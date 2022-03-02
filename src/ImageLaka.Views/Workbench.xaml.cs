@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Ribbon;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -13,14 +14,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ImageLaka
+namespace ImageLaka.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Workbench.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Workbench : RibbonWindow
     {
-        public MainWindow()
+        public Workbench()
         {
             InitializeComponent();
         }
