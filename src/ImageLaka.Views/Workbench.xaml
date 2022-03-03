@@ -4,6 +4,8 @@
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                      xmlns:fluent="urn:fluent-ribbon"
+                     xmlns:views="clr-namespace:ImageLaka.Views"
+                     xmlns:viewModels="clr-namespace:ImageLaka.ViewModels;assembly=ImageLaka.ViewModels"
                      mc:Ignorable="d"
                      Title="ImageLaka" Height="250" Width="800"
                      Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png">
@@ -11,9 +13,44 @@
         <Style x:Key="FontAwesome">
             <Setter Property="TextElement.FontFamily" Value="pack://application:,,,/ImageLaka.Views;component/Assets/#FontAwesome" />
             <Setter Property="TextElement.Foreground" Value="ForestGreen"></Setter>
-            <Setter Property="TextElement.FontSize" Value="14" />
+            <Setter Property="TextElement.FontSize" Value="30" />
+        </Style>
+        <Style x:Key="BtnInfoStyle" TargetType="fluent:Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="fluent:Button">
+                        <StackPanel x:Name="border" SnapsToDevicePixels="True" Margin="5" Height="68"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center">
+                            <TextBlock Text="{TemplateBinding Header}"
+                                       Margin="0,15,0,0"
+                                       FontFamily="pack://application:,,,/ImageLaka.Views;component/Assets/#FontAwesome"
+                                       Foreground="ForestGreen"
+                                       FontSize="30"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="{TemplateBinding Content}"
+                                       Margin="0,5,0,0"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#2f96b4"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#2a89a4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </fluent:RibbonWindow.Resources>
+    <fluent:RibbonWindow.DataContext>
+        <viewModels:WorkbenchViewModel></viewModels:WorkbenchViewModel>
+    </fluent:RibbonWindow.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -27,15 +64,26 @@
             <!--Tabs-->
             <fluent:RibbonTabItem Header="开始">
                 <fluent:RibbonGroupBox>
-                    <fluent:Button Header="&#xf0c7;" Style="{StaticResource FontAwesome}" FontSize="30" />
-                    <fluent:Button Header="Close">
-                        
-                    </fluent:Button>
+                    <fluent:Button Style="{StaticResource BtnInfoStyle}"
+                                   Header="&#xf15b;" Content="新建"
+                                   Command="{Binding NewImage}" />
+                    <fluent:Button Style="{StaticResource BtnInfoStyle}" 
+                                   Header="&#xf07c;" Content="打开"
+                                   Command="{Binding OpenImage}"/>
+                    <fluent:Button Style="{StaticResource BtnInfoStyle}" Header="&#xf1c5;" Content="导入" />
+                    <fluent:Button Style="{StaticResource BtnInfoStyle}" Header="&#xf0c7;" Content="保存" />
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox>
+                    <fluent:Button Style="{StaticResource BtnInfoStyle}" Header="&#xf1ea;" Content="页面" />
+                    <fluent:Button Style="{StaticResource BtnInfoStyle}" Header="&#xf02f;" Content="打印" />
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox>
+                    <fluent:Button Style="{StaticResource BtnInfoStyle}" Header="&#xf2d3;" Content="退出" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="图像">
                 <fluent:RibbonGroupBox>
-                    <fluent:Button Header="&#xf0c5;" Style="{StaticResource FontAwesome}" FontSize="30" />
+                    <fluent:Button Header="Button1" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="处理">
@@ -61,8 +109,12 @@
         </fluent:Ribbon>
         <Grid Grid.Row="1" Background="#FFF0F0F0">
         </Grid>
-        <fluent:StatusBar Grid.Row="2" Background="#FFFAFAFA">
-            <Label Content="Ready" />
-        </fluent:StatusBar>
+        <StatusBar Grid.Row="2" Background="#FFFAFAFA">
+            <StatusBarItem Content="Ready"></StatusBarItem>
+            <Separator HorizontalAlignment="Left" />
+            <StatusBarItem Content="100 x 300 Pix"></StatusBarItem>
+            <Separator HorizontalAlignment="Left" />
+            <ProgressBar Width="300" Height="12" HorizontalAlignment="Right"></ProgressBar>
+        </StatusBar>
     </Grid>
 </fluent:RibbonWindow>

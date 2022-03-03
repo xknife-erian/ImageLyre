@@ -23,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ImageLaka.ViewModels\ImageLaka.ViewModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\Images\imagelaka.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
