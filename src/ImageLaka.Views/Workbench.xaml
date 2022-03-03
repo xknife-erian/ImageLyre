@@ -1,58 +1,63 @@
-﻿<RibbonWindow x:Class="ImageLaka.Views.Workbench"
+﻿<fluent:RibbonWindow x:Class="ImageLaka.Views.Workbench"
               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:fluent="urn:fluent-ribbon"
               mc:Ignorable="d"
               Title="ImageLaka" Height="250" Width="800" 
-              HorizontalAlignment="Center" VerticalAlignment="Center"
-              HorizontalContentAlignment="Center"
-              VerticalContentAlignment="Center"
-              Padding="0" Margin="0"
               Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png">
-    <Grid Margin="0">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Ribbon Grid.Row="0" Grid.ColumnSpan="2" Margin="0">
-            <Ribbon.ApplicationMenu>
-                <RibbonApplicationMenu Visibility="Collapsed"/>
-            </Ribbon.ApplicationMenu>
-            <RibbonTab Header="开始">
-                <RibbonGroup>
-                    <RibbonButton Label="Button1" />
-                </RibbonGroup>
-            </RibbonTab>
-            <RibbonTab Header="图像">
-                <RibbonGroup>
-                    <RibbonButton Label="Button1" />
-                </RibbonGroup>
-            </RibbonTab>
-            <RibbonTab Header="处理">
-                <RibbonGroup>
-                    <RibbonButton Label="Button1" />
-                </RibbonGroup>
-            </RibbonTab>
-            <RibbonTab Header="分析">
-                <RibbonGroup>
-                    <RibbonButton Label="Button1" />
-                </RibbonGroup>
-            </RibbonTab>
-            <RibbonTab Header="视图">
-                <RibbonGroup>
-                    <RibbonButton Label="Button1" />
-                </RibbonGroup>
-            </RibbonTab>
-            <RibbonTab Header="帮助">
-                <RibbonGroup>
-                    <RibbonButton Label="Button1" />
-                </RibbonGroup>
-            </RibbonTab>
-        </Ribbon>
+        <fluent:Ribbon Grid.Row="0" x:Name="_Ribbon_" 
+                       IsQuickAccessToolBarMenuDropDownVisible="False" 
+                       IsQuickAccessToolBarVisible="False">
+            <!--Tabs-->
+            <fluent:RibbonTabItem Header="开始">
+                <fluent:RibbonGroupBox>
+                    <fluent:Button Header="Button1" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="图像">
+                <fluent:RibbonGroupBox>
+                    <fluent:Button Header="Button1" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="处理">
+                <fluent:RibbonGroupBox>
+                    <fluent:Button Header="Button1" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="分析">
+                <fluent:RibbonGroupBox>
+                    <fluent:Button Header="Button1" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="视图">
+                <fluent:RibbonGroupBox>
+                    <fluent:Button Header="Button1" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="帮助">
+                <fluent:RibbonGroupBox>
+                    <fluent:Button Header="Button1" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+        </fluent:Ribbon>
+        <Grid Grid.Row="1">
+            <Grid.Background>
+                <RadialGradientBrush>
+                    <GradientStop Color="#FFDCFDDE"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </RadialGradientBrush>
+            </Grid.Background>
+        </Grid>
         <StatusBar Grid.Row="2">
             <Label Content="Ready"></Label>
         </StatusBar>
     </Grid>
-</RibbonWindow>
+</fluent:RibbonWindow>

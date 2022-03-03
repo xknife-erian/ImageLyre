@@ -19,11 +19,12 @@ namespace ImageLaka.Views
     /// <summary>
     /// Interaction logic for Workbench.xaml
     /// </summary>
-    public partial class Workbench : RibbonWindow
+    public partial class Workbench : Fluent.RibbonWindow
     {
         public Workbench()
         {
             InitializeComponent();
+            _Ribbon_.SelectedTabIndex = 0;
         }
     }
 }
