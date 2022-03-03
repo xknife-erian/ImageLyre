@@ -4,14 +4,19 @@
               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
               mc:Ignorable="d"
-              Title="ImageLaka" Height="250" Width="800">
-    <Grid>
+              Title="ImageLaka" Height="250" Width="800" 
+              HorizontalAlignment="Center" VerticalAlignment="Center"
+              HorizontalContentAlignment="Center"
+              VerticalContentAlignment="Center"
+              Padding="0" Margin="0"
+              Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png">
+    <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Ribbon Grid.Row="0">
+        <Ribbon Grid.Row="0" Grid.ColumnSpan="2" Margin="0">
             <Ribbon.ApplicationMenu>
                 <RibbonApplicationMenu Visibility="Collapsed"/>
             </Ribbon.ApplicationMenu>
