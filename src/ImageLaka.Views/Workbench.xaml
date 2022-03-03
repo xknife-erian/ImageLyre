@@ -20,13 +20,17 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <!--使用Fluent.Ribbon中简洁的基本功能，QuickBar弃用，折叠弃用，顶部标题栏弃用-->
         <fluent:Ribbon Grid.Row="0" x:Name="_Ribbon_"
                        IsQuickAccessToolBarMenuDropDownVisible="False"
-                       IsQuickAccessToolBarVisible="False">
+                       IsQuickAccessToolBarVisible="False" CanMinimize="False">
             <!--Tabs-->
             <fluent:RibbonTabItem Header="开始">
                 <fluent:RibbonGroupBox>
                     <fluent:Button Header="&#xf0c7;" Style="{StaticResource FontAwesome}" FontSize="30" />
+                    <fluent:Button Header="Close">
+                        
+                    </fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <fluent:RibbonTabItem Header="图像">
