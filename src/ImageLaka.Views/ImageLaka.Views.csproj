@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\FontAwesome.ttf" />
     <None Remove="Assets\Images\imagelaka.png" />
   </ItemGroup>
 
@@ -16,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\FontAwesome.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Images\imagelaka.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
