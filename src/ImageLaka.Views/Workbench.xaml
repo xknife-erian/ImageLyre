@@ -9,7 +9,7 @@
                      Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png">
     <fluent:RibbonWindow.Resources>
         <Style x:Key="FontAwesome">
-            <Setter Property="TextElement.FontFamily" Value="pack://application:,,,/Assets/#FontAwesome" />
+            <Setter Property="TextElement.FontFamily" Value="pack://application:,,,/ImageLaka.Views;component/Assets/#FontAwesome" />
             <Setter Property="TextElement.Foreground" Value="ForestGreen"></Setter>
             <Setter Property="TextElement.FontSize" Value="14" />
         </Style>
@@ -55,33 +55,9 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
-        <Grid Grid.Row="1" Background="#FFCCCCCC">
-            <Viewbox>
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                    <TextBlock Foreground="BlueViolet" Margin="0,0,10,0"
-                               Style="{StaticResource FontAwesome}"
-                               Text="&#xf0c7;"
-                               VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="50" />
-                    <TextBlock Foreground="ForestGreen" Margin="0,0,10,0"
-                               Style="{StaticResource FontAwesome}"
-                               Text="&#xf0c5;"
-                               VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="50" />
-                    <TextBlock Foreground="Orange" Margin="0,0,10,0"
-                               Style="{StaticResource FontAwesome}"
-                               Text="&#xf0c3;"
-                               VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="50" />
-                    <TextBlock Foreground="Red" Margin="0,0,10,0"
-                               Style="{StaticResource FontAwesome}"
-                               Text="&#xf0c1;"
-                               VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="50" />
-                    <TextBlock Foreground="Blue"
-                               Style="{StaticResource FontAwesome}"
-                               Text="&#xf0a2;"
-                               VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="50" />
-                </StackPanel>
-            </Viewbox>
+        <Grid Grid.Row="1" Background="#FFF0F0F0">
         </Grid>
-        <fluent:StatusBar Grid.Row="2" Background="#FFDDEEEE">
+        <fluent:StatusBar Grid.Row="2" Background="#FFFAFAFA">
             <Label Content="Ready" />
         </fluent:StatusBar>
     </Grid>
