@@ -1,16 +1,12 @@
-﻿<Window x:Class="ImageLaka.Welcome"
+﻿<Window x:Class="ImageLaka.Logo"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:ImageLaka.ViewModels;assembly=ImageLaka.ViewModels"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Welcome" Height="180" Width="480" 
+        Title="Logo" Height="180" Width="480" 
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         ResizeMode="NoResize" Topmost="True">
-    <Window.DataContext>
-        <viewModels:WelcomeViewModel />
-    </Window.DataContext>
     <Border CornerRadius="30,30,30,30" Background="CornflowerBlue">
         <Grid>
             <TextBlock Height="Auto" Width="Auto" 

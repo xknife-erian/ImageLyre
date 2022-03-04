@@ -2,7 +2,7 @@
 
 namespace ImageLaka.ViewModels
 {
-    public class WelcomeViewModel : ObservableRecipient
+    public class LogoViewModel : ObservableRecipient
     {
     }
 }

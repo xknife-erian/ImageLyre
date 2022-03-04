@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ImageLaka
 {
     /// <summary>
-    /// Interaction logic for Welcome.xaml
+    /// Interaction logic for Logo.xaml
     /// </summary>
-    public partial class Welcome : Window
+    public partial class Logo : Window
     {
-        public Welcome()
+        public Logo()
         {
             InitializeComponent();
         }

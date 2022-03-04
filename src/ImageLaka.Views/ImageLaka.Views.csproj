@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="Fluent.Ribbon" Version="9.0.3" />
+    <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,11 @@
     <Resource Include="Assets\Images\imagelaka.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dialogs\" />
+    <Folder Include="Views\" />
   </ItemGroup>
 
 </Project>

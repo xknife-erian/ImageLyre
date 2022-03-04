@@ -1,30 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Ribbon;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using ImageLaka.Views.Dialogs;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using Ookii.Dialogs.Wpf;
 
-namespace ImageLaka.Views
+namespace ImageLaka.Views;
+
+/// <summary>
+///     Interaction logic for Workbench.xaml
+/// </summary>
+public partial class Workbench : IRecipient<ApplyDialogMessage>
 {
-    /// <summary>
-    /// Interaction logic for Workbench.xaml
-    /// </summary>
-    public partial class Workbench : Fluent.RibbonWindow
+    public Workbench()
     {
-        public Workbench()
+        InitializeComponent();
+        _Ribbon_.SelectedTabIndex = 0;
+    }
+
+    public void Receive(ApplyDialogMessage message)
+    {
+        var t = message.DialogType;
+        switch (t)
         {
-            InitializeComponent();
-            _Ribbon_.SelectedTabIndex = 0;
+            case DialogType.OpenImage:
+                Ookii.Dialogs.Wpf.VistaOpenFileDialog dialog = new VistaOpenFileDialog() {Filter = "*.txt"};
+                dialog.ShowDialog(this);
+                break;
         }
     }
 }

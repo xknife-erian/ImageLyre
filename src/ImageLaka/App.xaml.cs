@@ -23,8 +23,8 @@ namespace ImageLaka
 
         public App()
         {
-            var welcome = new Welcome();
-            welcome.Loaded += (_, _) =>
+            var logo = new Logo();
+            logo.Loaded += (_, _) =>
             {
                 Ioc.Default.ConfigureServices(IocSetup());
 
@@ -35,7 +35,7 @@ namespace ImageLaka
                 shell.Loaded += async (_, _) =>
                 {
                     await Task.Delay(12 * 100);
-                    welcome.Close();
+                    logo.Close();
                     _Logger.Trace("关闭欢迎窗体。");
                 };
                 shell.Closing += OnWorkbenchClosing;
@@ -43,7 +43,7 @@ namespace ImageLaka
                 shell.Show();
                 _Logger.Info("主窗体显示成功。");
             };
-            welcome.Show();
+            logo.Show();
         }
 
         private void OnWorkbenchClosing(object? sender, CancelEventArgs e)
