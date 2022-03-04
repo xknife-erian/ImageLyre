@@ -15,12 +15,9 @@ public class WorkbenchViewModel : ObservableRecipient
     {
         get
         {
-            return new AsyncRelayCommand(() =>
+            return new RelayCommand(() =>
             {
-                return Task.Factory.StartNew(() =>
-                {
-                    WeakReferenceMessenger.Default.Send(new ApplyDialogMessage(DialogType.OpenImage));
-                });
+                WeakReferenceMessenger.Default.Send(new ApplyDialogMessage(DialogType.OpenImage));
             });
         }
     }
