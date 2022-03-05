@@ -45,7 +45,9 @@ public class WorkbenchViewModel : ObservableRecipient
         if (success == true)
         {
             ImageFiles = settings.FileName;
-            _dialogService.Show(this, new ImageWindowViewModel());
+            var vm = new ImageWindowViewModel();
+            vm.ImageSource = settings.FileName;
+            _dialogService.Show(this, vm);
         }
     }
 }
