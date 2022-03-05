@@ -21,8 +21,9 @@ namespace ImageLaka
     {
         private static readonly ILogger _Logger = LogManager.GetCurrentClassLogger();
 
-        public App()
+        protected override void OnStartup(StartupEventArgs e)
         {
+            base.OnStartup(e);
             var logo = new Logo();
             logo.Loaded += (_, _) =>
             {
@@ -60,7 +61,8 @@ namespace ImageLaka
         private static IServiceProvider IocSetup()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterType<Workbench>().AsImplementedInterfaces().AsSelf().SingleInstance();
+            builder.RegisterModule<ImageLaka.Views.IoC.Modules>();
+            builder.RegisterModule<ImageLaka.ViewModels.IoC.Modules>();
             return new AutofacServiceProvider(builder.Build());
         }
     }

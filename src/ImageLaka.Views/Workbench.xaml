@@ -3,12 +3,16 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+                     md:DialogServiceViews.IsRegistered="True"
                      xmlns:fluent="urn:fluent-ribbon"
                      xmlns:views="clr-namespace:ImageLaka.Views"
-                     xmlns:viewModels="clr-namespace:ImageLaka.ViewModels;assembly=ImageLaka.ViewModels"
+                     xmlns:vm="clr-namespace:ImageLaka.ViewModels;assembly=ImageLaka.ViewModels"
                      mc:Ignorable="d"
                      Title="ImageLaka" Height="250" Width="800"
-                     Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png">
+                     Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png"
+                     DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
+                     d:DataContext="{d:DesignInstance {x:Type vm:WorkbenchViewModel}}">
     <fluent:RibbonWindow.Resources>
         <Style x:Key="FontAwesome">
             <Setter Property="TextElement.FontFamily" Value="pack://application:,,,/ImageLaka.Views;component/Assets/#FontAwesome" />
@@ -48,9 +52,6 @@
             </Setter>
         </Style>
     </fluent:RibbonWindow.Resources>
-    <fluent:RibbonWindow.DataContext>
-        <viewModels:WorkbenchViewModel></viewModels:WorkbenchViewModel>
-    </fluent:RibbonWindow.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -63,17 +64,17 @@
                        IsQuickAccessToolBarVisible="False" CanMinimize="False">
             <!--Tabs-->
             <fluent:RibbonTabItem Header="开始">
-                <fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="文件">
                     <fluent:Button Style="{StaticResource BtnInfoStyle}"
                                    Header="&#xf15b;" Content="新建"
-                                   Command="{Binding NewImage}" />
+                                   Command="{Binding NewImageFileCommand}" />
                     <fluent:Button Style="{StaticResource BtnInfoStyle}" 
                                    Header="&#xf07c;" Content="打开"
-                                   Command="{Binding OpenImage}"/>
+                                   Command="{Binding OpenImageFileCommand}"/>
                     <fluent:Button Style="{StaticResource BtnInfoStyle}" Header="&#xf1c5;" Content="导入" />
                     <fluent:Button Style="{StaticResource BtnInfoStyle}" Header="&#xf0c7;" Content="保存" />
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="打印">
                     <fluent:Button Style="{StaticResource BtnInfoStyle}" Header="&#xf1ea;" Content="页面" />
                     <fluent:Button Style="{StaticResource BtnInfoStyle}" Header="&#xf02f;" Content="打印" />
                 </fluent:RibbonGroupBox>
