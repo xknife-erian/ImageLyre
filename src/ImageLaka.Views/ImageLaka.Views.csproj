@@ -8,14 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\FontAwesome.ttf" />
+    <None Remove="Assets\Fonts\FontAwesome6.otf" />
     <None Remove="Assets\Images\imagelaka.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Assets\FontAwesome.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +24,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Fonts\FontAwesome6.otf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Images\imagelaka.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

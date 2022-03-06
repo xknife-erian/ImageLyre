@@ -1,10 +1,6 @@
-﻿using System.Reflection;
-using System.Windows.Input;
-using ImageLaka.Views;
-using ImageLaka.Views.Dialogs;
+﻿using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
 using MvvmDialogs;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
 
@@ -26,9 +22,11 @@ public class WorkbenchViewModel : ObservableRecipient
         set => SetProperty(ref _imageFiles, value);
     }
 
-    public ICommand NewImageFileCommand { get; set; }
+    public ICommand NewImageFileCommand => new RelayCommand(OpenFile);
 
     public ICommand OpenImageFileCommand => new RelayCommand(OpenFile);
+
+    public ICommand SwitchLanguageCommand => new RelayCommand(OpenFile);
 
     private void OpenFile()
     {
@@ -41,7 +39,7 @@ public class WorkbenchViewModel : ObservableRecipient
             Filter = filter
         };
 
-        bool? success = _dialogService.ShowOpenFileDialog(this, settings);
+        var success = _dialogService.ShowOpenFileDialog(this, settings);
         if (success == true)
         {
             ImageFiles = settings.FileName;
