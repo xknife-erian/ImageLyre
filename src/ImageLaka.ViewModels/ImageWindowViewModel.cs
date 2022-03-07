@@ -41,6 +41,6 @@ public class ImageWindowViewModel : ObservableRecipient
         _macro.AddAndDoCurrent(command);
         Data = _imageTarget.CurrentData;
         Width = Data.Width;
-        Height = Data.Height;
+        Height = Data.Height+70;
     }
 }
