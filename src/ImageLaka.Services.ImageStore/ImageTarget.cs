@@ -1,11 +1,12 @@
-﻿using System.Drawing.Imaging;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace ImageLaka.ImageEngine
 {
     public class ImageTarget : ITarget
     {
         private FileInfo _fileInfo;
-        public BitmapData CurrentData { get; set; }
+        public Bitmap CurrentData { get; set; }
 
         public ImageTarget(string path)
         {
