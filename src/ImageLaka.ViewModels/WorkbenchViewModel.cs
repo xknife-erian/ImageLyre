@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using ImageLaka.ImageEngine;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using MvvmDialogs;
@@ -10,10 +11,12 @@ public class WorkbenchViewModel : ObservableRecipient
 {
     private readonly IDialogService _dialogService;
     private string? _imageFiles;
+    private readonly Func<ImageWindowViewModel> _imageWindowViewModelFactory;
 
-    public WorkbenchViewModel(IDialogService dialogService)
+    public WorkbenchViewModel(IDialogService dialogService, Func<ImageWindowViewModel> imageWindowViewModelFactory)
     {
         _dialogService = dialogService;
+        _imageWindowViewModelFactory = imageWindowViewModelFactory;
     }
 
     public string? ImageFiles
@@ -43,8 +46,8 @@ public class WorkbenchViewModel : ObservableRecipient
         if (success == true)
         {
             ImageFiles = settings.FileName;
-            var vm = new ImageWindowViewModel();
-            vm.ImageSource = settings.FileName;
+            var vm = _imageWindowViewModelFactory.Invoke();
+            vm.Read(settings.FileName);
             _dialogService.Show(this, vm);
         }
     }

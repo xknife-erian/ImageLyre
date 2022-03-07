@@ -5,15 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageLaka.Views"
         xmlns:viewModels="clr-namespace:ImageLaka.ViewModels;assembly=ImageLaka.ViewModels"
+        xmlns:converters="clr-namespace:ImageLaka.Views.Converters"
         mc:Ignorable="d"
         Title="ImageWindow" Height="400" Width="400"
         d:DataContext="{d:DesignInstance {x:Type viewModels:ImageWindowViewModel}}">
     <Window.Resources>
-        <local:ImageFileSourceConverter x:Key="Converter" />
+        <converters:ImageFileSourceConverter x:Key="Converter" />
     </Window.Resources>
     <Grid>
         <Image Name="_ImageControl_"
-               Source="{Binding Path=ImageSource, Converter={StaticResource Converter}}" 
+               Source="{Binding Path=Data, Converter={StaticResource Converter}}" 
                Stretch="UniformToFill"></Image>
     </Grid>
 </Window>

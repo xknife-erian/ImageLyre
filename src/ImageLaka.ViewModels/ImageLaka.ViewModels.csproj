@@ -12,4 +12,8 @@
     <PackageReference Include="MvvmDialogs" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ImageLaka.Services.ImageStore\ImageLaka.ImageEngine.csproj" />
+  </ItemGroup>
+
 </Project>

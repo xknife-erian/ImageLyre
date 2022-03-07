@@ -24,27 +24,44 @@ namespace ImageLaka
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var logo = new Logo();
-            logo.Loaded += (_, _) =>
+            if (IsStartFromCommandLine(e))
             {
-                Ioc.Default.ConfigureServices(IocSetup());
-
-                var shell = Ioc.Default.GetService<Workbench>();
-                if (shell == null)
-                    return;
-                _Logger.Info("beginning...");
-                shell.Loaded += async (_, _) =>
+                var args = e.Args;//这是命令行参数。 TODO:命令行模式待开发。laka, 2022/3/7。
+            }
+            else
+            {
+                var logo = new Logo();
+                logo.Loaded += (_, _) =>
                 {
-                    await Task.Delay(12 * 100);
-                    logo.Close();
-                    _Logger.Trace("关闭欢迎窗体。");
+                    Ioc.Default.ConfigureServices(IocSetup());
+
+                    var shell = Ioc.Default.GetService<Workbench>();
+                    if (shell == null)
+                        return;
+                    _Logger.Info("beginning...");
+                    shell.Loaded += async (_, _) =>
+                    {
+                        await Task.Delay(12 * 100);
+                        logo.Close();
+                        _Logger.Trace("关闭欢迎窗体。");
+                    };
+                    shell.Closing += OnWorkbenchClosing;
+                    shell.Closed += OnWorkbenchClosed;
+                    shell.Show();
+                    _Logger.Info("主窗体显示成功。");
                 };
-                shell.Closing += OnWorkbenchClosing;
-                shell.Closed += OnWorkbenchClosed;
-                shell.Show();
-                _Logger.Info("主窗体显示成功。");
-            };
-            logo.Show();
+                logo.Show();
+            }
+        }
+
+        /// <summary>
+        /// 判断是否启动为一个命令行模式（无操作窗体）
+        /// </summary>
+        /// <param name="e">启动参数类</param>
+        /// <returns>当true时，以命令行模式启动；反之以标准WPF Window模式启动应用程序</returns>
+        private static bool IsStartFromCommandLine(StartupEventArgs e)
+        {
+            return false; //e.Args.Length > 0;
         }
 
         private void OnWorkbenchClosing(object? sender, CancelEventArgs e)

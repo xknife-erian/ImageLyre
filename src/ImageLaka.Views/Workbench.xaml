@@ -23,7 +23,7 @@
                             <TextBlock Text="{TemplateBinding Header}"
                                        Margin="0,15,0,0"
                                        FontFamily="pack://application:,,,/ImageLaka.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
-                                       Foreground="ForestGreen"
+                                       Foreground="SlateGray"
                                        FontSize="26"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center" />
@@ -59,11 +59,9 @@
             <!--Tabs-->
             <f:RibbonTabItem Header="开始">
                 <f:RibbonGroupBox Header="文件">
-                    <f:Button Style="{StaticResource MenuButton}"
-                              Header="&#xf15b;" Content="新建"
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf15b;" Content="新建"
                               Command="{Binding NewImageFileCommand}" />
-                    <f:Button Style="{StaticResource MenuButton}"
-                              Header="&#xf07c;" Content="打开"
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf07c;" Content="打开"
                               Command="{Binding OpenImageFileCommand}" />
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf1c5;" Content="导入" />
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf0c7;" Content="保存" />
