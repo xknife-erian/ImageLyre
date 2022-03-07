@@ -15,6 +15,5 @@ public class OpenCommand : BaseCommand
 
     public override void Undo()
     {
-        throw new NotImplementedException();
     }
 }

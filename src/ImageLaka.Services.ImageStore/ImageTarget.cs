@@ -1,17 +1,26 @@
-﻿namespace ImageLaka.ImageEngine
+﻿using System.Drawing.Imaging;
+
+namespace ImageLaka.ImageEngine
 {
     public class ImageTarget : ITarget
     {
-        public ImageReader Reader { get; set; }
+        private FileInfo _fileInfo;
+        public BitmapData CurrentData { get; set; }
+
+        public ImageTarget(string path)
+        {
+            _fileInfo = new FileInfo(path);
+        }
 
         public void Open()
         {
-            throw new NotImplementedException();
+            CurrentData = ImageHelper.Read(_fileInfo.FullName);
         }
 
         public void Close()
         {
-            throw new NotImplementedException();
+            _fileInfo = null;
+            CurrentData = null;
         }
     }
 }

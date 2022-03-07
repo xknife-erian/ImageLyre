@@ -9,18 +9,11 @@ using System.Threading.Tasks;
 
 namespace ImageLaka.ImageEngine
 {
-    public class ImageReader
+    public class ImageHelper
     {
-        public ImageReader(string path)
+        public static BitmapData Read(string path)
         {
-            FileInfo = new FileInfo(path);
-        }
-
-        public FileInfo FileInfo { get; set; }
-
-        public BitmapData Read()
-        {
-            var curBitmap = new Bitmap(FileInfo.FullName);
+            var curBitmap = new Bitmap(path);
 
             if (curBitmap != null)
             {

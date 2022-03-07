@@ -1,27 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing.Imaging;
 using ImageLaka.ImageEngine;
+using ImageLaka.Services.Macros;
+using ImageLaka.Services.Macros.Commands;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
-using MvvmDialogs;
 
-namespace ImageLaka.ViewModels
+namespace ImageLaka.ViewModels;
+
+public class ImageWindowViewModel : ObservableRecipient
 {
-    public class ImageWindowViewModel : ObservableRecipient
+    private ImageTarget _imageTarget;
+    private Macro _macro;
+    private BitmapData _data;
+
+    public BitmapData Data
     {
-        private ImageReader _imageReader;
-
-        public void Read(string path)
-        {
-            _imageReader = new ImageReader(path);
-            Data = _imageReader.Read();
-        }
-
-        public BitmapData Data { get; set; }
+        get => _data;
+        set => SetProperty(ref _data, value);
     }
 
+    public void Read(string path)
+    {
+        _macro = new Macro();
+        _imageTarget = new ImageTarget(path);
+        var command = new OpenCommand(_imageTarget);
+        _macro.AddAndDoCurrent(command);
+        Data = _imageTarget.CurrentData;
+    }
 }
