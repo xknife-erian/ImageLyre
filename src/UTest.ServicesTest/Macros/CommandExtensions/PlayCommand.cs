@@ -1,36 +1,51 @@
-﻿using ImageLaka;
+﻿using System.Drawing;
+using ImageLaka;
 
 namespace UTest.ServicesTest.Macros.CommandExtensions;
 
+/**
+ * 以下三个演示类，用来描述及演示<see cref="ITarget"/>,<see cref="IMacroCommand"/>在设计过程中，以及
+ * 当插件模式下的使用方法。
+ * 2022/3/8
+ */
+
+
 public class TextTarget : ITarget
 {
-    public string TestTarget { get; set; } = string.Empty;
+    public TextTarget(string source = "")
+    {
+        Target = source;
+    }
+
+    public string Target { get; set; }
 
     public void Open()
     {
-        TestTarget += $"{nameof(Open)}/";
+        Target += $"{nameof(Open)}\r\n";
     }
 
     public void Close()
     {
-        TestTarget += $"{nameof(Close)}/";
+        Target += $"{nameof(Close)}\r\n";
     }
 }
 
 public static class TargetExtensions
 {
+    public const string PLAY = "Play\r\n";
+
     public static void Play(this TextTarget it)
     {
-        it.TestTarget += $"{nameof(Play)}/";
+        it.Target += PLAY;
     }
 
     public static void UnPlay(this TextTarget it)
     {
-        it.TestTarget += it.TestTarget.Replace($"{nameof(Play)}/", string.Empty);
+        it.Target += it.Target.Replace(PLAY, string.Empty);
     }
 }
 
-public class PlayCommand : BaseCommand
+public class PlayCommand : BaseMacroCommand
 {
     private readonly TextTarget _textTarget;
 

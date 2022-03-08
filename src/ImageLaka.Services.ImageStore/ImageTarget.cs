@@ -1,27 +1,26 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
 
-namespace ImageLaka.ImageEngine
+namespace ImageLaka.ImageEngine;
+
+public class ImageTarget : ITarget
 {
-    public class ImageTarget : ITarget
+    private FileInfo _fileInfo;
+
+    public ImageTarget(string path)
     {
-        private FileInfo _fileInfo;
-        public Bitmap CurrentData { get; set; }
+        _fileInfo = new FileInfo(path);
+    }
 
-        public ImageTarget(string path)
-        {
-            _fileInfo = new FileInfo(path);
-        }
+    public Bitmap CurrentData { get; set; }
 
-        public void Open()
-        {
-            CurrentData = ImageHelper.Read(_fileInfo.FullName);
-        }
+    public void Open()
+    {
+        CurrentData = ImageUtil.Read(_fileInfo.FullName);
+    }
 
-        public void Close()
-        {
-            _fileInfo = null;
-            CurrentData = null;
-        }
+    public void Close()
+    {
+        _fileInfo = null;
+        CurrentData = null;
     }
 }

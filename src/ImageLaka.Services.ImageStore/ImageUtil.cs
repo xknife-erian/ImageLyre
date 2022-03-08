@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ImageLaka.ImageEngine
 {
-    public class ImageHelper
+    public class ImageUtil
     {
         public static Bitmap Read(string path)
         {

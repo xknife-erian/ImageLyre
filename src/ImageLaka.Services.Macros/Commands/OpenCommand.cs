@@ -2,7 +2,7 @@
 
 namespace ImageLaka.Services.Macros.Commands;
 
-public class OpenCommand : BaseCommand
+public class OpenCommand : BaseMacroCommand
 {
     public OpenCommand(ITarget target) : base(target)
     {
@@ -10,7 +10,8 @@ public class OpenCommand : BaseCommand
 
     public override void Do()
     {
-        _target.Open();
+        Target.Open();
+        IsDone = true;
     }
 
     public override void Undo()

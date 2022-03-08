@@ -2,7 +2,7 @@
 
 namespace ImageLaka.Services.Macros.Commands;
 
-public class CloseCommand : BaseCommand
+public class CloseCommand : BaseMacroCommand
 {
     public CloseCommand(ITarget target) : base(target)
     {
@@ -10,7 +10,7 @@ public class CloseCommand : BaseCommand
 
     public override void Do()
     {
-        _target.Close();
+        Target.Close();
     }
 
     public override void Undo()
