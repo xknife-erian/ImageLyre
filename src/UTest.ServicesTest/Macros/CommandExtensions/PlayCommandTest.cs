@@ -23,7 +23,7 @@ namespace UTest.ServicesTest.Macros.CommandExtensions
             var macro = new Macro();
             var cs = new List<IMacroCommand>();
 
-            //连续执行10次宏
+            //连续执行10次宏，也就是定义了10个命令
             var count = 10;
             for (int i = 0; i < 10; i++)
             {
@@ -33,7 +33,10 @@ namespace UTest.ServicesTest.Macros.CommandExtensions
             macro.DoCurrent(cs.ToArray());
 
             var actual = Regex.Matches(tt.Target, TEST_TXT).Count;
+
+            //期待10次迭加的字符串是正确的。
             actual.Should().Be(count);
+            tt.Target.Length.Should().Be(count * TEST_TXT.Length);
         }
     }
 }

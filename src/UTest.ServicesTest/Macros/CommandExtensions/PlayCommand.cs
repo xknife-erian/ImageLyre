@@ -55,9 +55,14 @@ public class PlayCommand : BaseMacroCommand
         _textTarget = (TextTarget) target;
     }
 
-    public override void Do()
+    /// <summary>
+    /// 完成命令的操作
+    /// </summary>
+    /// <returns>如果正常完成后，返回true；否则返回false。</returns>
+    protected override bool DoSpecific()
     {
         _textTarget.Play();
+        return true;
     }
 
     public override void Undo()

@@ -15,7 +15,7 @@ public interface IMacroCommand
     /// </summary>
     bool IsDone { get; }
     /// <summary>
-    /// 执行命令操作
+    /// 执行命令操作。如果正常完成，会将<see cref="IsDone"/>属性置为true。
     /// </summary>
     void Do();
     /// <summary>

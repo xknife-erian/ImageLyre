@@ -19,9 +19,18 @@ public abstract class BaseMacroCommand : IMacroCommand
     }
 
     /// <summary>
-    /// 执行命令操作
+    /// 执行命令操作。如果正常完成，会将<see cref="IsDone"/>属性置为true。
     /// </summary>
-    public abstract void Do();
+    public virtual void Do()
+    {
+        IsDone = DoSpecific();
+    }
+
+    /// <summary>
+    /// 完成命令的操作
+    /// </summary>
+    /// <returns>如果正常完成后，返回true；否则返回false。</returns>
+    protected abstract bool DoSpecific();
 
     /// <summary>
     /// 命令的操作是否可以回退
