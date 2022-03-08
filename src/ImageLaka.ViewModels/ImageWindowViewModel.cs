@@ -39,9 +39,9 @@ public class ImageWindowViewModel : ObservableRecipient
         _macro = new Macro();
         _imageTarget = new ImageTarget(path);
         var command = new OpenCommand(_imageTarget);
-        _macro.AddAndDoCurrent(command);
-        Bitmap = _imageTarget.CurrentData;
-        Width = Bitmap.Width;
-        Height = Bitmap.Height;
+        _macro.DoCurrent(command);
+        Data = _imageTarget.CurrentData;
+        Width = Data.Width;
+        Height = Data.Height+70;
     }
 }

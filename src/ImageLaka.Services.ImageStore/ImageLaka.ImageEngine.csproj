@@ -8,11 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.14" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ImageLaka.Base\ImageLaka.Base.csproj" />
+    <ProjectReference Include="..\ImageLaka.Base\ImageLaka.Base.csproj" />
   </ItemGroup>
 
 </Project>
