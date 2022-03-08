@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLaka", "ImageLaka\Imag
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{661B75C6-7367-4B61-B662-398AC704500B}"
 	ProjectSection(SolutionItems) = preProject
-		LICENSE = LICENSE
-		README.en.md = README.en.md
-		README.md = README.md
+		..\LICENSE = ..\LICENSE
+		..\README.en.md = ..\README.en.md
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLaka.Views", "ImageLaka.Views\ImageLaka.Views.csproj", "{922DC528-56DB-45BB-886C-6AEF34CFA512}"
@@ -20,11 +20,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLaka.ImageEngine", "Im
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLaka.Services.Macros", "ImageLaka.Services.Macros\ImageLaka.Services.Macros.csproj", "{CE539F9A-C1F2-4F45-8D20-18E5E74E34B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageLaka.Base", "ImageLaka.Base\ImageLaka.Base.csproj", "{8AAFD43C-4523-47E8-B5F5-EC435EDFEA73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLaka.Base", "ImageLaka.Base\ImageLaka.Base.csproj", "{8AAFD43C-4523-47E8-B5F5-EC435EDFEA73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTest.ServicesTest", "UTest.ServicesTest\UTest.ServicesTest.csproj", "{C4E19516-2322-4240-87F5-55A7B50B36BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ServicesTest", "UTest.ServicesTest\UTest.ServicesTest.csproj", "{C4E19516-2322-4240-87F5-55A7B50B36BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTest.UITest", "UTest.UITest\UTest.UITest.csproj", "{BBB087D8-F0DF-46C1-A614-EECB8EA886AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.UITest", "UTest.UITest\UTest.UITest.csproj", "{BBB087D8-F0DF-46C1-A614-EECB8EA886AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
