@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ImageLaka.Base\ImageLaka.Base.csproj" />
+    <ProjectReference Include="..\ImageLaka.Base\ImageLaka.Base.csproj" />
   </ItemGroup>
 
 </Project>
