@@ -12,7 +12,8 @@ public class WorkbenchViewModel : ObservableRecipient
     private readonly IDialogService _dialogService;
     private string? _imageFiles;
     private readonly Func<ImageWindowViewModel> _imageWindowViewModelFactory;
-    private readonly Dictionary<string, ImageWindowViewModel> _imageViewModelMap 
+
+    private readonly Dictionary<string, ImageWindowViewModel> _imageViewModelMap
         = new Dictionary<string, ImageWindowViewModel>();
 
     public WorkbenchViewModel(IDialogService dialogService, Func<ImageWindowViewModel> imageWindowViewModelFactory)
@@ -48,9 +49,18 @@ public class WorkbenchViewModel : ObservableRecipient
         if (success == true)
         {
             ImageFiles = settings.FileName;
-            var vm = _imageWindowViewModelFactory.Invoke();
-            vm.Read(settings.FileName);
-            _imageViewModelMap.Add(settings.FileName, vm);
+            ImageWindowViewModel vm;
+            if (_imageViewModelMap.ContainsKey(ImageFiles))
+            {
+                vm = _imageViewModelMap[ImageFiles];
+            }
+            else
+            {
+                vm = _imageWindowViewModelFactory.Invoke();
+                vm.Read(settings.FileName);
+                _imageViewModelMap.Add(settings.FileName, vm);
+            }
+
             _dialogService.Show(this, vm);
         }
     }

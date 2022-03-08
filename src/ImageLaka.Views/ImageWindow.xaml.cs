@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Drawing;
+using System.Windows;
 using ImageLaka.ViewModels;
 
 namespace ImageLaka.Views;
@@ -17,6 +18,15 @@ public partial class ImageWindow : Window
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         var vm = (ImageWindowViewModel) DataContext;
+        AdjustWindowSize(vm.Bitmap);
+    }
+
+    /// <summary>
+    /// 调整窗体大小
+    /// </summary>
+    /// <param name="vm"></param>
+    private void AdjustWindowSize(Bitmap vm)
+    {
         Height = _ToolBar_.Height + vm.Height + _StatusBar_.Height;
         Width = vm.Width;
     }

@@ -8,6 +8,8 @@
         xmlns:controlzex="urn:controlzex" x:Class="ImageLaka.Views.ImageWindow"
         mc:Ignorable="d"
         Title="ImageWindow"
+        Top="{Binding Path=Top}"
+        Left="{Binding Path=Left}"
         d:DesignHeight="400" d:DesignWidth="400"
         d:DataContext="{d:DesignInstance {x:Type viewModels:ImageWindowViewModel}}">
     <Window.Resources>

@@ -12,9 +12,10 @@ public class ImageWindowViewModel : ObservableRecipient
 {
     private ImageTarget _imageTarget;
     private Macro _macro;
+
+    #region 依赖属性
+
     private Bitmap _bitmap;
-    private int _width;
-    private int _height;
 
     public Bitmap Bitmap
     {
@@ -22,17 +23,10 @@ public class ImageWindowViewModel : ObservableRecipient
         set => SetProperty(ref _bitmap, value);
     }
 
-    public int Width
-    {
-        get => _width;
-        set => SetProperty(ref _width, value);
-    }
+    public int Top { get; set; }
+    public int Left { get; set; }
 
-    public int Height
-    {
-        get => _height;
-        set => SetProperty(ref _height, value);
-    }
+    #endregion
 
     public void Read(string path)
     {
@@ -40,8 +34,6 @@ public class ImageWindowViewModel : ObservableRecipient
         _imageTarget = new ImageTarget(path);
         var command = new OpenCommand(_imageTarget);
         _macro.DoCurrent(command);
-        Data = _imageTarget.CurrentData;
-        Width = Data.Width;
-        Height = Data.Height+70;
+        Bitmap = _imageTarget.CurrentData;
     }
 }
