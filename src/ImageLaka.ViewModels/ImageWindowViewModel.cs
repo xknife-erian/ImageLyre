@@ -4,6 +4,7 @@ using ImageLaka.ImageEngine;
 using ImageLaka.Services.Macros;
 using ImageLaka.Services.Macros.Commands;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using MvvmDialogs;
 
 namespace ImageLaka.ViewModels;
 
@@ -11,14 +12,14 @@ public class ImageWindowViewModel : ObservableRecipient
 {
     private ImageTarget _imageTarget;
     private Macro _macro;
-    private Bitmap _data;
+    private Bitmap _bitmap;
     private int _width;
     private int _height;
 
-    public Bitmap Data
+    public Bitmap Bitmap
     {
-        get => _data;
-        set => SetProperty(ref _data, value);
+        get => _bitmap;
+        set => SetProperty(ref _bitmap, value);
     }
 
     public int Width
@@ -39,8 +40,8 @@ public class ImageWindowViewModel : ObservableRecipient
         _imageTarget = new ImageTarget(path);
         var command = new OpenCommand(_imageTarget);
         _macro.AddAndDoCurrent(command);
-        Data = _imageTarget.CurrentData;
-        Width = Data.Width;
-        Height = Data.Height+70;
+        Bitmap = _imageTarget.CurrentData;
+        Width = Bitmap.Width;
+        Height = Bitmap.Height;
     }
 }
