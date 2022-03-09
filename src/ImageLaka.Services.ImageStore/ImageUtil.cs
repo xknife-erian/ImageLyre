@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Emgu.CV;
+using Emgu.CV.Structure;
 
 namespace ImageLaka.ImageEngine
 {
@@ -14,6 +16,15 @@ namespace ImageLaka.ImageEngine
         public static Bitmap Read(string path)
         {
             Bitmap bmp = new Bitmap(path);
+            return bmp;
+        }
+
+        public static Bitmap Gray(Bitmap source)
+        {
+            if (source == null)
+                return null;
+            Bitmap bmp = new Bitmap(source.Width, source.Height);
+            using Image<Bgr, Byte> img = new Image<Bgr, Byte>(500,500);
             return bmp;
         }
 

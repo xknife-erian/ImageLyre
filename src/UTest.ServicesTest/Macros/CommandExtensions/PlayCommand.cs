@@ -9,7 +9,6 @@ namespace UTest.ServicesTest.Macros.CommandExtensions;
  * 2022/3/8
  */
 
-
 public class TextTarget : ITarget
 {
     public TextTarget(string source = "")
