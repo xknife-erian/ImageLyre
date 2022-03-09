@@ -14,7 +14,7 @@ public class ImageTarget : ITarget
         _fileInfo = new FileInfo(path);
     }
 
-    public Bitmap CurrentData { get; set; }
+    public Bitmap Bitmap { get; set; }
 
     #region Implementation of ITarget
 
@@ -23,7 +23,7 @@ public class ImageTarget : ITarget
     /// </summary>
     public void Open()
     {
-        CurrentData = ImageUtil.Read(_fileInfo.FullName);
+        Bitmap = ImageUtil.Read(_fileInfo.FullName);
     }
 
     /// <summary>
@@ -32,7 +32,23 @@ public class ImageTarget : ITarget
     public void Close()
     {
         _fileInfo = null;
-        CurrentData = null;
+        Bitmap = null;
+    }
+
+    /// <summary>
+    /// 将目标图像转为8位图
+    /// </summary>
+    public void To8Bit()
+    {
+        Bitmap = ImageUtil.Gray(Bitmap);
+    }
+
+    /// <summary>
+    /// 将目标图像转为16位图
+    /// </summary>
+    public void To16Bit()
+    {
+        throw new NotImplementedException();
     }
 
     #endregion

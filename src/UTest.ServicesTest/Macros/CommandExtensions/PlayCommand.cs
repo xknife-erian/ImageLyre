@@ -27,6 +27,22 @@ public class TextTarget : ITarget
     {
         Target += $"{nameof(Close)}\r\n";
     }
+
+    /// <summary>
+    /// 将目标图像转为8位图
+    /// </summary>
+    public void To8Bit()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    /// <summary>
+    /// 将目标图像转为16位图
+    /// </summary>
+    public void To16Bit()
+    {
+        throw new System.NotImplementedException();
+    }
 }
 
 public static class TargetExtensions

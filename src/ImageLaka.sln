@@ -8,7 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{661B75C6-7367-4B61-B662-398AC704500B}"
 	ProjectSection(SolutionItems) = preProject
 		..\LICENSE = ..\LICENSE
-		..\README.en.md = ..\README.en.md
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject

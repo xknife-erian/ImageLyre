@@ -53,7 +53,7 @@
         </Grid.RowDefinitions>
         <!--使用Fluent.Ribbon中简洁的基本功能，QuickBar弃用，折叠弃用，顶部标题栏弃用-->
         <f:Ribbon Grid.Row="0" x:Name="_Ribbon_"
-                  SelectedTabIndex="5"
+                  SelectedTabIndex="1"
                   IsQuickAccessToolBarMenuDropDownVisible="False"
                   IsQuickAccessToolBarVisible="False">
             <!--Tabs-->
@@ -76,7 +76,20 @@
             </f:RibbonTabItem>
             <f:RibbonTabItem Header="图像">
                 <f:RibbonGroupBox>
-                    <f:Button Header="Button1" />
+                    <f:DropDownButton Header="模式">
+                        <f:MenuItem Header="8-bit"
+                                    Command="{Binding To8BitCommand}"/>
+                        <f:MenuItem Header="16-bit" 
+                                    Command="{Binding To16BitCommand}"/>
+                        <f:MenuItem Header="32-bit" />
+                        <f:MenuItem Header="8-bit Color" />
+                        <f:MenuItem Header="RGB Color" />
+                        <Separator />
+                        <f:MenuItem Header="RGB Stack" />
+                        <f:MenuItem Header="HSB Stack" />
+                        <f:MenuItem Header="HSB(32-bit)" />
+                        <f:MenuItem Header="Lab Stack" />
+                    </f:DropDownButton>
                 </f:RibbonGroupBox>
             </f:RibbonTabItem>
             <f:RibbonTabItem Header="处理">
@@ -103,7 +116,7 @@
                 <f:RibbonGroupBox>
                     <f:Button Style="{StaticResource MenuButton}"
                               Header="&#xf0c9;" Content="日志"
-                              Command="{Binding SwitchLanguageCommand}" />
+                              Command="{Binding ViewAppLogCommand}" />
                 </f:RibbonGroupBox>
             </f:RibbonTabItem>
         </f:Ribbon>

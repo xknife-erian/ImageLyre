@@ -28,13 +28,45 @@ public class WorkbenchViewModel : ObservableRecipient
         set => SetProperty(ref _imageFiles, value);
     }
 
-    public ICommand NewImageFileCommand => new RelayCommand(OpenFile);
+    public ICommand NewImageFileCommand => new RelayCommand(NewImageFile);
 
-    public ICommand OpenImageFileCommand => new RelayCommand(OpenFile);
+    public ICommand OpenImageFileCommand => new RelayCommand(OpenImageFile);
 
-    public ICommand SwitchLanguageCommand => new RelayCommand(OpenFile);
+    public ICommand To8BitCommand => new RelayCommand(To8Bit);
 
-    private void OpenFile()
+    public ICommand To16BitCommand => new RelayCommand(To16Bit);
+    public ICommand SwitchLanguageCommand => new RelayCommand(SwitchLanguage);
+    public ICommand ViewAppLogCommand => new RelayCommand(ViewAppLog);
+
+    private void To8Bit()
+    {
+        if (ImageFiles == null)
+            return;
+        ImageWindowViewModel vm;
+        if (!_imageViewModelMap.ContainsKey(ImageFiles))
+        {
+            vm = _imageWindowViewModelFactory.Invoke();
+            vm.To8Bit();
+        }
+    }
+
+    private void To16Bit()
+    {
+        if (ImageFiles == null)
+            return;
+        ImageWindowViewModel vm;
+        if (!_imageViewModelMap.ContainsKey(ImageFiles))
+        {
+            vm = _imageWindowViewModelFactory.Invoke();
+            vm.To16Bit();
+        }
+    }
+
+    private void NewImageFile()
+    {
+    }
+
+    private void OpenImageFile()
     {
         var fs = "*.tif;*.tiff;*.png;*.jpg;*.jpeg;*.bmp;*.gif";
         var filter = $"图像文件|{fs}|All files(*.*)|*.*";
@@ -57,11 +89,19 @@ public class WorkbenchViewModel : ObservableRecipient
             else
             {
                 vm = _imageWindowViewModelFactory.Invoke();
-                vm.Read(settings.FileName);
-                _imageViewModelMap.Add(settings.FileName, vm);
+                vm.Read(ImageFiles);
+                _imageViewModelMap.Add(ImageFiles, vm);
             }
 
             _dialogService.Show(this, vm);
         }
+    }
+    private void SwitchLanguage()
+    {
+
+    }
+
+    private void ViewAppLog()
+    {
     }
 }

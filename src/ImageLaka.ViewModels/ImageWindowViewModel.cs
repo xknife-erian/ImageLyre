@@ -34,6 +34,24 @@ public class ImageWindowViewModel : ObservableRecipient
         _imageTarget = new ImageTarget(path);
         var command = new OpenCommand(_imageTarget);
         _macro.DoCurrent(command);
-        Bitmap = _imageTarget.CurrentData;
+        Bitmap = _imageTarget.Bitmap;
     }
+
+    public void To8Bit()
+    {
+        if (_macro == null) return;
+        var command = new To8BitCommand(_imageTarget);
+        _macro.DoCurrent(command);
+        Bitmap = _imageTarget.Bitmap;
+    }
+
+    public void To16Bit()
+    {
+        if (_macro == null) return;
+        var command = new To16BitCommand(_imageTarget);
+        _macro.DoCurrent(command);
+        Bitmap = _imageTarget.Bitmap;
+    }
+
 }
+

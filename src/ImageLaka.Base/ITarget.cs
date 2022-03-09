@@ -16,4 +16,12 @@ public interface ITarget
     /// </summary>
     public void Close();
 
+    /// <summary>
+    /// 将目标图像转为8位图
+    /// </summary>
+    void To8Bit();
+    /// <summary>
+    /// 将目标图像转为16位图
+    /// </summary>
+    void To16Bit();
 }
