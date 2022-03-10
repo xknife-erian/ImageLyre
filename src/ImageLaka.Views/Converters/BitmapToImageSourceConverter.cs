@@ -44,6 +44,9 @@ public class BitmapToImageSourceConverter : IValueConverter
         System.Windows.Media.PixelFormat format;
         switch (src.PixelFormat)
         {
+            case PixelFormat.Format8bppIndexed:
+                format = PixelFormats.Gray8;
+                break;
             case PixelFormat.Format16bppRgb555:
                 format = PixelFormats.Bgr555;
                 break;

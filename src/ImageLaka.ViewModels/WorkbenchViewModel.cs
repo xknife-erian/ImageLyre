@@ -35,7 +35,9 @@ public class WorkbenchViewModel : ObservableRecipient
     public ICommand To8BitCommand => new RelayCommand(To8Bit);
 
     public ICommand To16BitCommand => new RelayCommand(To16Bit);
+
     public ICommand SwitchLanguageCommand => new RelayCommand(SwitchLanguage);
+
     public ICommand ViewAppLogCommand => new RelayCommand(ViewAppLog);
 
     private void To8Bit()
@@ -43,9 +45,8 @@ public class WorkbenchViewModel : ObservableRecipient
         if (ImageFiles == null)
             return;
         ImageWindowViewModel vm;
-        if (!_imageViewModelMap.ContainsKey(ImageFiles))
+        if (_imageViewModelMap.TryGetValue(ImageFiles, out vm))
         {
-            vm = _imageWindowViewModelFactory.Invoke();
             vm.To8Bit();
         }
     }

@@ -23,9 +23,8 @@ namespace ImageLaka.ImageEngine
         {
             if (source == null)
                 return null;
-            Bitmap bmp = new Bitmap(source.Width, source.Height);
-            using Image<Bgr, Byte> img = new Image<Bgr, Byte>(500,500);
-            return bmp;
+            var image = source.ToImage<Gray, byte>();
+            return image.ToBitmap();
         }
 
         /// <summary>
