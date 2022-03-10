@@ -26,7 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ImageLaka.Services.Macros\ImageLaka.Services.Macros.csproj" />
+    <ProjectReference Include="..\..\ImageLaka.Base\ImageLaka.Base.csproj" />
+    <ProjectReference Include="..\..\ImageLaka.Services.ImageStore\ImageLaka.ImageEngine.csproj" />
+    <ProjectReference Include="..\..\ImageLaka.Services.Macros\ImageLaka.Services.Macros.csproj" />
   </ItemGroup>
 
   <ItemGroup>

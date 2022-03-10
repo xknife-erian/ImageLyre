@@ -1,12 +1,13 @@
-﻿using NLog;
+﻿using ImageLaka.ImageEngine;
+using NLog;
 
 namespace ImageLaka.Services.Macros.Commands;
 
-public class To16BitCommand : BaseMacroCommand
+public class To8BitBeat : BaseMacroBeat
 {
     private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
 
-    public To16BitCommand(ITarget target) : base(target)
+    public To8BitBeat(ITarget target) : base(target)
     {
     }
 
@@ -14,7 +15,7 @@ public class To16BitCommand : BaseMacroCommand
     {
         try
         {
-            Target.To16Bit();
+            ImageTarget.To8Bit();
             return true;
         }
         catch (Exception e)

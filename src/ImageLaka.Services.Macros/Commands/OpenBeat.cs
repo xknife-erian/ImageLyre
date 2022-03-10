@@ -3,15 +3,15 @@ using NLog;
 
 namespace ImageLaka.Services.Macros.Commands;
 
-public class OpenCommand : BaseMacroCommand
+public class OpenBeat : BaseMacroBeat
 {
     private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
 
-    public OpenCommand(ITarget target) : base(target)
+    public OpenBeat(ITarget target) : base(target)
     {
     }
 
-    #region Overrides of BaseMacroCommand
+    #region Overrides of BaseMacroBeat
 
     /// <summary>
     /// 完成命令的操作

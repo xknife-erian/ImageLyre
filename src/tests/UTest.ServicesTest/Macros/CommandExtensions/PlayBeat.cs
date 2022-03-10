@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
 using ImageLaka;
+using ImageLaka.Services.Macros;
 
 namespace UTest.ServicesTest.Macros.CommandExtensions;
 
 /**
- * 以下三个演示类，用来描述及演示<see cref="ITarget"/>,<see cref="IMacroCommand"/>在设计过程中，以及
+ * 以下三个演示类，用来描述及演示<see cref="ITarget"/>,<see cref="IMacroBeat"/>在设计过程中，以及
  * 当插件模式下的使用方法。
  * 2022/3/8
  */
@@ -60,11 +61,11 @@ public static class TargetExtensions
     }
 }
 
-public class PlayCommand : BaseMacroCommand
+public class PlayBeat : BaseMacroBeat
 {
     private readonly TextTarget _textTarget;
 
-    public PlayCommand(ITarget target)
+    public PlayBeat(ITarget target)
         : base(target)
     {
         _textTarget = (TextTarget) target;

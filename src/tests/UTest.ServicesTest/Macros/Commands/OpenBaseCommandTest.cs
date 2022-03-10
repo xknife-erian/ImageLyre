@@ -11,8 +11,8 @@ namespace UTest.ServicesTest.Macros.Commands
         public void DoTest1()
         {
             ITarget img = null;
-            var cmd = new OpenCommand(img);
-            cmd.Do();
+            var cmd = new OpenBeat(img);
+            cmd.Execute();
             img.Should().NotBeNull();
         }
     }

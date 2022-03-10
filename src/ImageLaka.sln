@@ -21,9 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLaka.Services.Macros",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLaka.Base", "ImageLaka.Base\ImageLaka.Base.csproj", "{8AAFD43C-4523-47E8-B5F5-EC435EDFEA73}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ServicesTest", "..\tests\UTest.ServicesTest\UTest.ServicesTest.csproj", "{C4E19516-2322-4240-87F5-55A7B50B36BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ServicesTest", "tests\UTest.ServicesTest\UTest.ServicesTest.csproj", "{C4E19516-2322-4240-87F5-55A7B50B36BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.UITest", "..\tests\UTest.UITest\UTest.UITest.csproj", "{BBB087D8-F0DF-46C1-A614-EECB8EA886AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.UITest", "tests\UTest.UITest\UTest.UITest.csproj", "{BBB087D8-F0DF-46C1-A614-EECB8EA886AA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2081BCDA-7671-4922-9656-38DBF41D7C0C}"
 EndProject

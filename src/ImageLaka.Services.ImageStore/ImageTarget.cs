@@ -35,21 +35,24 @@ public class ImageTarget : ITarget
         Bitmap = null;
     }
 
+    #endregion
+}
+
+public static class ImageTargetEx
+{
     /// <summary>
     /// 将目标图像转为8位图
     /// </summary>
-    public void To8Bit()
+    public static void To8Bit(this ImageTarget target)
     {
-        Bitmap = ImageUtil.Gray(Bitmap);
+        target.Bitmap = ImageUtil.Gray(target.Bitmap);
     }
 
     /// <summary>
     /// 将目标图像转为16位图
     /// </summary>
-    public void To16Bit()
+    public static void To16Bit(this ImageTarget target)
     {
-        throw new NotImplementedException();
+        target.Bitmap = ImageUtil.Gray(target.Bitmap);
     }
-
-    #endregion
 }

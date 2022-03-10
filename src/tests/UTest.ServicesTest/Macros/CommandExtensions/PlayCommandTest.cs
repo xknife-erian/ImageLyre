@@ -21,13 +21,13 @@ namespace UTest.ServicesTest.Macros.CommandExtensions
             var tt = new TextTarget();//实际项目中，将使用Image作为目标；为方便测试，此处采用Text作为目标（不保存）
             //实例一个宏
             var macro = new Macro();
-            var cs = new List<IMacroCommand>();
+            var cs = new List<IMacroBeat>();
 
             //连续执行10次宏，也就是定义了10个命令
             var count = 10;
             for (int i = 0; i < 10; i++)
             {
-                var c = new PlayCommand(tt);
+                var c = new PlayBeat(tt);
                 cs.Add(c);
             }
             macro.DoCurrent(cs.ToArray());

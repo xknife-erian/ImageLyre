@@ -3,11 +3,11 @@ using NLog;
 
 namespace ImageLaka.Services.Macros.Commands;
 
-public class CloseCommand : BaseMacroCommand
+public class CloseBeat : BaseMacroBeat
 {
     private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
 
-    public CloseCommand(ITarget target) 
+    public CloseBeat(ITarget target) 
         : base(target)
     {
     }
