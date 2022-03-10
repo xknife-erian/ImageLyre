@@ -24,7 +24,7 @@ public class To16BitCommand : BaseMacroCommand
         }
     }
 
-    public override void Undo()
+    public override void UnExecute()
     {
         throw new NotImplementedException();
     }

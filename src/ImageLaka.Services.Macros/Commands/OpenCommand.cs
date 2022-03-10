@@ -31,7 +31,7 @@ public class OpenCommand : BaseMacroCommand
         }
     }
 
-    public override void Undo()
+    public override void UnExecute()
     {
         Target.Close();
     }

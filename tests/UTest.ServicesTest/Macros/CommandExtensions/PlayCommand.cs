@@ -80,7 +80,7 @@ public class PlayCommand : BaseMacroCommand
         return true;
     }
 
-    public override void Undo()
+    public override void UnExecute()
     {
         _textTarget.UnPlay();
     }

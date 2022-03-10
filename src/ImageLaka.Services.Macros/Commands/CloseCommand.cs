@@ -30,7 +30,7 @@ public class CloseCommand : BaseMacroCommand
         }
     }
 
-    public override void Undo()
+    public override void UnExecute()
     {
         Target.Open();
     }

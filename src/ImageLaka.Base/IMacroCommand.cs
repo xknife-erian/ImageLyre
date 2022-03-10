@@ -1,10 +1,13 @@
-﻿// ReSharper disable once CheckNamespace
+﻿
+using System.Windows.Input;
+
+// ReSharper disable once CheckNamespace
 namespace ImageLaka;
 
 /// <summary>
 /// 描述一个宏命令的接口
 /// </summary>
-public interface IMacroCommand
+public interface IMacroCommand : ICommand
 {
     /// <summary>
     /// 宏命令的操作目标
@@ -15,15 +18,11 @@ public interface IMacroCommand
     /// </summary>
     bool IsDone { get; }
     /// <summary>
-    /// 执行命令操作。如果正常完成，会将<see cref="IsDone"/>属性置为true。
-    /// </summary>
-    void Do();
-    /// <summary>
     /// 命令的操作是否可以回退
     /// </summary>
     bool UndoEnable { get; }
     /// <summary>
     /// 回退命令操作
     /// </summary>
-    void Undo();
+    void UnExecute();
 }
