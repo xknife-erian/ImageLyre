@@ -14,7 +14,7 @@ public class ImageTarget : ITarget
         _fileInfo = new FileInfo(path);
     }
 
-    public Bitmap Bitmap { get; set; }
+    public Bitmap? Bitmap { get; set; }
 
     #region Implementation of ITarget
 
@@ -36,23 +36,4 @@ public class ImageTarget : ITarget
     }
 
     #endregion
-}
-
-public static class ImageTargetEx
-{
-    /// <summary>
-    /// 将目标图像转为8位图
-    /// </summary>
-    public static void To8Bit(this ImageTarget target)
-    {
-        target.Bitmap = ImageUtil.Gray(target.Bitmap);
-    }
-
-    /// <summary>
-    /// 将目标图像转为16位图
-    /// </summary>
-    public static void To16Bit(this ImageTarget target)
-    {
-        target.Bitmap = ImageUtil.Gray(target.Bitmap);
-    }
 }

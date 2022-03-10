@@ -81,7 +81,8 @@
                                     Command="{Binding To8BitCommand}"/>
                         <f:MenuItem Header="16-bit" 
                                     Command="{Binding To16BitCommand}"/>
-                        <f:MenuItem Header="32-bit" />
+                        <f:MenuItem Header="32-bit"
+                                    Command="{Binding To32BitCommand}"/>
                         <f:MenuItem Header="8-bit Color" />
                         <f:MenuItem Header="RGB Color" />
                         <Separator />

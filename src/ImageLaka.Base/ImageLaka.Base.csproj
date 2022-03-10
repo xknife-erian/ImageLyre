@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NKnife" Version="22.0.0" />
+  </ItemGroup>
+
 </Project>

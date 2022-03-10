@@ -1,9 +1,5 @@
 ﻿using System.ComponentModel;
-using System.Windows;
 using ImageLaka.ViewModels;
-using ImageLaka.Views.Dialogs;
-using Microsoft.Toolkit.Mvvm.Messaging;
-using Ookii.Dialogs.Wpf;
 
 namespace ImageLaka.Views;
 
@@ -15,13 +11,12 @@ public partial class Workbench
     public Workbench()
     {
         InitializeComponent();
-        Loaded+= delegate(object sender, RoutedEventArgs args)
+        Loaded += delegate
         {
             var vm = (WorkbenchViewModel) DataContext;
             vm.PropertyChanged += ViewModelPropertyChanged;
         };
         _Ribbon_.SelectedTabIndex = 0;
-
     }
 
     private void ViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -35,9 +30,6 @@ public partial class Workbench
                 if (!string.IsNullOrEmpty(vm.ImageFiles))
                     _Ribbon_.SelectedTabIndex = 1;
                 break;
-            default:
-                break;
         }
-
     }
 }

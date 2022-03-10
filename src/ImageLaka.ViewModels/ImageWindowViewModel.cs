@@ -51,5 +51,11 @@ public class ImageWindowViewModel : ObservableRecipient
         Bitmap = _imageTarget.Bitmap;
     }
 
+    public void To32Bit()
+    {
+        var command = new To32BitBeat(_imageTarget);
+        _macro.DoCurrent(command);
+        Bitmap = _imageTarget.Bitmap;
+    }
 }
 
