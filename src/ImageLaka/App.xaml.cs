@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using ImageLaka.Base;
+using ImageLaka.Managers;
 using ImageLaka.Views;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using NLog;
@@ -19,7 +21,18 @@ namespace ImageLaka
     /// </summary>
     public partial class App : Application
     {
-        private static readonly ILogger _Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+
+        public App()
+        {
+            Ioc.Default.ConfigureServices(IocSetup());
+
+            var president = Ioc.Default.GetService<President>();
+            if (president == null)
+                return;
+            president.OptionManager.Initianize();
+            president.ConsoleManager.Initianize();
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -27,28 +40,27 @@ namespace ImageLaka
             if (IsStartFromCommandLine(e))
             {
                 var args = e.Args;//这是命令行参数。 TODO:命令行模式待开发。laka, 2022/3/7。
+                Log.Info(args);
             }
             else
             {
                 var logo = new Logo();
                 logo.Loaded += (_, _) =>
                 {
-                    Ioc.Default.ConfigureServices(IocSetup());
-
                     var shell = Ioc.Default.GetService<Workbench>();
                     if (shell == null)
                         return;
-                    _Logger.Info("beginning...");
+                    Log.Info("beginning...");
                     shell.Loaded += async (_, _) =>
                     {
                         await Task.Delay(12 * 100);
                         logo.Close();
-                        _Logger.Trace("关闭欢迎窗体。");
+                        Log.Trace("关闭欢迎窗体。");
                     };
                     shell.Closing += OnWorkbenchClosing;
                     shell.Closed += OnWorkbenchClosed;
                     shell.Show();
-                    _Logger.Info("主窗体显示成功。");
+                    Log.Info("主窗体显示成功。");
                 };
                 logo.Show();
             }
@@ -66,18 +78,21 @@ namespace ImageLaka
 
         private void OnWorkbenchClosing(object? sender, CancelEventArgs e)
         {
-            _Logger.Info("OnWorkbenchClosing...");
+            Log.Info("OnWorkbenchClosing...");
         }
 
         private void OnWorkbenchClosed(object? sender, EventArgs e)
         {
-            _Logger.Info("OnWorkbenchClosed.");
+            Log.Info("OnWorkbenchClosed.");
             Environment.Exit(0);
         }
 
         private static IServiceProvider IocSetup()
         {
             var builder = new ContainerBuilder();
+            builder.RegisterModule<ImageLaka.Base.IoC.Modules>();
+            builder.RegisterModule<ImageLaka.ImageEngine.IoC.Modules>();
+            builder.RegisterModule<ImageLaka.Services.Macros.IoC.Modules>();
             builder.RegisterModule<ImageLaka.Views.IoC.Modules>();
             builder.RegisterModule<ImageLaka.ViewModels.IoC.Modules>();
             return new AutofacServiceProvider(builder.Build());

@@ -7,6 +7,7 @@
                 md:DialogServiceViews.IsRegistered="True"
                 xmlns:f="urn:fluent-ribbon"
                 xmlns:vm="clr-namespace:ImageLaka.ViewModels;assembly=ImageLaka.ViewModels"
+                xmlns:views="clr-namespace:ImageLaka.Views"
                 mc:Ignorable="d"
                 Title="ImageLaka" Height="250" Width="800"
                 Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png"

@@ -13,6 +13,12 @@ public class ImageWindowViewModel : ObservableRecipient
     private ImageTarget _imageTarget;
     private Macro _macro;
 
+    public void SetParentWindowBound(Rectangle rectangle)
+    {
+        Top = rectangle.Top + rectangle.Height + 50;
+        Left = rectangle.Left + rectangle.Width + 50;
+    }
+    
     #region 依赖属性
 
     private Bitmap _bitmap;

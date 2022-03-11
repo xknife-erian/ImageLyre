@@ -1,5 +1,4 @@
-﻿// ReSharper disable once CheckNamespace
-namespace ImageLaka;
+﻿namespace ImageLaka;
 
 /// <summary>
 /// 描述一个被操作的目标

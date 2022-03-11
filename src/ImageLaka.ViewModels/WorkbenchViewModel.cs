@@ -1,5 +1,7 @@
-﻿using System.Windows.Input;
+﻿using System.Drawing;
+using System.Windows.Input;
 using ImageLaka.ImageEngine;
+using ImageLaka.Managers;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using MvvmDialogs;
@@ -23,11 +25,13 @@ public class WorkbenchViewModel : ObservableRecipient
     #region 依赖属性
 
     private string? _imageFiles;
+
     public string? ImageFiles
     {
         get => _imageFiles;
         set => SetProperty(ref _imageFiles, value);
     }
+    public Rectangle Rectangle { get; set; }
 
     #endregion
 
@@ -40,7 +44,6 @@ public class WorkbenchViewModel : ObservableRecipient
     public ICommand To32BitCommand => new RelayCommand(To32Bit);
     public ICommand SwitchLanguageCommand => new RelayCommand(SwitchLanguage);
     public ICommand ViewAppLogCommand => new RelayCommand(ViewAppLog);
-
 
     private void To8Bit()
     {
@@ -105,6 +108,7 @@ public class WorkbenchViewModel : ObservableRecipient
                 {
                     vm = _imageVmFactory.Invoke();
                     vm.Read(file);
+                    vm.SetParentWindowBound(Rectangle);
                     ImageVmMap.Add(file, vm);
                 }
 
