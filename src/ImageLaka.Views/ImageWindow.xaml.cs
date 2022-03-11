@@ -24,10 +24,14 @@ public partial class ImageWindow : Window
     /// <summary>
     /// 调整窗体大小
     /// </summary>
-    /// <param name="vm"></param>
-    private void AdjustWindowSize(Bitmap vm)
+    /// <param name="bmp"></param>
+    private void AdjustWindowSize(Bitmap bmp)
     {
-        Height = _ToolBar_.Height + vm.Height + _StatusBar_.Height;
-        Width = vm.Width;
+        var bmpHeight = 0;
+        if (bmp != null)
+            bmpHeight = bmp.Height;
+        Height = _ToolBar_.Height + bmpHeight + _StatusBar_.Height;
+        if(bmp!= null)
+        Width = bmp.Width;
     }
 }

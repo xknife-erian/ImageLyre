@@ -7,9 +7,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Emgu.CV;
+using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using SixLabors.ImageSharp;
 using Color = System.Drawing.Color;
+using Size = SixLabors.ImageSharp.Size;
 
 namespace ImageLaka.ImageEngine
 {
@@ -17,28 +19,32 @@ namespace ImageLaka.ImageEngine
     {
         public static Bitmap Read(string path)
         {
-            Bitmap bmp = new Bitmap(path);
-            return bmp;
+            if (File.Exists(path))
+            {
+                return new Bitmap(path);
+            }
+
+            return new Bitmap(100,100);
         }
 
-        public static Bitmap? ToGray(Bitmap? source, ImageBits ib)
+        public static Bitmap? ToGray(Bitmap? source, PixelDepth ib)
         {
             if (source == null)
                 return null;
             switch (ib)
             {
-                case ImageBits.Bit32:
-                case ImageBits.Bit24:
+                case PixelDepth.Bit32:
+                case PixelDepth.Bit24:
                 {
                     var image = source.ToImage<Gray, uint>();
                     return image.ToBitmap();
                 }
-                case ImageBits.Bit16:
+                case PixelDepth.Bit16:
                 {
                     var image = source.ToImage<Gray, ushort>();
                     return image.ToBitmap();
                 }
-                case ImageBits.Bit8:
+                case PixelDepth.Bit8:
                 default:
                 {
                     var image = source.ToImage<Gray, byte>();
@@ -46,10 +52,5 @@ namespace ImageLaka.ImageEngine
                 }
             }
         }
-    }
-
-    public enum ImageBits
-    {
-        Bit8, Bit16, Bit24, Bit32
     }
 }

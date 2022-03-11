@@ -27,9 +27,15 @@ public partial class Workbench
         switch (e.PropertyName)
         {
             case nameof(vm.ImageFiles):
+            {
                 if (!string.IsNullOrEmpty(vm.ImageFiles))
+                {
                     _Ribbon_.SelectedTabIndex = 1;
+                    var imgVm = vm.ImageVmMap[vm.ImageFiles];
+                    var f = imgVm.Bitmap;
+                }
                 break;
+            }
         }
     }
 }

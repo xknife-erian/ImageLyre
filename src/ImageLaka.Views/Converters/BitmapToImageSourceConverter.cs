@@ -27,19 +27,21 @@ public class BitmapToImageSourceConverter : IValueConverter
     /// <summary>
     ///     将Bitmap 转换成WriteableBitmap
     /// </summary>
-    public static WriteableBitmap BitmapToWriteableBitmap(Bitmap src)
+    public static WriteableBitmap BitmapToWriteableBitmap(Bitmap bmp)
     {
-        var wb = CreateCompatibleWriteableBitmap(src);
-        var format = src.PixelFormat;
+        if (bmp == null)
+            return null;
+        var wb = CreateCompatibleWriteableBitmap(bmp);
+        var format = bmp.PixelFormat;
 
-        BitmapCopyToWriteableBitmap(src, wb, new Rectangle(0, 0, src.Width, src.Height), 0, 0, format);
+        BitmapCopyToWriteableBitmap(bmp, wb, new Rectangle(0, 0, bmp.Width, bmp.Height), 0, 0, format);
         return wb;
     }
 
     /// <summary>
     ///     创建尺寸和格式与Bitmap兼容的WriteableBitmap
     /// </summary>
-    public static WriteableBitmap CreateCompatibleWriteableBitmap(Bitmap src)
+    public static WriteableBitmap CreateCompatibleWriteableBitmap(Bitmap bmp)
     {
         /**
             (1) BlackWhite：
@@ -118,7 +120,7 @@ public class BitmapToImageSourceConverter : IValueConverter
             用于表现印刷色格式，采用32BPP，共四个颜色通道即C、M、Y、K（青色Cyan, 品红Magenta, 黄色Yellow和黑色blacK)，各占8PP。
          */
         System.Windows.Media.PixelFormat format;
-        switch (src.PixelFormat)
+        switch (bmp.PixelFormat)
         {
             case PixelFormat.Format8bppIndexed:
                 format = PixelFormats.Gray8;
@@ -145,7 +147,7 @@ public class BitmapToImageSourceConverter : IValueConverter
                 return null;
         }
 
-        return new WriteableBitmap(src.Width, src.Height, 0, 0, format, null);
+        return new WriteableBitmap(bmp.Width, bmp.Height, 0, 0, format, null);
     }
 
     /// <summary>

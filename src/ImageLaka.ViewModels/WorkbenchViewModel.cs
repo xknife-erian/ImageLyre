@@ -10,43 +10,44 @@ namespace ImageLaka.ViewModels;
 public class WorkbenchViewModel : ObservableRecipient
 {
     private readonly IDialogService _dialogService;
-    private string? _imageFiles;
-    private readonly Func<ImageWindowViewModel> _imageWindowViewModelFactory;
+    private readonly Func<ImageWindowViewModel> _imageVmFactory;
 
-    private readonly Dictionary<string, ImageWindowViewModel> _imageViewModelMap
-        = new Dictionary<string, ImageWindowViewModel>();
+    public Dictionary<string, ImageWindowViewModel> ImageVmMap { get; set; } = new();
 
-    public WorkbenchViewModel(IDialogService dialogService, Func<ImageWindowViewModel> imageWindowViewModelFactory)
+    public WorkbenchViewModel(IDialogService dialogService, Func<ImageWindowViewModel> imageVmFactory)
     {
         _dialogService = dialogService;
-        _imageWindowViewModelFactory = imageWindowViewModelFactory;
+        _imageVmFactory = imageVmFactory;
     }
 
+    #region 依赖属性
+
+    private string? _imageFiles;
     public string? ImageFiles
     {
         get => _imageFiles;
         set => SetProperty(ref _imageFiles, value);
     }
 
+    #endregion
+
+    #region 命令
+
     public ICommand NewImageFileCommand => new RelayCommand(NewImageFile);
-
     public ICommand OpenImageFileCommand => new RelayCommand(OpenImageFile);
-
     public ICommand To8BitCommand => new RelayCommand(To8Bit);
-
     public ICommand To16BitCommand => new RelayCommand(To16Bit);
     public ICommand To32BitCommand => new RelayCommand(To32Bit);
-
     public ICommand SwitchLanguageCommand => new RelayCommand(SwitchLanguage);
-
     public ICommand ViewAppLogCommand => new RelayCommand(ViewAppLog);
+
 
     private void To8Bit()
     {
         if (ImageFiles == null)
             return;
         ImageWindowViewModel vm;
-        if (_imageViewModelMap.TryGetValue(ImageFiles, out vm))
+        if (ImageVmMap.TryGetValue(ImageFiles, out vm))
         {
             vm.To8Bit();
         }
@@ -57,7 +58,7 @@ public class WorkbenchViewModel : ObservableRecipient
         if (ImageFiles == null)
             return;
         ImageWindowViewModel vm;
-        if (_imageViewModelMap.TryGetValue(ImageFiles, out vm))
+        if (ImageVmMap.TryGetValue(ImageFiles, out vm))
         {
             vm.To16Bit();
         }
@@ -68,7 +69,7 @@ public class WorkbenchViewModel : ObservableRecipient
         if (ImageFiles == null)
             return;
         ImageWindowViewModel vm;
-        if (_imageViewModelMap.TryGetValue(ImageFiles, out vm))
+        if (ImageVmMap.TryGetValue(ImageFiles, out vm))
         {
             vm.To32Bit();
         }
@@ -92,22 +93,27 @@ public class WorkbenchViewModel : ObservableRecipient
         var success = _dialogService.ShowOpenFileDialog(this, settings);
         if (success == true)
         {
-            ImageFiles = settings.FileName;
-            ImageWindowViewModel vm;
-            if (_imageViewModelMap.ContainsKey(ImageFiles))
+            var files = settings.FileNames;
+            foreach (var file in files)
             {
-                vm = _imageViewModelMap[ImageFiles];
-            }
-            else
-            {
-                vm = _imageWindowViewModelFactory.Invoke();
-                vm.Read(ImageFiles);
-                _imageViewModelMap.Add(ImageFiles, vm);
-            }
+                ImageWindowViewModel vm;
+                if (ImageVmMap.ContainsKey(file))
+                {
+                    vm = ImageVmMap[file];
+                }
+                else
+                {
+                    vm = _imageVmFactory.Invoke();
+                    vm.Read(file);
+                    ImageVmMap.Add(file, vm);
+                }
 
-            _dialogService.Show(this, vm);
+                _dialogService.Show(this, vm);
+                ImageFiles = file;
+            }
         }
     }
+
     private void SwitchLanguage()
     {
 
@@ -116,4 +122,7 @@ public class WorkbenchViewModel : ObservableRecipient
     private void ViewAppLog()
     {
     }
+
+    #endregion
+
 }

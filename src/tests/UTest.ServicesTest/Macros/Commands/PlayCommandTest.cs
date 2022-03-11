@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using FluentAssertions;
 using ImageLaka;
 using ImageLaka.Services.Macros;
+using UTest.ServicesTest.Macros.Demos;
 using Xunit;
 
-namespace UTest.ServicesTest.Macros.CommandExtensions
+namespace UTest.ServicesTest.Macros.Commands
 {
     public class PlayCommandTest
     {
@@ -32,11 +29,11 @@ namespace UTest.ServicesTest.Macros.CommandExtensions
             }
             macro.DoCurrent(cs.ToArray());
 
-            var actual = Regex.Matches(tt.Target, TEST_TXT).Count;
+            var actual = Regex.Matches(tt.Text, TEST_TXT).Count;
 
             //期待10次迭加的字符串是正确的。
             actual.Should().Be(count);
-            tt.Target.Length.Should().Be(count * TEST_TXT.Length);
+            tt.Text.Length.Should().Be(count * TEST_TXT.Length);
         }
     }
 }

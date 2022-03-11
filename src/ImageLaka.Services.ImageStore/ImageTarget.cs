@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using Emgu.CV;
 
 namespace ImageLaka.ImageEngine;
 
@@ -14,7 +15,7 @@ public class ImageTarget : ITarget
         _fileInfo = new FileInfo(path);
     }
 
-    public Bitmap? Bitmap { get; set; }
+    public Bitmap Bitmap { get; set; }
 
     #region Implementation of ITarget
 
