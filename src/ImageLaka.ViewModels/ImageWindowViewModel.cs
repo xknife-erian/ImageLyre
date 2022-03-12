@@ -29,22 +29,28 @@ public class ImageWindowViewModel : ObservableRecipient
 
     public void To8Bit()
     {
+        if(_imageTarget==null)
+            return;
         var command = new To8BitBeat(_imageTarget);
-        _macro.DoCurrent(command);
+        _macro?.DoCurrent(command);
         Bitmap = _imageTarget.Bitmap;
     }
 
     public void To16Bit()
     {
+        if (_imageTarget == null)
+            return;
         var command = new To16BitBeat(_imageTarget);
-        _macro.DoCurrent(command);
+        _macro?.DoCurrent(command);
         Bitmap = _imageTarget.Bitmap;
     }
 
     public void To32Bit()
     {
+        if (_imageTarget == null)
+            return;
         var command = new To32BitBeat(_imageTarget);
-        _macro.DoCurrent(command);
+        _macro?.DoCurrent(command);
         Bitmap = _imageTarget.Bitmap;
     }
 

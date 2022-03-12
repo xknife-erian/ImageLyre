@@ -20,23 +20,34 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ToolBar x:Name="_ToolBar_" Grid.Row="0" Height="30" OverflowMode="Never">
-            <Menu>
-                <MenuItem Header="kkk">
-                    <MenuItem Header="aaa" />
-                    <MenuItem Header="bbb" />
-                </MenuItem>
-            </Menu>
-        </ToolBar>
-        <StackPanel x:Name="_MiddlePanel_" Background="DarkGray" Grid.Row="1">
-            <Image x:Name="_Image_" Stretch="Uniform"
-                   Source="{Binding Bitmap, Converter={StaticResource Bmp2Img}}" />
-        </StackPanel>
-        <StatusBar x:Name="_StatusBar_" Grid.Row="2" Height="26">
+        <TabControl Grid.Row="0">
+            <TabItem Header="图像" Height="20" Padding="10,0">
+                <StackPanel x:Name="_MiddlePanel_" Background="DarkGray">
+                    <Image x:Name="_Image_" Stretch="Uniform"
+                           Source="{Binding Bitmap, Converter={StaticResource Bmp2Img}}" />
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="B" Height="20" Padding="10,0">
+                <StackPanel Background="CornflowerBlue">
+                    <Image />
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="G" Height="20" Padding="10,0">
+                <StackPanel Background="MediumSeaGreen">
+                    <Image />
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="R" Height="20" Padding="10,0">
+                <StackPanel Background="PaleVioletRed">
+                    <Image />
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+
+        <StatusBar x:Name="_StatusBar_" Grid.Row="1" Height="26">
             <TextBlock Padding="0" Margin="1,0" Text="{Binding ParentRectangle, Converter={StaticResource Rect2Str}}" />
             <TextBlock Padding="0" Margin="1,0" Text="{Binding ElementName=_Window_,Path=Top }" />
             <TextBlock Padding="0" Margin="1,0" Text="{Binding ElementName=_Window_,Path=Left}" />
