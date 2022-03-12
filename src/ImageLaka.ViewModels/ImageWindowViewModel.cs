@@ -1,38 +1,22 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
 using ImageLaka.ImageEngine;
 using ImageLaka.Services.Macros;
 using ImageLaka.Services.Macros.Commands;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
-using MvvmDialogs;
 
 namespace ImageLaka.ViewModels;
 
 public class ImageWindowViewModel : ObservableRecipient
 {
-    private ImageTarget _imageTarget;
-    private Macro _macro;
+    private ImageTarget? _imageTarget;
+    private Macro? _macro;
 
     public void SetParentWindowBound(Rectangle rectangle)
     {
+        ParentRectangle = rectangle;
         Top = rectangle.Top + rectangle.Height + 50;
-        Left = rectangle.Left + rectangle.Width + 50;
+        Left = rectangle.Left + 50;
     }
-    
-    #region 依赖属性
-
-    private Bitmap _bitmap;
-
-    public Bitmap Bitmap
-    {
-        get => _bitmap;
-        set => SetProperty(ref _bitmap, value);
-    }
-
-    public int Top { get; set; }
-    public int Left { get; set; }
-
-    #endregion
 
     public void Read(string path)
     {
@@ -63,5 +47,21 @@ public class ImageWindowViewModel : ObservableRecipient
         _macro.DoCurrent(command);
         Bitmap = _imageTarget.Bitmap;
     }
-}
 
+    #region 依赖属性
+
+    private Bitmap? _bitmap;
+
+    public Bitmap? Bitmap
+    {
+        get => _bitmap;
+        set => SetProperty(ref _bitmap, value);
+    }
+
+    public int Top { get; set; }
+    public int Left { get; set; }
+
+    public Rectangle ParentRectangle { get; set; }
+
+    #endregion
+}

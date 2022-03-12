@@ -1,19 +1,22 @@
 ﻿<Window
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:ImageLaka.ViewModels;assembly=ImageLaka.ViewModels"
-        xmlns:converters="clr-namespace:ImageLaka.Views.Converters"
-        xmlns:controlzex="urn:controlzex" x:Class="ImageLaka.Views.ImageWindow"
-        mc:Ignorable="d"
-        Title="ImageWindow"
-        Top="{Binding Path=Top}"
-        Left="{Binding Path=Left}"
-        d:DesignHeight="400" d:DesignWidth="400"
-        d:DataContext="{d:DesignInstance {x:Type viewModels:ImageWindowViewModel}}">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:ImageLaka.ViewModels;assembly=ImageLaka.ViewModels"
+    xmlns:converters="clr-namespace:ImageLaka.Views.Converters"
+    x:Class="ImageLaka.Views.ImageWindow"
+    mc:Ignorable="d"
+    Title="ImageWindow"
+    Top="{Binding Path=Top}"
+    Left="{Binding Path=Left}"
+    WindowStartupLocation="Manual"
+    x:Name="_Window_"
+    d:DesignHeight="400" d:DesignWidth="400"
+    d:DataContext="{d:DesignInstance {x:Type viewModels:ImageWindowViewModel}}">
     <Window.Resources>
-        <converters:BitmapToImageSourceConverter x:Key="Converter" />
+        <converters:BitmapToImageSourceConverter x:Key="Bmp2Img" />
+        <converters:RectangleToStringConverter x:Key="Rect2Str" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -24,18 +27,19 @@
         <ToolBar x:Name="_ToolBar_" Grid.Row="0" Height="30" OverflowMode="Never">
             <Menu>
                 <MenuItem Header="kkk">
-                    <MenuItem Header="aaa"></MenuItem>
-                    <MenuItem Header="bbb"></MenuItem>
+                    <MenuItem Header="aaa" />
+                    <MenuItem Header="bbb" />
                 </MenuItem>
             </Menu>
         </ToolBar>
         <StackPanel x:Name="_MiddlePanel_" Background="DarkGray" Grid.Row="1">
             <Image x:Name="_Image_" Stretch="Uniform"
-                   Source="{Binding Bitmap, Converter={StaticResource Converter}}" />
+                   Source="{Binding Bitmap, Converter={StaticResource Bmp2Img}}" />
         </StackPanel>
         <StatusBar x:Name="_StatusBar_" Grid.Row="2" Height="26">
-            <TextBlock Padding="0" Margin="1,0" Text="{Binding Height}" />
-            <TextBlock Padding="0" Margin="1,0" Text="{Binding Width}" />
+            <TextBlock Padding="0" Margin="1,0" Text="{Binding ParentRectangle, Converter={StaticResource Rect2Str}}" />
+            <TextBlock Padding="0" Margin="1,0" Text="{Binding ElementName=_Window_,Path=Top }" />
+            <TextBlock Padding="0" Margin="1,0" Text="{Binding ElementName=_Window_,Path=Left}" />
         </StatusBar>
     </Grid>
 </Window>
