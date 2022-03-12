@@ -15,7 +15,7 @@
     d:DesignHeight="400" d:DesignWidth="400"
     d:DataContext="{d:DesignInstance {x:Type viewModels:ImageWindowViewModel}}">
     <Window.Resources>
-        <converters:BitmapToImageSourceConverter x:Key="Bmp2Img" />
+        <converters:BitmapToImageSourceConverter x:Key="MatWriter" />
         <converters:RectangleToStringConverter x:Key="Rect2Str" />
     </Window.Resources>
     <Grid>
@@ -26,8 +26,14 @@
         <TabControl Grid.Row="0">
             <TabItem Header="图像" Height="20" Padding="10,0">
                 <StackPanel x:Name="_MiddlePanel_" Background="DarkGray">
-                    <Image x:Name="_Image_" Stretch="Uniform"
-                           Source="{Binding Bitmap, Converter={StaticResource Bmp2Img}}" />
+                    <Image x:Name="_Image_" Stretch="Uniform">
+                        <Image.Source>
+                            <MultiBinding Converter="{StaticResource MatWriter}">
+                                <Binding Path="Bitmap"/>
+                                <Binding Path="Bitmap"/>
+                            </MultiBinding>
+                        </Image.Source>
+                    </Image>
                 </StackPanel>
             </TabItem>
             <TabItem Header="B" Height="20" Padding="10,0">

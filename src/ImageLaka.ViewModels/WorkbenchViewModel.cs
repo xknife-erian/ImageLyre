@@ -35,7 +35,7 @@ public class WorkbenchViewModel : ObservableRecipient
 
     #endregion
 
-    #region 命令
+    #region 菜单功能命令
 
     public ICommand NewImageFileCommand => new RelayCommand(NewImageFile);
     public ICommand OpenImageFileCommand => new RelayCommand(OpenImageFile);
@@ -120,7 +120,6 @@ public class WorkbenchViewModel : ObservableRecipient
 
     private void SwitchLanguage()
     {
-
     }
 
     private void ViewAppLog()
