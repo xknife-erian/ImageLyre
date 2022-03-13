@@ -8,13 +8,12 @@ namespace ImageLaka.ImageEngine;
 /// </summary>
 public class ImageTarget : ITarget
 {
-    private FileInfo _fileInfo;
-
     public ImageTarget(string path)
     {
-        _fileInfo = new FileInfo(path);
+        File = new FileInfo(path);
     }
 
+    public FileInfo File { get; private set; }
     public Bitmap Bitmap { get; set; }
 
     #region Implementation of ITarget
@@ -24,7 +23,7 @@ public class ImageTarget : ITarget
     /// </summary>
     public void Open()
     {
-        Bitmap = ImageUtil.Read(_fileInfo.FullName);
+        Bitmap = ImageUtil.Read(File.FullName);
     }
 
     /// <summary>
@@ -32,7 +31,7 @@ public class ImageTarget : ITarget
     /// </summary>
     public void Close()
     {
-        _fileInfo = null;
+        File = null;
         Bitmap = null;
     }
 

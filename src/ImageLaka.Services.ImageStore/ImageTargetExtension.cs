@@ -7,7 +7,7 @@ public static class ImageTargetExtension
     /// </summary>
     public static void To8Bit(this ImageTarget target)
     {
-        target.Bitmap = ImageUtil.ToGray(target.Bitmap, PixelDepth.Bit8);
+        target.Bitmap = ImageUtil.ToGray(target.Bitmap, BitsPerPixel.Bit8);
     }
 
     /// <summary>
@@ -15,7 +15,7 @@ public static class ImageTargetExtension
     /// </summary>
     public static void To16Bit(this ImageTarget target)
     {
-        target.Bitmap = ImageUtil.ToGray(target.Bitmap, PixelDepth.Bit16);
+        target.Bitmap = ImageUtil.ToGray(target.Bitmap, BitsPerPixel.Bit16);
     }
 
     /// <summary>
@@ -23,6 +23,6 @@ public static class ImageTargetExtension
     /// </summary>
     public static void To32Bit(this ImageTarget target)
     {
-        target.Bitmap = ImageUtil.ToGray(target.Bitmap, PixelDepth.Bit32);
+        target.Bitmap = ImageUtil.ToGray(target.Bitmap, BitsPerPixel.Bit32);
     }
 }

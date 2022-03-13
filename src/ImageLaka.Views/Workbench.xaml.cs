@@ -30,7 +30,7 @@ public partial class Workbench
         {
             var width = (int) e.NewSize.Width;
             var height = (int) e.NewSize.Height;
-            vm.Rectangle = new Rectangle((int) Left, (int) Top, width, height);
+            vm.WindowRectangle = new Rectangle((int) Left, (int) Top, width, height);
         };
         Loaded += delegate
         {
@@ -50,18 +50,5 @@ public partial class Workbench
         if (sender == null)
             return;
         var vm = (WorkbenchViewModel) sender;
-        switch (e.PropertyName)
-        {
-            case nameof(vm.ImageFiles):
-            {
-                if (!string.IsNullOrEmpty(vm.ImageFiles))
-                {
-                    _Ribbon_.SelectedTabIndex = 1;
-                    var imgVm = vm.ImageVmMap[vm.ImageFiles];
-                    var f = imgVm.Bitmap;
-                }
-                break;
-            }
-        }
     }
 }

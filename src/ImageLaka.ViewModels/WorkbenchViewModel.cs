@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Input;
 using ImageLaka.ImageEngine;
 using ImageLaka.Managers;
@@ -13,7 +14,6 @@ public class WorkbenchViewModel : ObservableRecipient
 {
     private readonly IDialogService _dialogService;
     private readonly Func<ImageWindowViewModel> _imageVmFactory;
-
     public Dictionary<string, ImageWindowViewModel> ImageVmMap { get; set; } = new();
 
     public WorkbenchViewModel(IDialogService dialogService, Func<ImageWindowViewModel> imageVmFactory)
@@ -22,16 +22,27 @@ public class WorkbenchViewModel : ObservableRecipient
         _imageVmFactory = imageVmFactory;
     }
 
-    #region 依赖属性
+    #region 属性
 
-    private string? _imageFiles;
+    /// <summary>
+    /// Window的大小与位置
+    /// </summary>
+    public Rectangle WindowRectangle { get; set; }
+    
+    #endregion
 
-    public string? ImageFiles
+    #region 被绑定的属性
+
+    private ImageWindowViewModel? _activatedImageViewModel;
+
+    /// <summary>
+    /// 激活的Image窗体ViewModel
+    /// </summary>
+    public ImageWindowViewModel? ActivatedImageViewModel
     {
-        get => _imageFiles;
-        set => SetProperty(ref _imageFiles, value);
+        get => _activatedImageViewModel;
+        set => SetProperty(ref _activatedImageViewModel, value);
     }
-    public Rectangle Rectangle { get; set; }
 
     #endregion
 
@@ -47,35 +58,19 @@ public class WorkbenchViewModel : ObservableRecipient
 
     private void To8Bit()
     {
-        if (ImageFiles == null)
-            return;
-        ImageWindowViewModel vm;
-        if (ImageVmMap.TryGetValue(ImageFiles, out vm))
-        {
-            vm.To8Bit();
-        }
+        if (ActivatedImageViewModel != null)
+            ActivatedImageViewModel.To8Bit();
     }
 
     private void To16Bit()
     {
-        if (ImageFiles == null)
-            return;
-        ImageWindowViewModel vm;
-        if (ImageVmMap.TryGetValue(ImageFiles, out vm))
-        {
-            vm.To16Bit();
-        }
+        if (ActivatedImageViewModel != null)
+            ActivatedImageViewModel.To16Bit();
     }
-
     private void To32Bit()
     {
-        if (ImageFiles == null)
-            return;
-        ImageWindowViewModel vm;
-        if (ImageVmMap.TryGetValue(ImageFiles, out vm))
-        {
-            vm.To32Bit();
-        }
+        if (ActivatedImageViewModel != null)
+            ActivatedImageViewModel.To32Bit();
     }
 
     private void NewImageFile()
@@ -90,6 +85,7 @@ public class WorkbenchViewModel : ObservableRecipient
         var settings = new OpenFileDialogSettings
         {
             Title = "图像文件",
+            Multiselect = true,
             Filter = filter
         };
 
@@ -108,16 +104,19 @@ public class WorkbenchViewModel : ObservableRecipient
                 {
                     vm = _imageVmFactory.Invoke();
                     vm.Read(file);
-                    vm.SetParentWindowBound(Rectangle);
+                    vm.SetParentWindowBound(WindowRectangle);
                     ImageVmMap.Add(file, vm);
                 }
-
+                ActivatedImageViewModel = vm;
+                ActivatedImageViewModel.WindowIsActivated += (s, e) =>
+                {
+                    ActivatedImageViewModel = s as ImageWindowViewModel;
+                };
                 _dialogService.Show(this, vm);
-                ImageFiles = file;
             }
         }
     }
-
+    
     private void SwitchLanguage()
     {
     }
@@ -127,5 +126,6 @@ public class WorkbenchViewModel : ObservableRecipient
     }
 
     #endregion
+
 
 }
