@@ -124,11 +124,12 @@ public class WorkbenchViewModel : ObservableRecipient
     private void SwitchLanguage()
     {
     }
-
+    
+    private static uint LogCount = 1;
     private void ViewAppLog()
     {
         _dialogService.Show(this, _loggerVm);
-        Log.Info("显示日志窗体完成.");
+        Log.Info($"显示日志窗体完成.{LogCount++}");
     }
 
     #endregion

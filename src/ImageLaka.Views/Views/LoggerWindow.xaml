@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:ImageLaka.Views.Views"
         xmlns:wpf="clr-namespace:NKnife.NLog.WPF;assembly=NKnife.NLog.WPF"
         mc:Ignorable="d"
-        Title="LoggerWindow" Height="450" Width="800">
+        Title="{Binding ViewCount}" Height="450" Width="800"
+        d:DataContext="LoggerWindowViewModel">
     <Grid>
         <wpf:NLogViewer></wpf:NLogViewer>
     </Grid>

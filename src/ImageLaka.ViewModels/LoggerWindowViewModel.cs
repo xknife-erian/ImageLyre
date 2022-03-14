@@ -9,5 +9,12 @@ namespace ImageLaka.ViewModels
 {
     public class LoggerWindowViewModel : ObservableRecipient
     {
+        private int _viewCount;
+
+        public int ViewCount
+        {
+            get => _viewCount++;
+            set => _viewCount = value;
+        }
     }
 }
