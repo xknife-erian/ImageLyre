@@ -9,8 +9,8 @@
                 xmlns:vm="clr-namespace:ImageLaka.ViewModels;assembly=ImageLaka.ViewModels"
                 mc:Ignorable="d"
                 Title="ImageLaka" Height="250" Width="800"
-                Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png" 
-DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
+                Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png"
+                DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
                 d:DataContext="{d:DesignInstance {x:Type vm:WorkbenchViewModel}}">
     <f:RibbonWindow.Resources>
         <Style x:Key="MenuButton" TargetType="f:Button">
@@ -55,13 +55,14 @@ DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
         <f:Ribbon Grid.Row="0" x:Name="_Ribbon_"
                   SelectedTabIndex="1"
                   IsQuickAccessToolBarMenuDropDownVisible="False"
-                  IsQuickAccessToolBarVisible="False" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                  IsQuickAccessToolBarVisible="False"
+                  CanMinimize="False">
             <f:Ribbon.Resources>
                 <Style TargetType="{x:Type MenuItem}" x:Key="MenuItemStyle">
-                    <Setter Property="FontFamily" Value="Microsoft YaHei UI"/>
-                    <Setter Property="Foreground" Value="Black"/>
-                    <Setter Property="FontSize" Value="12"/>
-                    <Setter Property="Margin" Value="0,0,5,0"></Setter>
+                    <Setter Property="FontFamily" Value="Microsoft YaHei UI" />
+                    <Setter Property="Foreground" Value="Black" />
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="Margin" Value="0,0,5,0" />
                 </Style>
             </f:Ribbon.Resources>
             <f:RibbonTabItem Header="开始">
@@ -94,28 +95,28 @@ DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
                         <f:MenuItem Header="Lab 颜色" Style="{StaticResource MenuItemStyle}" />
                         <Separator />
                         <f:MenuItem Header="8位/通道" Style="{StaticResource MenuItemStyle}"
-                                    Command="{Binding To8BitCommand}"/>
+                                    Command="{Binding To8BitCommand}" />
                         <f:MenuItem Header="16位/通道" Style="{StaticResource MenuItemStyle}"
-                                    Command="{Binding To16BitCommand}"/>
+                                    Command="{Binding To16BitCommand}" />
                         <f:MenuItem Header="32位/通道" Style="{StaticResource MenuItemStyle}"
-                                    Command="{Binding To32BitCommand}"/>
+                                    Command="{Binding To32BitCommand}" />
                     </f:DropDownButton>
                 </f:RibbonGroupBox>
                 <f:RibbonGroupBox Header="旋转">
                     <f:DropDownButton Header="&#xf079;"
-                        Padding="0,-15,0,0"
-                        FontFamily="pack://application:,,,/ImageLaka.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
-                        Foreground="SlateGray"
-                        FontSize="26">
+                                      Padding="0,-15,0,0"
+                                      FontFamily="pack://application:,,,/ImageLaka.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
+                                      Foreground="SlateGray"
+                                      FontSize="26">
                         <f:MenuItem Header="180°" Style="{StaticResource MenuItemStyle}" />
                         <f:MenuItem Header="90°(顺时针)" Style="{StaticResource MenuItemStyle}" />
                         <f:MenuItem Header="90°(逆时针)" Style="{StaticResource MenuItemStyle}" />
                         <f:MenuItem Header="任意角度" Style="{StaticResource MenuItemStyle}" />
                         <Separator />
                         <f:MenuItem Header="水平翻转" Style="{StaticResource MenuItemStyle}"
-                                    Command="{Binding To8BitCommand}"/>
+                                    Command="{Binding To8BitCommand}" />
                         <f:MenuItem Header="垂直翻转" Style="{StaticResource MenuItemStyle}"
-                                    Command="{Binding To16BitCommand}"/>
+                                    Command="{Binding To16BitCommand}" />
                     </f:DropDownButton>
                 </f:RibbonGroupBox>
                 <f:RibbonGroupBox Header="调整">
@@ -135,12 +136,14 @@ DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
                     </f:DropDownButton>
                 </f:RibbonGroupBox>
                 <f:RibbonGroupBox>
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf12d;" Content="更名" />
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf257;" Content="裁切" />
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf0b2;" Content="尺寸" />
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf044;" Content="计数" />
                 </f:RibbonGroupBox>
                 <f:RibbonGroupBox>
-                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="信息" />
-                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="属性" />
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf05a;" Content="信息" />
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf0c9;" Content="属性" />
                 </f:RibbonGroupBox>
             </f:RibbonTabItem>
             <f:RibbonTabItem Header="处理">
@@ -151,10 +154,11 @@ DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
             <f:RibbonTabItem Header="分析">
                 <f:RibbonGroupBox>
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="测量" />
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf2a1;" Content="ROI" />
                 </f:RibbonGroupBox>
                 <f:RibbonGroupBox>
-                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="直方图" />
-                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="直方图" />
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf1fe;" Content="直方图" />
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf201;" Content="Plot Profile" />
                 </f:RibbonGroupBox>
             </f:RibbonTabItem>
             <f:RibbonTabItem Header="视图">

@@ -108,7 +108,7 @@ public class WorkbenchViewModel : ObservableRecipient
                 {
                     vm = _imageVmFactory.Invoke();
                     vm.Read(file);
-                    vm.SetParentWindowBound(WindowRectangle);
+                    vm.SetParentWindowRectangle(WindowRectangle);
                     ImageVmMap.Add(file, vm);
                 }
                 ActivatedImageViewModel = vm;
