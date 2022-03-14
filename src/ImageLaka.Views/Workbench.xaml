@@ -88,14 +88,10 @@ DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
                                       FontFamily="pack://application:,,,/ImageLaka.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
                                       Foreground="SlateGray"
                                       FontSize="26">
-                        <f:MenuItem Header="位图" Style="{StaticResource MenuItemStyle}" />
                         <f:MenuItem Header="灰度" Style="{StaticResource MenuItemStyle}" />
-                        <f:MenuItem Header="双色调" Style="{StaticResource MenuItemStyle}" />
-                        <f:MenuItem Header="索引颜色" Style="{StaticResource MenuItemStyle}" />
                         <f:MenuItem Header="RGB 颜色" Style="{StaticResource MenuItemStyle}" />
                         <f:MenuItem Header="CMYK 颜色" Style="{StaticResource MenuItemStyle}" />
                         <f:MenuItem Header="Lab 颜色" Style="{StaticResource MenuItemStyle}" />
-                        <f:MenuItem Header="多通道" Style="{StaticResource MenuItemStyle}" />
                         <Separator />
                         <f:MenuItem Header="8位/通道" Style="{StaticResource MenuItemStyle}"
                                     Command="{Binding To8BitCommand}"/>
@@ -142,6 +138,10 @@ DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf0b2;" Content="尺寸" />
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf044;" Content="计数" />
                 </f:RibbonGroupBox>
+                <f:RibbonGroupBox>
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="信息" />
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="属性" />
+                </f:RibbonGroupBox>
             </f:RibbonTabItem>
             <f:RibbonTabItem Header="处理">
                 <f:RibbonGroupBox>
@@ -151,6 +151,10 @@ DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
             <f:RibbonTabItem Header="分析">
                 <f:RibbonGroupBox>
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="测量" />
+                </f:RibbonGroupBox>
+                <f:RibbonGroupBox>
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="直方图" />
+                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="直方图" />
                 </f:RibbonGroupBox>
             </f:RibbonTabItem>
             <f:RibbonTabItem Header="视图">
