@@ -7,19 +7,23 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using MvvmDialogs;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
+using NLog;
 
 namespace ImageLaka.ViewModels;
 
 public class WorkbenchViewModel : ObservableRecipient
 {
+    private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
     private readonly IDialogService _dialogService;
+    private readonly LoggerWindowViewModel _loggerVm;
     private readonly Func<ImageWindowViewModel> _imageVmFactory;
-    public Dictionary<string, ImageWindowViewModel> ImageVmMap { get; set; } = new();
+    public Dictionary<string, ImageWindowViewModel> ImageVmMap { get; } = new();
 
-    public WorkbenchViewModel(IDialogService dialogService, Func<ImageWindowViewModel> imageVmFactory)
+    public WorkbenchViewModel(IDialogService dialogService, Func<ImageWindowViewModel> imageVmFactory, LoggerWindowViewModel loggerVm)
     {
         _dialogService = dialogService;
         _imageVmFactory = imageVmFactory;
+        _loggerVm = loggerVm;
     }
 
     #region 属性
@@ -123,9 +127,10 @@ public class WorkbenchViewModel : ObservableRecipient
 
     private void ViewAppLog()
     {
+        _dialogService.Show(this, _loggerVm);
+        Log.Info("显示日志窗体完成.");
     }
 
     #endregion
-
 
 }

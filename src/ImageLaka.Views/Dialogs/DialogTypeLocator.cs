@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using ImageLaka.ViewModels;
+using ImageLaka.Views.Views;
 using MvvmDialogs.DialogTypeLocators;
 
 namespace ImageLaka.Views.Dialogs;
@@ -14,6 +15,8 @@ public class DialogTypeLocator: IDialogTypeLocator
         {
             case nameof(ImageWindowViewModel):
                 return typeof(ImageWindow);
+            case nameof(LoggerWindowViewModel):
+                return typeof(LoggerWindow);
             default:
                 return null;
         }

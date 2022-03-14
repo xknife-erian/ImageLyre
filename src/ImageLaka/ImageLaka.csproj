@@ -28,4 +28,10 @@
     <ProjectReference Include="..\ImageLaka.Views\ImageLaka.Views.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
