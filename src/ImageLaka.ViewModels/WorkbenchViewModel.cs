@@ -125,11 +125,10 @@ public class WorkbenchViewModel : ObservableRecipient
     {
     }
     
-    private static uint LogCount = 1;
     private void ViewAppLog()
     {
         _dialogService.Show(this, _loggerVm);
-        Log.Info($"显示日志窗体完成.{LogCount++}");
+        Log.Info($"显示日志窗体完成.");
     }
 
     #endregion

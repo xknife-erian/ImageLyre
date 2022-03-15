@@ -9,5 +9,5 @@ public class OptionManager
         HabitData = new NKnife.HabitData();
     }
 
-    public HabitData HabitData { get; private set; }
+    public HabitData? HabitData { get; private set; }
 }

@@ -1,4 +1,5 @@
 ﻿using ImageLaka;
+using ImageLaka.ImageEngine;
 using NLog;
 
 namespace ImageLaka.Services.Macros.Commands;
@@ -22,6 +23,7 @@ public class OpenBeat : BaseMacroBeat
         try
         {
             Target.Open();
+            Log.Info($"{ImageTarget.File.FullName} {nameof(Target.Open)}.");
             return true;
         }
         catch (Exception e)

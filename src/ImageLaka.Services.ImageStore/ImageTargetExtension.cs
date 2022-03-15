@@ -15,7 +15,6 @@ public static class ImageTargetExtension
     /// </summary>
     public static void To16Bit(this ImageTarget target)
     {
-        target.Bitmap = ImageUtil.ToGray(target.Bitmap, BitsPerPixel.Bit16);
     }
 
     /// <summary>
@@ -23,6 +22,5 @@ public static class ImageTargetExtension
     /// </summary>
     public static void To32Bit(this ImageTarget target)
     {
-        target.Bitmap = ImageUtil.ToGray(target.Bitmap, BitsPerPixel.Bit32);
     }
 }

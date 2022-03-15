@@ -9,6 +9,11 @@
         Title="{Binding ViewCount}" Height="450" Width="800"
         d:DataContext="LoggerWindowViewModel">
     <Grid>
-        <wpf:NLogViewer></wpf:NLogViewer>
+        <wpf:NLogViewer TimeHeader="时间"
+                        LevelHeader="等级"
+                        MessageHeader="日志"
+                        LoggerNameHeader="发生"
+                        ExceptionHeader="异常"
+                        ExceptionWidth="0" />
     </Grid>
 </Window>

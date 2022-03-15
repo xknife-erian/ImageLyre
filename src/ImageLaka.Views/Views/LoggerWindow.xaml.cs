@@ -22,6 +22,13 @@ namespace ImageLaka.Views.Views
         public LoggerWindow()
         {
             InitializeComponent();
+            Closing += LoggerWindow_Closing;
+        }
+
+        private void LoggerWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.Hide();
+            e.Cancel = true; // this cancels the close event. 
         }
     }
 }
