@@ -9,7 +9,7 @@ public static class ImageTargetExtension
     /// </summary>
     public static void To8Bit(this ImageTarget target)
     {
-        target.Bitmap = ImageUtil.ImageFormatConverter(target.Bitmap, BitsPerPixel.Bit8);
+        target.Bitmap = ImageUtil.ImageFormatConverter(target.Bitmap, ImageFormat.Gray, BitsPerPixel.Bit8);
     }
 
     /// <summary>

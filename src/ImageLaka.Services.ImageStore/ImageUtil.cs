@@ -3,6 +3,7 @@ using System.Drawing.Imaging;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using ImageLaka.ImageEngine.Enums;
+using ImageFormat = ImageLaka.ImageEngine.Enums.ImageFormat;
 
 namespace ImageLaka.ImageEngine;
 
@@ -142,41 +143,49 @@ public class ImageUtil
 
     }
 
-    public static Bitmap? ImageFormatConverter(Bitmap? source, BmpType bmpType, BitsPerPixel ib)
+    public static Bitmap? ImageFormatConverter(Bitmap? source, ImageFormat imageFormat, BitsPerPixel bpp)
     {
         if (source == null)
             return null;
-        switch (bmpType)
+        switch (imageFormat)
         {
-            case BmpType.Gray:
-                return ToGray(source, ib);
-            case BmpType.CMYK:
-            case BmpType.Lab:
-                break;
-            case BmpType.RGB:
+            case ImageFormat.Gray:
+                return ToGray(source, bpp);
+            case ImageFormat.CMYK:
+                return ToCMYK(source, bpp);
+            case ImageFormat.Lab:
+                return ToLab(source, bpp);
+            case ImageFormat.RGB:
                 default:
-                return ToRGB(source, ib);
+                return ToRGB(source, bpp);
         }
-
     }
 
-    private static Bitmap ToGray(Bitmap source, BitsPerPixel ib)
+    private static Bitmap ToCMYK(Bitmap source, BitsPerPixel bpp)
     {
-        switch (ib)
+        throw new NotImplementedException();
+    }
+
+    private static Bitmap ToLab(Bitmap source, BitsPerPixel bpp)
+    {
+        throw new NotImplementedException();
+    }
+
+    private static Bitmap ToRGB(Bitmap source, BitsPerPixel bpp)
+    {
+        throw new NotImplementedException();
+    }
+
+    private static Bitmap ToGray(Bitmap source, BitsPerPixel bpp)
+    {
+        switch (bpp)
         {
             case BitsPerPixel.Bit32:
             case BitsPerPixel.Bit24:
-            {
-                var image = source.ToImage<Gray, uint>();
-                return image.ToBitmap();
-            }
             case BitsPerPixel.Bit16:
-            {
-                var image = source.ToImage<Gray, ushort>();
-                return image.ToBitmap();
-            }
-            case BitsPerPixel.Bit8:
             default:
+                throw new NotSupportedException();
+            case BitsPerPixel.Bit8:
             {
                 var image = source.ToImage<Gray, byte>();
                 return image.ToBitmap();

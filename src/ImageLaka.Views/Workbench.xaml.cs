@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Windows;
 using ImageLaka.Managers;
 using ImageLaka.ViewModels;
+using NKnife;
+using NLog;
 
 namespace ImageLaka.Views;
 
@@ -12,6 +14,8 @@ namespace ImageLaka.Views;
 /// </summary>
 public partial class Workbench
 {
+    private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
+
     private readonly OptionManager _optionManager;
 
     public Workbench(OptionManager optionManager)
@@ -21,6 +25,11 @@ public partial class Workbench
         InitializeComponent();
         var vm = (WorkbenchViewModel)DataContext;
 
+        if (_optionManager.HabitData == null)
+        {
+            _Log.Warn("用户习惯载入失败.");
+            _optionManager.HabitData = new HabitData();
+        }
         var top = _optionManager.HabitData.GetValue($"{nameof(Workbench)}.{nameof(Top)}", 100);
         Top = int.Parse(top);
         var left = _optionManager.HabitData.GetValue($"{nameof(Workbench)}.{nameof(Left)}", 100);

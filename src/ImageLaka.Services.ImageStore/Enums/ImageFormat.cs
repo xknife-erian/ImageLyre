@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ImageLaka.ImageEngine.Enums
 {
-    public enum BmpType
+    public enum ImageFormat
     {
         Gray,RGB,CMYK,Lab
     }

@@ -30,7 +30,7 @@ namespace ImageLaka
             var president = Ioc.Default.GetService<President>();
             if (president == null)
                 return;
-            president.OptionManager.Initianize();
+            president.OptionManager.Initialize();
             president.ConsoleManager.Initianize();
         }
 

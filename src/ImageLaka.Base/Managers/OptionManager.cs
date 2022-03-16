@@ -2,12 +2,21 @@
 
 namespace ImageLaka.Managers;
 
+/// <summary>
+/// 选项与用户习惯服务
+/// </summary>
 public class OptionManager
 {
-    public void Initianize()
+    /// <summary>
+    /// 初始化
+    /// </summary>
+    public void Initialize()
     {
         HabitData = new NKnife.HabitData();
     }
 
-    public HabitData? HabitData { get; private set; }
+    /// <summary>
+    /// 用户使用习惯
+    /// </summary>
+    public HabitData? HabitData { get; set; }
 }
