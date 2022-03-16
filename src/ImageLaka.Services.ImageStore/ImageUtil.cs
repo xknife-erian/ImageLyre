@@ -2,6 +2,7 @@
 using System.Drawing.Imaging;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using ImageLaka.ImageEngine.Enums;
 
 namespace ImageLaka.ImageEngine;
 
@@ -60,10 +61,107 @@ public class ImageUtil
         }
     }
 
-    public static Bitmap? ToGray(Bitmap? source, BitsPerPixel ib)
+    /// <summary>
+    /// 更新图像到指定的对比度
+    /// </summary>
+    /// <param name="img">待更新的图像</param>
+    /// <param name="wb">指定的对比度</param>
+    public static void UpdateWhiteBalance(Image<Bgr, byte> img, WhiteBalance wb)
+    {
+        int avgR = 0, avgG = 0, avgB = 0;
+        int sumR = 0, sumG = 0, sumB = 0;
+        for (int h = 0; h < img.Height; ++h)
+        {
+            for (int w = 0; w < img.Width; ++w)
+            {
+                sumB += img.Data[h, w, 0];
+                sumG += img.Data[h, w, 1];
+                sumR += img.Data[h, w, 2];
+            }
+        }
+        int size = img.Height * img.Width;
+        avgB = sumB / size;
+        avgG = sumG / size;
+        avgR = sumR / size;
+        //double k = (avgB + avgG + avgR) / 3;
+        double k = 0.299 * avgR + 0.587 * avgG + 0.114 * avgB;
+
+        switch (wb)
+        {
+            case WhiteBalance.AUTO:
+                avgR = (sumR / size);
+                avgG = (sumG / size);
+                avgB = (sumB / size);
+                break;
+            case WhiteBalance.CLOUDY:
+                avgR = (int)(sumR * 1.953125 / size);
+                avgG = (int)(sumG * 1.0390625 / size);
+                avgB = (int)(sumB / size);
+                break;
+            case WhiteBalance.DAYLIGHT:
+                avgR = (int)(sumR * 1.2734375 / size);
+                avgG = (int)(sumG / size);
+                avgB = (int)(sumB * 1.0625 / size);
+                break;
+            case WhiteBalance.INCANDESCENCE:
+                avgR = (int)(sumR * 1.2890625 / size);
+                avgG = (int)(sumG / size);
+                avgB = (int)(sumB * 1.0625 / size);
+                break;
+            case WhiteBalance.FLUORESCENT:
+                avgR = (int)(sumR * 1.1875 / size);
+                avgG = (int)(sumG / size);
+                avgB = (int)(sumB * 1.3125 / size);
+                break;
+            case WhiteBalance.TUNGSTEN:
+                avgR = (int)(sumR / size);
+                avgG = (int)(sumG * 1.0078125 / size);
+                avgB = (int)(sumB * 1.28125 / size);
+                break;
+            default:
+                break;
+        }
+
+        double kr = k / avgR;
+        double kg = k / avgG;
+        double kb = k / avgB;
+        double newB, newG, newR;
+        for (int h = 0; h < img.Height; ++h)
+        {
+            for (int w = 0; w < img.Width; ++w)
+            {
+                newB = img.Data[h, w, 0] * kb;
+                newG = img.Data[h, w, 1] * kg;
+                newR = img.Data[h, w, 2] * kr;
+
+                img.Data[h, w, 0] = (byte)(newB > 255 ? 255 : newB);
+                img.Data[h, w, 1] = (byte)(newG > 255 ? 255 : newG);
+                img.Data[h, w, 2] = (byte)(newR > 255 ? 255 : newR);
+            }
+        }
+
+    }
+
+    public static Bitmap? ImageFormatConverter(Bitmap? source, BmpType bmpType, BitsPerPixel ib)
     {
         if (source == null)
             return null;
+        switch (bmpType)
+        {
+            case BmpType.Gray:
+                return ToGray(source, ib);
+            case BmpType.CMYK:
+            case BmpType.Lab:
+                break;
+            case BmpType.RGB:
+                default:
+                return ToRGB(source, ib);
+        }
+
+    }
+
+    private static Bitmap ToGray(Bitmap source, BitsPerPixel ib)
+    {
         switch (ib)
         {
             case BitsPerPixel.Bit32:

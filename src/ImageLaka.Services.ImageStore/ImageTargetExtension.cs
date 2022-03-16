@@ -1,4 +1,6 @@
-﻿namespace ImageLaka.ImageEngine;
+﻿using ImageLaka.ImageEngine.Enums;
+
+namespace ImageLaka.ImageEngine;
 
 public static class ImageTargetExtension
 {
@@ -7,7 +9,7 @@ public static class ImageTargetExtension
     /// </summary>
     public static void To8Bit(this ImageTarget target)
     {
-        target.Bitmap = ImageUtil.ToGray(target.Bitmap, BitsPerPixel.Bit8);
+        target.Bitmap = ImageUtil.ImageFormatConverter(target.Bitmap, BitsPerPixel.Bit8);
     }
 
     /// <summary>

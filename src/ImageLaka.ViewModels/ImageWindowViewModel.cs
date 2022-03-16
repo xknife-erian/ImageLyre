@@ -2,6 +2,7 @@
 using System.Drawing.Imaging;
 using System.Windows.Input;
 using ImageLaka.ImageEngine;
+using ImageLaka.ImageEngine.Enums;
 using ImageLaka.Services.Macros;
 using ImageLaka.Services.Macros.Commands;
 using Microsoft.Toolkit.Mvvm.ComponentModel;

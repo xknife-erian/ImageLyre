@@ -1,4 +1,4 @@
-﻿namespace ImageLaka.ImageEngine;
+﻿namespace ImageLaka.ImageEngine.Enums;
 
 /// <summary>
 /// 像素深度是指存储每个像素所需要的比特数。
