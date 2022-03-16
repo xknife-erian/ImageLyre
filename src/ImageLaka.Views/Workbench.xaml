@@ -89,16 +89,27 @@
                                       FontFamily="pack://application:,,,/ImageLaka.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
                                       Foreground="SlateGray"
                                       FontSize="26">
-                        <f:MenuItem Header="灰度" Style="{StaticResource MenuItemStyle}" />
-                        <f:MenuItem Header="RGB 颜色" Style="{StaticResource MenuItemStyle}" />
-                        <f:MenuItem Header="CMYK 颜色" Style="{StaticResource MenuItemStyle}" />
-                        <f:MenuItem Header="Lab 颜色" Style="{StaticResource MenuItemStyle}" />
+                        <f:MenuItem Header="灰度" Style="{StaticResource MenuItemStyle}"
+                                    IsChecked="{Binding IsGray}"
+                                    Command="{Binding ToGrayCommand}"/>
+                        <f:MenuItem Header="RGB 颜色" Style="{StaticResource MenuItemStyle}"
+                                    IsChecked="{Binding IsRGB}"
+                                    Command="{Binding ToRGBCommand}"/>
+                        <f:MenuItem Header="CMYK 颜色" Style="{StaticResource MenuItemStyle}" 
+                                    IsChecked="{Binding IsCMYK}"
+                                    Command="{Binding ToCMYKCommand}"/>
+                        <f:MenuItem Header="Lab 颜色" Style="{StaticResource MenuItemStyle}"
+                                    IsChecked="{Binding IsLab}"
+                                    Command="{Binding ToLabCommand}"/>
                         <Separator />
                         <f:MenuItem Header="8位/通道" Style="{StaticResource MenuItemStyle}"
+                                    IsChecked="{Binding Is8Bit}"
                                     Command="{Binding To8BitCommand}" />
                         <f:MenuItem Header="16位/通道" Style="{StaticResource MenuItemStyle}"
+                                    IsChecked="{Binding Is16Bit}"
                                     Command="{Binding To16BitCommand}" />
                         <f:MenuItem Header="32位/通道" Style="{StaticResource MenuItemStyle}"
+                                    IsChecked="{Binding Is32Bit}"
                                     Command="{Binding To32BitCommand}" />
                     </f:DropDownButton>
                 </f:RibbonGroupBox>

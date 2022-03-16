@@ -5,7 +5,7 @@ namespace ImageLaka.Services.Macros.Commands;
 
 public class To16BitBeat : BaseMacroBeat
 {
-    private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
 
     public To16BitBeat(ITarget target) : base(target)
     {
@@ -16,11 +16,12 @@ public class To16BitBeat : BaseMacroBeat
         try
         {
             ImageTarget.To16Bit();
+            _Log.Info($"{ImageTarget.File.FullName} To16Bit.");
             return true;
         }
         catch (Exception e)
         {
-            Log.Warn(e);
+            _Log.Warn(e);
             return false;
         }
     }

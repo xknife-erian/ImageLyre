@@ -6,7 +6,7 @@ namespace ImageLaka.Services.Macros.Commands;
 
 public class OpenBeat : BaseMacroBeat
 {
-    private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
 
     public OpenBeat(ITarget target) : base(target)
     {
@@ -23,12 +23,12 @@ public class OpenBeat : BaseMacroBeat
         try
         {
             Target.Open();
-            Log.Info($"{ImageTarget.File.FullName} {nameof(Target.Open)}.");
+            _Log.Info($"{ImageTarget.File.FullName}已打开。");
             return true;
         }
         catch (Exception e)
         {
-            Log.Warn(e);
+            _Log.Warn(e);
             return false;
         }
     }

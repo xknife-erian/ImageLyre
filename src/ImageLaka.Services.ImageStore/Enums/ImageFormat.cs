@@ -8,6 +8,7 @@ namespace ImageLaka.ImageEngine.Enums
 {
     public enum ImageFormat
     {
-        Gray,RGB,CMYK,Lab
+        Gray,RGB,CMYK,Lab,
+        Undefined
     }
 }

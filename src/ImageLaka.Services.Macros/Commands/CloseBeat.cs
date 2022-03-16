@@ -5,7 +5,7 @@ namespace ImageLaka.Services.Macros.Commands;
 
 public class CloseBeat : BaseMacroBeat
 {
-    private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
 
     public CloseBeat(ITarget target) 
         : base(target)
@@ -21,11 +21,12 @@ public class CloseBeat : BaseMacroBeat
         try
         {
             Target.Close();
+            _Log.Info($"{ImageTarget.File.FullName}已关闭。");
             return true;
         }
         catch (Exception e)
         {
-            Log.Warn(e);
+            _Log.Warn(e);
             return false;
         }
     }

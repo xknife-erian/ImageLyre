@@ -39,7 +39,7 @@ public partial class Workbench
         {
             var width = (int) e.NewSize.Width;
             var height = (int) e.NewSize.Height;
-            vm.WindowRectangle = new Rectangle((int) Left, (int) Top, width, height);
+            vm.SelfRectangle = new Rectangle((int) Left, (int) Top, width, height);
         };
         Loaded += delegate
         {
@@ -59,5 +59,12 @@ public partial class Workbench
         if (sender == null)
             return;
         var vm = (WorkbenchViewModel) sender;
+        switch (e.PropertyName)
+        {
+            case nameof(vm.ActivatedImageViewModel):
+                if (vm.ActivatedImageViewModel != null)
+                    _Ribbon_.SelectedTabIndex = 1;
+                break;
+        }
     }
 }

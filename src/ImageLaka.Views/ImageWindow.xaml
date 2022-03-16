@@ -19,6 +19,9 @@
         <b:EventTrigger EventName="Activated">
             <b:InvokeCommandAction Command="{Binding WindowActivated}"/>
         </b:EventTrigger>
+        <b:EventTrigger EventName="Loaded">
+            <b:InvokeCommandAction Command="{Binding WindowActivated}"/>
+        </b:EventTrigger>
     </b:Interaction.Triggers>
     <Window.Resources>
         <converters:BitmapToImageSourceConverter x:Key="MatWriter" />
@@ -60,6 +63,7 @@
         </TabControl>
 
         <StatusBar x:Name="_StatusBar_" Grid.Row="1" Height="26">
+            <TextBlock Padding="0" Margin="1,0" Text="{Binding PixelFormat }" />
             <TextBlock Padding="0" Margin="1,0" Text="{Binding ElementName=_Window_,Path=Top }" />
             <TextBlock Padding="0" Margin="1,0" Text="{Binding ElementName=_Window_,Path=Left}" />
         </StatusBar>

@@ -3,11 +3,11 @@ using NLog;
 
 namespace ImageLaka.Services.Macros.Commands;
 
-public class To32BitBeat : BaseMacroBeat
+public class ToCMYKBeat : BaseMacroBeat
 {
     private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
 
-    public To32BitBeat(ITarget target) : base(target)
+    public ToCMYKBeat(ITarget target) : base(target)
     {
     }
 
@@ -15,8 +15,8 @@ public class To32BitBeat : BaseMacroBeat
     {
         try
         {
-            ImageTarget.To32Bit();
-            _Log.Info($"{ImageTarget.File.FullName} To32Bit.");
+            ImageTarget.ToCMYK();
+            _Log.Info($"{ImageTarget.File.FullName} ToCMYK.");
             return true;
         }
         catch (Exception e)

@@ -5,7 +5,7 @@ namespace ImageLaka.Services.Macros.Commands;
 
 public class To8BitBeat : BaseMacroBeat
 {
-    private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+    private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
 
     public To8BitBeat(ITarget target) : base(target)
     {
@@ -16,13 +16,13 @@ public class To8BitBeat : BaseMacroBeat
         try
         {
             ImageTarget.To8Bit();
-            Log.Info($"{ImageTarget.File.FullName} To8Bit.");
+            _Log.Info($"{ImageTarget.File.FullName} To8Bit.");
 
             return true;
         }
         catch (Exception e)
         {
-            Log.Warn(e);
+            _Log.Warn(e);
             return false;
         }
     }
