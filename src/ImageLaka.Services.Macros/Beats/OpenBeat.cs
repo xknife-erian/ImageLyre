@@ -21,7 +21,7 @@ public class OpenBeat : BaseMacroBeat
         try
         {
             Target.Open();
-            _Log.Info($"{ImageTarget.File.FullName}已打开。");
+            _Log.Info($"{ImageTarget.File.FullName} 已打开。");
             return true;
         }
         catch (Exception e)

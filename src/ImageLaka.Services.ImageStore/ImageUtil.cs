@@ -42,6 +42,8 @@ public static class ImageUtil
     {
         if (bmp == null)
             return BitsPerPixel.Undefined;
+        if ((int)bmp.PixelFormat == 8207)
+            return BitsPerPixel.Bit32;
         switch (bmp.PixelFormat)
         {
             case PixelFormat.Format16bppArgb1555: //像素格式为每像素16位。该颜色信息指定32,768种色调，其中5位为红色，5位为绿色，5位为蓝色，1位为alpha。

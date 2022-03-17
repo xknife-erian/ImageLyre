@@ -14,11 +14,18 @@ public class ImageWindowViewModel : ObservableRecipient
 {
     private Macro? _macro;
 
+    #region 属性
+
+
+    #endregion
+
     #region 界面属性
 
     private ImageTarget? _imageTarget;
     private Bitmap? _bitmap;
-    private string _pixelFormat;
+    private PixelFormat _pixelFormat;
+    private int _top;
+    private int _left;
 
     public Bitmap? Bitmap
     {
@@ -32,21 +39,30 @@ public class ImageWindowViewModel : ObservableRecipient
         set => SetProperty(ref _imageTarget, value);
     }
 
-    public string PixelFormat
+    public PixelFormat PixelFormat
     {
         get => _pixelFormat;
         set => SetProperty(ref _pixelFormat, value);
     }
 
-    public int Top { get; private set; }
-    public int Left { get; private set; }
+    public int Top
+    {
+        get => _top;
+        set => SetProperty(ref _top, value);
+    }
+
+    public int Left
+    {
+        get => _left;
+        set => SetProperty(ref _left, value);
+    }
 
     #endregion
 
-    public void SetParentWindowRectangle(Rectangle rectangle)
+    public void SetStartLocation(Point point)
     {
-        Top = rectangle.Top + rectangle.Height + 50;
-        Left = rectangle.Left + 50;
+        Top = point.X;
+        Left = point.Y;
     }
 
     public void Read(string path)
@@ -56,7 +72,7 @@ public class ImageWindowViewModel : ObservableRecipient
         var command = new OpenBeat(_imageTarget);
         _macro.DoCurrent(command);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat.ToString();
+        PixelFormat = Bitmap.PixelFormat;
     }
     public void ToGray()
     {
@@ -65,7 +81,7 @@ public class ImageWindowViewModel : ObservableRecipient
         var beat = new ToGrayBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat.ToString();
+        PixelFormat = Bitmap.PixelFormat;
     }
 
     public void ToRGB()
@@ -75,7 +91,7 @@ public class ImageWindowViewModel : ObservableRecipient
         var beat = new ToRGBBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat.ToString();
+        PixelFormat = Bitmap.PixelFormat;
     }
 
     public void ToCMYK()
@@ -85,7 +101,7 @@ public class ImageWindowViewModel : ObservableRecipient
         var beat = new ToCMYKBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat.ToString();
+        PixelFormat = Bitmap.PixelFormat;
     }
 
     public void ToHSV()
@@ -95,7 +111,7 @@ public class ImageWindowViewModel : ObservableRecipient
         var beat = new ToHSVBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat.ToString();
+        PixelFormat = Bitmap.PixelFormat;
     }
 
     public void ToLab()
@@ -105,7 +121,7 @@ public class ImageWindowViewModel : ObservableRecipient
         var beat = new ToLabBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat.ToString();
+        PixelFormat = Bitmap.PixelFormat;
     }
 
     public void To8Bit()
@@ -115,7 +131,7 @@ public class ImageWindowViewModel : ObservableRecipient
         var beat = new To8BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat.ToString();
+        PixelFormat = Bitmap.PixelFormat;
     }
 
     public void To16Bit()
@@ -125,7 +141,17 @@ public class ImageWindowViewModel : ObservableRecipient
         var beat = new To16BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat.ToString();
+        PixelFormat = Bitmap.PixelFormat;
+    }
+
+    public void To24Bit()
+    {
+        if (_imageTarget == null)
+            return;
+        var beat = new To24BitBeat(_imageTarget);
+        _macro?.DoCurrent(beat);
+        Bitmap = _imageTarget.Bitmap;
+        PixelFormat = Bitmap.PixelFormat;
     }
 
     public void To32Bit()
@@ -135,7 +161,7 @@ public class ImageWindowViewModel : ObservableRecipient
         var beat = new To32BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat.ToString();
+        PixelFormat = Bitmap.PixelFormat;
     }
 
     public ICommand WindowActivated => new RelayCommand(OnWindowActivated);

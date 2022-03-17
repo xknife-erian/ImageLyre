@@ -8,7 +8,7 @@ namespace ImageLaka.ViewModels.IoC
         {
             builder.RegisterType<WorkbenchViewModel>().AsSelf().SingleInstance();
             builder.RegisterType<ImageWindowViewModel>().AsSelf();
-            builder.RegisterType<LoggerWindowViewModel>().AsSelf();
+            builder.RegisterType<LoggerWindowViewModel>().AsSelf().SingleInstance();
         }
     }
 

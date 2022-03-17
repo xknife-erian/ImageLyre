@@ -7,6 +7,7 @@
                 md:DialogServiceViews.IsRegistered="True"
                 xmlns:f="urn:fluent-ribbon"
                 xmlns:vm="clr-namespace:ImageLaka.ViewModels;assembly=ImageLaka.ViewModels"
+                xmlns:converters="clr-namespace:ImageLaka.Views.Converters"
                 mc:Ignorable="d"
                 Title="ImageLaka" Height="250" Width="800"
                 Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png"
@@ -44,6 +45,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <converters:RectangleToStringConverter x:Key="RectString" />
     </f:RibbonWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -111,6 +113,9 @@
                         <f:MenuItem Header="16位/通道" Style="{StaticResource MenuItemStyle}"
                                     IsChecked="{Binding Is16Bit}"
                                     Command="{Binding To16BitCommand}" />
+                        <f:MenuItem Header="24位/通道" Style="{StaticResource MenuItemStyle}"
+                                    IsChecked="{Binding Is24Bit}"
+                                    Command="{Binding To24BitCommand}" />
                         <f:MenuItem Header="32位/通道" Style="{StaticResource MenuItemStyle}"
                                     IsChecked="{Binding Is32Bit}"
                                     Command="{Binding To32BitCommand}" />
@@ -197,7 +202,7 @@
         <StatusBar Grid.Row="2" Background="#FFFAFAFA">
             <StatusBarItem Content="Ready" />
             <Separator HorizontalAlignment="Left" />
-            <StatusBarItem Content="100 x 300 Pix" />
+            <StatusBarItem Content="{Binding SelfRectangle, Converter={StaticResource RectString}}" />
             <Separator HorizontalAlignment="Left" />
             <ProgressBar Width="300" Height="12" HorizontalAlignment="Right" />
         </StatusBar>

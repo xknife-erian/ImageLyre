@@ -49,6 +49,7 @@ public partial class Workbench
         {
             _optionManager.HabitData.SetValue($"{nameof(Workbench)}.{nameof(Top)}", Top);
             _optionManager.HabitData.SetValue($"{nameof(Workbench)}.{nameof(Left)}", Left);
+            vm.SelfRectangle = new Rectangle((int)Left, (int)Top, (int)Width, (int)Height);
         };
 
         _Ribbon_.SelectedTabIndex = 0;

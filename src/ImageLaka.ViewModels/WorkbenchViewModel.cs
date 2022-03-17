@@ -29,16 +29,13 @@ public class WorkbenchViewModel : ObservableRecipient
 
     #region 属性
 
-    /// <summary>
-    ///     自身窗体大小与位置。当窗体SizeChanged时，会更新该值。通过这个值可以调整其他需要弹出的窗体的位置。
-    /// </summary>
-    public Rectangle SelfRectangle { get; set; }
 
     #endregion
 
     #region 被绑定的属性
 
     private ImageWindowViewModel? _activatedImageViewModel;
+    private Rectangle _selfRectangle;
 
     /// <summary>
     ///     激活的Image窗体ViewModel
@@ -47,6 +44,15 @@ public class WorkbenchViewModel : ObservableRecipient
     {
         get => _activatedImageViewModel;
         set => SetProperty(ref _activatedImageViewModel, value);
+    }
+
+    /// <summary>
+    ///     自身窗体大小与位置。当窗体SizeChanged时，会更新该值。通过这个值可以调整其他需要弹出的窗体的位置。
+    /// </summary>
+    public Rectangle SelfRectangle
+    {
+        get => _selfRectangle;
+        set => SetProperty(ref _selfRectangle, value);
     }
 
     #region 图像格式菜单中被选中的项
@@ -58,6 +64,7 @@ public class WorkbenchViewModel : ObservableRecipient
     private bool _isLab;
     private bool _is8Bit;
     private bool _is16Bit;
+    private bool _is24Bit;
     private bool _is32Bit;
 
     public bool IsGray
@@ -102,6 +109,12 @@ public class WorkbenchViewModel : ObservableRecipient
         set => SetProperty(ref _is16Bit, value);
     }
 
+    public bool Is24Bit
+    {
+        get => _is24Bit;
+        set => SetProperty(ref _is24Bit, value);
+    }
+
     public bool Is32Bit
     {
         get => _is32Bit;
@@ -122,6 +135,7 @@ public class WorkbenchViewModel : ObservableRecipient
         IsLab = false;
         Is8Bit = false;
         Is16Bit = false;
+        Is24Bit = false;
         Is32Bit = false;
         switch (bpp)
         {
@@ -130,6 +144,9 @@ public class WorkbenchViewModel : ObservableRecipient
                 break;
             case BitsPerPixel.Bit16:
                 Is16Bit = true;
+                break;
+            case BitsPerPixel.Bit24:
+                Is24Bit = true;
                 break;
             case BitsPerPixel.Bit32:
                 Is32Bit = true;
@@ -215,6 +232,12 @@ public class WorkbenchViewModel : ObservableRecipient
             ActivatedImageViewModel.To16Bit();
     });
 
+    public ICommand To24BitCommand => new RelayCommand(() =>
+    {
+        if (ActivatedImageViewModel != null)
+            ActivatedImageViewModel.To24Bit();
+    });
+
     public ICommand To32BitCommand => new RelayCommand(() =>
     {
         if (ActivatedImageViewModel != null)
@@ -257,8 +280,9 @@ public class WorkbenchViewModel : ObservableRecipient
                 else
                 {
                     vm = _imageVmFactory.Invoke();
+                    ImageVmMap.Add(file, vm);
                     vm.Read(file);
-                    vm.SetParentWindowRectangle(SelfRectangle);
+                    vm.SetStartLocation(ComputeLocation());
                     vm.WindowIsActivated += (s, e) =>
                     {
                         var ivm = s as ImageWindowViewModel;
@@ -268,12 +292,18 @@ public class WorkbenchViewModel : ObservableRecipient
                             UpdateImageFormat();
                         }
                     };
-                    ImageVmMap.Add(file, vm);
                 }
 
                 _dialogService.Show(this, vm);
             }
         }
+    }
+
+    private Point ComputeLocation()
+    {
+        var x = SelfRectangle.Top + SelfRectangle.Height + ImageVmMap.Count * 20;
+        var y = SelfRectangle.Left + ImageVmMap.Count * 20;
+        return new Point(x, y);
     }
 
     private void SwitchLanguage()

@@ -19,7 +19,7 @@ public class RectangleToStringConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         var rect = (Rectangle)value;
-        return $"Top:{rect.Top},Left:{rect.Left};Width:{rect.Width};Height:{rect.Height}";
+        return $"[{rect.Top},{rect.Left}],[{rect.Width},{rect.Height}]";
     }
 
     /// <summary>Converts a value.</summary>
