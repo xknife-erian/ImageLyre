@@ -1,7 +1,6 @@
-﻿using ImageLaka;
-using NLog;
+﻿using NLog;
 
-namespace ImageLaka.Services.Macros.Commands;
+namespace ImageLaka.Services.Macros.Beats;
 
 public class CloseBeat : BaseMacroBeat
 {

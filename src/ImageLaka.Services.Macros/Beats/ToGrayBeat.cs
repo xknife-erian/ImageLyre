@@ -1,7 +1,7 @@
 ﻿using ImageLaka.ImageEngine;
 using NLog;
 
-namespace ImageLaka.Services.Macros.Commands;
+namespace ImageLaka.Services.Macros.Beats;
 
 public class ToGrayBeat : BaseMacroBeat
 {

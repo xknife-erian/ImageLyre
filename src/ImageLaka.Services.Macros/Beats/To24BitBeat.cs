@@ -1,13 +1,13 @@
 ﻿using ImageLaka.ImageEngine;
 using NLog;
 
-namespace ImageLaka.Services.Macros.Commands;
+namespace ImageLaka.Services.Macros.Beats;
 
-public class ToLabBeat : BaseMacroBeat
+public class To24BitBeat : BaseMacroBeat
 {
     private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
 
-    public ToLabBeat(ITarget target) : base(target)
+    public To24BitBeat(ITarget target) : base(target)
     {
     }
 
@@ -15,8 +15,8 @@ public class ToLabBeat : BaseMacroBeat
     {
         try
         {
-            ImageTarget.ToLab();
-            _Log.Info($"{ImageTarget.File.FullName} ToLab.");
+            ImageTarget.To24Bit();
+            _Log.Info($"{ImageTarget.File.FullName} To24Bit.");
             return true;
         }
         catch (Exception e)

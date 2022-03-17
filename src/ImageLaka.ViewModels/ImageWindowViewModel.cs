@@ -4,7 +4,7 @@ using System.Windows.Input;
 using ImageLaka.ImageEngine;
 using ImageLaka.ImageEngine.Enums;
 using ImageLaka.Services.Macros;
-using ImageLaka.Services.Macros.Commands;
+using ImageLaka.Services.Macros.Beats;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 

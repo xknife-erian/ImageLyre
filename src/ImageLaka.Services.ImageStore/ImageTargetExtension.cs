@@ -82,19 +82,54 @@ public static class ImageTargetExtension
     /// </summary>
     public static void To8Bit(this ImageTarget target)
     {
+        MagickImage magickImage = new MagickImage(target.File.FullName);
+        magickImage.Depth = 8;
+        using (var memStream = new MemoryStream())
+        {
+            magickImage.Write(memStream);
+            target.Bitmap = new Bitmap(memStream);
+        }
     }
 
     /// <summary>
-    /// 将目标图像转为16位灰度图
+    /// 将目标图像转为16位图
     /// </summary>
     public static void To16Bit(this ImageTarget target)
     {
+        MagickImage magickImage = new MagickImage(target.File.FullName);
+        magickImage.Depth = 16;
+        using (var memStream = new MemoryStream())
+        {
+            magickImage.Write(memStream);
+            target.Bitmap = new Bitmap(memStream);
+        }
     }
 
     /// <summary>
-    /// 将目标图像转为32位灰度图
+    /// 将目标图像转为24位图
+    /// </summary>
+    public static void To24Bit(this ImageTarget target)
+    {
+        MagickImage magickImage = new MagickImage(target.File.FullName);
+        magickImage.Depth = 24;
+        using (var memStream = new MemoryStream())
+        {
+            magickImage.Write(memStream);
+            target.Bitmap = new Bitmap(memStream);
+        }
+    }
+    
+    /// <summary>
+    /// 将目标图像转为32位图
     /// </summary>
     public static void To32Bit(this ImageTarget target)
     {
+        MagickImage magickImage = new MagickImage(target.File.FullName);
+        magickImage.Depth = 32;
+        using (var memStream = new MemoryStream())
+        {
+            magickImage.Write(memStream);
+            target.Bitmap = new Bitmap(memStream);
+        }
     }
 }

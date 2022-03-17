@@ -1,8 +1,6 @@
-﻿using ImageLaka;
-using ImageLaka.ImageEngine;
-using NLog;
+﻿using NLog;
 
-namespace ImageLaka.Services.Macros.Commands;
+namespace ImageLaka.Services.Macros.Beats;
 
 public class OpenBeat : BaseMacroBeat
 {

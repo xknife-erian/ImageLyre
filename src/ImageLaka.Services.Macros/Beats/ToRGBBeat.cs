@@ -1,13 +1,13 @@
 ﻿using ImageLaka.ImageEngine;
 using NLog;
 
-namespace ImageLaka.Services.Macros.Commands;
+namespace ImageLaka.Services.Macros.Beats;
 
-public class ToHSVBeat : BaseMacroBeat
+public class ToRGBBeat : BaseMacroBeat
 {
     private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
 
-    public ToHSVBeat(ITarget target) : base(target)
+    public ToRGBBeat(ITarget target) : base(target)
     {
     }
 
@@ -15,8 +15,8 @@ public class ToHSVBeat : BaseMacroBeat
     {
         try
         {
-            ImageTarget.ToHSV();
-            _Log.Info($"{ImageTarget.File.FullName} ToHSV.");
+            ImageTarget.ToRGB();
+            _Log.Info($"{ImageTarget.File.FullName} ToRGB.");
             return true;
         }
         catch (Exception e)
