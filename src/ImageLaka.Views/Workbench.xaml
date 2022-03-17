@@ -98,6 +98,9 @@
                         <f:MenuItem Header="CMYK 颜色" Style="{StaticResource MenuItemStyle}" 
                                     IsChecked="{Binding IsCMYK}"
                                     Command="{Binding ToCMYKCommand}"/>
+                        <f:MenuItem Header="HSV 颜色" Style="{StaticResource MenuItemStyle}" 
+                                    IsChecked="{Binding IsHSV}"
+                                    Command="{Binding ToHSVCommand}"/>
                         <f:MenuItem Header="Lab 颜色" Style="{StaticResource MenuItemStyle}"
                                     IsChecked="{Binding IsLab}"
                                     Command="{Binding ToLabCommand}"/>

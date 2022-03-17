@@ -53,6 +53,7 @@ public class WorkbenchViewModel : ObservableRecipient
 
     private bool _isGray;
     private bool _isRGB;
+    private bool _isHSV;
     private bool _isCMYK;
     private bool _isLab;
     private bool _is8Bit;
@@ -69,6 +70,12 @@ public class WorkbenchViewModel : ObservableRecipient
     {
         get => _isRGB;
         set => SetProperty(ref _isRGB, value);
+    }
+
+    public bool IsHSV
+    {
+        get => _isHSV;
+        set => SetProperty(ref _isHSV, value);
     }
 
     public bool IsCMYK
@@ -110,6 +117,7 @@ public class WorkbenchViewModel : ObservableRecipient
         var format = ImageUtil.GetImageFormat(vm.Bitmap);
         IsGray = false;
         IsRGB = false;
+        IsHSV = false;
         IsCMYK = false;
         IsLab = false;
         Is8Bit = false;
@@ -135,6 +143,9 @@ public class WorkbenchViewModel : ObservableRecipient
                 break;
             case ImageFormat.CMYK:
                 IsCMYK = true;
+                break;
+            case ImageFormat.HSV:
+                IsHSV = true;
                 break;
             case ImageFormat.Gray:
                 IsGray = true;
@@ -167,6 +178,13 @@ public class WorkbenchViewModel : ObservableRecipient
             UpdateImageFormat();
         }
     });
+    public ICommand ToHSVCommand => new RelayCommand(() => {
+        if (ActivatedImageViewModel != null)
+        {
+            ActivatedImageViewModel.ToHSV();
+            UpdateImageFormat();
+        }
+    }); 
     public ICommand ToCMYKCommand => new RelayCommand(() => {
         if (ActivatedImageViewModel != null)
         {

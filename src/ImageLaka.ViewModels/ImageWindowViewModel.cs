@@ -88,6 +88,16 @@ public class ImageWindowViewModel : ObservableRecipient
         PixelFormat = Bitmap.PixelFormat.ToString();
     }
 
+    public void ToHSV()
+    {
+        if (_imageTarget == null)
+            return;
+        var beat = new ToHSVBeat(_imageTarget);
+        _macro?.DoCurrent(beat);
+        Bitmap = _imageTarget.Bitmap;
+        PixelFormat = Bitmap.PixelFormat.ToString();
+    }
+
     public void ToLab()
     {
         if (_imageTarget == null)
@@ -154,6 +164,7 @@ public class ImageWindowViewModel : ObservableRecipient
     }
 
     #endregion
+
 
 
 }
