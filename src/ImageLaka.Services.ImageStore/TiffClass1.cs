@@ -8,7 +8,7 @@ using BitMiracle.LibTiff.Classic;
 
 namespace ImageLaka.ImageEngine
 {
-    internal class Class1
+    internal class TiffClass1
     {
         static void Main(string[] args)
         {

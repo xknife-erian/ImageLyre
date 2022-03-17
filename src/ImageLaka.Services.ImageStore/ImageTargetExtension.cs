@@ -1,4 +1,5 @@
-﻿using ImageLaka.ImageEngine.Enums;
+﻿using System.Drawing;
+using ImageLaka.ImageEngine.Enums;
 using ImageMagick;
 
 namespace ImageLaka.ImageEngine;
@@ -24,13 +25,10 @@ public static class ImageTargetExtension
     {
         MagickImage magickImage = new MagickImage(target.File.FullName);
         magickImage.ColorSpace = ColorSpace.CMYK;
-        //magickImage.TransformColorSpace(ColorProfile.AppleRGB);
         using (var memStream = new MemoryStream())
         {
-            // Write the image to the memorystream
             magickImage.Write(memStream);
-
-            target.Bitmap = new System.Drawing.Bitmap(memStream);
+            target.Bitmap = new Bitmap(memStream);
         }
     }
     /// <summary>

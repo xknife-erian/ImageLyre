@@ -79,6 +79,7 @@ public class BitmapToImageSourceConverter : IMultiValueConverter
                 format = PixelFormats.Bgra32;
                 break;
             default:
+                format = PixelFormats.Cmyk32;
                 return new WriteableBitmap(bmp.Width, bmp.Height, 0, 0, format, null);
         }
 
