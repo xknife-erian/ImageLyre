@@ -1,9 +1,8 @@
-using System.IO;
 using FluentAssertions;
 using ImageLaka.ViewModels;
 using Xunit;
 
-namespace UTest.UITest
+namespace UTest.ViewModelsTest
 {
     public class ImageWindowViewModelUnitTest
     {

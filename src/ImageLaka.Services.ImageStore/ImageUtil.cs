@@ -7,13 +7,30 @@ using ImageFormat = ImageLaka.ImageEngine.Enums.ImageFormat;
 
 namespace ImageLaka.ImageEngine;
 
-public class ImageUtil
+public static class ImageUtil
 {
     public static Bitmap Read(string path)
     {
-        if (File.Exists(path)) return new Bitmap(path);
+        if (File.Exists(path)) 
+            return new Bitmap(path);
 
         return new Bitmap(100, 100);
+    }
+
+    /// <summary>
+    /// 判断一个图像是否是CMYK颜色模式
+    /// </summary>
+    /// <param name="image">指定的图像</param>
+    public static bool IsCMYK(this Image image)
+    {
+        var flags = (ImageFlags)image.Flags;
+        if (flags.HasFlag(ImageFlags.ColorSpaceCmyk) || flags.HasFlag(ImageFlags.ColorSpaceYcck))
+        {
+            return true;
+        }
+
+        const int pixelFormat32BppCMYK = 15 | (32 << 8);
+        return (int)image.PixelFormat == pixelFormat32BppCMYK;
     }
 
     /// <summary>
