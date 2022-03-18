@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ImageLaka.Controls\ImageLaka.Controls.csproj" />
     <ProjectReference Include="..\ImageLaka.ViewModels\ImageLaka.ViewModels.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using ImageLaka.ImageEngine.Enums;
@@ -259,7 +260,7 @@ public static class ImageUtil
     /// </summary>
     /// <param name="bmp">指定的图像</param>
     /// <returns>灰度直方图数据数组</returns>
-    public static int[] GetHisogram(Bitmap bmp)
+    public static int[] GetHistogram(Bitmap bmp)
     {
         var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
         BitmapData data = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);//PixelFormat.Format24bppRgb);
