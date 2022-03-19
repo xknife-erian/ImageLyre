@@ -35,23 +35,23 @@ public partial class Workbench
         var left = _optionManager.HabitData.GetValue($"{nameof(Workbench)}.{nameof(Left)}", 100);
         Left = int.Parse(left);
 
-        SizeChanged += (s, e) =>
-        {
-            var width = (int) e.NewSize.Width;
-            var height = (int) e.NewSize.Height;
-            vm.SelfRectangle = new Rectangle((int) Left, (int) Top, width, height);
-        };
-        Loaded += delegate
+        Loaded += (s, e) =>
         {
             vm.PropertyChanged += ViewModelPropertyChanged;
+            vm.SelfRectangle = new Rectangle((int)Left, (int)Top, (int)Width, (int)Height);
         };
-        LocationChanged += delegate
+        LocationChanged += (s, e) =>
         {
             _optionManager.HabitData.SetValue($"{nameof(Workbench)}.{nameof(Top)}", Top);
             _optionManager.HabitData.SetValue($"{nameof(Workbench)}.{nameof(Left)}", Left);
             vm.SelfRectangle = new Rectangle((int)Left, (int)Top, (int)Width, (int)Height);
         };
-
+        SizeChanged += (s, e) =>
+        {
+            var width = (int)e.NewSize.Width;
+            var height = (int)e.NewSize.Height;
+            vm.SelfRectangle = new Rectangle((int)Left, (int)Top, width, height);
+        };
         _Ribbon_.SelectedTabIndex = 0;
     }
 

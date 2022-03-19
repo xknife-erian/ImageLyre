@@ -12,6 +12,8 @@ using ImageLad.Base.IoC;
 using ImageLad.Managers;
 using ImageLad.Views;
 using ImageLad.Base;
+using ImageLad.ViewModels;
+using ImageLad.Views.Utils;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using NLog;
 
@@ -22,7 +24,7 @@ namespace ImageLad
     /// </summary>
     public partial class App : Application
     {
-        private static readonly ILogger Log = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
 
         public App()
         {
@@ -33,6 +35,8 @@ namespace ImageLad
                 return;
             president.OptionManager.Initialize();
             president.ConsoleManager.Initianize();
+            DispatcherHelper.Initialize();
+            LoggerWindowViewModel.SetDispatcher(DispatcherHelper.CheckBeginInvokeOnUI);
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -41,7 +45,7 @@ namespace ImageLad
             if (IsStartFromCommandLine(e))
             {
                 var args = e.Args;//这是命令行参数。 TODO:命令行模式待开发。laka, 2022/3/7。
-                Log.Info(args);
+                _Log.Info(args);
             }
             else
             {
@@ -51,17 +55,17 @@ namespace ImageLad
                     var shell = Ioc.Default.GetService<Workbench>();
                     if (shell == null)
                         return;
-                    Log.Info("beginning...");
+                    _Log.Info("beginning...");
                     shell.Loaded += async (_, _) =>
                     {
                         await Task.Delay(12 * 100);
                         logo.Close();
-                        Log.Trace("关闭欢迎窗体。");
+                        _Log.Trace("关闭欢迎窗体。");
                     };
                     shell.Closing += OnWorkbenchClosing;
                     shell.Closed += OnWorkbenchClosed;
                     shell.Show();
-                    Log.Info("主窗体显示成功。");
+                    _Log.Info("主窗体显示成功。");
                 };
                 logo.Show();
             }
@@ -79,12 +83,12 @@ namespace ImageLad
 
         private void OnWorkbenchClosing(object? sender, CancelEventArgs e)
         {
-            Log.Info("OnWorkbenchClosing...");
+            _Log.Info("OnWorkbenchClosing...");
         }
 
         private void OnWorkbenchClosed(object? sender, EventArgs e)
         {
-            Log.Info("OnWorkbenchClosed.");
+            _Log.Info("OnWorkbenchClosed.");
             Environment.Exit(0);
         }
 

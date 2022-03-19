@@ -17,7 +17,9 @@ public class WorkbenchViewModel : ObservableRecipient
     private readonly Func<ImageWindowViewModel> _imageVmFactory;
     private readonly LoggerWindowViewModel _loggerVm;
 
-    public WorkbenchViewModel(IDialogService dialogService, Func<ImageWindowViewModel> imageVmFactory,
+    public WorkbenchViewModel(
+        IDialogService dialogService, 
+        Func<ImageWindowViewModel> imageVmFactory,
         LoggerWindowViewModel loggerVm)
     {
         _dialogService = dialogService;
@@ -181,6 +183,9 @@ public class WorkbenchViewModel : ObservableRecipient
 
     public ICommand NewImageFileCommand => new RelayCommand(NewImageFile);
     public ICommand OpenImageFileCommand => new RelayCommand(OpenImageFile);
+
+    #region 菜单：图像>模式
+
     public ICommand ToGrayCommand => new RelayCommand(() => {
         if (ActivatedImageViewModel != null)
         {
@@ -201,7 +206,7 @@ public class WorkbenchViewModel : ObservableRecipient
             ActivatedImageViewModel.ToHSV();
             UpdateImageFormat();
         }
-    }); 
+    });
     public ICommand ToCMYKCommand => new RelayCommand(() => {
         if (ActivatedImageViewModel != null)
         {
@@ -229,13 +234,19 @@ public class WorkbenchViewModel : ObservableRecipient
     public ICommand To16BitCommand => new RelayCommand(() =>
     {
         if (ActivatedImageViewModel != null)
+        {
             ActivatedImageViewModel.To16Bit();
+            UpdateImageFormat();
+        }
     });
 
     public ICommand To24BitCommand => new RelayCommand(() =>
     {
         if (ActivatedImageViewModel != null)
+        {
             ActivatedImageViewModel.To24Bit();
+            UpdateImageFormat();
+        }
     });
 
     public ICommand To32BitCommand => new RelayCommand(() =>
@@ -246,6 +257,8 @@ public class WorkbenchViewModel : ObservableRecipient
             UpdateImageFormat();
         }
     });
+
+    #endregion
 
     public ICommand SwitchLanguageCommand => new RelayCommand(SwitchLanguage);
     public ICommand ViewAppLogCommand => new RelayCommand(ViewAppLog);
@@ -282,7 +295,7 @@ public class WorkbenchViewModel : ObservableRecipient
                     vm = _imageVmFactory.Invoke();
                     ImageVmMap.Add(file, vm);
                     vm.Read(file);
-                    vm.SetStartLocation(ComputeLocation());
+                    vm.SetStartLocation(ComputeImageDialogLocation());
                     vm.WindowIsActivated += (s, e) =>
                     {
                         var ivm = s as ImageWindowViewModel;
@@ -299,7 +312,7 @@ public class WorkbenchViewModel : ObservableRecipient
         }
     }
 
-    private Point ComputeLocation()
+    private Point ComputeImageDialogLocation()
     {
         var x = SelfRectangle.Top + SelfRectangle.Height + ImageVmMap.Count * 20;
         var y = SelfRectangle.Left + ImageVmMap.Count * 20;
@@ -312,8 +325,16 @@ public class WorkbenchViewModel : ObservableRecipient
 
     private void ViewAppLog()
     {
+        _loggerVm.SetStartLocation(ComputeLoggerDialogLocation());
         _dialogService.Show(this, _loggerVm);
         _Log.Info("显示日志窗体完成.");
+    }
+
+    private Point ComputeLoggerDialogLocation()
+    {
+        var x = SelfRectangle.Left + SelfRectangle.Width + 3;
+        var y = SelfRectangle.Top;
+        return new Point(x, y);
     }
 
     #endregion

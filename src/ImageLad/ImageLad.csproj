@@ -5,11 +5,11 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>imagelaka.ico</ApplicationIcon>
+    <ApplicationIcon>imagelad.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="imagelaka.ico" />
+    <Content Include="imagelad.ico" />
   </ItemGroup>
 
   <ItemGroup>
