@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FluentAssertions;
-using ImageLaka;
-using ImageLaka.Services.Macros;
+using ImageLad;
+using ImageLad.Services.Macros;
 using UTest.ServicesTest.Macros.Demos;
 using Xunit;
 

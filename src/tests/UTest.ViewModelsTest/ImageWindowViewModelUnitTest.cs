@@ -1,5 +1,5 @@
 using FluentAssertions;
-using ImageLaka.ViewModels;
+using ImageLad.ViewModels;
 using Xunit;
 
 namespace UTest.ViewModelsTest

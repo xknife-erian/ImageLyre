@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 using FluentAssertions;
-using ImageLaka.Views.Utils;
+using ImageLad.Views.Utils;
 using Xunit;
 using ImagingPixelFormat = System.Drawing.Imaging.PixelFormat;
 using MediaPixelFormat = System.Windows.Media.PixelFormat;

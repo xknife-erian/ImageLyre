@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ImageLaka.ImageEngine;
-using ImageLaka.Services.Macros;
+using ImageLad.ImageEngine;
+using ImageLad.Services.Macros;
 
 namespace UTest.ServicesTest.Macros.Demos
 {

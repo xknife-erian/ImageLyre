@@ -1,5 +1,5 @@
-﻿using ImageLaka;
-using ImageLaka.Services.Macros;
+﻿using ImageLad;
+using ImageLad.Services.Macros;
 
 namespace UTest.ServicesTest.Macros.Demos;
 

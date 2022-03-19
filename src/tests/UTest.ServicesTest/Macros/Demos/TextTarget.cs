@@ -1,4 +1,4 @@
-﻿using ImageLaka;
+﻿using ImageLad;
 
 namespace UTest.ServicesTest.Macros.Demos;
 

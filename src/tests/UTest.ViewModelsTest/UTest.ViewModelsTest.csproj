@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="FluentAssertions" Version="6.5.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -22,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ImageLaka.ViewModels\ImageLaka.ViewModels.csproj" />
+    <ProjectReference Include="..\..\ImageLad.ViewModels\ImageLad.ViewModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,19 @@
+﻿<Window x:Class="ImageLad.Views.Views.LoggerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageLad.Views.Views"
+        xmlns:wpf="clr-namespace:NKnife.NLog.WPF;assembly=NKnife.NLog.WPF"
+        mc:Ignorable="d"
+        Title="{Binding ViewCount}" Height="450" Width="800"
+        d:DataContext="LoggerWindowViewModel">
+    <Grid>
+        <wpf:NLogViewer TimeHeader="时间"
+                        LevelHeader="等级"
+                        MessageHeader="日志"
+                        LoggerNameHeader="发生"
+                        ExceptionHeader="异常"
+                        ExceptionWidth="0" />
+    </Grid>
+</Window>

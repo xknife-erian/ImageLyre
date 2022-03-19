@@ -9,13 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ImageLaka.Controls\ImageLaka.Controls.csproj" />
-    <ProjectReference Include="..\..\ImageLaka.Services.ImageStore\ImageLaka.ImageEngine.csproj" />
-    <ProjectReference Include="..\..\ImageLaka.Views\ImageLaka.Views.csproj" />
+    <ProjectReference Include="..\..\ImageLad.Controls\ImageLad.Controls.csproj" />
+    <ProjectReference Include="..\..\ImageLad.Views\ImageLad.Views.csproj" />
   </ItemGroup>
 
   <ItemGroup>

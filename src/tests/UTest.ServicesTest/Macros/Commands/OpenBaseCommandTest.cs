@@ -1,6 +1,6 @@
 using FluentAssertions;
-using ImageLaka;
-using ImageLaka.Services.Macros.Beats;
+using ImageLad;
+using ImageLad.Services.Macros.Beats;
 using Xunit;
 
 namespace UTest.ServicesTest.Macros.Commands

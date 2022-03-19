@@ -1,0 +1,27 @@
+﻿<Window x:Class="ImageLad.Logo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="Logo" Height="180" Width="480" 
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ResizeMode="NoResize" Topmost="True">
+    <Border CornerRadius="30,30,30,30" Background="CornflowerBlue">
+        <Grid>
+            <TextBlock Height="Auto" Width="Auto" 
+                       HorizontalAlignment="Center" VerticalAlignment="Center" 
+                       FontFamily="Times New Roman" FontSize="70" Foreground="#FFFBF7F7" 
+                       Text="ImageLaka">
+                <TextBlock.Effect>
+                    <DropShadowEffect
+                        ShadowDepth="4"
+                        Direction="330"
+                        Color="Black"
+                        Opacity="0.6"
+                        BlurRadius="8" RenderingBias="Quality"/>
+                </TextBlock.Effect>
+            </TextBlock>
+        </Grid>
+    </Border>
+</Window>
