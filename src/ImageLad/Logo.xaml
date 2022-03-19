@@ -12,7 +12,7 @@
             <TextBlock Height="Auto" Width="Auto" 
                        HorizontalAlignment="Center" VerticalAlignment="Center" 
                        FontFamily="Times New Roman" FontSize="70" Foreground="#FFFBF7F7" 
-                       Text="ImageLaka">
+                       Text="ImageLad" FontStyle="Normal" FontStretch="Normal" LineStackingStrategy="MaxHeight" TextTrimming="None">
                 <TextBlock.Effect>
                     <DropShadowEffect
                         ShadowDepth="4"

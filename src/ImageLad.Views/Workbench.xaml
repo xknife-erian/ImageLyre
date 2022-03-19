@@ -9,8 +9,8 @@
                 xmlns:vm="clr-namespace:ImageLad.ViewModels;assembly=ImageLad.ViewModels"
                 xmlns:converters="clr-namespace:ImageLad.Views.Converters"
                 mc:Ignorable="d"
-                Title="ImageLaka" Height="250" Width="800"
-                Icon="/ImageLaka.Views;component/Assets/Images/imagelaka.png"
+                Title="ImageLad" Height="250" Width="800"
+                Icon="/ImageLad.Views;component/Assets/Images/imagelad.png"
                 DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
                 d:DataContext="{d:DesignInstance {x:Type vm:WorkbenchViewModel}}">
     <f:RibbonWindow.Resources>
@@ -23,7 +23,7 @@
                                     HorizontalAlignment="Center">
                             <TextBlock Text="{TemplateBinding Header}"
                                        Margin="0,15,0,0"
-                                       FontFamily="pack://application:,,,/ImageLaka.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
+                                       FontFamily="pack://application:,,,/ImageLad.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
                                        Foreground="SlateGray"
                                        FontSize="26"
                                        VerticalAlignment="Center"
@@ -88,7 +88,7 @@
                 <f:RibbonGroupBox Header="模式">
                     <f:DropDownButton Header="&#xf1c5;"
                                       Padding="0,-15,0,0"
-                                      FontFamily="pack://application:,,,/ImageLaka.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
+                                      FontFamily="pack://application:,,,/ImageLad.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
                                       Foreground="SlateGray"
                                       FontSize="26">
                         <f:MenuItem Header="灰度" Style="{StaticResource MenuItemStyle}"
@@ -124,7 +124,7 @@
                 <f:RibbonGroupBox Header="旋转">
                     <f:DropDownButton Header="&#xf079;"
                                       Padding="0,-15,0,0"
-                                      FontFamily="pack://application:,,,/ImageLaka.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
+                                      FontFamily="pack://application:,,,/ImageLad.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
                                       Foreground="SlateGray"
                                       FontSize="26">
                         <f:MenuItem Header="180°" Style="{StaticResource MenuItemStyle}" />
@@ -141,7 +141,7 @@
                 <f:RibbonGroupBox Header="调整">
                     <f:DropDownButton Header="&#xf0e3;"
                                       Padding="0,-15,0,0"
-                                      FontFamily="pack://application:,,,/ImageLaka.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
+                                      FontFamily="pack://application:,,,/ImageLad.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
                                       Foreground="SlateGray"
                                       FontSize="26">
                         <f:MenuItem Header="亮度/对比度" Style="{StaticResource MenuItemStyle}" />
