@@ -13,9 +13,11 @@ namespace ImageLad.ViewModels;
 public class WorkbenchViewModel : ObservableRecipient
 {
     private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
+
     private readonly IDialogService _dialogService;
     private readonly Func<ImageWindowViewModel> _imageVmFactory;
     private readonly LoggerWindowViewModel _loggerVm;
+    private readonly Dictionary<string, ImageWindowViewModel> _imageVmMap = new();
 
     public WorkbenchViewModel(
         IDialogService dialogService, 
@@ -26,8 +28,6 @@ public class WorkbenchViewModel : ObservableRecipient
         _imageVmFactory = imageVmFactory;
         _loggerVm = loggerVm;
     }
-
-    public Dictionary<string, ImageWindowViewModel> ImageVmMap { get; } = new();
 
     #region 属性
 
@@ -286,14 +286,14 @@ public class WorkbenchViewModel : ObservableRecipient
             foreach (var file in files)
             {
                 ImageWindowViewModel vm;
-                if (ImageVmMap.ContainsKey(file))
+                if (_imageVmMap.ContainsKey(file))
                 {
-                    vm = ImageVmMap[file];
+                    vm = _imageVmMap[file];
                 }
                 else
                 {
                     vm = _imageVmFactory.Invoke();
-                    ImageVmMap.Add(file, vm);
+                    _imageVmMap.Add(file, vm);
                     vm.Read(file);
                     vm.SetStartLocation(ComputeImageDialogLocation());
                     vm.WindowIsActivated += (s, e) =>
@@ -314,8 +314,8 @@ public class WorkbenchViewModel : ObservableRecipient
 
     private Point ComputeImageDialogLocation()
     {
-        var x = SelfRectangle.Top + SelfRectangle.Height + ImageVmMap.Count * 20;
-        var y = SelfRectangle.Left + ImageVmMap.Count * 20;
+        var x = SelfRectangle.Top + SelfRectangle.Height + _imageVmMap.Count * 20;
+        var y = SelfRectangle.Left + (_imageVmMap.Count - 1) * 20;
         return new Point(x, y);
     }
 

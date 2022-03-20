@@ -1,7 +1,11 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using ImageLad.ViewModels;
 using ImageLad.Views.Utils;
+using NLog;
 
 namespace ImageLad.Views.Views;
 
@@ -48,7 +52,7 @@ public partial class LoggerWindow : Window
         _TimeColumn_.Width = 98;
         _LevelColumn_.Width = 48;
         _NameColumn_.Width = 96;
-        var newWidth = w - _TimeColumn_.Width - _LevelColumn_.Width - _ExColumn_.Width - _NameColumn_.Width - 40;
+        var newWidth = w - _TimeColumn_.Width - _LevelColumn_.Width - _ExColumn_.Width - _NameColumn_.Width - 45;
         if (newWidth > 0)
             _MsgColumn_.Width = newWidth;
     }

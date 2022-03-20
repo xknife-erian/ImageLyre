@@ -9,13 +9,13 @@ namespace ImageLad;
 [Target(nameof(LoggerWindow))]
 public class NlogTarget : Target
 {
-    private readonly LoggerStack _loggerStack = LoggerStack.Instance;
+    private readonly LogStack _logStack = LogStack.Instance;
 
     protected override void Write(LogEventInfo logEvent)
     {
         try
         {
-            _loggerStack.AddLogInfo(logEvent);
+            _logStack.AddLog(logEvent);
         }
         catch (Exception e)
         {

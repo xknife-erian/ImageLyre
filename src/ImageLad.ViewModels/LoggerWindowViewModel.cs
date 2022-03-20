@@ -8,15 +8,14 @@ namespace ImageLad.ViewModels;
 
 public class LoggerWindowViewModel : ObservableRecipient
 {
-    private static Action<Action>? _dispatcherAction;
 
     public LoggerWindowViewModel()
     {
-        var loggerStack = LoggerStack.Instance;
-        loggerStack.LogAdded += LoggerStackOnLogAdded;
+        var logStack = LogStack.Instance;
+        Logs = logStack.Logs;
     }
 
-    public ObservableCollection<Log> Logs { get; set; } = new();
+    public ObservableCollection<Log> Logs { get; private set; }
 
     public Point Location { get; set; }
 
@@ -32,8 +31,6 @@ public class LoggerWindowViewModel : ObservableRecipient
 
     public int MaxRowCount { get; set; } = 50;
 
-    public bool AutoScrollToLast { get; set; } = true;
-
     public string TimeHeader { get; set; } = "Time";
 
     public string LoggerNameHeader { get; set; } = "Logger";
@@ -43,20 +40,6 @@ public class LoggerWindowViewModel : ObservableRecipient
     public string MessageHeader { get; set; } = "Message";
 
     public string ExceptionHeader { get; set; } = "Exception";
-
-    public static void SetDispatcher(Action<Action> checkBeginInvokeOnUi)
-    {
-        _dispatcherAction = checkBeginInvokeOnUi;
-    }
-
-    private void LoggerStackOnLogAdded(object? sender, EventArgs<Log[]> e)
-    {
-        _dispatcherAction?.Invoke(() =>
-        {
-            foreach (var log in e.Item)
-                Logs.Insert(0, log);
-        });
-    }
 
     public void SetStartLocation(Point location)
     {

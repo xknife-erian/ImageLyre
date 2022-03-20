@@ -13,6 +13,7 @@ using ImageLad.Managers;
 using ImageLad.Views;
 using ImageLad.Base;
 using ImageLad.ViewModels;
+using ImageLad.ViewModels.Utils.NLog;
 using ImageLad.Views.Utils;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using NLog;
@@ -36,7 +37,7 @@ namespace ImageLad
             president.OptionManager.Initialize();
             president.ConsoleManager.Initianize();
             DispatcherHelper.Initialize();
-            LoggerWindowViewModel.SetDispatcher(DispatcherHelper.CheckBeginInvokeOnUI);
+            LogStack.UIDispatcher = DispatcherHelper.CheckBeginInvokeOnUI;
         }
 
         protected override void OnStartup(StartupEventArgs e)
