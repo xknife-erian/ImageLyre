@@ -17,7 +17,7 @@ public partial class ImageWindow : Window
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        var vm = (ImageWindowViewModel) DataContext;
+        var vm = (ImageViewModel) DataContext;
         Top = vm.Top;
         Left = vm.Left;
         AdjustWindowSize(vm.Bitmap);

@@ -1,23 +1,20 @@
 ﻿using System.Collections.ObjectModel;
 using System.Drawing;
-using ImageLad.ViewModels.Utils.NLog;
+using ImageLad.NLog;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
-using NKnife.Events;
 
 namespace ImageLad.ViewModels;
 
-public class LoggerWindowViewModel : ObservableRecipient
+public class LoggerViewModel : ObservableRecipient
 {
-
-    public LoggerWindowViewModel()
+    public LoggerViewModel()
     {
         var logStack = LogStack.Instance;
         Logs = logStack.Logs;
     }
 
-    public ObservableCollection<Log> Logs { get; private set; }
+    public ObservableCollection<Log> Logs { get; }
 
-    public Point Location { get; set; }
 
     public double TimeWidth { get; set; } = 120;
 
@@ -31,15 +28,17 @@ public class LoggerWindowViewModel : ObservableRecipient
 
     public int MaxRowCount { get; set; } = 50;
 
-    public string TimeHeader { get; set; } = "Time";
+    public string TimeHeader { get; set; } = "时间";
 
-    public string LoggerNameHeader { get; set; } = "Logger";
+    public string LoggerNameHeader { get; set; } = "发生";
 
-    public string LevelHeader { get; set; } = "Level";
+    public string LevelHeader { get; set; } = "等级";
 
-    public string MessageHeader { get; set; } = "Message";
+    public string MessageHeader { get; set; } = "信息";
 
-    public string ExceptionHeader { get; set; } = "Exception";
+    public string ExceptionHeader { get; set; } = "异常";
+
+    public Point Location { get; private set; }
 
     public void SetStartLocation(Point location)
     {

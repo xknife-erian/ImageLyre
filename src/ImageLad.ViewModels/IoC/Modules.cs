@@ -6,9 +6,10 @@ namespace ImageLad.ViewModels.IoC
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<ImageViewModel>().AsSelf();
             builder.RegisterType<WorkbenchViewModel>().AsSelf().SingleInstance();
-            builder.RegisterType<ImageWindowViewModel>().AsSelf();
-            builder.RegisterType<LoggerWindowViewModel>().AsSelf().SingleInstance();
+            builder.RegisterType<LoggerViewModel>().AsSelf().SingleInstance();
+            builder.RegisterType<OptionViewModel>().AsSelf().SingleInstance();
         }
     }
 

@@ -10,7 +10,7 @@ using Microsoft.Toolkit.Mvvm.Input;
 
 namespace ImageLad.ViewModels;
 
-public class ImageWindowViewModel : ObservableRecipient
+public class ImageViewModel : ObservableRecipient
 {
     private Macro? _macro;
 
@@ -182,7 +182,7 @@ public class ImageWindowViewModel : ObservableRecipient
     public override bool Equals(object? obj)
     {
         if (obj == null) return false;
-        var vm = obj as ImageWindowViewModel;
+        var vm = obj as ImageViewModel;
         if (vm == null) return false;
         if(vm._imageTarget != null && vm._imageTarget.File.FullName.Equals(this._imageTarget?.File.FullName))
             return true;

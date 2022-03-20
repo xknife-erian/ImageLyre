@@ -4,18 +4,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:self="clr-namespace:ImageLad.Views.Views"
+        xmlns:vm="clr-namespace:ImageLad.ViewModels;assembly=ImageLad.ViewModels"
         mc:Ignorable="d"
         Title="{Binding Id}" Height="450" Width="800"
         Top="{Binding Location.Y}" Left="{Binding Location.X}"
-        d:DataContext="LoggerWindowViewModel">
+        d:DataContext="{d:DesignInstance {x:Type vm:LoggerViewModel}}">
     <Grid>
         <ListView ItemsSource="{Binding Logs}" Name="_LogView_">
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+                    <Setter Property="FontFamily" Value="Consolas" />
                     <Setter Property="Background" Value="{Binding Background}" />
                     <Setter Property="Foreground" Value="{Binding Foreground}" />
-                    <Setter Property="FontFamily" Value="Consolas" />
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Background" Value="LightYellow" />

@@ -15,18 +15,21 @@ public class WorkbenchViewModel : ObservableRecipient
     private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
 
     private readonly IDialogService _dialogService;
-    private readonly Func<ImageWindowViewModel> _imageVmFactory;
-    private readonly LoggerWindowViewModel _loggerVm;
-    private readonly Dictionary<string, ImageWindowViewModel> _imageVmMap = new();
+    private readonly Func<ImageViewModel> _imageVmFactory;
+    private readonly Dictionary<string, ImageViewModel> _imageVmMap = new();
+    private readonly LoggerViewModel _loggerVm;
+    private readonly OptionViewModel _optionVm;
 
     public WorkbenchViewModel(
         IDialogService dialogService, 
-        Func<ImageWindowViewModel> imageVmFactory,
-        LoggerWindowViewModel loggerVm)
+        Func<ImageViewModel> imageVmFactory,
+        LoggerViewModel loggerVm, 
+        OptionViewModel optionVm)
     {
         _dialogService = dialogService;
         _imageVmFactory = imageVmFactory;
         _loggerVm = loggerVm;
+        _optionVm = optionVm;
     }
 
     #region 属性
@@ -36,13 +39,13 @@ public class WorkbenchViewModel : ObservableRecipient
 
     #region 被绑定的属性
 
-    private ImageWindowViewModel? _activatedImageViewModel;
+    private ImageViewModel? _activatedImageViewModel;
     private Rectangle _selfRectangle;
 
     /// <summary>
     ///     激活的Image窗体ViewModel
     /// </summary>
-    public ImageWindowViewModel? ActivatedImageViewModel
+    public ImageViewModel? ActivatedImageViewModel
     {
         get => _activatedImageViewModel;
         set => SetProperty(ref _activatedImageViewModel, value);
@@ -181,8 +184,14 @@ public class WorkbenchViewModel : ObservableRecipient
 
     #region 菜单功能命令
 
-    public ICommand NewImageFileCommand => new RelayCommand(NewImageFile);
+    public ICommand NewImageFileCommand => new RelayCommand(() => { });
     public ICommand OpenImageFileCommand => new RelayCommand(OpenImageFile);
+    public ICommand SetOptionCommand => new RelayCommand(() =>
+    {
+        _optionVm.SetStartLocation(ComputeRightLocation());
+        _dialogService.Show(this, _optionVm);
+        _Log.Info("显示选项窗体完成.");
+    });
 
     #region 菜单：图像>模式
 
@@ -260,12 +269,13 @@ public class WorkbenchViewModel : ObservableRecipient
 
     #endregion
 
-    public ICommand SwitchLanguageCommand => new RelayCommand(SwitchLanguage);
-    public ICommand ViewAppLogCommand => new RelayCommand(ViewAppLog);
-
-    private void NewImageFile()
+    public ICommand SwitchLanguageCommand => new RelayCommand(() => { });
+    public ICommand ViewAppLogCommand => new RelayCommand(() =>
     {
-    }
+        _loggerVm.SetStartLocation(ComputeRightLocation());
+        _dialogService.Show(this, _loggerVm);
+        _Log.Info("显示日志窗体完成.");
+    });
 
     private void OpenImageFile()
     {
@@ -285,7 +295,7 @@ public class WorkbenchViewModel : ObservableRecipient
             var files = settings.FileNames;
             foreach (var file in files)
             {
-                ImageWindowViewModel vm;
+                ImageViewModel vm;
                 if (_imageVmMap.ContainsKey(file))
                 {
                     vm = _imageVmMap[file];
@@ -295,10 +305,10 @@ public class WorkbenchViewModel : ObservableRecipient
                     vm = _imageVmFactory.Invoke();
                     _imageVmMap.Add(file, vm);
                     vm.Read(file);
-                    vm.SetStartLocation(ComputeImageDialogLocation());
+                    vm.SetStartLocation(ComputeBelowLocation(_imageVmMap.Count));
                     vm.WindowIsActivated += (s, e) =>
                     {
-                        var ivm = s as ImageWindowViewModel;
+                        var ivm = s as ImageViewModel;
                         if (!Equals(ActivatedImageViewModel, ivm))
                         {
                             ActivatedImageViewModel = ivm;
@@ -312,25 +322,20 @@ public class WorkbenchViewModel : ObservableRecipient
         }
     }
 
-    private Point ComputeImageDialogLocation()
+    /// <summary>
+    /// 计算出在下方显示时的坐标
+    /// </summary>
+    private Point ComputeBelowLocation(int count = 0)
     {
-        var x = SelfRectangle.Top + SelfRectangle.Height + _imageVmMap.Count * 20;
-        var y = SelfRectangle.Left + (_imageVmMap.Count - 1) * 20;
+        var x = SelfRectangle.Top + SelfRectangle.Height + count * 20;
+        var y = SelfRectangle.Left + (count - 1) * 20;
         return new Point(x, y);
     }
 
-    private void SwitchLanguage()
-    {
-    }
-
-    private void ViewAppLog()
-    {
-        _loggerVm.SetStartLocation(ComputeLoggerDialogLocation());
-        _dialogService.Show(this, _loggerVm);
-        _Log.Info("显示日志窗体完成.");
-    }
-
-    private Point ComputeLoggerDialogLocation()
+    /// <summary>
+    /// 计算出在右方显示时的坐标
+    /// </summary>
+    private Point ComputeRightLocation()
     {
         var x = SelfRectangle.Left + SelfRectangle.Width + 3;
         var y = SelfRectangle.Top;

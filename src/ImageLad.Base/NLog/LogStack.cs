@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using NLog;
 
-namespace ImageLad.ViewModels.Utils.NLog;
+namespace ImageLad.NLog;
 
 public sealed class LogStack
 {

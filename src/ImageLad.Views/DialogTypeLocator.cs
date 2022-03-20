@@ -4,21 +4,23 @@ using ImageLad.ViewModels;
 using ImageLad.Views.Views;
 using MvvmDialogs.DialogTypeLocators;
 
-namespace ImageLad.Views.Dialogs;
+namespace ImageLad.Views;
 
-public class DialogTypeLocator: IDialogTypeLocator
+public class DialogTypeLocator : IDialogTypeLocator
 {
     public Type Locate(INotifyPropertyChanged viewModel)
     {
         var vmName = viewModel.GetType().Name;
         switch (vmName)
         {
-            case nameof(ImageWindowViewModel):
+            case nameof(ImageViewModel):
                 return typeof(ImageWindow);
-            case nameof(LoggerWindowViewModel):
+            case nameof(LoggerViewModel):
                 return typeof(LoggerWindow);
+            case nameof(OptionViewModel):
+                return typeof(OptionWindow);
             default:
-                return null;
+                throw new NotImplementedException(vmName);
         }
     }
 }

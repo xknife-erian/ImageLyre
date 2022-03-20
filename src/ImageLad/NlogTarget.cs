@@ -1,5 +1,5 @@
 ﻿using System;
-using ImageLad.ViewModels.Utils.NLog;
+using ImageLad.NLog;
 using ImageLad.Views.Views;
 using NLog;
 using NLog.Targets;

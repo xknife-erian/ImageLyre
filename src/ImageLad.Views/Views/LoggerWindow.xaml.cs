@@ -25,7 +25,7 @@ public partial class LoggerWindow : Window
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        var vm = (LoggerWindowViewModel)DataContext;
+        var vm = (LoggerViewModel)DataContext;
         Top = vm.Location.Y;
         Left = vm.Location.X;
     }
