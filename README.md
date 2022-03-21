@@ -1,8 +1,8 @@
 ![Lad](https://images.pushsquare.com/62ef8dd81a36a/now-you-can-enjoy-arc-the-lad-in-your-native-tongue-as-was-originally-intended.large.jpg)
 # ImageLad
 
-> 但行好事，莫问前程。
-> 作者承诺本软件非商用完全免费，并全部开源。
+> - 但行好事，莫问前程。
+> - 作者承诺本软件非商用完全免费，并全部开源。
 
 ---
 
