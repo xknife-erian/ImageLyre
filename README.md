@@ -1,7 +1,14 @@
 ![Lad](https://images.pushsquare.com/62ef8dd81a36a/now-you-can-enjoy-arc-the-lad-in-your-native-tongue-as-was-originally-intended.large.jpg)
 # ImageLad
 
+> 但行好事，莫问前程
+
 ---
+
+　　ImageLad是一个正在研发的公共的图像处理软件，由Erian Lu在2022年春天启动研发工作，在当前的研发进展里，基本上完全参考[ImageJ](https://imagej.nih.gov/ij/)的功能布局，一是向经典致敬，二是让先期的一些用户更容易接受和迁移。
+　　ImageLad是一个开放结构的软件，支持用户自定义插件和宏。ImageLad实现了简单的IDE功能，用户可直接基于ImageLad进行图像处理。
+　　ImageLad能够显示，编辑，分析，处理，保存，打印8位，16位，32位的图片，支持TIFF, PNG, GIF, JPEG, BMP, DICOM, FITS等多种格式。ImageLad支持图像栈功能，即在一个窗口里以多线程的形式层叠多个图像并行处理。只要内存允许，ImageLad能打开任意多的图像进行处理。除了基本的图像操作，比如缩放，旋转，扭曲，平滑处理外，ImageLad还能进行图片的区域和像素统计，间距，角度计算，能创建柱状图和剖面图，进行傅里叶变换。
+
 ## 软件核心功能(图像处理基本功能）
 
 #### 第1阶段：
