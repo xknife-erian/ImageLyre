@@ -1,4 +1,4 @@
-![Lad](https://images.pushsquare.com/62ef8dd81a36a/now-you-can-enjoy-arc-the-lad-in-your-native-tongue-as-was-originally-intended.large.jpg)
+![Lad](https://www.kidsgen.com/short_stories/images/lenny.png)
 # ImageLad
 
 > 初心：但行好事，莫问前程。
