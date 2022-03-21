@@ -3,7 +3,8 @@
 namespace ImageLad.Services.Macros;
 
 /// <summary>
-/// 宏。宏是动作(命令<see cref="BaseMacroBeat"/>)的管理集合，以后对命令的直接操作。
+/// 宏。
+/// 宏是动作(命令<see cref="IMacroBeat"/>)的管理集合，以后对命令的直接操作。
 /// 宏不关心命令所操作的目标，宏只关心命令。
 /// </summary>
 public class Macro
