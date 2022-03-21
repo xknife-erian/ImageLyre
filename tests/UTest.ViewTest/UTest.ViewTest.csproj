@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ImageLad.Views\ImageLad.Views.csproj" />
+    <ProjectReference Include="..\..\src\ImageLad.Views\ImageLad.Views.csproj" />
   </ItemGroup>
 
 </Project>

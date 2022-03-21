@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ImageLad.Controls\ImageLad.Controls.csproj" />
-    <ProjectReference Include="..\..\ImageLad.Views\ImageLad.Views.csproj" />
+    <ProjectReference Include="..\..\src\ImageLad.Controls\ImageLad.Controls.csproj" />
+    <ProjectReference Include="..\..\src\ImageLad.Views\ImageLad.Views.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad", "ImageLad\ImageLad.csproj", "{B7394000-F600-4118-AA7E-F0DF8BABCCFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad", "src\ImageLad\ImageLad.csproj", "{B7394000-F600-4118-AA7E-F0DF8BABCCFC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{661B75C6-7367-4B61-B662-398AC704500B}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,15 +12,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Views", "ImageLad.Views\ImageLad.Views.csproj", "{922DC528-56DB-45BB-886C-6AEF34CFA512}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Views", "src\ImageLad.Views\ImageLad.Views.csproj", "{922DC528-56DB-45BB-886C-6AEF34CFA512}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.ViewModels", "ImageLad.ViewModels\ImageLad.ViewModels.csproj", "{2AC1D480-27FE-449C-81CF-D3F623CC491A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.ViewModels", "src\ImageLad.ViewModels\ImageLad.ViewModels.csproj", "{2AC1D480-27FE-449C-81CF-D3F623CC491A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.ImageEngine", "ImageLad.Services.ImageStore\ImageLad.ImageEngine.csproj", "{9B4BAB84-29A7-4230-BF12-4048E4FF20FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.ImageEngine", "src\ImageLad.Services.ImageStore\ImageLad.ImageEngine.csproj", "{9B4BAB84-29A7-4230-BF12-4048E4FF20FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Services.Macros", "ImageLad.Services.Macros\ImageLad.Services.Macros.csproj", "{CE539F9A-C1F2-4F45-8D20-18E5E74E34B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Services.Macros", "src\ImageLad.Services.Macros\ImageLad.Services.Macros.csproj", "{CE539F9A-C1F2-4F45-8D20-18E5E74E34B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Base", "ImageLad.Base\ImageLad.Base.csproj", "{8AAFD43C-4523-47E8-B5F5-EC435EDFEA73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Base", "src\ImageLad.Base\ImageLad.Base.csproj", "{8AAFD43C-4523-47E8-B5F5-EC435EDFEA73}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ServicesTest", "tests\UTest.ServicesTest\UTest.ServicesTest.csproj", "{C4E19516-2322-4240-87F5-55A7B50B36BB}"
 EndProject
@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ViewModelsTest", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ViewTest", "tests\UTest.ViewTest\UTest.ViewTest.csproj", "{36CF8FD0-25F3-4324-B471-FE59AA7A5AD5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Controls", "ImageLad.Controls\ImageLad.Controls.csproj", "{255F6EF6-2493-4334-BF34-D4876EF04A95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Controls", "src\ImageLad.Controls\ImageLad.Controls.csproj", "{255F6EF6-2493-4334-BF34-D4876EF04A95}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFTest", "tests\WPFTest\WPFTest.csproj", "{04D19F9E-16E6-4519-9624-76E9330F1602}"
 EndProject
