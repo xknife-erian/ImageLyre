@@ -35,7 +35,13 @@ namespace WPFTest
         {
             var file = _images[_currentImage];
             var bmp = new Bitmap(file);
-            HistogramDataArray = ImageUtil.GetHistogram(bmp);
+            var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            BitmapData data = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);//PixelFormat.Format24bppRgb);
+            // var bmpBytes = (byte[]) (data.Scan0);
+            // HistogramDataArray = Histogram.Run(bmpBytes);
+
+            bmp.UnlockBits(data);
+
             var fi = new FileInfo(file);
             CurrentFile = $"{fi.Name.ToUpper()}, {fi.Length / 1000}k";
             Image = CreateBitmapSourceFromBitmap(bmp);
