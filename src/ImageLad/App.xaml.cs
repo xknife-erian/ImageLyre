@@ -50,7 +50,7 @@ namespace ImageLad
             }
             else
             {
-                var logo = new Logo();
+                var logo = new Welcome();
                 logo.Loaded += (_, _) =>
                 {
                     var shell = Ioc.Default.GetService<Workbench>();

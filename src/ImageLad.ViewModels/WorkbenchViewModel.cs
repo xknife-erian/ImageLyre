@@ -16,20 +16,24 @@ public class WorkbenchViewModel : ObservableRecipient
 
     private readonly IDialogService _dialogService;
     private readonly Func<ImageViewModel> _imageVmFactory;
+    private readonly Func<ChartViewModel> _chartVmFactory;
     private readonly Dictionary<string, ImageViewModel> _imageVmMap = new();
     private readonly LoggerViewModel _loggerVm;
     private readonly OptionViewModel _optionVm;
 
     public WorkbenchViewModel(
         IDialogService dialogService, 
-        Func<ImageViewModel> imageVmFactory,
+        Func<ImageViewModel> imageVmFactory, 
+        Func<ChartViewModel> chartVmFactory,
         LoggerViewModel loggerVm, 
         OptionViewModel optionVm)
     {
         _dialogService = dialogService;
         _imageVmFactory = imageVmFactory;
+        _chartVmFactory = chartVmFactory;
         _loggerVm = loggerVm;
         _optionVm = optionVm;
+        _chartVmFactory = chartVmFactory;
     }
 
     #region 属性
@@ -269,7 +273,12 @@ public class WorkbenchViewModel : ObservableRecipient
 
     #endregion
 
-    public ICommand SwitchLanguageCommand => new RelayCommand(() => { });
+    public ICommand SwitchLanguageCommand => new RelayCommand(() =>
+    {
+        var vm = _chartVmFactory.Invoke();
+        vm.SetStartLocation(ComputeRightLocation());
+        _dialogService.Show(this, vm);
+    });
     public ICommand ViewAppLogCommand => new RelayCommand(() =>
     {
         _loggerVm.SetStartLocation(ComputeRightLocation());

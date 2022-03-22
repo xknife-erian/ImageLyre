@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ImageLad
 {
     /// <summary>
-    /// Interaction logic for Logo.xaml
+    /// Interaction logic for Welcome.xaml
     /// </summary>
-    public partial class Logo : Window
+    public partial class Welcome : Window
     {
-        public Logo()
+        public Welcome()
         {
             InitializeComponent();
         }
