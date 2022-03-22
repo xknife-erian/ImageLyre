@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathNet.Numerics.Statistics;
 
 namespace ImageLad.ImageEngine
 {
@@ -15,15 +16,44 @@ namespace ImageLad.ImageEngine
     public class Histogram
     {
         /// <summary>
+        /// 总像素数
+        /// </summary>
+        public int Count { get; set; }
+        /// <summary>
+        /// 均值
+        /// </summary>
+        public double Mean { get; set; }
+        /// <summary>
+        /// 标准偏差
+        /// </summary>
+        public double StdDev { get; set; }
+        /// <summary>
+        /// 最小值
+        /// </summary>
+        public int Min { get; set; }
+        /// <summary>
+        /// 最大值
+        /// </summary>
+        public int Max { get; set; }
+        /// <summary>
+        /// 模态灰度值
+        /// </summary>
+        public int Mode { get; set; }
+        /// <summary>
+        /// 图像灰度直方图数据
+        /// </summary>
+        public double[] Array { get; private set; } = new double[256];
+
+        /// <summary>
         /// 计算指定的图像灰度直方图
         /// </summary>
         /// <param name="bmp">指定的图像</param>
         /// <returns>灰度直方图数据数组</returns>
-        public static int[] Run(Bitmap bmp)
+        public static Histogram Compute(Bitmap bmp)
         {
+            var his = new Histogram();
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData data = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);//PixelFormat.Format24bppRgb);
-            int[] histogram = new int[256];
             unsafe
             {
                 byte* ptr = (byte*)data.Scan0;//每个像素的颜色数组
@@ -34,14 +64,25 @@ namespace ImageLad.ImageEngine
                     {
                         var mean = ptr[0] + ptr[1] + ptr[2];
                         mean /= 3;
-                        histogram[(int)mean]++;
+                        his.Array[mean]++;
                         ptr += 3;
                     }
                     ptr += remain;
                 }
             }
+
+            his.Count = data.Height * data.Width;
             bmp.UnlockBits(data);
-            return histogram;
+            his.StdDev = his.Array.StandardDeviation();
+            his.Mean = his.Array.Mean();
+            his.Max = (int) his.Array.Max();
+            his.Min = (int) his.Array.Min();
+            foreach (var d in his.Array)
+            {
+                his.Count += (int) d;
+            }
+
+            return his;
         }
 
         /// <summary>

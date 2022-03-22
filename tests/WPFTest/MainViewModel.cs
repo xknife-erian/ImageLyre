@@ -35,13 +35,8 @@ namespace WPFTest
         {
             var file = _images[_currentImage];
             var bmp = new Bitmap(file);
-            var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            BitmapData data = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);//PixelFormat.Format24bppRgb);
-            // var bmpBytes = (byte[]) (data.Scan0);
-            // HistogramDataArray = Histogram.Run(bmpBytes);
-
-            bmp.UnlockBits(data);
-
+            var histogram = Histogram.Compute(bmp);
+            HistogramDataArray = histogram.Array;
             var fi = new FileInfo(file);
             CurrentFile = $"{fi.Name.ToUpper()}, {fi.Length / 1000}k";
             Image = CreateBitmapSourceFromBitmap(bmp);
@@ -49,14 +44,14 @@ namespace WPFTest
 
         #region 为界面准备的可被绑定的属性
         
-        private int[] _histogramDataArray = new int[256];
+        private double[] _histogramDataArray = new double[256];
         private string _currentFile;
         private BitmapSource _image;
 
         /// <summary>
         /// 直方图数据
         /// </summary>
-        public int[] HistogramDataArray
+        public double[] HistogramDataArray
         {
             get => _histogramDataArray;
             set => SetProperty(ref _histogramDataArray, value);
