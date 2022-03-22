@@ -5,7 +5,7 @@ namespace ImageLad.Services.Importer
 {
     public static class Import
     {
-        [DllImport("TestDLL")]
-        public static extern int[] GetHistogram(float v1, float v2, float t);
+        [DllImport("Wrapper\\library.dll", EntryPoint = "sum")]
+        public static extern int sum(int v1, int v2);
     }
 }
