@@ -25,6 +25,7 @@ public sealed class HistogramControl : Canvas
         //为本控制定义一个唯一的绘图器
         _drawingVisual = new DrawingVisual();
         AddVisualChild(_drawingVisual);
+        
     }
 
     protected override int VisualChildrenCount => 1;

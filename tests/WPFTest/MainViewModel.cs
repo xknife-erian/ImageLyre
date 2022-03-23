@@ -35,7 +35,7 @@ namespace WPFTest
         {
             var file = _images[_currentImage];
             var bmp = new Bitmap(file);
-            var histogram = Histogram.Compute(bmp, GrayFormula.Weighted);
+            var histogram = Histogram.Compute(bmp, GrayFormula.Average);
             HistogramDataArray = histogram.Array;
             var fi = new FileInfo(file);
             Info = $"{fi.Name.ToUpper()}, {fi.Length / 1000}k, {histogram}";

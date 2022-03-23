@@ -51,7 +51,7 @@ namespace ImageLad.ImageEngine
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"Count:{Count}, Mean:{Math.Round(Mean, 3)}, StdDev:{Math.Round(StdDev, 3)}, Min:{Min}, Max:{Max}, Mode:{Mode}";
+            return $"Count: {Count}; Mean: {Math.Round(Mean, 3)}; StdDev: {Math.Round(StdDev, 3)}; Min: {Min}; Max: {Max}; Mode: {Mode};";
         }
 
         #endregion
@@ -60,6 +60,7 @@ namespace ImageLad.ImageEngine
         /// 计算指定的图像灰度直方图
         /// </summary>
         /// <param name="bmp">指定的图像</param>
+        /// <param name="gf">转换灰度的算法</param>
         /// <returns>灰度直方图数据数组</returns>
         public static Histogram Compute(Bitmap bmp, GrayFormula gf)
         {
@@ -82,7 +83,8 @@ namespace ImageLad.ImageEngine
                                 mean /= 3;
                                 break;
                             case GrayFormula.Weighted:
-                                mean = (int) (0.299 * ptr[0] + 0.587 * ptr[1] + 0.114 * ptr[2]);
+                                // gray = 0.299 ×  red + 0.587 ×  green + 0.114 ×  blue
+                                mean = (int) (0.114 * ptr[0] + 0.587 * ptr[1] + 0.299 * ptr[2]);
                                 break;
                         }
 
@@ -97,8 +99,23 @@ namespace ImageLad.ImageEngine
             bmp.UnlockBits(data);
             his.StdDev = his.Array.StandardDeviation();
             his.Mean = his.Array.Mean();
-            his.Max = (int) his.Array.Max();
-            his.Min = (int) his.Array.Min();
+            for (int i = 0; i < his.Array.Length; i++)
+            {
+                if (his.Array[i] != 0)
+                {
+                    his.Min = i;
+                    break;
+                }
+            }
+
+            for (int i = his.Array.Length - 1; i >= 0; i--)
+            {
+                if (his.Array[i] != 0)
+                {
+                    his.Max = i;
+                    break;
+                }
+            }
             foreach (var d in his.Array)
             {
                 his.Count += (int) d;
