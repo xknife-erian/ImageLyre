@@ -38,14 +38,14 @@ namespace WPFTest
             var histogram = Histogram.Compute(bmp);
             HistogramDataArray = histogram.Array;
             var fi = new FileInfo(file);
-            CurrentFile = $"{fi.Name.ToUpper()}, {fi.Length / 1000}k";
+            Info = $"{fi.Name.ToUpper()}, {fi.Length / 1000}k, {histogram}";
             Image = CreateBitmapSourceFromBitmap(bmp);
         }
 
         #region 为界面准备的可被绑定的属性
         
         private double[] _histogramDataArray = new double[256];
-        private string _currentFile;
+        private string _info;
         private BitmapSource _image;
 
         /// <summary>
@@ -57,10 +57,10 @@ namespace WPFTest
             set => SetProperty(ref _histogramDataArray, value);
         }
 
-        public string CurrentFile
+        public string Info
         {
-            get => _currentFile;
-            set => SetProperty(ref _currentFile, value);
+            get => _info;
+            set => SetProperty(ref _info, value);
         }
 
         public BitmapSource Image

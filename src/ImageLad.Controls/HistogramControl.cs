@@ -106,16 +106,16 @@ public sealed class HistogramControl : Canvas
     /// 直方图的数据源。
     /// </summary>
     [Category("数据源")]
-    public int[] DataSource
+    public double[] DataSource
     {
-        get => (int[]) GetValue(DataSourceProperty);
+        get => (double[]) GetValue(DataSourceProperty);
         set => SetValue(DataSourceProperty, value);
     }
 
     public static readonly DependencyProperty DataSourceProperty =
-        DependencyProperty.Register($"{nameof(DataSource)}", typeof(int[]), typeof(HistogramControl),
+        DependencyProperty.Register($"{nameof(DataSource)}", typeof(double[]), typeof(HistogramControl),
             new PropertyMetadata(
-                new int[256],
+                new double[256],
                 OnValueChanged,
                 OnBinding));
 

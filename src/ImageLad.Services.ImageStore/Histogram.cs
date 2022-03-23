@@ -44,6 +44,17 @@ namespace ImageLad.ImageEngine
         /// </summary>
         public double[] Array { get; private set; } = new double[256];
 
+        #region Overrides of Object
+
+        /// <summary>Returns a string that represents the current object.</summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return $"Count:{Count}, Mean:{Math.Round(Mean, 3)}, StdDev:{Math.Round(StdDev, 3)}, Min:{Min}, Max:{Max}, Mode:{Mode}";
+        }
+
+        #endregion
+
         /// <summary>
         /// 计算指定的图像灰度直方图
         /// </summary>

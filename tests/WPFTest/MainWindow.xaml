@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ctl="clr-namespace:ImageLad.Controls;assembly=ImageLad.Controls"
+        xmlns:wpfTest="clr-namespace:WPFTest"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        d:DataContext="MainViewModel"
+        d:DataContext="{d:DesignInstance {x:Type wpfTest:MainViewModel}}"
         Title="MainWindow" Height="600" Width="1200">
     <Grid>
         <TabControl Margin="10">
@@ -35,7 +36,7 @@
 
                     </StackPanel>
                     <StatusBar Grid.Row="2" Padding="0">
-                        <TextBlock Text="{Binding CurrentFile}"></TextBlock>
+                        <TextBlock Text="{Binding Info}"></TextBlock>
                     </StatusBar>
                 </Grid>
 
