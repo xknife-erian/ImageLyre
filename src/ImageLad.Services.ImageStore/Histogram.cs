@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Emgu.CV.StructuredLight;
 using MathNet.Numerics.Statistics;
 
 namespace ImageLad.ImageEngine
@@ -60,7 +61,7 @@ namespace ImageLad.ImageEngine
         /// </summary>
         /// <param name="bmp">指定的图像</param>
         /// <returns>灰度直方图数据数组</returns>
-        public static Histogram Compute(Bitmap bmp)
+        public static Histogram Compute(Bitmap bmp, GrayFormula gf)
         {
             var his = new Histogram();
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
@@ -73,8 +74,18 @@ namespace ImageLad.ImageEngine
                 {
                     for (int j = 0; j < data.Width; j++)
                     {
-                        var mean = ptr[0] + ptr[1] + ptr[2];
-                        mean /= 3;
+                        int mean = 0;
+                        switch (gf)
+                        {
+                            case GrayFormula.Average:
+                                mean = ptr[0] + ptr[1] + ptr[2];
+                                mean /= 3;
+                                break;
+                            case GrayFormula.Weighted:
+                                mean = (int) (0.299 * ptr[0] + 0.587 * ptr[1] + 0.114 * ptr[2]);
+                                break;
+                        }
+
                         his.Array[mean]++;
                         ptr += 3;
                     }
@@ -162,5 +173,10 @@ namespace ImageLad.ImageEngine
             }
             */
         }
+    }
+
+    public enum GrayFormula
+    {
+        Average, Weighted
     }
 }
