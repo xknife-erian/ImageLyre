@@ -25,6 +25,25 @@ namespace ImageLad.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(HistogramPanel), new FrameworkPropertyMetadata(typeof(HistogramPanel)));
         }
 
+        // /// <summary>
+        // /// 直方图的数据源。
+        // /// </summary>
+        // [Category("数据源")]
+        // public IEnumerable<ISeries> DataSource
+        // {
+        //     get => (IEnumerable<ISeries>)GetValue(DataSourceProperty);
+        //     set => SetValue(DataSourceProperty, value);
+        // }
+        //
+        // public static readonly DependencyProperty DataSourceProperty =
+        //     DependencyProperty.Register($"{nameof(DataSource)}", typeof(IEnumerable<ISeries>), typeof(HistogramPanel),
+        //         new PropertyMetadata(
+        //             null,
+        //             null,
+        //             null));
+
+
+        /*
         #region 依赖属性：数据源
 
         /// <summary>
@@ -69,5 +88,6 @@ namespace ImageLad.Controls
         }
 
         #endregion
+        */
     }
 }

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using ImageLad.Views.Utils;
 
 namespace ImageLad.Views.Converters
 {
@@ -24,7 +23,7 @@ namespace ImageLad.Views.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var fm = (PixelFormat) value;
-            return Util.TranslateBitmapFormat(fm);
+            return Utils.Util.TranslateBitmapFormat(fm);
         }
 
         /// <summary>Converts a value.</summary>

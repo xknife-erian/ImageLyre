@@ -1,9 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:ImageLad.Controls"
-    xmlns:wpf="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF">
-
+    xmlns:local="clr-namespace:ImageLad.Controls">
 
     <Style TargetType="{x:Type local:HistogramPanel}">
         <Setter Property="Template">
@@ -12,7 +10,7 @@
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <wpf:CartesianChart Series="{TemplateBinding DataSource}"/>
+
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

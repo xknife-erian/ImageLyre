@@ -9,6 +9,9 @@
         d:DataContext="{d:DesignInstance {x:Type wpfTest:MainViewModel}}"
         Title="MainWindow" Height="600" Width="1200">
     <Grid>
+        <Grid.Resources>
+        </Grid.Resources>
+
         <TabControl Margin="10">
             <TabItem Header="灰度直方图" Height="30">
                 <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
@@ -22,7 +25,6 @@
                             <ColumnDefinition ></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <ctl:HistogramPanel DataSource="{Binding HistogramDataArray}" ></ctl:HistogramPanel>
                         <!-- <ctl:HistogramControl Grid.Column="0" Margin="10" Background="#FFD5D5D5" -->
                         <!--                       DataSource="{Binding HistogramDataArray}" /> -->
                         <Border Grid.Column="1" Margin="10" BorderThickness="0.5" BorderBrush="Black">

@@ -3,13 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ImageLad.Views.Views"
-        xmlns:wpf="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         xmlns:vm="clr-namespace:ImageLad.ViewModels;assembly=ImageLad.ViewModels"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        xmlns:converters="clr-namespace:ImageLad.Views.Converters"
         mc:Ignorable="d"
         Title="ChartWindow" Height="400" Width="400"
         d:DataContext="{d:DesignInstance {x:Type vm:ChartViewModel}}">
     <Grid>
-        <wpf:CartesianChart Series="{Binding Series}"/>
+        <Grid.Resources>
+            <converters:DoubleArray2Model x:Key="Array2Series" />
+        </Grid.Resources>
+        <WpfPlot x:Name="_Plot_">
+        </WpfPlot>
     </Grid>
 </Window>
