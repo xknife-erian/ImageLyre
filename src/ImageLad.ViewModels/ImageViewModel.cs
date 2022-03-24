@@ -189,6 +189,13 @@ public class ImageViewModel : ObservableRecipient
         return false;
     }
 
+    /// <summary>Serves as the default hash function.</summary>
+    /// <returns>A hash code for the current object.</returns>
+    public override int GetHashCode()
+    {
+        return _imageTarget.File.FullName.GetHashCode() + _imageTarget.File.CreationTime.GetHashCode();
+    }
+
     #endregion
 
 

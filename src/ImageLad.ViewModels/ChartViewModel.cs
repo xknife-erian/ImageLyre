@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ImageLad.Utils;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace ImageLad.ViewModels
@@ -13,14 +14,12 @@ namespace ImageLad.ViewModels
     {
         public ChartViewModel()
         {
-            var count = 200;
+            var count = 256;
             var random = new Random((int) DateTime.Now.Ticks);
-            for (int i = 0; i < count; i++)
+            var src = DataGen.RandomNormal(random, count, 11, 55.45d, 100);
+            for (int i = 0; i < src.Length; i++)
             {
-                var a = random.Next(100, 150);
-                var b = random.Next(100, 10000);
-                var c = double.Parse($"{a}.{b}");
-                DataSource.Add(c);
+                DataSource.Add(src[i]);
             }
         }
 

@@ -5,11 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ctl="clr-namespace:ImageLad.Controls;assembly=ImageLad.Controls"
         xmlns:wpfTest="clr-namespace:WPFTest"
+        xmlns:converters="clr-namespace:ImageLad.Controls.Converters;assembly=ImageLad.Controls"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         d:DataContext="{d:DesignInstance {x:Type wpfTest:MainViewModel}}"
         Title="MainWindow" Height="600" Width="1200">
     <Grid>
         <Grid.Resources>
+            <converters:DoubleArray2Series x:Key="Array2Series"></converters:DoubleArray2Series>
         </Grid.Resources>
 
         <TabControl Margin="10">
@@ -25,8 +27,7 @@
                             <ColumnDefinition ></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <!-- <ctl:HistogramControl Grid.Column="0" Margin="10" Background="#FFD5D5D5" -->
-                        <!--                       DataSource="{Binding HistogramDataArray}" /> -->
+                        <ctl:HistogramPanel DataSource="{Binding HistogramDataArray, Converter={StaticResource Array2Series}}"></ctl:HistogramPanel>
                         <Border Grid.Column="1" Margin="10" BorderThickness="0.5" BorderBrush="Black">
                             <Image Source="{Binding Image}"></Image>
                         </Border>
