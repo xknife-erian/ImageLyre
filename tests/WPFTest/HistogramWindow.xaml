@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFTest"
+        xmlns:controls="clr-namespace:ImageLad.Controls;assembly=ImageLad.Controls"
         mc:Ignorable="d"
         Title="HistogramWindow" Height="450" Width="800">
     <Grid>
@@ -12,6 +13,6 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Button Grid.Row="0" Content="OK"></Button>
-        <local:HistogramWindow Grid.Row="1"></local:HistogramWindow>
+        <controls:HistogramBox Grid.Row="1" Max="9988"></controls:HistogramBox>
     </Grid>
 </Window>
