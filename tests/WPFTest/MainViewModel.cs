@@ -71,6 +71,13 @@ namespace WPFTest
 
         #endregion
 
+
+        public ICommand TestHistogramCommand => new RelayCommand(() =>
+        {
+            var hd = new HistogramWindow();
+            hd.ShowDialog();
+        });
+
         public ICommand OpenLastImageCommand => new RelayCommand(LastImage);
 
         public ICommand OpenNextImageCommand => new RelayCommand(NextImage);

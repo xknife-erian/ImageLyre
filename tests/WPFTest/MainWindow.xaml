@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ctl="clr-namespace:ImageLad.Controls;assembly=ImageLad.Controls"
-        xmlns:wpfTest="clr-namespace:WPFTest"
+        xmlns:local="clr-namespace:WPFTest"
         xmlns:converters="clr-namespace:ImageLad.Controls.Converters;assembly=ImageLad.Controls"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        d:DataContext="{d:DesignInstance {x:Type wpfTest:MainViewModel}}"
+        d:DataContext="{d:DesignInstance {x:Type local:MainViewModel}}"
         Title="MainWindow" Height="600" Width="1200">
     <Grid>
         <Grid.Resources>
@@ -24,10 +24,12 @@
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition ></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <ctl:HistogramPanel DataSource="{Binding HistogramDataArray, Converter={StaticResource Array2Series}}"></ctl:HistogramPanel>
+                        <ctl:HistogramBox Grid.Column="0" Max="512"
+                                          HistogramSeries="{Binding HistogramDataArray, Converter={StaticResource Array2Series}}" />
+                        <!-- <ctl:HistogramPanel DataSource="{Binding HistogramDataArray, Converter={StaticResource Array2Series}}"></ctl:HistogramPanel> -->
                         <Border Grid.Column="1" Margin="10" BorderThickness="0.5" BorderBrush="Black">
                             <Image Source="{Binding Image}"></Image>
                         </Border>
@@ -37,7 +39,8 @@
                                 Command="{Binding OpenLastImageCommand}"/>
                         <Button Height="30" Margin="5,0,5,7" Padding="20,0" Content="下一张" 
                                 Command="{Binding OpenNextImageCommand}"/>
-
+                        <Button Height="30" Margin="5,0,5,7" Padding="20,0" Content="Test" 
+                                Command="{Binding TestHistogramCommand}"/>
                     </StackPanel>
                     <StatusBar Grid.Row="2" Padding="0">
                         <TextBlock Text="{Binding Info}"></TextBlock>
