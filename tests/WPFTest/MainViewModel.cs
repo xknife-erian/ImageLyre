@@ -35,8 +35,8 @@ namespace WPFTest
         {
             var file = _images[_currentImage];
             var bmp = new Bitmap(file);
-            var histogram = Histogram.Compute(bmp, GrayFormula.Average);
-            HistogramDataArray = histogram.Array;
+            var histogram = GrayHistogram.Compute(bmp, GrayFormula.Average);
+            Histogram = histogram;
             var fi = new FileInfo(file);
             Info = $"{fi.Name.ToUpper()}, {fi.Length / 1000}k, {histogram}";
             Image = CreateBitmapSourceFromBitmap(bmp);
@@ -44,17 +44,17 @@ namespace WPFTest
 
         #region 为界面准备的可被绑定的属性
         
-        private double[] _histogramDataArray = new double[256];
+        private GrayHistogram _histogram;
         private string _info;
         private BitmapSource _image;
 
         /// <summary>
         /// 直方图数据
         /// </summary>
-        public double[] HistogramDataArray
+        public GrayHistogram Histogram
         {
-            get => _histogramDataArray;
-            set => SetProperty(ref _histogramDataArray, value);
+            get => _histogram;
+            set => SetProperty(ref _histogram, value);
         }
 
         public string Info
@@ -70,13 +70,6 @@ namespace WPFTest
         }
 
         #endregion
-
-
-        public ICommand TestHistogramCommand => new RelayCommand(() =>
-        {
-            var hd = new HistogramWindow();
-            hd.ShowDialog();
-        });
 
         public ICommand OpenLastImageCommand => new RelayCommand(LastImage);
 

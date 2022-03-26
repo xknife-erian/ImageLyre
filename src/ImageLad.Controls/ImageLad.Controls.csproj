@@ -7,15 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Page Remove="Themes\Generic.xaml" />
+    <Compile Remove="Themes\**" />
+    <EmbeddedResource Remove="Themes\**" />
+    <None Remove="Themes\**" />
+    <Page Remove="Themes\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-beta.101" />
+    <PackageReference Include="OxyPlot.Wpf" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Themes\" />
+    <ProjectReference Include="..\ImageLad.Base\ImageLad.Base.csproj" />
+    <ProjectReference Include="..\ImageLad.Services.ImageStore\ImageLad.ImageEngine.csproj" />
   </ItemGroup>
 
 </Project>

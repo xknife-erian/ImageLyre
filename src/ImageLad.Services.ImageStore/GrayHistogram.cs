@@ -11,10 +11,10 @@ using MathNet.Numerics.Statistics;
 namespace ImageLad.ImageEngine
 {
     /// <summary>
-    /// 图像直方图是一种反映图像色调分布的直方图，其绘制每个色调值的像素数。每个色调值的像素数也称为频率(frequency)。
+    /// 图像的灰度直方图是一种反映图像色调分布的直方图，其绘制每个色调值的像素数。每个色调值的像素数也称为频率(frequency)。
     /// https://juejin.cn/post/7059551594982932511
     /// </summary>
-    public class Histogram
+    public class GrayHistogram
     {
         /// <summary>
         /// 总像素数
@@ -62,9 +62,9 @@ namespace ImageLad.ImageEngine
         /// <param name="bmp">指定的图像</param>
         /// <param name="gf">转换灰度的算法</param>
         /// <returns>灰度直方图数据数组</returns>
-        public static Histogram Compute(Bitmap bmp, GrayFormula gf)
+        public static GrayHistogram Compute(Bitmap bmp, GrayFormula gf)
         {
-            var his = new Histogram();
+            var his = new GrayHistogram();
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData data = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);//PixelFormat.Format24bppRgb);
             unsafe
@@ -125,7 +125,7 @@ namespace ImageLad.ImageEngine
         }
 
         /// <summary>
-        /// 直方图均衡化 Histogram Equalization
+        /// 直方图均衡化 GrayHistogram Equalization
         /// 假如图像的灰度分布不均匀，其灰度分布集中在较窄的范围内，使图像的细节不够清晰，对比度较低。通常采用直方图均衡化及直方图规定化两种变换，使图像的灰度范围拉开或使灰度均匀分布，从而增大反差，使图像细节清晰，以达到增强的目的。
         /// 直方图均衡化，对图像进行非线性拉伸，重新分配图像的灰度值，使一定范围内图像的灰度值大致相等。这样，原来直方图中间的峰值部分对比度得到增强，而两侧的谷底部分对比度降低，输出图像的直方图是一个较为平坦的直方图。
         /// 
