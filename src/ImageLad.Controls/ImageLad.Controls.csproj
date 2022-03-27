@@ -22,4 +22,8 @@
     <ProjectReference Include="..\ImageLad.Services.ImageStore\ImageLad.ImageEngine.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Converters\" />
+  </ItemGroup>
+
 </Project>

@@ -28,7 +28,7 @@ namespace ImageLad.Controls
         public HistogramBox()
         {
             InitializeComponent();
-            Loaded += (s, e) => {_Plot_.InvalidatePlot(); };
+            Loaded += (s, e) => { _Plot_.InvalidatePlot(); };
         }
 
         /// <summary>
@@ -51,33 +51,39 @@ namespace ImageLad.Controls
         private static void HasData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var plot = ((HistogramBox) d)._Plot_;
-            var model = new PlotModel();
-
-            var linearAxis1 = new LinearAxis();
-            linearAxis1.Position = AxisPosition.Bottom;
-            linearAxis1.IsAxisVisible = false;
-            linearAxis1.MaximumPadding = 0;
-            linearAxis1.MinimumPadding = 0; 
-            model.Axes.Add(linearAxis1);
-
-            var linearAxis2 = new LinearAxis();
-            linearAxis2.Position = AxisPosition.Left;
-            linearAxis2.IsAxisVisible = false;
-            linearAxis2.MaximumPadding = 0;
-            linearAxis2.MinimumPadding = 0; 
-            model.Axes.Add(linearAxis2);
-
-            var series = new HistogramSeries();
-            series.FillColor = OxyColor.FromRgb(110, 130, 240);
-            model.Series.Add(series);
-
-            var items = (GrayHistogram)e.NewValue;
-            for (int i = 0; i < items.Array.Length; i++)
+            if (plot.Model == null)
             {
-                series.Items.Add(new HistogramItem(i, (double) i + 1, items.Array[i], (int) items.Array[i]));
+                var model = new PlotModel();
+
+                var linearAxis1 = new LinearAxis();
+                linearAxis1.Position = AxisPosition.Bottom;
+                linearAxis1.IsAxisVisible = false;
+                linearAxis1.MaximumPadding = 0;
+                linearAxis1.MinimumPadding = 0;
+                model.Axes.Add(linearAxis1);
+
+                var linearAxis2 = new LinearAxis();
+                linearAxis2.Position = AxisPosition.Left;
+                linearAxis2.IsAxisVisible = false;
+                linearAxis2.MaximumPadding = 0;
+                linearAxis2.MinimumPadding = 0;
+                model.Axes.Add(linearAxis2);
+
+                var series = new HistogramSeries();
+                series.FillColor = OxyColor.FromRgb(110, 130, 240);
+                model.Series.Add(series);
+
+                plot.Model = model;
             }
 
-            plot.Model = model;
+            var hs = (HistogramSeries) plot.Model.Series[0];
+            hs.Items.Clear();
+            var gh = (GrayHistogram) e.NewValue;
+            for (int i = 0; i < gh.Array.Length; i++)
+            {
+                hs.Items.Add(new HistogramItem(i, (double) i + 1, gh.Array[i], (int) gh.Array[i]));
+            }
+            plot.InvalidatePlot();
         }
     }
 }

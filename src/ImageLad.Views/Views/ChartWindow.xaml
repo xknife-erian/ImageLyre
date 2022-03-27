@@ -4,14 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:ImageLad.ViewModels;assembly=ImageLad.ViewModels"
-        xmlns:wpf="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        xmlns:oxy="http://oxyplot.org/wpf"
         mc:Ignorable="d"
         Title="ChartWindow" Height="400" Width="400"
         d:DataContext="{d:DesignInstance {x:Type vm:ChartViewModel}}">
     <Grid>
         <Grid.Resources>
         </Grid.Resources>
-        <wpf:CartesianChart>
-        </wpf:CartesianChart>
+        <oxy:PlotView></oxy:PlotView>
     </Grid>
 </Window>
