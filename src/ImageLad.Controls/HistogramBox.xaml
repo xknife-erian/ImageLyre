@@ -13,7 +13,7 @@
                 <RowDefinition Height="10"></RowDefinition>
                 <RowDefinition Height="40"></RowDefinition>
             </Grid.RowDefinitions>
-            <oxy:PlotView Grid.Row="0" x:Name="_Plot_"/>
+            <oxy:PlotView Grid.Row="0" x:Name="_Plot_" Margin="0"/>
             <Canvas Grid.Row="1">
                 <Canvas.Background>
                     <LinearGradientBrush>
