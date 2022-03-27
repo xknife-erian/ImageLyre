@@ -67,13 +67,14 @@ namespace ImageLad.Controls
             linearAxis2.MinimumPadding = 0; 
             model.Axes.Add(linearAxis2);
 
-            var series = new OxyPlot.Series.HistogramSeries();
+            var series = new HistogramSeries();
+            series.FillColor = OxyColor.FromRgb(110, 130, 240);
             model.Series.Add(series);
 
             var items = (GrayHistogram)e.NewValue;
             for (int i = 0; i < items.Array.Length; i++)
             {
-                series.Items.Add(new OxyPlot.Series.HistogramItem((double)i, (double)i+1, items.Array[i], (int)items.Array[i]));
+                series.Items.Add(new HistogramItem(i, (double) i + 1, items.Array[i], (int) items.Array[i]));
             }
 
             plot.Model = model;
