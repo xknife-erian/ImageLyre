@@ -5,9 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ctl="clr-namespace:ImageLad.Controls;assembly=ImageLad.Controls"
         xmlns:local="clr-namespace:WPFTest"
+        xmlns:converters="clr-namespace:ImageLad.Views.Converters;assembly=ImageLad.Views"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         d:DataContext="{d:DesignInstance {x:Type local:MainViewModel}}"
         Title="MainWindow" Height="600" Width="1200">
+    <Window.Resources>
+        <converters:BitmapToImageSourceConverter x:Key="BmpWriter" />
+    </Window.Resources>
     <Grid>
         <TabControl Margin="10">
             <TabItem Header="灰度直方图" Height="30">
@@ -25,7 +29,7 @@
                         <ctl:HistogramPanel Grid.Column="0" Margin="10" BorderThickness="0.5" BorderBrush="Black"
                                           GrayHistogramSeries="{Binding Histogram}" />
                         <Border Grid.Column="1" Margin="10" BorderThickness="0.5" BorderBrush="Black">
-                            <Image Source="{Binding Image}"></Image>
+                            <Image Source="{Binding Image, Converter={StaticResource BmpWriter}}"></Image>
                         </Border>
                     </Grid>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">

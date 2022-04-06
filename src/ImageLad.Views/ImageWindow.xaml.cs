@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows;
 using ImageLad.ViewModels;
+using SkiaSharp;
 
 namespace ImageLad.Views;
 
@@ -27,7 +28,7 @@ public partial class ImageWindow : Window
     /// 调整窗体大小
     /// </summary>
     /// <param name="bmp"></param>
-    private void AdjustWindowSize(Bitmap? bmp)
+    private void AdjustWindowSize(SKBitmap? bmp)
     {
         var bmpHeight = 0;
         if (bmp != null)

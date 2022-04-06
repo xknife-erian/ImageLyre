@@ -7,6 +7,7 @@ using ImageLad.Services.Macros.Beats;
 using ImageLad.ImageEngine.Enums;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using SkiaSharp;
 
 namespace ImageLad.ViewModels;
 
@@ -22,12 +23,11 @@ public class ImageViewModel : ObservableRecipient
     #region 界面属性
 
     private ImageTarget? _imageTarget;
-    private Bitmap? _bitmap;
-    private PixelFormat _pixelFormat;
+    private SKBitmap? _bitmap;
     private int _top;
     private int _left;
 
-    public Bitmap? Bitmap
+    public SKBitmap? Bitmap
     {
         get => _bitmap;
         set => SetProperty(ref _bitmap, value);
@@ -39,11 +39,11 @@ public class ImageViewModel : ObservableRecipient
         set => SetProperty(ref _imageTarget, value);
     }
 
-    public PixelFormat PixelFormat
-    {
-        get => _pixelFormat;
-        set => SetProperty(ref _pixelFormat, value);
-    }
+    // public PixelFormat PixelFormat
+    // {
+    //     get => _pixelFormat;
+    //     set => SetProperty(ref _pixelFormat, value);
+    // }
 
     public int Top
     {
@@ -72,7 +72,7 @@ public class ImageViewModel : ObservableRecipient
         var command = new OpenBeat(_imageTarget);
         _macro.DoCurrent(command);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        //PixelFormat = Bitmap.PixelFormat;
     }
     public void ToGray()
     {
@@ -81,7 +81,7 @@ public class ImageViewModel : ObservableRecipient
         var beat = new ToGrayBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        //PixelFormat = Bitmap.PixelFormat;
     }
 
     public void ToRGB()
@@ -91,7 +91,7 @@ public class ImageViewModel : ObservableRecipient
         var beat = new ToRGBBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        //PixelFormat = Bitmap.PixelFormat;
     }
 
     public void ToCMYK()
@@ -101,7 +101,7 @@ public class ImageViewModel : ObservableRecipient
         var beat = new ToCMYKBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        //PixelFormat = Bitmap.PixelFormat;
     }
 
     public void ToHSV()
@@ -111,7 +111,7 @@ public class ImageViewModel : ObservableRecipient
         var beat = new ToHSVBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        //PixelFormat = Bitmap.PixelFormat;
     }
 
     public void ToLab()
@@ -121,7 +121,7 @@ public class ImageViewModel : ObservableRecipient
         var beat = new ToLabBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        //PixelFormat = Bitmap.PixelFormat;
     }
 
     public void To8Bit()
@@ -131,7 +131,7 @@ public class ImageViewModel : ObservableRecipient
         var beat = new To8BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        //PixelFormat = Bitmap.PixelFormat;
     }
 
     public void To16Bit()
@@ -141,7 +141,7 @@ public class ImageViewModel : ObservableRecipient
         var beat = new To16BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        //PixelFormat = Bitmap.PixelFormat;
     }
 
     public void To24Bit()
@@ -151,7 +151,7 @@ public class ImageViewModel : ObservableRecipient
         var beat = new To24BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        //PixelFormat = Bitmap.PixelFormat;
     }
 
     public void To32Bit()
@@ -161,7 +161,7 @@ public class ImageViewModel : ObservableRecipient
         var beat = new To32BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        //PixelFormat = Bitmap.PixelFormat;
     }
 
     public ICommand WindowActivated => new RelayCommand(OnWindowActivated);

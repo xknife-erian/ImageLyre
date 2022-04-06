@@ -15,7 +15,7 @@ public class To16BitBeat : BaseMacroBeat
     {
         try
         {
-            ImageTarget.To16Bit();
+            //ImageTarget.To16Bit();
             _Log.Info($"{ImageTarget.File.FullName} To16Bit.");
             return true;
         }

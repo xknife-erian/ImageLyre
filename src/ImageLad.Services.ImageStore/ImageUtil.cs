@@ -7,6 +7,7 @@ namespace ImageLad.ImageEngine;
 
 public static class ImageUtil
 {
+    /*
     public static Bitmap Read(string path)
     {
         if (File.Exists(path)) 
@@ -120,7 +121,7 @@ public static class ImageUtil
                 return ImageLadFormat.Undefined;
         }
     }
-
+    */
     /// <summary>
     /// 更新图像到指定的对比度
     /// </summary>
@@ -201,7 +202,7 @@ public static class ImageUtil
         // }
 
     }
-
+    /*
     public static Bitmap? ImageFormatConverter(Bitmap? source, ImageLadFormat imageLadFormat, BitsPerPixel bpp)
     {
         if (source == null)
@@ -251,7 +252,6 @@ public static class ImageUtil
             }
         }
     }
-
     /// <summary>Generates a Bitmap from data on the range [0, 255]</summary>
     /// <param name="data">The data to use.</param>
     /// <returns>A Bitmap</returns>
@@ -279,6 +279,7 @@ public static class ImageUtil
     /// <summary>Generates a sample Bitmap.</summary>
     /// <returns>A sample Bitmap</returns>
     public static Bitmap SampleImage() => BitmapFrom2dArray(SampleImageData());
+        */
 
     /// <summary>Returns a sample 2D array of grayscale values.</summary>
     /// <returns>2D array of grayscale values.</returns>

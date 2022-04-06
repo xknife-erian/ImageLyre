@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using SkiaSharp;
 
 namespace ImageLad.ImageEngine;
 
@@ -13,7 +14,7 @@ public class ImageTarget : ITarget
     }
 
     public FileInfo File { get; private set; }
-    public Bitmap Bitmap { get; set; }
+    public SKBitmap Bitmap { get; set; }
 
     #region Implementation of ITarget
 
@@ -22,7 +23,7 @@ public class ImageTarget : ITarget
     /// </summary>
     public void Open()
     {
-        Bitmap = ImageUtil.Read(File.FullName);
+        Bitmap = SKBitmap.Decode(File.Open(FileMode.Open));
     }
 
     /// <summary>

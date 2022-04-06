@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
+using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.Statistics;
+using SkiaSharp;
 
-namespace ImageLad.ImageEngine
+namespace ImageLad.ImageEngine.Analyze
 {
     /// <summary>
     /// 图像的灰度直方图是一种反映图像色调分布的直方图，其绘制每个色调值的像素数。每个色调值的像素数也称为频率(frequency)。
@@ -61,20 +57,17 @@ namespace ImageLad.ImageEngine
         /// <param name="bmp">指定的图像</param>
         /// <param name="gf">转换灰度的算法</param>
         /// <returns>灰度直方图数据数组</returns>
-        public static GrayHistogram Compute(Bitmap bmp, GrayFormula gf)
+        public static GrayHistogram Compute(SKBitmap bmp, GrayFormula gf)
         {
             var his = new GrayHistogram();
-            MathNet.Numerics.Statistics.Histogram histogram = new MathNet.Numerics.Statistics.Histogram();
-
-            var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            BitmapData data = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);//PixelFormat.Format24bppRgb);
+            //https://docs.microsoft.com/zh-cn/xamarin/xamarin-forms/user-interface/graphics/skiasharp/bitmaps/pixel-bits
             unsafe
             {
-                byte* ptr = (byte*)data.Scan0;//每个像素的颜色数组
-                int remain = data.Stride - data.Width * 3; //data.Stride描述图像的跨距宽度（也称为扫描宽度）。
-                for (int i = 0; i < data.Height; i++)
+                byte* ptr = (byte*) bmp.GetPixels(); //每个像素的颜色数组
+                int remain = bmp.RowBytes;// - bmp.Width * 4; //data.Stride描述图像的跨距宽度（也称为扫描宽度）。
+                for (int i = 0; i < bmp.Height; i++)
                 {
-                    for (int j = 0; j < data.Width; j++)
+                    for (int j = 0; j < bmp.Width; j++)
                     {
                         int mean = 0;
                         switch (gf)
@@ -84,7 +77,6 @@ namespace ImageLad.ImageEngine
                                 mean /= 3;
                                 break;
                             case GrayFormula.Weighted:
-                                // gray = 0.299 ×  red + 0.587 ×  green + 0.114 ×  blue
                                 mean = (int) (0.114 * ptr[0] + 0.587 * ptr[1] + 0.299 * ptr[2]);
                                 break;
                         }
@@ -92,12 +84,12 @@ namespace ImageLad.ImageEngine
                         his.Array[mean]++;
                         ptr += 3;
                     }
+
                     ptr += remain;
                 }
             }
 
-            his.Count = data.Height * data.Width;
-            bmp.UnlockBits(data);
+            his.Count = bmp.ByteCount;
             his.StdDev = his.Array.StandardDeviation();
             his.Mean = his.Array.Mean();
             for (int i = 0; i < his.Array.Length; i++)
@@ -117,11 +109,11 @@ namespace ImageLad.ImageEngine
                     break;
                 }
             }
+
             foreach (var d in his.Array)
             {
                 his.Count += (int) d;
             }
-
             return his;
         }
 

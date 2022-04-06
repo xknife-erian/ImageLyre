@@ -19,6 +19,7 @@
     <PackageReference Include="NKnife.NLog.WPF" Version="1.3.0" />
     <PackageReference Include="NLog" Version="4.7.15" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.80.3" />
   </ItemGroup>
 
   <ItemGroup>

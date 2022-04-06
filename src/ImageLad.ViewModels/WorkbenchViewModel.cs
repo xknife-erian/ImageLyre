@@ -133,10 +133,10 @@ public class WorkbenchViewModel : ObservableRecipient
     private void UpdateImageFormat()
     {
         var vm = ActivatedImageViewModel;
-        if (vm == null || vm.Bitmap == null)
+        if (vm == null )
             return;
-        var bpp = ImageUtil.GetBitsPerPixel(vm.Bitmap);
-        var format = ImageUtil.GetImageFormat(vm.Bitmap);
+        var bpp = BitsPerPixel.Bit24; //ImageUtil.GetBitsPerPixel(vm.Bitmap);
+        var format = ImageLadFormat.RGB;//ImageUtil.GetImageFormat(vm.Bitmap);
         IsGray = false;
         IsRGB = false;
         IsHSV = false;

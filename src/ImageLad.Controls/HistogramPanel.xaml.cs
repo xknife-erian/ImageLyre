@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ImageLad.ImageEngine;
+using ImageLad.ImageEngine.Analyze;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
