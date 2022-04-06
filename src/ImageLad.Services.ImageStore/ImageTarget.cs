@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using Emgu.CV;
 
 namespace ImageLad.ImageEngine;
 

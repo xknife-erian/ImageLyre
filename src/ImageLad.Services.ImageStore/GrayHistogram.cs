@@ -5,7 +5,6 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Emgu.CV.StructuredLight;
 using MathNet.Numerics.Statistics;
 
 namespace ImageLad.ImageEngine

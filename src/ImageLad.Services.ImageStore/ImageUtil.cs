@@ -1,8 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using Emgu.CV;
-using Emgu.CV.Structure;
 using ImageLad.ImageEngine.Enums;
 
 namespace ImageLad.ImageEngine;
@@ -128,79 +126,79 @@ public static class ImageUtil
     /// </summary>
     /// <param name="img">待更新的图像</param>
     /// <param name="wb">指定的对比度</param>
-    public static void UpdateWhiteBalance(Image<Bgr, byte> img, WhiteBalance wb)
+    public static void UpdateWhiteBalance()//Image<Bgr, byte> img, WhiteBalance wb)
     {
-        int avgR = 0, avgG = 0, avgB = 0;
-        int sumR = 0, sumG = 0, sumB = 0;
-        for (int h = 0; h < img.Height; ++h)
-        {
-            for (int w = 0; w < img.Width; ++w)
-            {
-                sumB += img.Data[h, w, 0];
-                sumG += img.Data[h, w, 1];
-                sumR += img.Data[h, w, 2];
-            }
-        }
-        int size = img.Height * img.Width;
-        avgB = sumB / size;
-        avgG = sumG / size;
-        avgR = sumR / size;
-        //double k = (avgB + avgG + avgR) / 3;
-        double k = 0.299 * avgR + 0.587 * avgG + 0.114 * avgB;
-
-        switch (wb)
-        {
-            case WhiteBalance.Auto:
-                avgR = (sumR / size);
-                avgG = (sumG / size);
-                avgB = (sumB / size);
-                break;
-            case WhiteBalance.Cloudy:
-                avgR = (int)(sumR * 1.953125 / size);
-                avgG = (int)(sumG * 1.0390625 / size);
-                avgB = (int)(sumB / size);
-                break;
-            case WhiteBalance.Daylight:
-                avgR = (int)(sumR * 1.2734375 / size);
-                avgG = (int)(sumG / size);
-                avgB = (int)(sumB * 1.0625 / size);
-                break;
-            case WhiteBalance.Incandescence:
-                avgR = (int)(sumR * 1.2890625 / size);
-                avgG = (int)(sumG / size);
-                avgB = (int)(sumB * 1.0625 / size);
-                break;
-            case WhiteBalance.Fluorescent:
-                avgR = (int)(sumR * 1.1875 / size);
-                avgG = (int)(sumG / size);
-                avgB = (int)(sumB * 1.3125 / size);
-                break;
-            case WhiteBalance.Tungsten:
-                avgR = (int)(sumR / size);
-                avgG = (int)(sumG * 1.0078125 / size);
-                avgB = (int)(sumB * 1.28125 / size);
-                break;
-            default:
-                break;
-        }
-
-        double kr = k / avgR;
-        double kg = k / avgG;
-        double kb = k / avgB;
-        double newB, newG, newR;
-        for (int h = 0; h < img.Height; ++h)
-        {
-            for (int w = 0; w < img.Width; ++w)
-            {
-                newB = img.Data[h, w, 0] * kb;
-                newG = img.Data[h, w, 1] * kg;
-                newR = img.Data[h, w, 2] * kr;
-
-                img.Data[h, w, 0] = (byte)(newB > 255 ? 255 : newB);
-                img.Data[h, w, 1] = (byte)(newG > 255 ? 255 : newG);
-                img.Data[h, w, 2] = (byte)(newR > 255 ? 255 : newR);
-            }
-        }
+        // int avgR = 0, avgG = 0, avgB = 0;
+        // int sumR = 0, sumG = 0, sumB = 0;
+        // for (int h = 0; h < img.Height; ++h)
+        // {
+        //     for (int w = 0; w < img.Width; ++w)
+        //     {
+        //         sumB += img.Data[h, w, 0];
+        //         sumG += img.Data[h, w, 1];
+        //         sumR += img.Data[h, w, 2];
+        //     }
+        // }
+        // int size = img.Height * img.Width;
+        // avgB = sumB / size;
+        // avgG = sumG / size;
+        // avgR = sumR / size;
+        // //double k = (avgB + avgG + avgR) / 3;
+        // double k = 0.299 * avgR + 0.587 * avgG + 0.114 * avgB;
+        //
+        // switch (wb)
+        // {
+        //     case WhiteBalance.Auto:
+        //         avgR = (sumR / size);
+        //         avgG = (sumG / size);
+        //         avgB = (sumB / size);
+        //         break;
+        //     case WhiteBalance.Cloudy:
+        //         avgR = (int)(sumR * 1.953125 / size);
+        //         avgG = (int)(sumG * 1.0390625 / size);
+        //         avgB = (int)(sumB / size);
+        //         break;
+        //     case WhiteBalance.Daylight:
+        //         avgR = (int)(sumR * 1.2734375 / size);
+        //         avgG = (int)(sumG / size);
+        //         avgB = (int)(sumB * 1.0625 / size);
+        //         break;
+        //     case WhiteBalance.Incandescence:
+        //         avgR = (int)(sumR * 1.2890625 / size);
+        //         avgG = (int)(sumG / size);
+        //         avgB = (int)(sumB * 1.0625 / size);
+        //         break;
+        //     case WhiteBalance.Fluorescent:
+        //         avgR = (int)(sumR * 1.1875 / size);
+        //         avgG = (int)(sumG / size);
+        //         avgB = (int)(sumB * 1.3125 / size);
+        //         break;
+        //     case WhiteBalance.Tungsten:
+        //         avgR = (int)(sumR / size);
+        //         avgG = (int)(sumG * 1.0078125 / size);
+        //         avgB = (int)(sumB * 1.28125 / size);
+        //         break;
+        //     default:
+        //         break;
+        // }
+        //
+        // double kr = k / avgR;
+        // double kg = k / avgG;
+        // double kb = k / avgB;
+        // double newB, newG, newR;
+        // for (int h = 0; h < img.Height; ++h)
+        // {
+        //     for (int w = 0; w < img.Width; ++w)
+        //     {
+        //         newB = img.Data[h, w, 0] * kb;
+        //         newG = img.Data[h, w, 1] * kg;
+        //         newR = img.Data[h, w, 2] * kr;
+        //
+        //         img.Data[h, w, 0] = (byte)(newB > 255 ? 255 : newB);
+        //         img.Data[h, w, 1] = (byte)(newG > 255 ? 255 : newG);
+        //         img.Data[h, w, 2] = (byte)(newR > 255 ? 255 : newR);
+        //     }
+        // }
 
     }
 
@@ -244,12 +242,12 @@ public static class ImageUtil
             case BitsPerPixel.Bit32:
             case BitsPerPixel.Bit24:
             case BitsPerPixel.Bit16:
+            case BitsPerPixel.Bit8:
             default:
                 throw new NotSupportedException();
-            case BitsPerPixel.Bit8:
             {
-                var image = source.ToImage<Gray, byte>();
-                return image.ToBitmap();
+                //var image = source.ToImage<Gray, byte>();
+                //return image.ToBitmap();
             }
         }
     }
