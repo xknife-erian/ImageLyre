@@ -179,8 +179,10 @@
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf200;" Content="测量" />
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf2a1;" Content="ROI" />
                 </f:RibbonGroupBox>
-                <f:RibbonGroupBox>
-                    <f:Button Style="{StaticResource MenuButton}" Header="&#xf1fe;" Content="直方图" />
+                <f:RibbonGroupBox Header="图表">
+                    <f:Button Style="{StaticResource MenuButton}" 
+                              Header="&#xf1fe;" Content="直方图" 
+                              Command="{Binding HistogramCommand}"/>
                     <f:Button Style="{StaticResource MenuButton}" Header="&#xf201;" Content="Plot Profile" />
                 </f:RibbonGroupBox>
             </f:RibbonTabItem>

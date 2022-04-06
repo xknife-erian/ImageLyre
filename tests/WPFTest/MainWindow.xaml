@@ -22,9 +22,8 @@
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <ctl:HistogramBox Grid.Column="0" Margin="10" BorderThickness="0.5" BorderBrush="Black"
+                        <ctl:HistogramPanel Grid.Column="0" Margin="10" BorderThickness="0.5" BorderBrush="Black"
                                           GrayHistogramSeries="{Binding Histogram}" />
-                        <!-- <ctl:HistogramPanel DataSource="{Binding HistogramDataArray, Converter={StaticResource Array2Series}}"></ctl:HistogramPanel> -->
                         <Border Grid.Column="1" Margin="10" BorderThickness="0.5" BorderBrush="Black">
                             <Image Source="{Binding Image}"></Image>
                         </Border>

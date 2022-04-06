@@ -22,8 +22,8 @@ public class DialogTypeLocator : IDialogTypeLocator
                 return typeof(LoggerWindow);
             case nameof(OptionViewModel):
                 return typeof(OptionWindow);
-            case nameof(ChartViewModel):
-                return typeof(ChartWindow);
+            case nameof(HistogramViewModel):
+                return typeof(HistogramWindow);
             default:
                 throw new NotImplementedException(vmName);
         }

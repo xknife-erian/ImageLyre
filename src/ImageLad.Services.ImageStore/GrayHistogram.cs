@@ -65,6 +65,8 @@ namespace ImageLad.ImageEngine
         public static GrayHistogram Compute(Bitmap bmp, GrayFormula gf)
         {
             var his = new GrayHistogram();
+            MathNet.Numerics.Statistics.Histogram histogram = new MathNet.Numerics.Statistics.Histogram();
+
             var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData data = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);//PixelFormat.Format24bppRgb);
             unsafe

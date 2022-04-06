@@ -16,24 +16,24 @@ public class WorkbenchViewModel : ObservableRecipient
 
     private readonly IDialogService _dialogService;
     private readonly Func<ImageViewModel> _imageVmFactory;
-    private readonly Func<ChartViewModel> _chartVmFactory;
-    private readonly Dictionary<string, ImageViewModel> _imageVmMap = new();
+    private readonly Func<HistogramViewModel> _histogramVmFactory;
     private readonly LoggerViewModel _loggerVm;
     private readonly OptionViewModel _optionVm;
+
+    private readonly Dictionary<string, ImageViewModel> _imageVmMap = new();
 
     public WorkbenchViewModel(
         IDialogService dialogService, 
         Func<ImageViewModel> imageVmFactory, 
-        Func<ChartViewModel> chartVmFactory,
+        Func<HistogramViewModel> histogramVmFactory,
         LoggerViewModel loggerVm, 
         OptionViewModel optionVm)
     {
         _dialogService = dialogService;
         _imageVmFactory = imageVmFactory;
-        _chartVmFactory = chartVmFactory;
+        _histogramVmFactory = histogramVmFactory;
         _loggerVm = loggerVm;
         _optionVm = optionVm;
-        _chartVmFactory = chartVmFactory;
     }
 
     #region 属性
@@ -188,8 +188,16 @@ public class WorkbenchViewModel : ObservableRecipient
 
     #region 菜单功能命令
 
+    #region 开始 -> 文件
+
     public ICommand NewImageFileCommand => new RelayCommand(() => { });
+
     public ICommand OpenImageFileCommand => new RelayCommand(OpenImageFile);
+
+    #endregion
+
+    #region 开始 -> 选项
+
     public ICommand SetOptionCommand => new RelayCommand(() =>
     {
         _optionVm.SetStartLocation(ComputeRightLocation());
@@ -197,7 +205,9 @@ public class WorkbenchViewModel : ObservableRecipient
         _Log.Info("显示选项窗体完成.");
     });
 
-    #region 菜单：图像>模式
+    #endregion
+
+    #region 图像 -> 模式
 
     public ICommand ToGrayCommand => new RelayCommand(() => {
         if (ActivatedImageViewModel != null)
@@ -206,6 +216,7 @@ public class WorkbenchViewModel : ObservableRecipient
             UpdateImageFormat();
         }
     });
+
     public ICommand ToRGBCommand => new RelayCommand(() => {
         if (ActivatedImageViewModel != null)
         {
@@ -213,6 +224,7 @@ public class WorkbenchViewModel : ObservableRecipient
             UpdateImageFormat();
         }
     });
+
     public ICommand ToHSVCommand => new RelayCommand(() => {
         if (ActivatedImageViewModel != null)
         {
@@ -220,6 +232,7 @@ public class WorkbenchViewModel : ObservableRecipient
             UpdateImageFormat();
         }
     });
+
     public ICommand ToCMYKCommand => new RelayCommand(() => {
         if (ActivatedImageViewModel != null)
         {
@@ -227,6 +240,7 @@ public class WorkbenchViewModel : ObservableRecipient
             UpdateImageFormat();
         }
     });
+
     public ICommand ToLabCommand => new RelayCommand(() => {
         if (ActivatedImageViewModel != null)
         {
@@ -273,18 +287,35 @@ public class WorkbenchViewModel : ObservableRecipient
 
     #endregion
 
-    public ICommand SwitchLanguageCommand => new RelayCommand(() =>
+    #region 分析 -> 图表
+
+    public ICommand HistogramCommand => new RelayCommand(() =>
     {
-        var vm = _chartVmFactory.Invoke();
+        var vm = _histogramVmFactory.Invoke();
         vm.SetStartLocation(ComputeRightLocation());
         _dialogService.Show(this, vm);
     });
+
+    #endregion
+
+    #region 帮助
+
+    public ICommand SwitchLanguageCommand => new RelayCommand(() =>
+    {
+    });
+
     public ICommand ViewAppLogCommand => new RelayCommand(() =>
     {
         _loggerVm.SetStartLocation(ComputeRightLocation());
         _dialogService.Show(this, _loggerVm);
         _Log.Info("显示日志窗体完成.");
     });
+
+    #endregion
+
+    #endregion
+
+    #region 私有方法
 
     private void OpenImageFile()
     {
@@ -352,4 +383,5 @@ public class WorkbenchViewModel : ObservableRecipient
     }
 
     #endregion
+
 }

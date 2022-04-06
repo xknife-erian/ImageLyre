@@ -17,11 +17,11 @@ using ImageLad.ViewModels;
 namespace ImageLad.Views.Views
 {
     /// <summary>
-    /// ChartWindow.xaml 的交互逻辑
+    /// HistogramWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class ChartWindow : Window
+    public partial class HistogramWindow : Window
     {
-        public ChartWindow()
+        public HistogramWindow()
         {
             InitializeComponent();
             Loaded += OnLoaded;
@@ -29,7 +29,7 @@ namespace ImageLad.Views.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var vm = (ChartViewModel)DataContext;
+            var vm = (HistogramViewModel)DataContext;
             Top = vm.Location.Y;
             Left = vm.Location.X;
         }

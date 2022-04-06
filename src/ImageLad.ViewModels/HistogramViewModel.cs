@@ -10,9 +10,9 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace ImageLad.ViewModels
 {
-    public class ChartViewModel : ObservableRecipient
+    public class HistogramViewModel : ObservableRecipient
     {
-        public ChartViewModel()
+        public HistogramViewModel()
         {
             var count = 256;
             var random = new Random((int) DateTime.Now.Ticks);
