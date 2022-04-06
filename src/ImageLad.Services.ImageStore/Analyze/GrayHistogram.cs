@@ -60,33 +60,23 @@ namespace ImageLad.ImageEngine.Analyze
         public static GrayHistogram Compute(SKBitmap bmp, GrayFormula gf)
         {
             var his = new GrayHistogram();
-            //https://docs.microsoft.com/zh-cn/xamarin/xamarin-forms/user-interface/graphics/skiasharp/bitmaps/pixel-bits
-            unsafe
+            SKColor[] pixels = bmp.Pixels;
+            for (int i = 0; i < pixels.LongLength; i++)
             {
-                byte* ptr = (byte*) bmp.GetPixels(); //每个像素的颜色数组
-                int remain = bmp.RowBytes;// - bmp.Width * 4; //data.Stride描述图像的跨距宽度（也称为扫描宽度）。
-                for (int i = 0; i < bmp.Height; i++)
+                int mean = 0;
+                var ptr = pixels[i];
+                switch (gf)
                 {
-                    for (int j = 0; j < bmp.Width; j++)
-                    {
-                        int mean = 0;
-                        switch (gf)
-                        {
-                            case GrayFormula.Average:
-                                mean = ptr[0] + ptr[1] + ptr[2];
-                                mean /= 3;
-                                break;
-                            case GrayFormula.Weighted:
-                                mean = (int) (0.114 * ptr[0] + 0.587 * ptr[1] + 0.299 * ptr[2]);
-                                break;
-                        }
-
-                        his.Array[mean]++;
-                        ptr += 3;
-                    }
-
-                    ptr += remain;
+                    case GrayFormula.Average:
+                        mean = ptr.Blue + ptr.Green + ptr.Red;
+                        mean /= 3;
+                        break;
+                    case GrayFormula.Weighted:
+                        mean = (int)(0.114 * ptr.Blue + 0.587 * ptr.Green + 0.299 * ptr.Red);
+                        break;
                 }
+
+                his.Array[mean]++;
             }
 
             his.Count = bmp.ByteCount;
