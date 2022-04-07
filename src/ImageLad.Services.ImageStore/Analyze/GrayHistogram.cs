@@ -16,7 +16,7 @@ namespace ImageLad.ImageEngine.Analyze
         /// </summary>
         public int Count { get; set; }
         /// <summary>
-        /// 均值
+        /// 算术平均数
         /// </summary>
         public double Mean { get; set; }
         /// <summary>
