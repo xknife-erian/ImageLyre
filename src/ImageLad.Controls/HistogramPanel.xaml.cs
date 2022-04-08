@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,7 +52,10 @@ namespace ImageLad.Controls
 
         private static void HasData(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var plot = ((HistogramPanel) d)._Plot_;
+            var panel = d as HistogramPanel;
+            if (panel == null)
+                return;
+            var plot = panel._Plot_;
             if (plot.Model == null)
             {
                 var model = new PlotModel();
@@ -84,7 +88,14 @@ namespace ImageLad.Controls
             {
                 hs.Items.Add(new HistogramItem(i, (double) i + 1, gh.Array[i], (int) gh.Array[i]));
             }
+
             plot.InvalidatePlot();
+            panel._Max_.Text = gh.Max.ToString();
+            panel._Min_.Text = gh.Min.ToString();
+            panel._Mean_.Text = Math.Round(gh.Mean, 3).ToString(CultureInfo.InvariantCulture);
+            panel._StdDev_.Text = Math.Round(gh.StdDev, 3).ToString(CultureInfo.InvariantCulture);
+            panel._Count_.Text = gh.Count.ToString();
+            panel._Mode_.Text = $"{gh.Mode.Item1}({gh.Mode.Item2})";
         }
     }
 }

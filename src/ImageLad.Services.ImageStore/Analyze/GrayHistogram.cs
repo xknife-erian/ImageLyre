@@ -14,31 +14,32 @@ namespace ImageLad.ImageEngine.Analyze
         /// <summary>
         /// 总像素数
         /// </summary>
-        public int Count { get; set; }
+        public long Count { get; set; }
         /// <summary>
-        /// 算术平均数
+        /// 灰度的平均水平
+        /// https://zouzhongliang.com/index.php/2019/04/12/阈值-灰度平均值计算方法/
         /// </summary>
         public double Mean { get; set; }
         /// <summary>
-        /// 标准偏差
+        /// 平均方差是衡量一个样本波动大小的量，对图像来说，平均方差反应的是图像高频部分的大小。方差小，则图片看着较暗；方差大，则图片看着较亮。
         /// </summary>
         public double StdDev { get; set; }
         /// <summary>
-        /// 最小值
+        /// 选择范围内的最小灰度值。
         /// </summary>
         public int Min { get; set; }
         /// <summary>
-        /// 最大值
+        /// 选择范围内的最大灰度值。
         /// </summary>
         public int Max { get; set; }
         /// <summary>
-        /// 模态灰度值
+        /// 模式灰度值 - 在选择范围内最经常出现的灰度值。相当于直方图中的最高峰。Item1:灰度值;Item2:该灰度值的像素数。
         /// </summary>
-        public int Mode { get; set; }
+        public (int,double) Mode { get; set; }
         /// <summary>
         /// 图像灰度直方图数据
         /// </summary>
-        public double[] Array { get; private set; } = new double[256];
+        public double[] Array { get; } = new double[256];
 
         #region Overrides of Object
 
@@ -59,13 +60,17 @@ namespace ImageLad.ImageEngine.Analyze
         /// <returns>灰度直方图数据数组</returns>
         public static GrayHistogram Compute(SKBitmap bmp, GrayFormula gf)
         {
+            double m = 0.0;
+            double n = 0.0;
+            int j = 0;
+
             var his = new GrayHistogram();
             SKColor[] pixels = bmp.Pixels;
             for (int i = 0; i < pixels.LongLength; i++)
             {
                 int mean = 0;
                 var ptr = pixels[i];
-                switch (gf)
+                switch (gf)//计算灰度值
                 {
                     case GrayFormula.Average:
                         mean = ptr.Blue + ptr.Green + ptr.Red;
@@ -76,17 +81,27 @@ namespace ImageLad.ImageEngine.Analyze
                         break;
                 }
 
+                //计算均值
+                his.Mean += mean;
+
+                //计算标准方差
+                j++;
+                double tmpM = m;
+                m += (mean - tmpM) / j;
+                n += (mean - tmpM) * (mean - m);
+
                 his.Array[mean]++;
             }
 
-            his.Count = bmp.ByteCount;
-            his.StdDev = his.Array.StandardDeviation();
-            his.Mean = his.Array.Mean();
+            his.Count = pixels.LongLength;
+            his.Mean /= pixels.LongLength;//均值
+            his.StdDev = Math.Sqrt(n / (j - 1));//标准方差
+            his.Mode = CalculateModeValue(his.Array);
             for (int i = 0; i < his.Array.Length; i++)
             {
                 if (his.Array[i] != 0)
                 {
-                    his.Min = i;
+                    his.Min = i;//最小值
                     break;
                 }
             }
@@ -95,7 +110,7 @@ namespace ImageLad.ImageEngine.Analyze
             {
                 if (his.Array[i] != 0)
                 {
-                    his.Max = i;
+                    his.Max = i;//最大值
                     break;
                 }
             }
@@ -105,6 +120,17 @@ namespace ImageLad.ImageEngine.Analyze
                 his.Count += (int) d;
             }
             return his;
+        }
+
+        private static (int, double) CalculateModeValue(double[] array)
+        {
+            var value = (0, 0d);
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] > value.Item2)
+                    value = (i, array[i]);
+            }
+            return value;
         }
 
         /// <summary>

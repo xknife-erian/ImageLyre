@@ -11,15 +11,12 @@ using SkiaSharp.Views.WPF;
 namespace ImageLad.Views.Converters;
 
 [ValueConversion(typeof(SKBitmap), typeof(WriteableBitmap))]
-public class BitmapToImageSourceConverter : IValueConverter
+public class Bitmap2WriteableBitmapConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         var bitmap = (SKBitmap) value;
-        // TODO: 2022年3月13日，laka，不是每次都重新创建WriteableBitmap，而是通过WriteableBitmap.WritePixels()替换其缓存的数据，但是未成功。
-        // WriteableBitmap srcBitmap;
-        // if (value[1] != null && value[1] is WriteableBitmap)
-        //     srcBitmap = (WriteableBitmap) value[1];
+        // TODO: 2022年3月13日。每次都重新创建WriteableBitmap，总觉得不合适。
         return bitmap.ToWriteableBitmap();
     }
 

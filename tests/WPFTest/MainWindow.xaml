@@ -10,7 +10,7 @@
         d:DataContext="{d:DesignInstance {x:Type local:MainViewModel}}"
         Title="MainWindow" Height="600" Width="1200">
     <Window.Resources>
-        <converters:BitmapToImageSourceConverter x:Key="BmpWriter" />
+        <converters:Bitmap2WriteableBitmapConverter x:Key="BmpWriter" />
     </Window.Resources>
     <Grid>
         <TabControl Margin="10">

@@ -22,7 +22,7 @@
         </b:EventTrigger>
     </b:Interaction.Triggers>
     <Window.Resources>
-        <converters:BitmapToImageSourceConverter x:Key="BmpWriter" />
+        <converters:Bitmap2WriteableBitmapConverter x:Key="ImageConverter" />
         <converters:PixelFormatConverter x:Key="FormatString" />
     </Window.Resources>
     <Grid>
@@ -35,7 +35,7 @@
                 <StackPanel x:Name="_MiddlePanel_" Background="DarkGray">
                     <Image x:Name="_Image_" Stretch="Uniform">
                         <Image.Source>
-                            <MultiBinding Converter="{StaticResource BmpWriter}">
+                            <MultiBinding Converter="{StaticResource ImageConverter}">
                                 <Binding Path="Bitmap" />
                                 <Binding ElementName="_Image_" Path="Style" />
                             </MultiBinding>
