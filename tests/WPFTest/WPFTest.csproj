@@ -6,7 +6,14 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <IsPublishable>True</IsPublishable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Main.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
@@ -17,6 +24,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ImageLad.Controls\ImageLad.Controls.csproj" />
     <ProjectReference Include="..\..\src\ImageLad.Views\ImageLad.Views.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="MainViewModel.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
