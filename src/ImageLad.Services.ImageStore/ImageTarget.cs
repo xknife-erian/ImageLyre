@@ -23,8 +23,8 @@ public class ImageTarget : ITarget
     /// </summary>
     public void Open()
     {
-        var fs = File.Open(FileMode.Open);
-        Bitmap = SKBitmap.Decode(fs);
+        var stream = File.Open(FileMode.Open);
+        Bitmap = SKBitmap.Decode(stream);
     }
 
     /// <summary>
