@@ -36,11 +36,15 @@ namespace WPFTest
         private void ReadImage()
         {
             var file = _images[_currentImage];
-            var fileInfo = new FileInfo(file);
-            var bmp = SKBitmap.Decode(fileInfo.Open(FileMode.Open));
+
+            var target = new ImageTarget(file);
+            target.Open();
+            var bmp = target.Bitmap;
 
             var histogram = GrayHistogram.Compute(bmp, GrayFormula.Average);
             Histogram = histogram;
+
+            var fileInfo = new FileInfo(file);
             Info = $"{fileInfo.Name.ToUpper()}, {fileInfo.Length / 1000}k, {histogram}";
             Image = bmp;
         }
