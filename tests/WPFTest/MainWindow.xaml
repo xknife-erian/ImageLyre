@@ -11,7 +11,7 @@
         Icon="\Main.png"
         Title="MainWindow" Height="800" Width="1600">
     <Window.Resources>
-        <converters:Bitmap2WriteableBitmapConverter x:Key="BmpWriter" />
+        <converters:Bitmap2WriteableBitmapConverter x:Key="ImageConverter" />
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -30,7 +30,7 @@
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <Border Grid.Row="0" Margin="0" BorderThickness="0.5" BorderBrush="Black">
-                <Image Source="{Binding Image, Converter={StaticResource BmpWriter}}" />
+                <Image Source="{Binding Image, Converter={StaticResource ImageConverter}}" />
             </Border>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <Button Height="30" Margin="0,0,5,5" Padding="20,0" Content="上一张"

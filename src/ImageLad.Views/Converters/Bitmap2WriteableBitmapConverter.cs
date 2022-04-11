@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
@@ -15,8 +16,9 @@ public class Bitmap2WriteableBitmapConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var bitmap = (SKBitmap) value;
-        // TODO: 2022年3月13日。每次都重新创建WriteableBitmap，总觉得不合适。
+        var bitmap = value as SKBitmap;
+        if (bitmap == null)
+            throw new ArgumentNullException(nameof(value));
         return bitmap.ToWriteableBitmap();
     }
 

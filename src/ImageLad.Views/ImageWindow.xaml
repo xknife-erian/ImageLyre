@@ -33,14 +33,7 @@
         <TabControl Grid.Row="0">
             <TabItem Header="图像" Height="20" Padding="10,0">
                 <StackPanel x:Name="_MiddlePanel_" Background="DarkGray">
-                    <Image x:Name="_Image_" Stretch="Uniform">
-                        <Image.Source>
-                            <MultiBinding Converter="{StaticResource ImageConverter}">
-                                <Binding Path="Bitmap" />
-                                <Binding ElementName="_Image_" Path="Style" />
-                            </MultiBinding>
-                        </Image.Source>
-                    </Image>
+                    <Image x:Name="_Image_" Stretch="Uniform"  Source="{Binding Bitmap, Converter={StaticResource ImageConverter}}" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="B" Height="20" Padding="10,0">
