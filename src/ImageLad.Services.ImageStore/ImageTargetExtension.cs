@@ -4,6 +4,7 @@ using ImageMagick;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SkiaSharp;
 
 namespace ImageLad.ImageEngine;
 
@@ -20,16 +21,16 @@ public static class ImageTargetExtension
             image.Mutate(x => x
                 .Resize(image.Width / 2, image.Height / 2)
                 .Grayscale());
-            target.Bitmap = image.
-        }
-        MagickImage magickImage = new MagickImage(target.File.FullName);
-        magickImage.ColorSpace = ColorSpace.Gray;
-        using (var memStream = new MemoryStream())
-        {
-            magickImage.Write(memStream);
-            target.Bitmap = new Bitmap(memStream);
+            target.Bitmap = image.ToSKBitmap();
         }
     }
+
+    public static SKBitmap ToSKBitmap(this Image image)
+    {
+        var bitmap = new SKBitmap();
+        return bitmap;
+    }
+
     /*
     /// <summary>
     /// 将目标图像转为RGB图
