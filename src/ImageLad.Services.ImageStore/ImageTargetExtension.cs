@@ -28,6 +28,7 @@ public static class ImageTargetExtension
     public static SKBitmap ToSKBitmap(this Image image)
     {
         var bitmap = new SKBitmap();
+
         return bitmap;
     }
 
