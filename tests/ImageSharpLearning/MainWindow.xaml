@@ -15,7 +15,8 @@
         <Image Source="{Binding Image}"></Image>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
         <StackPanel Grid.Column="2">
-            <Button Content="GRB To Gray" Margin="16,10" Padding="0,6"></Button>
+            <Button Content="GRB To Gray" Margin="16,10" Padding="0,6"
+                    Command="{Binding RGB2GrayCommand}"></Button>
         </StackPanel>
     </Grid>
 </Window>
