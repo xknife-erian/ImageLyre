@@ -1,25 +1,22 @@
 ﻿using System;
-using System.Drawing;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Data;
-using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using SkiaSharp;
-using SkiaSharp.Views.WPF;
+using ImageLad.Views.Utils;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImageLad.Views.Converters;
 
-[ValueConversion(typeof(SKBitmap), typeof(WriteableBitmap))]
-public class Bitmap2WriteableBitmapConverter : IValueConverter
+[ValueConversion(typeof(Image), typeof(BitmapSource))]
+public class ImageSharp2BitmapSourceConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        var bitmap = value as SKBitmap;
+        var bitmap = value as Image<Rgb24>;
         if (bitmap == null)
             throw new ArgumentNullException(nameof(value));
-        return bitmap.ToWriteableBitmap();
+        return new ImageSharpSource<Rgb24>(bitmap);
     }
 
     /// <summary>Converts a binding target value to the source binding values.</summary>

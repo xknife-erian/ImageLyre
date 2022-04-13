@@ -11,7 +11,7 @@
         Icon="\Main.png"
         Title="MainWindow" Height="800" Width="1600">
     <Window.Resources>
-        <converters:Bitmap2WriteableBitmapConverter x:Key="ImageConverter" />
+        <converters:SKBitmap2BitmapSourceConverter x:Key="ImageConverter" />
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
