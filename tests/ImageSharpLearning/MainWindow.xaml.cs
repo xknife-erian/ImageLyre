@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,9 +18,11 @@ using ImageLad.Views.Utils;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.ColorSpaces;
 using SixLabors.ImageSharp.ColorSpaces.Conversion;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using Color = SixLabors.ImageSharp.Color;
 using Image = SixLabors.ImageSharp.Image;
 
 namespace ImageSharpLearning
@@ -51,7 +54,7 @@ namespace ImageSharpLearning
         {
             var stream = new MemoryStream(File.ReadAllBytes(_file));
             var image = SixLabors.ImageSharp.Image.Load(stream);
-            return (Image<Rgb24>)image;
+            return (Image<Rgb24>) image;
         }
 
         public ImageSharpSource<Rgb24> Image
@@ -62,10 +65,27 @@ namespace ImageSharpLearning
 
         public ICommand RGB2GrayCommand => new RelayCommand(() =>
         {
-            var img = GetImage();
-            var converter = new ColorSpaceConverter(new ColorSpaceConverterOptions());
+            var c = new ColorSpaceConverter();
+            var image = GetImage();
+            var newImg = new ImageSharpSource<L8>();
+            image.ProcessPixelRows(accessor =>
+            {
+                for (int y = 0; y < accessor.Height; y++)
+                {
+                    Span<Rgb24> row = accessor.GetRowSpan(y);
 
-            Image = new ImageSharpSource<Rgb24>(img);
+                    // pixelRow.Length has the same value as accessor.Width,
+                    // but using pixelRow.Length allows the JIT to optimize away bounds checks:
+                    for (int x = 0; x < row.Length; x++)
+                    {
+                        // Get a reference to the pixel at position x
+                        //pixelRow[x] = new Rgb24((byte) x, (byte) y, (byte) (x - y));
+                        var rx = row[x];
+                    }
+                }
+
+                Image = new ImageSharpSource<Rgb24>(image);
+            });
         });
     }
 }

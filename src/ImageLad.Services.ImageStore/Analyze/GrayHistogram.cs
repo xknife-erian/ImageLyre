@@ -70,14 +70,17 @@ namespace ImageLad.ImageEngine.Analyze
             {
                 int mean = 0;
                 var ptr = pixels[i];
-                switch (gf)//计算灰度值
+                switch (gf) //计算灰度值
                 {
                     case GrayFormula.Average:
                         mean = ptr.Blue + ptr.Green + ptr.Red;
                         mean /= 3;
                         break;
                     case GrayFormula.Weighted:
-                        mean = (int)(0.114 * ptr.Blue + 0.587 * ptr.Green + 0.299 * ptr.Red);
+                        //彩色转灰度，有一个很著名的心理学公式：
+                        //Gray = R*0.299 + G*0.587 + B*0.114
+                        //为避免低速的浮点运算，放大1000倍来实现整数运算算法
+                        mean = (114 * ptr.Blue + 587 * ptr.Green + 299 * ptr.Red + 500) / 1000;
                         break;
                 }
 

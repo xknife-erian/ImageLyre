@@ -41,7 +41,7 @@ namespace WPFTest
             target.Open();
             var bmp = target.Bitmap;
 
-            var histogram = GrayHistogram.Compute(bmp, GrayFormula.Average);
+            var histogram = GrayHistogram.Compute(bmp, GrayFormula.Weighted);
             Histogram = histogram;
 
             var fileInfo = new FileInfo(file);
