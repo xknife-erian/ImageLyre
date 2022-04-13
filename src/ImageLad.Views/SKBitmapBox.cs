@@ -41,7 +41,7 @@ namespace ImageLad.Views
                 new PropertyMetadata(
                     VerticalAlignment.Center, (s, e) => ((SKBitmapBox)s).InvalidateVisual()));
 
-        private WriteableBitmap? backingStore;
+        private WriteableBitmap? _backingStore;
 
         public SKBitmapBox() =>
             this.Stretch = Stretch.Uniform;
@@ -85,7 +85,7 @@ namespace ImageLad.Views
                 }
                 backingStore.Freeze();
 
-                this.backingStore = backingStore;
+                this._backingStore = backingStore;
             }
             else if (this.Source is SKImage image)
             {
@@ -100,7 +100,7 @@ namespace ImageLad.Views
                 }
                 backingStore.Freeze();
 
-                this.backingStore = backingStore;
+                this._backingStore = backingStore;
             }
             else if (this.Source is SKDrawable drawable)
             {
@@ -115,11 +115,11 @@ namespace ImageLad.Views
                 }
                 backingStore.Freeze();
 
-                this.backingStore = backingStore;
+                this._backingStore = backingStore;
             }
             else
             {
-                this.backingStore = null;
+                this._backingStore = null;
             }
 
             this.InvalidateVisual();
@@ -129,7 +129,7 @@ namespace ImageLad.Views
         {
             base.OnRender(drawingContext);
 
-            if (this.backingStore is { } backingStore)
+            if (this._backingStore is { } backingStore)
             {
                 if (backingStore.Width > 0 && backingStore.Height > 0 &&
                     base.RenderSize.Width > 0 && base.RenderSize.Height > 0)
