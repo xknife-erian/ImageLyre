@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.Statistics;
+using OpenCvSharp;
 using SkiaSharp;
 
 namespace ImageLad.ImageEngine.Analyze

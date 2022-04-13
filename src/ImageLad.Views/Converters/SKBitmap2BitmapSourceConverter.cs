@@ -6,7 +6,6 @@ using System.Windows.Data;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using SixLabors.ImageSharp.ColorSpaces;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 

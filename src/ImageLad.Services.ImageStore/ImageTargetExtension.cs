@@ -1,9 +1,7 @@
 ﻿using System.Drawing;
 using ImageLad.ImageEngine.Enums;
 using ImageMagick;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
+using OpenCvSharp;
 using SkiaSharp;
 
 namespace ImageLad.ImageEngine;
@@ -15,21 +13,8 @@ public static class ImageTargetExtension
     /// </summary>
     public static void ToGray(this ImageTarget target)
     {
-        //target.Bitmap = ImageUtil.ImageFormatConverter(target.Bitmap, ImageLadFormat.Gray, BitsPerPixel.Bit8);
-        using (Image image = Image.Load(target.File.FullName))
-        {
-            image.Mutate(x => x
-                .Resize(image.Width / 2, image.Height / 2)
-                .Grayscale());
-            target.Bitmap = image.ToSKBitmap();
-        }
-    }
-
-    public static SKBitmap ToSKBitmap(this Image image)
-    {
-        var bitmap = new SKBitmap();
-
-        return bitmap;
+        var bitmap = target.Bitmap.PeekPixels();
+        //bitmap.ColorType = SKColorType.Gray8;
     }
 
     /*
