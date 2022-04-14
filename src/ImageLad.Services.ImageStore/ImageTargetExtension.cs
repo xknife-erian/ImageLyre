@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ImageLad.ImageEngine.Analyze;
 using ImageLad.ImageEngine.Enums;
 using ImageMagick;
 using OpenCvSharp;
@@ -13,8 +14,27 @@ public static class ImageTargetExtension
     /// </summary>
     public static void ToGray(this ImageTarget target)
     {
-        var bitmap = target.Bitmap.PeekPixels();
-        //bitmap.ColorType = SKColorType.Gray8;
+        // SKBitmap bitmap = new SKBitmap(target.Bitmap.Width, target.Bitmap.Height);
+        //
+        // byte[,,] buffer = new byte[target.Bitmap.Width, target.Bitmap.Height, 4];
+        // for (int row = 0; row < target.Bitmap.Height; row++)
+        // for (int col = 0; col < target.Bitmap.Width; col++)
+        // {
+        //     buffer[row, col, 0] = (byte) col; // red
+        //     buffer[row, col, 1] = 0; // green
+        //     buffer[row, col, 2] = (byte) row; // blue
+        //     buffer[row, col, 3] = 0xFF; // alpha
+        // }
+        unsafe
+        {
+            // fixed (byte* ptr = buffer)
+            // {
+            //     bitmap.SetPixels((IntPtr) ptr);
+            // }
+        }
+        var stream = File.Open(@"D:\OneDrive\图片\this_is_me.jpg", FileMode.Open);
+        target.Bitmap = SKBitmap.Decode(stream);
+        //target.Bitmap = bitmap;
     }
 
     /*
