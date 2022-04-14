@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ImageMagick;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.Statistics;
 using OpenCvSharp;
@@ -59,18 +60,18 @@ namespace ImageLad.ImageEngine.Analyze
         /// <param name="bmp">指定的图像</param>
         /// <param name="gf">转换灰度的算法</param>
         /// <returns>灰度直方图数据数组</returns>
-        public static GrayHistogram Compute(SKBitmap bmp, GrayFormula gf)
+        public static GrayHistogram Compute(MagickImage bmp, GrayFormula gf)
         {
             double m = 0.0;
             double n = 0.0;
             int j = 0;
 
             var his = new GrayHistogram();
-            SKColor[] pixels = bmp.Pixels;
-            for (int i = 0; i < pixels.LongLength; i++)
+            var pixels = bmp.GetPixels();
+            for (int i = 0; i < pixels.LongCount(); i++)
             {
                 int mean = 0;
-                var ptr = pixels[i];
+                var ptr = pixels.GetPixel(0, 0);ptr.
                 switch (gf) //计算灰度值
                 {
                     case GrayFormula.Average:
@@ -97,8 +98,8 @@ namespace ImageLad.ImageEngine.Analyze
                 his.Array[mean]++;
             }
 
-            his.Count = pixels.LongLength;
-            his.Mean /= pixels.LongLength;//均值
+            his.Count = pixels.LongCount();
+            his.Mean /= pixels.LongCount();//均值
             his.StdDev = Math.Sqrt(n / (j - 1));//标准方差
             his.Mode = CalculateModeValue(his.Array);
             for (int i = 0; i < his.Array.Length; i++)
