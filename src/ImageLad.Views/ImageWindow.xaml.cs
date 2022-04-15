@@ -28,7 +28,7 @@ public partial class ImageWindow : Window
     /// 调整窗体大小
     /// </summary>
     /// <param name="bmp"></param>
-    private void AdjustWindowSize(MagickImage? bmp)
+    private void AdjustWindowSize(Bitmap? bmp)
     {
         var bmpHeight = 0;
         if (bmp != null)

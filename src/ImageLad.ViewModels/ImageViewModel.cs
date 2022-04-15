@@ -23,11 +23,12 @@ public class ImageViewModel : ObservableRecipient
     #region 界面属性
 
     private ImageTarget? _imageTarget;
-    private MagickImage? _bitmap;
+    private Bitmap? _bitmap;
     private int _top;
     private int _left;
+    private PixelFormat _pixelFormat;
 
-    public MagickImage? Bitmap
+    public Bitmap? Bitmap
     {
         get => _bitmap;
         set => SetProperty(ref _bitmap, value);
@@ -39,11 +40,11 @@ public class ImageViewModel : ObservableRecipient
         set => SetProperty(ref _imageTarget, value);
     }
 
-    // public PixelFormat PixelFormat
-    // {
-    //     get => _pixelFormat;
-    //     set => SetProperty(ref _pixelFormat, value);
-    // }
+    public PixelFormat PixelFormat
+    {
+        get => _pixelFormat;
+        set => SetProperty(ref _pixelFormat, value);
+    }
 
     public int Top
     {
@@ -81,7 +82,7 @@ public class ImageViewModel : ObservableRecipient
         var beat = new ToGrayBeat(_imageTarget);
         _macro?.DoCurrent(beat);
         Bitmap = _imageTarget.Bitmap;
-        //PixelFormat = Bitmap.PixelFormat;
+        PixelFormat = Bitmap.PixelFormat;
     }
 
     public void ToRGB()

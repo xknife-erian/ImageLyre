@@ -7,6 +7,7 @@
     xmlns:converters="clr-namespace:ImageLad.Views.Converters"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:views="clr-namespace:ImageLad.Views"
+    xmlns:drawing="clr-namespace:ImageLad.Views.Converters.Drawing"
     x:Class="ImageLad.Views.ImageWindow"
     mc:Ignorable="d"
     WindowStartupLocation="Manual"
@@ -23,7 +24,7 @@
         </b:EventTrigger>
     </b:Interaction.Triggers>
     <Window.Resources>
-        <converters:SKBitmap2BitmapSourceConverter x:Key="ImageConverter" />
+        <drawing:Bitmap2BitmapSourceConverter x:Key="ImageConverter" />
         <converters:PixelFormatConverter x:Key="FormatString" />
     </Window.Resources>
     <Grid>

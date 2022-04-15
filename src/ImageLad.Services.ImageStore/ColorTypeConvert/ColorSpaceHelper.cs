@@ -197,7 +197,7 @@ public static class ColorSpaceHelper
     /// <param name="b">The Blue value.</param>
     public static string RGBToHex(int r, int g, int b)
     {
-        return string.Format("#{0:x2}{1:x2}{2:x2}", r, g, b);
+        return $"#{r:x2}{g:x2}{b:x2}";
     }
 
 
@@ -385,9 +385,9 @@ public static class ColorSpaceHelper
         if (s == 0)
             // achromatic color (gray scale)
             return new RGB(
-                Convert.ToInt32(double.Parse(string.Format("{0:0.00}", l * 255.0))),
-                Convert.ToInt32(double.Parse(string.Format("{0:0.00}", l * 255.0))),
-                Convert.ToInt32(double.Parse(string.Format("{0:0.00}", l * 255.0)))
+                Convert.ToInt32(double.Parse($"{l * 255.0:0.00}")),
+                Convert.ToInt32(double.Parse($"{l * 255.0:0.00}")),
+                Convert.ToInt32(double.Parse($"{l * 255.0:0.00}"))
             );
 
         var q = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
@@ -414,9 +414,9 @@ public static class ColorSpaceHelper
         }
 
         return new RGB(
-            Convert.ToInt32(double.Parse(string.Format("{0:0.00}", T[0] * 255.0))),
-            Convert.ToInt32(double.Parse(string.Format("{0:0.00}", T[1] * 255.0))),
-            Convert.ToInt32(double.Parse(string.Format("{0:0.00}", T[2] * 255.0)))
+            Convert.ToInt32(double.Parse($"{T[0] * 255.0:0.00}")),
+            Convert.ToInt32(double.Parse($"{T[1] * 255.0:0.00}")),
+            Convert.ToInt32(double.Parse($"{T[2] * 255.0:0.00}"))
         );
     }
 

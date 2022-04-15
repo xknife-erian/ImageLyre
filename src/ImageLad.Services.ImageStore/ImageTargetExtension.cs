@@ -13,31 +13,16 @@ public static class ImageTargetExtension
     /// </summary>
     public static void ToGray(this ImageTarget target)
     {
-        byte[,,] buffer = new byte[target.Bitmap.Width, target.Bitmap.Height, 4];
-        for (int row = 0; row < target.Bitmap.Height - 1; row++)
+        MagickImage magickImage = new MagickImage(target.File.FullName);
+        magickImage.ColorSpace = ColorSpace.Gray;
+        using (var memStream = new MemoryStream())
         {
-            for (int col = 0; col < target.Bitmap.Width - 1; col++)
-            {
-                buffer[row, col, 0] = (byte) col; // red
-                buffer[row, col, 1] = 0; // green
-                buffer[row, col, 2] = (byte) row; // blue
-                buffer[row, col, 3] = 0xFF; // alpha
-            }
+            magickImage.Write(memStream);
+            target.Bitmap = new Bitmap(memStream);
         }
-
-        unsafe
-        {
-            fixed (byte* ptr = buffer)
-            {
-                //bitmap.SetPixels((IntPtr) ptr);
-            }
-        }
-        // var stream = File.Open(@"d:\1-d.png", FileMode.Open);
-        // target.Bitmap = SKBitmap.Decode(stream);
-        //target.Bitmap = bitmap;
     }
 
-    /*
+    
     /// <summary>
     /// 将目标图像转为RGB图
     /// </summary>
@@ -149,5 +134,4 @@ public static class ImageTargetExtension
             target.Bitmap = new Bitmap(memStream);
         }
     }
-    */
 }

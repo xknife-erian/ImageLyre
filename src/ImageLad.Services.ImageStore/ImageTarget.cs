@@ -14,7 +14,7 @@ public class ImageTarget : ITarget
     }
 
     public FileInfo File { get; private set; }
-    public MagickImage Bitmap { get; set; }
+    public Bitmap Bitmap { get; set; }
 
     #region Implementation of ITarget
 
@@ -24,7 +24,7 @@ public class ImageTarget : ITarget
     public void Open()
     {
         var stream = File.Open(FileMode.Open);
-        Bitmap = new MagickImage(stream);
+        Bitmap = new Bitmap(stream);
     }
 
     /// <summary>

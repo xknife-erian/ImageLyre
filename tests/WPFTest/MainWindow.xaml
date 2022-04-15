@@ -6,12 +6,13 @@
         xmlns:ctl="clr-namespace:ImageLad.Controls;assembly=ImageLad.Controls"
         xmlns:local="clr-namespace:WPFTest"
         xmlns:converters="clr-namespace:ImageLad.Views.Converters;assembly=ImageLad.Views"
+        xmlns:drawing="clr-namespace:ImageLad.Views.Converters.Drawing;assembly=ImageLad.Views"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         d:DataContext="{d:DesignInstance {x:Type local:MainViewModel}}"
         Icon="\Main.png"
         Title="MainWindow" Height="800" Width="1600">
     <Window.Resources>
-        <converters:SKBitmap2BitmapSourceConverter x:Key="ImageConverter" />
+        <drawing:Bitmap2BitmapSourceConverter x:Key="ImageConverter" />
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>

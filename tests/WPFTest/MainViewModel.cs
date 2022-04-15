@@ -53,7 +53,7 @@ namespace WPFTest
         
         private GrayHistogram _histogram;
         private string _info;
-        private MagickImage _image;
+        private Bitmap _image;
 
         /// <summary>
         /// 直方图数据
@@ -70,7 +70,7 @@ namespace WPFTest
             set => SetProperty(ref _info, value);
         }
 
-        public MagickImage Image
+        public Bitmap Image
         {
             get => _image;
             set => SetProperty(ref _image, value);

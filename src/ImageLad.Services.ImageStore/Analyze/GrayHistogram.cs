@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
+using System.Net.Mime;
 using ImageMagick;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.Statistics;
@@ -56,56 +58,57 @@ namespace ImageLad.ImageEngine.Analyze
         /// <summary>
         /// 计算指定的图像灰度直方图
         /// </summary>
-        /// <param name="bmp">指定的图像</param>
+        /// <param name="bitmap">指定的图像</param>
         /// <param name="gf">转换灰度的算法</param>
         /// <returns>灰度直方图数据数组</returns>
-        public static GrayHistogram Compute(MagickImage bmp, GrayFormula gf)
+        public static GrayHistogram Compute(Bitmap bitmap, GrayFormula gf)
         {
             double m = 0.0;
             double n = 0.0;
             int j = 0;
 
             var his = new GrayHistogram();
-            var pixels = bmp.GetPixels();
-            for (int i = 0; i < pixels.LongCount(); i++)
+
+            BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+
+            int pixelSize = GetUnitPixelSize(bitmap);
+            int b = 0, g = 1, r = 2; // BGR
+
+            unsafe
             {
-                int mean = 0;
-                var ptr = pixels.GetPixel(0, 0);
-                // switch (gf) //计算灰度值
-                // {
-                //     case GrayFormula.Average:
-                //         mean = ptr.Blue + ptr.Green + ptr.Red;
-                //         mean /= 3;
-                //         break;
-                //     case GrayFormula.Weighted:
-                //         //彩色转灰度，有一个很著名的心理学公式：
-                //         //Gray = R*0.299 + G*0.587 + B*0.114
-                //         //为避免低速的浮点运算，放大1000倍来实现整数运算算法
-                //         mean = (114 * ptr.Blue + 587 * ptr.Green + 299 * ptr.Red + 500) / 1000;
-                //         break;
-                // }
+                byte* ptr = (byte*) bitmapData.Scan0;
+                for (int row = 0; row < bitmap.Height; ++row)
+                {
+                    for (int col = 0; col < bitmap.Width; ++col)
+                    {
+                        int mean = (ptr[r] * 299 + ptr[g] * 587 + ptr[b] * 114 + 500) / 1000;
+                        ptr += pixelSize;
 
-                //计算均值
-                his.Mean += mean;
+                        //计算均值
+                        his.Mean += mean;
 
-                //计算标准方差
-                j++;
-                double tmpM = m;
-                m += (mean - tmpM) / j;
-                n += (mean - tmpM) * (mean - m);
+                        //计算标准方差
+                        j++;
+                        double tmpM = m;
+                        m += (mean - tmpM) / j;
+                        n += (mean - tmpM) * (mean - m);
 
-                his.Array[mean]++;
+                        his.Array[mean]++;
+                    }
+                    ptr += bitmapData.Stride - bitmapData.Width * pixelSize;
+                }
             }
 
-            his.Count = pixels.LongCount();
-            his.Mean /= pixels.LongCount();//均值
-            his.StdDev = Math.Sqrt(n / (j - 1));//标准方差
+            bitmap.UnlockBits(bitmapData);
+
+            his.Mean /= bitmap.Width * bitmap.Height; //均值
+            his.StdDev = Math.Sqrt(n / (j - 1)); //标准方差
             his.Mode = CalculateModeValue(his.Array);
             for (int i = 0; i < his.Array.Length; i++)
             {
                 if (his.Array[i] != 0)
                 {
-                    his.Min = i;//最小值
+                    his.Min = i; //最小值
                     break;
                 }
             }
@@ -114,7 +117,7 @@ namespace ImageLad.ImageEngine.Analyze
             {
                 if (his.Array[i] != 0)
                 {
-                    his.Max = i;//最大值
+                    his.Max = i; //最大值
                     break;
                 }
             }
@@ -123,6 +126,7 @@ namespace ImageLad.ImageEngine.Analyze
             {
                 his.Count += (int) d;
             }
+
             return his;
         }
 
@@ -135,6 +139,11 @@ namespace ImageLad.ImageEngine.Analyze
                     value = (i, array[i]);
             }
             return value;
+        }
+
+        public static int GetUnitPixelSize(Bitmap bitmap)
+        {
+            return Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
         }
 
         /// <summary>
