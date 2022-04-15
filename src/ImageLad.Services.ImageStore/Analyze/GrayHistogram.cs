@@ -3,7 +3,6 @@ using ImageMagick;
 using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.Statistics;
 using OpenCvSharp;
-using SkiaSharp;
 
 namespace ImageLad.ImageEngine.Analyze
 {
@@ -71,20 +70,20 @@ namespace ImageLad.ImageEngine.Analyze
             for (int i = 0; i < pixels.LongCount(); i++)
             {
                 int mean = 0;
-                var ptr = pixels.GetPixel(0, 0);ptr.
-                switch (gf) //计算灰度值
-                {
-                    case GrayFormula.Average:
-                        mean = ptr.Blue + ptr.Green + ptr.Red;
-                        mean /= 3;
-                        break;
-                    case GrayFormula.Weighted:
-                        //彩色转灰度，有一个很著名的心理学公式：
-                        //Gray = R*0.299 + G*0.587 + B*0.114
-                        //为避免低速的浮点运算，放大1000倍来实现整数运算算法
-                        mean = (114 * ptr.Blue + 587 * ptr.Green + 299 * ptr.Red + 500) / 1000;
-                        break;
-                }
+                var ptr = pixels.GetPixel(0, 0);
+                // switch (gf) //计算灰度值
+                // {
+                //     case GrayFormula.Average:
+                //         mean = ptr.Blue + ptr.Green + ptr.Red;
+                //         mean /= 3;
+                //         break;
+                //     case GrayFormula.Weighted:
+                //         //彩色转灰度，有一个很著名的心理学公式：
+                //         //Gray = R*0.299 + G*0.587 + B*0.114
+                //         //为避免低速的浮点运算，放大1000倍来实现整数运算算法
+                //         mean = (114 * ptr.Blue + 587 * ptr.Green + 299 * ptr.Red + 500) / 1000;
+                //         break;
+                // }
 
                 //计算均值
                 his.Mean += mean;

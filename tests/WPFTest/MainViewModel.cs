@@ -12,9 +12,9 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using ImageLad.ImageEngine;
 using ImageLad.ImageEngine.Analyze;
+using ImageMagick;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
-using SkiaSharp;
 
 namespace WPFTest
 {
@@ -53,7 +53,7 @@ namespace WPFTest
         
         private GrayHistogram _histogram;
         private string _info;
-        private SKBitmap _image;
+        private MagickImage _image;
 
         /// <summary>
         /// 直方图数据
@@ -70,7 +70,7 @@ namespace WPFTest
             set => SetProperty(ref _info, value);
         }
 
-        public SKBitmap Image
+        public MagickImage Image
         {
             get => _image;
             set => SetProperty(ref _image, value);

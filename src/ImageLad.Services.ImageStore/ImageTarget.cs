@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using SkiaSharp;
+using ImageMagick;
 
 namespace ImageLad.ImageEngine;
 
@@ -14,7 +14,7 @@ public class ImageTarget : ITarget
     }
 
     public FileInfo File { get; private set; }
-    public SKBitmap Bitmap { get; set; }
+    public MagickImage Bitmap { get; set; }
 
     #region Implementation of ITarget
 
@@ -24,7 +24,7 @@ public class ImageTarget : ITarget
     public void Open()
     {
         var stream = File.Open(FileMode.Open);
-        Bitmap = SKBitmap.Decode(stream);
+        Bitmap = new MagickImage(stream);
     }
 
     /// <summary>

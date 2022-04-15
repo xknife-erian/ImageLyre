@@ -5,9 +5,9 @@ using ImageLad.ImageEngine;
 using ImageLad.Services.Macros;
 using ImageLad.Services.Macros.Beats;
 using ImageLad.ImageEngine.Enums;
+using ImageMagick;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
-using SkiaSharp;
 
 namespace ImageLad.ViewModels;
 
@@ -23,11 +23,11 @@ public class ImageViewModel : ObservableRecipient
     #region 界面属性
 
     private ImageTarget? _imageTarget;
-    private SKBitmap? _bitmap;
+    private MagickImage? _bitmap;
     private int _top;
     private int _left;
 
-    public SKBitmap? Bitmap
+    public MagickImage? Bitmap
     {
         get => _bitmap;
         set => SetProperty(ref _bitmap, value);

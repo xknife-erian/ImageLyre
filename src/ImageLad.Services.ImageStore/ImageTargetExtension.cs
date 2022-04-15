@@ -3,7 +3,6 @@ using ImageLad.ImageEngine.Analyze;
 using ImageLad.ImageEngine.Enums;
 using ImageMagick;
 using OpenCvSharp;
-using SkiaSharp;
 
 namespace ImageLad.ImageEngine;
 
@@ -14,8 +13,6 @@ public static class ImageTargetExtension
     /// </summary>
     public static void ToGray(this ImageTarget target)
     {
-        SKBitmap bitmap = new SKBitmap(target.Bitmap.Width, target.Bitmap.Height);
-        
         byte[,,] buffer = new byte[target.Bitmap.Width, target.Bitmap.Height, 4];
         for (int row = 0; row < target.Bitmap.Height - 1; row++)
         {
@@ -32,12 +29,12 @@ public static class ImageTargetExtension
         {
             fixed (byte* ptr = buffer)
             {
-                bitmap.SetPixels((IntPtr) ptr);
+                //bitmap.SetPixels((IntPtr) ptr);
             }
         }
         // var stream = File.Open(@"d:\1-d.png", FileMode.Open);
         // target.Bitmap = SKBitmap.Decode(stream);
-        target.Bitmap = bitmap;
+        //target.Bitmap = bitmap;
     }
 
     /*
