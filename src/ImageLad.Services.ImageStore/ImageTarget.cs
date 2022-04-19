@@ -10,11 +10,11 @@ public class ImageTarget : ITarget
 {
     public ImageTarget(string path)
     {
-        File = new FileInfo(path);
+        FileInfo = new FileInfo(path);
     }
 
-    public FileInfo File { get; private set; }
-    public Bitmap Bitmap { get; set; }
+    public FileInfo FileInfo { get; private set; }
+    public Bitmap? Bitmap { get; set; }
 
     #region Implementation of ITarget
 
@@ -23,7 +23,7 @@ public class ImageTarget : ITarget
     /// </summary>
     public void Open()
     {
-        using var stream = File.Open(FileMode.Open);
+        using var stream = FileInfo.Open(FileMode.Open);
         Bitmap = new Bitmap(stream);
     }
 
@@ -32,7 +32,7 @@ public class ImageTarget : ITarget
     /// </summary>
     public void Close()
     {
-        File = null;
+        Bitmap?.Dispose();
         Bitmap = null;
     }
 

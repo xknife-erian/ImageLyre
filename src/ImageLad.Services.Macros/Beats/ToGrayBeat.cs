@@ -16,7 +16,7 @@ public class ToGrayBeat : BaseMacroBeat
         try
         {
             ImageTarget.ToGray();
-            _Log.Info($"{ImageTarget.File.FullName} ToGray.");
+            _Log.Info($"{ImageTarget.FileInfo.FullName} ToGray.");
             return true;
         }
         catch (Exception e)

@@ -16,7 +16,7 @@ public class To8BitBeat : BaseMacroBeat
         try
         {
             ImageTarget.To8Bit();
-            _Log.Info($"{ImageTarget.File.FullName} To8Bit.");
+            _Log.Info($"{ImageTarget.FileInfo.FullName} To8Bit.");
 
             return true;
         }

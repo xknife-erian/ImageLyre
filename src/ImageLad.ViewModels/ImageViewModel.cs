@@ -185,7 +185,7 @@ public class ImageViewModel : ObservableRecipient
         if (obj == null) return false;
         var vm = obj as ImageViewModel;
         if (vm == null) return false;
-        if(vm._imageTarget != null && vm._imageTarget.File.FullName.Equals(this._imageTarget?.File.FullName))
+        if(vm._imageTarget != null && vm._imageTarget.FileInfo.FullName.Equals(this._imageTarget?.FileInfo.FullName))
             return true;
         return false;
     }
@@ -194,7 +194,7 @@ public class ImageViewModel : ObservableRecipient
     /// <returns>A hash code for the current object.</returns>
     public override int GetHashCode()
     {
-        return _imageTarget.File.FullName.GetHashCode() + _imageTarget.File.CreationTime.GetHashCode();
+        return _imageTarget.FileInfo.FullName.GetHashCode() + _imageTarget.FileInfo.CreationTime.GetHashCode();
     }
 
     #endregion

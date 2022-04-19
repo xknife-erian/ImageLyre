@@ -16,7 +16,7 @@ public class ToHSVBeat : BaseMacroBeat
         try
         {
             ImageTarget.ToHSV();
-            _Log.Info($"{ImageTarget.File.FullName} ToHSV.");
+            _Log.Info($"{ImageTarget.FileInfo.FullName} ToHSV.");
             return true;
         }
         catch (Exception e)

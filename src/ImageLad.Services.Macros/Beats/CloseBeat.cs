@@ -20,7 +20,7 @@ public class CloseBeat : BaseMacroBeat
         try
         {
             Target.Close();
-            _Log.Info($"{ImageTarget.File.FullName} 已关闭。");
+            _Log.Info($"{ImageTarget.FileInfo.FullName} 已关闭。");
             return true;
         }
         catch (Exception e)

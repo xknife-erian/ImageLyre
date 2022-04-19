@@ -16,7 +16,7 @@ public class To24BitBeat : BaseMacroBeat
         try
         {
             ImageTarget.To24Bit();
-            _Log.Info($"{ImageTarget.File.FullName} To24Bit.");
+            _Log.Info($"{ImageTarget.FileInfo.FullName} To24Bit.");
             return true;
         }
         catch (Exception e)

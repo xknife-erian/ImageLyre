@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     WindowStartupLocation="Manual"
     x:Name="_Window_"
-    Title="{Binding Target.File.Name}"
+    Title="{Binding Target.FileInfo.Name}"
     d:DesignHeight="200" d:DesignWidth="400"
     d:DataContext="{d:DesignInstance {x:Type vm:ImageViewModel}}">
     <b:Interaction.Triggers>

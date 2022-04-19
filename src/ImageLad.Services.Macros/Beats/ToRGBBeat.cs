@@ -16,7 +16,7 @@ public class ToRGBBeat : BaseMacroBeat
         try
         {
             ImageTarget.ToRGB();
-            _Log.Info($"{ImageTarget.File.FullName} ToRGB.");
+            _Log.Info($"{ImageTarget.FileInfo.FullName} ToRGB.");
             return true;
         }
         catch (Exception e)
