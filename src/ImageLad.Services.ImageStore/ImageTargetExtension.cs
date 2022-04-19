@@ -17,7 +17,6 @@ public static class ImageTargetExtension
         target.Bitmap = new Bitmap(memStream);
     }
 
-
     /// <summary>
     ///     将目标图像转为RGB图
     /// </summary>
