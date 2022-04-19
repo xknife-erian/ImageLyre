@@ -23,7 +23,7 @@ public class ImageTarget : ITarget
     /// </summary>
     public void Open()
     {
-        var stream = File.Open(FileMode.Open);
+        using var stream = File.Open(FileMode.Open);
         Bitmap = new Bitmap(stream);
     }
 

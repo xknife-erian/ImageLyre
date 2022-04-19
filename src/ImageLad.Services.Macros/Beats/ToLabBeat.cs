@@ -15,7 +15,7 @@ public class ToLabBeat : BaseMacroBeat
     {
         try
         {
-            //ImageTarget.ToLab();
+            ImageTarget.ToLab();
             _Log.Info($"{ImageTarget.File.FullName} ToLab.");
             return true;
         }

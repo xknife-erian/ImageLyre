@@ -15,7 +15,7 @@ public class ToCMYKBeat : BaseMacroBeat
     {
         try
         {
-            //ImageTarget.ToCMYK();
+            ImageTarget.ToCMYK();
             _Log.Info($"{ImageTarget.File.FullName} ToCMYK.");
             return true;
         }

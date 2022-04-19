@@ -14,19 +14,19 @@ public class WorkbenchViewModel : ObservableRecipient
 {
     private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
 
-    private readonly IDialogService _dialogService;
-    private readonly Func<ImageViewModel> _imageVmFactory;
-    private readonly Func<HistogramViewModel> _histogramVmFactory;
-    private readonly LoggerViewModel _loggerVm;
-    private readonly OptionViewModel _optionVm;
+    #region 变量
 
     private readonly Dictionary<string, ImageViewModel> _imageVmMap = new();
 
+    #endregion
+
+    #region 构造函数
+
     public WorkbenchViewModel(
-        IDialogService dialogService, 
-        Func<ImageViewModel> imageVmFactory, 
+        IDialogService dialogService,
+        Func<ImageViewModel> imageVmFactory,
         Func<HistogramViewModel> histogramVmFactory,
-        LoggerViewModel loggerVm, 
+        LoggerViewModel loggerVm,
         OptionViewModel optionVm)
     {
         _dialogService = dialogService;
@@ -36,8 +36,19 @@ public class WorkbenchViewModel : ObservableRecipient
         _optionVm = optionVm;
     }
 
-    #region 属性
+    #endregion
 
+    #region IoC注入的变量
+
+    private readonly IDialogService _dialogService;
+    private readonly Func<ImageViewModel> _imageVmFactory;
+    private readonly Func<HistogramViewModel> _histogramVmFactory;
+    private readonly LoggerViewModel _loggerVm;
+    private readonly OptionViewModel _optionVm;
+
+    #endregion
+
+    #region 属性
 
     #endregion
 
@@ -133,10 +144,10 @@ public class WorkbenchViewModel : ObservableRecipient
     private void UpdateImageFormat()
     {
         var vm = ActivatedImageViewModel;
-        if (vm == null )
+        if (vm == null)
             return;
-        var bpp = BitsPerPixel.Bit24; //ImageUtil.GetBitsPerPixel(vm.Bitmap);
-        var format = ImageLadFormat.RGB;//ImageUtil.GetImageFormat(vm.Bitmap);
+        var bpp = ImageUtil.GetBitsPerPixel(vm.Bitmap);
+        var format = ImageUtil.GetImageFormat(vm.Bitmap);
         IsGray = false;
         IsRGB = false;
         IsHSV = false;
@@ -209,7 +220,8 @@ public class WorkbenchViewModel : ObservableRecipient
 
     #region 图像 -> 模式
 
-    public ICommand ToGrayCommand => new RelayCommand(() => {
+    public ICommand ToGrayCommand => new RelayCommand(() =>
+    {
         if (ActivatedImageViewModel != null)
         {
             ActivatedImageViewModel.ToGray();
@@ -217,7 +229,8 @@ public class WorkbenchViewModel : ObservableRecipient
         }
     });
 
-    public ICommand ToRGBCommand => new RelayCommand(() => {
+    public ICommand ToRGBCommand => new RelayCommand(() =>
+    {
         if (ActivatedImageViewModel != null)
         {
             ActivatedImageViewModel.ToRGB();
@@ -225,7 +238,8 @@ public class WorkbenchViewModel : ObservableRecipient
         }
     });
 
-    public ICommand ToHSVCommand => new RelayCommand(() => {
+    public ICommand ToHSVCommand => new RelayCommand(() =>
+    {
         if (ActivatedImageViewModel != null)
         {
             ActivatedImageViewModel.ToHSV();
@@ -233,7 +247,8 @@ public class WorkbenchViewModel : ObservableRecipient
         }
     });
 
-    public ICommand ToCMYKCommand => new RelayCommand(() => {
+    public ICommand ToCMYKCommand => new RelayCommand(() =>
+    {
         if (ActivatedImageViewModel != null)
         {
             ActivatedImageViewModel.ToCMYK();
@@ -241,7 +256,8 @@ public class WorkbenchViewModel : ObservableRecipient
         }
     });
 
-    public ICommand ToLabCommand => new RelayCommand(() => {
+    public ICommand ToLabCommand => new RelayCommand(() =>
+    {
         if (ActivatedImageViewModel != null)
         {
             ActivatedImageViewModel.ToLab();
@@ -300,9 +316,7 @@ public class WorkbenchViewModel : ObservableRecipient
 
     #region 帮助
 
-    public ICommand SwitchLanguageCommand => new RelayCommand(() =>
-    {
-    });
+    public ICommand SwitchLanguageCommand => new RelayCommand(() => { });
 
     public ICommand ViewAppLogCommand => new RelayCommand(() =>
     {
@@ -363,7 +377,7 @@ public class WorkbenchViewModel : ObservableRecipient
     }
 
     /// <summary>
-    /// 计算出在下方显示时的坐标
+    ///     计算出在下方显示时的坐标
     /// </summary>
     private Point ComputeBelowLocation(int count = 0)
     {
@@ -373,7 +387,7 @@ public class WorkbenchViewModel : ObservableRecipient
     }
 
     /// <summary>
-    /// 计算出在右方显示时的坐标
+    ///     计算出在右方显示时的坐标
     /// </summary>
     private Point ComputeRightLocation()
     {
@@ -383,5 +397,4 @@ public class WorkbenchViewModel : ObservableRecipient
     }
 
     #endregion
-
 }

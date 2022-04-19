@@ -7,7 +7,6 @@ namespace ImageLad.ImageEngine;
 
 public static class ImageUtil
 {
-    /*
     public static Bitmap Read(string path)
     {
         if (File.Exists(path)) 
@@ -121,7 +120,7 @@ public static class ImageUtil
                 return ImageLadFormat.Undefined;
         }
     }
-    */
+    
     /// <summary>
     /// 更新图像到指定的对比度
     /// </summary>

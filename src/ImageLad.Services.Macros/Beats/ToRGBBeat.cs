@@ -15,7 +15,7 @@ public class ToRGBBeat : BaseMacroBeat
     {
         try
         {
-            //ImageTarget.ToRGB();
+            ImageTarget.ToRGB();
             _Log.Info($"{ImageTarget.File.FullName} ToRGB.");
             return true;
         }
