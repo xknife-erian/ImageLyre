@@ -2,7 +2,7 @@
 
 namespace ImageLad.ImageEngine.Undetermined
 {
-    public class AutoColorLevelsClass1
+    public class AutoColorLevels
     {
         // /// <summary>
         // /// 模拟Photoshop的自动色阶
