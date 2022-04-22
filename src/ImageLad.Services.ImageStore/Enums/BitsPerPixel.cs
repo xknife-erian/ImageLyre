@@ -2,7 +2,7 @@
 
 /// <summary>
 /// 像素深度是指存储每个像素所需要的比特数。
-/// https://gitee.com/xknife/image-laka/wikis/%E7%9F%A5%E8%AF%86%E9%A2%86%E5%9F%9F/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/%E5%83%8F%E7%B4%A0%E6%B7%B1%E5%BA%A6
+/// https://gitee.com/xknife/ImageLad/wikis/知识领域/图像处理/像素深度
 /// </summary>
 public enum BitsPerPixel : ushort
 {

@@ -95,28 +95,25 @@ public static class ColorSpaceHelper
     ///     Gets visible spectrum colors.
     /// </summary>
     /// <param name="alpha">The alpha value used for each colors.</param>
-    public static Color[] GetSpectrumColors(int alpha)
+    public static Color[] GetSpectrumColors(int alpha = 255)
     {
         var colors = new Color[256 * 6];
         //for(int i=127; i<256; i++) colors[i-127] = Color.FromArgb(alpha, i, 0, 0);
-        for (var i = 0; i < 256; i++) colors[i] = Color.FromArgb(alpha, 255, i, 0);
-        for (var i = 0; i < 256; i++) colors[i + 256] = Color.FromArgb(alpha, 255 - i, 255, 0);
-        for (var i = 0; i < 256; i++) colors[i + 256 * 2] = Color.FromArgb(alpha, 0, 255, i);
-        for (var i = 0; i < 256; i++) colors[i + 256 * 3] = Color.FromArgb(alpha, 0, 255 - i, 255);
-        for (var i = 0; i < 256; i++) colors[i + 256 * 4] = Color.FromArgb(alpha, i, 0, 255);
-        for (var i = 0; i < 256; i++) colors[i + 256 * 5] = Color.FromArgb(alpha, 255, 0, 255 - i);
+        for (var i = 0; i < 256; i++) 
+            colors[i] = Color.FromArgb(alpha, 255, i, 0);
+        for (var i = 0; i < 256; i++) 
+            colors[i + 256] = Color.FromArgb(alpha, 255 - i, 255, 0);
+        for (var i = 0; i < 256; i++) 
+            colors[i + 256 * 2] = Color.FromArgb(alpha, 0, 255, i);
+        for (var i = 0; i < 256; i++) 
+            colors[i + 256 * 3] = Color.FromArgb(alpha, 0, 255 - i, 255);
+        for (var i = 0; i < 256; i++) 
+            colors[i + 256 * 4] = Color.FromArgb(alpha, i, 0, 255);
+        for (var i = 0; i < 256; i++) 
+            colors[i + 256 * 5] = Color.FromArgb(alpha, 255, 0, 255 - i);
         //for(int i=0; i<128; i++) colors[i+(128+256*6)] = Color.FromArgb(alpha, 255-i, 0, 0);
 
         return colors;
-    }
-
-
-    /// <summary>
-    ///     Gets visible spectrum colors.
-    /// </summary>
-    public static Color[] GetSpectrumColors()
-    {
-        return GetSpectrumColors(255);
     }
 
     #endregion
@@ -525,9 +522,9 @@ public static class ColorSpaceHelper
         else if (l > 0.5) s = (max - min) / (2 - (max + min)); //(max-min > 0)?
 
         return new HSL(
-            double.Parse(string.Format("{0:0.##}", h)),
-            double.Parse(string.Format("{0:0.##}", s)),
-            double.Parse(string.Format("{0:0.##}", l))
+            double.Parse($"{h:0.##}"),
+            double.Parse($"{s:0.##}"),
+            double.Parse($"{l:0.##}")
         );
     }
 

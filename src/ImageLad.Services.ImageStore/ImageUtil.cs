@@ -202,32 +202,4 @@ public static partial class ImageUtil
         }
     }
 
-    /// <summary>Generates a Bitmap from data on the range [0, 255]</summary>
-    /// <param name="data">The data to use.</param>
-    /// <returns>A Bitmap</returns>
-    public static Bitmap BitmapFrom2dArray(double[,] data)
-    {
-        int length1 = data.GetLength(1);
-        int length2 = data.GetLength(0);
-        Bitmap bmp = new Bitmap(length1, length2, PixelFormat.Format8bppIndexed);
-        Rectangle rect = new Rectangle(0, 0, length1, length2);
-        BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
-        byte[] source = new byte[bmpData.Stride * length2];
-        for (int index1 = 0; index1 < length2; ++index1)
-        {
-            for (int index2 = 0; index2 < length1; ++index2)
-                source[index1 * bmpData.Stride + index2] = (byte) data[index1, index2];
-        }
-
-        Marshal.Copy(source, 0, bmpData.Scan0, source.Length);
-        bmp.UnlockBits(bmpData);
-        Bitmap bitmap = new Bitmap(length1, length2, PixelFormat.Format32bppPArgb);
-        using (Graphics graphics = Graphics.FromImage((Image) bitmap))
-            graphics.DrawImage((Image) bmp, 0, 0);
-        return bitmap;
-    }
-
-    /// <summary>Generates a sample Bitmap.</summary>
-    /// <returns>A sample Bitmap</returns>
-    public static Bitmap SampleImage() => BitmapFrom2dArray(SampleImageData());
 }
