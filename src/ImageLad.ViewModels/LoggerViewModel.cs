@@ -15,7 +15,6 @@ public class LoggerViewModel : ObservableRecipient
 
     public ObservableCollection<Log> Logs { get; }
 
-
     public double TimeWidth { get; set; } = 120;
 
     public double LoggerNameWidth { get; set; } = 50;
