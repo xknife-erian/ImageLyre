@@ -7,9 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Converters\**" />
     <Compile Remove="Themes\**" />
+    <EmbeddedResource Remove="Converters\**" />
     <EmbeddedResource Remove="Themes\**" />
+    <None Remove="Converters\**" />
     <None Remove="Themes\**" />
+    <Page Remove="Converters\**" />
     <Page Remove="Themes\**" />
   </ItemGroup>
 
@@ -20,10 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ImageLad.Base\ImageLad.Base.csproj" />
     <ProjectReference Include="..\ImageLad.Services.ImageStore\ImageLad.ImageEngine.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Converters\" />
   </ItemGroup>
 
 </Project>
