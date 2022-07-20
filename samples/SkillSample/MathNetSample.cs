@@ -1,11 +1,11 @@
 ﻿using System.Numerics;
 using MathNet.Numerics.LinearAlgebra.Complex;
 
-namespace ImageProcessorSample;
+namespace SkillSample;
 
-public class Class1
+public class MathNetSample
 {
-    public Class1()
+    public MathNetSample()
     {
         //DenseMatrix:一个具有密集存储的矩阵类。底层存储是一个一维数组，以列为主的顺序（逐列）。
         //矩阵的定义和初始化

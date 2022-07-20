@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -17,7 +16,7 @@ using Microsoft.Toolkit.Mvvm.Input;
 using Color = System.Drawing.Color;
 using Size = System.Windows.Size;
 
-namespace ImageProcessorSample;
+namespace SkillSample;
 
 public class MainWindowViewModel : ObservableRecipient
 {

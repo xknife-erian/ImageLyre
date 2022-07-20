@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using ImageLad.ImageEngine;
 using ImageLad.ImageEngine.Analyze;
-using ImageMagick;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 
-namespace WPFTest
+namespace WPFSample
 {
     public class MainViewModel : ObservableRecipient
     {
