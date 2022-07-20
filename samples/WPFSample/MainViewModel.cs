@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Text.Json.Serialization;
 using System.Windows.Input;
 using ImageLad.ImageEngine;
 using ImageLad.ImageEngine.Analyze;
+using ImageLad.UI.Controls;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 
@@ -33,7 +36,12 @@ namespace WPFSample
             var bmp = target.Bitmap;
 
             var histogram = GrayHistogram.Compute(bmp, GrayFormula.Weighted);
-            Histogram = histogram;
+            Histograms = new List<UiGrayHistogram> {new()
+            {
+                Histogram = histogram,
+                Color = Color.CadetBlue,
+                Visible = true
+            }};
 
             var fileInfo = new FileInfo(file);
             Info = $"{fileInfo.Name.ToUpper()}, {fileInfo.Length / 1000}k, {histogram}";
@@ -42,17 +50,17 @@ namespace WPFSample
 
         #region 为界面准备的可被绑定的属性
         
-        private GrayHistogram _histogram;
+        private List<UiGrayHistogram> _histograms;
         private string _info;
         private Bitmap _image;
 
         /// <summary>
         /// 直方图数据
         /// </summary>
-        public GrayHistogram Histogram
+        public List<UiGrayHistogram> Histograms
         {
-            get => _histogram;
-            set => SetProperty(ref _histogram, value);
+            get => _histograms;
+            set => SetProperty(ref _histograms, value);
         }
 
         public string Info

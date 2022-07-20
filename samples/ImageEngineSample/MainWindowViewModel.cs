@@ -158,7 +158,7 @@ public class MainWindowViewModel : ObservableRecipient
 
             //为对比显示，得到直接的照片
             using var fs = new FileStream(file, FileMode.Open, FileAccess.Read);
-            _photos.Add(ImageUtil.BuildBitmap(fs));
+            _photos.Add(WriteableBitmapUtil.BuildBitmap(fs));
         }
 
         Photo = _photos[1];
@@ -186,7 +186,7 @@ public class MainWindowViewModel : ObservableRecipient
                         var stride = (_imageRect.Width * _bitmap.Format.BitsPerPixel) / 8;
                         var array = new byte[_photoBytes[index].Length];
                         Array.Copy(_photoBytes[index], array, _photoBytes[index].Length);
-                        ImageUtil.ReverseImageStream(_photoBytes[index], array, 3);
+                        BytesUtil.ReverseImageStream(_photoBytes[index], array, 3);
                         _bitmap.WritePixels(_imageRect, array, _bitmap.BackBufferStride, 0);
                         _bitmap.AddDirtyRect(_imageRect);
                         _bitmap.Unlock();

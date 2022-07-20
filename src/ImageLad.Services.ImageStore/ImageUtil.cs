@@ -120,38 +120,6 @@ public static partial class ImageUtil
         }
     }
 
-    /// <summary>
-    ///     从流(<see cref="FileStream" />,<see cref="MemoryStream" />)快速创建<see cref="WriteableBitmap" />
-    /// </summary>
-    /// <param name="stream">包含图像的流</param>
-    /// <returns>WPF界面的<see cref="BitmapSource" /></returns>
-    public static WriteableBitmap BuildBitmap(Stream stream)
-    {
-        var bitmapImage = new BitmapImage();
-        bitmapImage.BeginInit();
-        bitmapImage.StreamSource = stream;
-        bitmapImage.EndInit();
-        bitmapImage.Freeze();
-        return new WriteableBitmap(bitmapImage);
-    }
-
-    /// <summary>
-    /// 反转图像流
-    /// </summary>
-    /// <param name="src">源图像流</param>
-    /// <param name="target">目标图像流</param>
-    /// <param name="bytePerPixel">每个像素的字节数</param>
-    public static void ReverseImageStream(byte[] src, byte[] target, ushort bytePerPixel)
-    {
-        var last = target.Length;
-        for (int i = 0; i < src.Length; i += bytePerPixel)
-        {
-            last -= bytePerPixel;
-            for (int j = 0; j < bytePerPixel; j++)
-                target[last + j] = src[i + j];
-        }
-    }
-
     public static int HSBtoRGB(float hue, float saturation, float brightness)
     {
         int r = 0, g = 0, b = 0;
@@ -334,5 +302,4 @@ public static partial class ImageUtil
             }
         }
     }
-
 }

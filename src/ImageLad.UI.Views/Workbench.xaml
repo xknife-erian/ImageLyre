@@ -10,7 +10,7 @@
                 xmlns:viewModels="clr-namespace:ImageLad.UI.ViewModels;assembly=ImageLad.UI.ViewModels"
                 mc:Ignorable="d"
                 Title="ImageLad" Height="250" Width="800"
-                Icon="/ImageLad.Views;component/Assets/Images/imagelad.png"
+                Icon="/ImageLad.UI.Views;component/Assets/Images/imagelad.png"
                 DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
                 d:DataContext="{d:DesignInstance {x:Type viewModels:WorkbenchViewModel}}">
     <f:RibbonWindow.Resources>
@@ -23,7 +23,7 @@
                                     HorizontalAlignment="Center">
                             <TextBlock Text="{TemplateBinding Header}"
                                        Margin="0,15,0,0"
-                                       FontFamily="pack://application:,,,/ImageLad.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
+                                       FontFamily="pack://application:,,,/ImageLad.UI.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
                                        Foreground="SlateGray"
                                        FontSize="26"
                                        VerticalAlignment="Center"
@@ -92,7 +92,7 @@
                 <f:RibbonGroupBox Header="模式">
                     <f:DropDownButton Header="&#xf1c5;"
                                       Padding="0,-15,0,0"
-                                      FontFamily="pack://application:,,,/ImageLad.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
+                                      FontFamily="pack://application:,,,/ImageLad.UI.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
                                       Foreground="SlateGray"
                                       FontSize="26">
                         <f:MenuItem Header="灰度" Style="{StaticResource MenuItemStyle}"
@@ -128,7 +128,7 @@
                 <f:RibbonGroupBox Header="旋转">
                     <f:DropDownButton Header="&#xf079;"
                                       Padding="0,-15,0,0"
-                                      FontFamily="pack://application:,,,/ImageLad.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
+                                      FontFamily="pack://application:,,,/ImageLad.UI.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
                                       Foreground="SlateGray"
                                       FontSize="26">
                         <f:MenuItem Header="180°" Style="{StaticResource MenuItemStyle}" />
@@ -145,7 +145,7 @@
                 <f:RibbonGroupBox Header="调整">
                     <f:DropDownButton Header="&#xf0e3;"
                                       Padding="0,-15,0,0"
-                                      FontFamily="pack://application:,,,/ImageLad.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
+                                      FontFamily="pack://application:,,,/ImageLad.UI.Views;component/Assets/Fonts/FontAwesome6.otf#Font Awesome 6 Free Solid"
                                       Foreground="SlateGray"
                                       FontSize="26">
                         <f:MenuItem Header="亮度/对比度" Style="{StaticResource MenuItemStyle}" />

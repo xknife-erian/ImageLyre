@@ -1,17 +1,17 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace ImageLad.ImageEngine.Extensions
+namespace ImageLad.ImageEngine
 {
     /// <summary>
     /// 图像(<see cref="Bitmap"/>) 扩展
     /// </summary>
-    public static class BitmapExtensions
+    public static class BitmapUtil
     {
         #region ToPixelArray2D(转换为 Color[,]颜色值二维数组)
 
         /// <summary>
-        /// 将图像转换为 Color[,]颜色值二维数组
+        /// 将图像转换为<see cref="Color"/>[,]颜色值二维数组
         /// </summary>
         /// <param name="bitmap">图像</param>
         /// <returns></returns>
@@ -43,7 +43,7 @@ namespace ImageLad.ImageEngine.Extensions
         #region ToGrayArray2D(转换为 byte[,]灰度值二维数组)
 
         /// <summary>
-        /// 将图像转换为 byte[,]灰度值二维数组，后续所有操作都以二维数组作为中间变量
+        /// 将图像转换为<see cref="byte"/>[,]灰度值二维数组，后续所有操作都以二维数组作为中间变量
         /// </summary>
         /// <param name="bitmap">图像</param>
         /// <returns></returns>
@@ -60,7 +60,7 @@ namespace ImageLad.ImageEngine.Extensions
                 {
                     for (int x = 0; x < width; x++)
                     {
-                        grayBytes[x, y] = GetGrayValue(ptr[2], ptr[1], ptr[0]);
+                        grayBytes[x, y] = ColorUtil.GetGrayValue(ptr[2], ptr[1], ptr[0]);
                         ptr += 3;
                     }
 
@@ -71,17 +71,7 @@ namespace ImageLad.ImageEngine.Extensions
             }
         }
 
-        /// <summary>
-        /// 获取灰度值
-        /// </summary>
-        /// <param name="red">红</param>
-        /// <param name="green">绿</param>
-        /// <param name="blue">蓝</param>
-        /// <returns></returns>
-        private static byte GetGrayValue(byte red, byte green, byte blue)
-        {
-            return (byte)((red * 19595 + green * 38469 + blue * 7472) >> 16);
-        }
+
 
         /// <summary>
         /// 将颜色二维数组转换为 byte[,]灰度值二维数组
@@ -96,21 +86,11 @@ namespace ImageLad.ImageEngine.Extensions
             {
                 for (int x = 0; x < width; x++)
                 {
-                    grayBytes[x, y] = GetGrayValue(pixels[x, y]);
+                    grayBytes[x, y] = ColorUtil.GetGrayValue(pixels[x, y]);
                 }
             }
 
             return grayBytes;
-        }
-
-        /// <summary>
-        /// 获取灰度值
-        /// </summary>
-        /// <param name="pixel">颜色</param>
-        /// <returns></returns>
-        private static byte GetGrayValue(Color pixel)
-        {
-            return GetGrayValue(pixel.R, pixel.G, pixel.B);
         }
 
         #endregion
@@ -251,7 +231,7 @@ namespace ImageLad.ImageEngine.Extensions
                 {
                     byte value = binBytes[x, y];
                     // 背景，边框
-                    if (value > gray || (x == 0 || y == 0 || x == width - 1 || y == height - 1))
+                    if (value > gray || x == 0 || y == 0 || x == width - 1 || y == height - 1)
                     {
                         binBytes[x, y] = 255;
                         continue;
