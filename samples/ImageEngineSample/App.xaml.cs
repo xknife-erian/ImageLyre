@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace SkillSample
+namespace ImageEngineSample
 {
     /// <summary>
     /// App.xaml 的交互逻辑

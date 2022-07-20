@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.IO;
 using BitMiracle.LibTiff.Classic;
 
 namespace ImageLad.ImageEngine.Undetermined

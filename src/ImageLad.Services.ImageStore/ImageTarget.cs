@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.IO;
 using ImageMagick;
 
 namespace ImageLad.ImageEngine;

@@ -4,49 +4,90 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:oxy="http://oxyplot.org/wpf"
-             mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
     <Border>
         <Grid Margin="2" Background="WhiteSmoke">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="10"></RowDefinition>
-                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
-            <oxy:PlotView Grid.Row="0" x:Name="_Plot_" Margin="0"/>
-            <Canvas Grid.Row="1" Margin="7,0">
+            <oxy:PlotView x:Name="_Plot_"
+                          Grid.Row="0"
+                          Margin="0" />
+            <Canvas x:Name="_GrayScaleSliceEnablePanel_"
+                    Grid.Row="1"
+                    Margin="7,0">
                 <Canvas.Background>
                     <LinearGradientBrush>
-                        <GradientStop Color="Black"/>
-                        <GradientStop Color="White" Offset="1"/>
+                        <GradientStop Color="Black" />
+                        <GradientStop Offset="1" Color="White" />
                     </LinearGradientBrush>
                 </Canvas.Background>
             </Canvas>
             <Grid Grid.Row="2" Margin="0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"></ColumnDefinition>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
-                    <ColumnDefinition Width="2*"></ColumnDefinition>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
-                    <ColumnDefinition Width="2*"></ColumnDefinition>
-                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Content="最大值:" HorizontalContentAlignment="Right"></Label>
-                <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" x:Name="_Max_"/>
-                <Label Grid.Row="0" Grid.Column="2" Content="最小值:" HorizontalContentAlignment="Right"></Label>
-                <TextBlock Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" x:Name="_Min_"/>
-                <Label Grid.Row="0" Grid.Column="4" Content="像素:" HorizontalContentAlignment="Right"></Label>
-                <TextBlock Grid.Row="0" Grid.Column="5" VerticalAlignment="Center" x:Name="_Count_"/>
-                <Label Grid.Row="1" Grid.Column="0" Content="均值:" HorizontalContentAlignment="Right"></Label>
-                <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" x:Name="_Mean_"/>
-                <Label Grid.Row="1" Grid.Column="2" Content="标准差:" HorizontalContentAlignment="Right"></Label>
-                <TextBlock Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" x:Name="_StdDev_"/>
-                <Label Grid.Row="1" Grid.Column="4" Content="模式灰度值:" HorizontalContentAlignment="Right"></Label>
-                <TextBlock Grid.Row="1" Grid.Column="5" VerticalAlignment="Center" x:Name="_Mode_"/>
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       HorizontalContentAlignment="Right"
+                       Content="最大值:" />
+                <TextBlock x:Name="_Max_"
+                           Grid.Row="0"
+                           Grid.Column="1"
+                           VerticalAlignment="Center" />
+                <Label Grid.Row="0"
+                       Grid.Column="2"
+                       HorizontalContentAlignment="Right"
+                       Content="最小值:" />
+                <TextBlock x:Name="_Min_"
+                           Grid.Row="0"
+                           Grid.Column="3"
+                           VerticalAlignment="Center" />
+                <Label Grid.Row="0"
+                       Grid.Column="4"
+                       HorizontalContentAlignment="Right"
+                       Content="像素:" />
+                <TextBlock x:Name="_Count_"
+                           Grid.Row="0"
+                           Grid.Column="5"
+                           VerticalAlignment="Center" />
+                <Label Grid.Row="1"
+                       Grid.Column="0"
+                       HorizontalContentAlignment="Right"
+                       Content="均值:" />
+                <TextBlock x:Name="_Mean_"
+                           Grid.Row="1"
+                           Grid.Column="1"
+                           VerticalAlignment="Center" />
+                <Label Grid.Row="1"
+                       Grid.Column="2"
+                       HorizontalContentAlignment="Right"
+                       Content="标准差:" />
+                <TextBlock x:Name="_StdDev_"
+                           Grid.Row="1"
+                           Grid.Column="3"
+                           VerticalAlignment="Center" />
+                <Label Grid.Row="1"
+                       Grid.Column="4"
+                       HorizontalContentAlignment="Right"
+                       Content="模式灰度值:" />
+                <TextBlock x:Name="_Mode_"
+                           Grid.Row="1"
+                           Grid.Column="5"
+                           VerticalAlignment="Center" />
             </Grid>
         </Grid>
     </Border>

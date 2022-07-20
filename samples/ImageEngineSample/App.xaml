@@ -1,9 +1,9 @@
-﻿<Application x:Class="SkillSample.App"
+﻿<Application x:Class="ImageEngineSample.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:skillSample="clr-namespace:SkillSample"
+             xmlns:imageEngineSample="clr-namespace:ImageEngineSample"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <skillSample:MainWindowViewModel x:Key="_ViewModel_" />
+        <imageEngineSample:MainWindowViewModel x:Key="_ViewModel_" />
     </Application.Resources>
 </Application>

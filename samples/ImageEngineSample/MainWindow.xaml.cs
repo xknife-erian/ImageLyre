@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace SkillSample;
+namespace ImageEngineSample;
 
 /// <summary>
 /// MainWindow.xaml 的交互逻辑

@@ -1,104 +1,140 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ImageLad.ImageEngine;
-using ImageLad.ImageEngine.Analyze;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 
-namespace ImageLad.Controls
+namespace ImageLad.Controls;
+
+/// <summary>
+///     HistogramPanel.xaml 的交互逻辑
+/// </summary>
+public partial class HistogramPanel : UserControl
 {
-    /// <summary>
-    /// HistogramPanel.xaml 的交互逻辑
-    /// </summary>
-    public partial class HistogramPanel : UserControl
+    public HistogramPanel()
     {
-        public HistogramPanel()
-        {
-            InitializeComponent();
-            Loaded += (s, e) => { _Plot_.InvalidatePlot(); };
-        }
-
-        /// <summary>
-        /// 直方图的数据源。
-        /// </summary>
-        public GrayHistogram GrayHistogramSeries
-        {
-            get => (GrayHistogram) GetValue(GrayHistogramSeriesProperty);
-            set => SetValue(GrayHistogramSeriesProperty, value);
-        }
-
-
-        public static readonly DependencyProperty GrayHistogramSeriesProperty =
-            DependencyProperty.Register($"{nameof(GrayHistogramSeries)}", typeof(GrayHistogram), typeof(HistogramPanel),
-                new PropertyMetadata(
-                    null,   // 依赖项对象的默认值，通常作为某种特定类型的值提供。
-                    HasData,// 对处理程序实现的引用，每当属性的有效值更改时，属性系统都将调用该处理程序实现。
-                    null)); // 对处理程序实现的引用，每当属性系统对该属性调用 CoerceValue(DependencyProperty) 时都将调用此处理程序实现。
-
-        private static void HasData(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var panel = d as HistogramPanel;
-            if (panel == null)
-                return;
-            var plot = panel._Plot_;
-            if (plot.Model == null)
-            {
-                var model = new PlotModel();
-
-                var bottomAxis = new LinearAxis();
-                bottomAxis.Position = AxisPosition.Bottom;
-                bottomAxis.IsAxisVisible = false;
-                bottomAxis.MaximumPadding = 0;
-                bottomAxis.MinimumPadding = 0;
-                model.Axes.Add(bottomAxis);
-
-                var leftAxis = new LinearAxis();
-                leftAxis.Position = AxisPosition.Left;
-                leftAxis.IsAxisVisible = false;
-                leftAxis.MaximumPadding = 0;
-                leftAxis.MinimumPadding = 0;
-                model.Axes.Add(leftAxis);
-
-                var series = new HistogramSeries();
-                series.FillColor = OxyColor.FromRgb(110, 130, 240);
-                model.Series.Add(series);
-
-                plot.Model = model;
-            }
-
-            var hs = (HistogramSeries) plot.Model.Series[0];
-            var gh = (GrayHistogram) e.NewValue;
-            hs.Items.Clear();
-            for (int i = 0; i < gh.Array.Length; i++)
-            {
-                hs.Items.Add(new HistogramItem(i, (double) i + 1, gh.Array[i], (int) gh.Array[i]));
-            }
-
-            plot.InvalidatePlot();
-            panel._Max_.Text = gh.Max.ToString();
-            panel._Min_.Text = gh.Min.ToString();
-            panel._Mean_.Text = Math.Round(gh.Mean, 3).ToString(CultureInfo.InvariantCulture);
-            panel._StdDev_.Text = Math.Round(gh.StdDev, 3).ToString(CultureInfo.InvariantCulture);
-            panel._Count_.Text = gh.Count.ToString();
-            panel._Mode_.Text = $"{gh.Mode.Item1}({gh.Mode.Item2})";
-        }
+        InitializeComponent();
+        Loaded += (_, _) => { _Plot_.InvalidatePlot(); };
     }
+
+    #region GrayHistograms
+
+    public static readonly DependencyProperty GrayHistogramsProperty = DependencyProperty.Register(
+        nameof(GrayHistograms), typeof(List<UiGrayHistogram>), typeof(HistogramPanel),
+        new PropertyMetadata(default(List<UiGrayHistogram>), OnGrayHistogramsChanged));
+
+    public List<UiGrayHistogram> GrayHistograms
+    {
+        get => (List<UiGrayHistogram>)GetValue(GrayHistogramsProperty);
+        set => SetValue(GrayHistogramsProperty, value);
+    }
+
+    private static void OnGrayHistogramsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not HistogramPanel panel)
+            return;
+
+        var plot = panel._Plot_;
+        var histograms = (List<UiGrayHistogram>)e.NewValue;
+        plot.Model = new PlotModel();
+
+        var bottomAxis = new LinearAxis
+        {
+            Position = AxisPosition.Bottom,
+            IsAxisVisible = false,
+            MaximumPadding = 0,
+            MinimumPadding = 0
+        };
+        plot.Model.Axes.Add(bottomAxis);
+
+        var leftAxis = new LinearAxis
+        {
+            Position = AxisPosition.Left,
+            IsAxisVisible = false,
+            MaximumPadding = 0,
+            MinimumPadding = 0
+        };
+        plot.Model.Axes.Add(leftAxis);
+
+        foreach (var hist in histograms)
+        {
+            hist.VisibleChanged += (_, _) =>
+            {
+                var index = histograms.IndexOf(hist);
+                plot.Model.Series[index].IsVisible = hist.Visible;
+                plot.InvalidatePlot();
+            };
+            var series = BuildHistogramSeries(hist);
+            plot.Model.Series.Add(series);
+        }
+
+        plot.InvalidatePlot();
+    }
+
+    private static HistogramSeries BuildHistogramSeries(UiGrayHistogram hist)
+    {
+        var color = OxyColor.FromRgb(hist.Color.R, hist.Color.G, hist.Color.B);
+        var series = new HistogramSeries { FillColor = color, IsVisible = hist.Visible };
+        for (var i = 0; i < hist.Histogram.Array.Length; i++)
+            series.Items.Add(new HistogramItem(i, (double)i + 1, hist.Histogram.Array[i],
+                (int)hist.Histogram.Array[i]));
+        return series;
+    }
+
+    #endregion
+
+    #region GrayScaleSliceEnable
+
+    public static readonly DependencyProperty GrayScaleSliceEnableProperty = DependencyProperty.Register(
+        nameof(GrayScaleSliceEnable), typeof(bool), typeof(HistogramPanel),
+        new PropertyMetadata(false, OnGrayScaleSliceEnableChanged));
+
+    private static void OnGrayScaleSliceEnableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not HistogramPanel panel)
+            return;
+        var p = panel._GrayScaleSliceEnablePanel_;
+        if ((bool)e.NewValue)
+            p.Visibility = Visibility.Visible;
+        else
+            p.Visibility = Visibility.Collapsed;
+    }
+
+    /// <summary>
+    ///     中部灰度指示条是否显示。默认显示。
+    /// </summary>
+    public bool GrayScaleSliceEnable
+    {
+        get => (bool)GetValue(GrayScaleSliceEnableProperty);
+        set => SetValue(GrayScaleSliceEnableProperty, value);
+    }
+
+    #endregion
+
+    #region SliceHeight
+
+    public static readonly DependencyProperty SliceHeightProperty = DependencyProperty.Register(
+        nameof(SliceHeight), typeof(int), typeof(HistogramPanel),
+        new PropertyMetadata(8, OnSliceHeightChanged));
+
+    private static void OnSliceHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not HistogramPanel panel)
+            return;
+        panel._GrayScaleSliceEnablePanel_.Height = (int)e.NewValue;
+    }
+
+    public int SliceHeight
+    {
+        get => (int)GetValue(SliceHeightProperty);
+        set => SetValue(SliceHeightProperty, value);
+    }
+
+    #endregion
 }
+
 /****
  * 曾尝试用自定义控件的模式在Canvas上自行绘制，虽然成功，但功能较少，未使用。
 /// <summary>

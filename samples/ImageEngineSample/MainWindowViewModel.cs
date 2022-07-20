@@ -10,13 +10,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using ImageLad.Skills;
+using ImageLad.ImageEngine;
+using ImageLad.ImageEngine.Jobs;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using Color = System.Drawing.Color;
 using Size = System.Windows.Size;
 
-namespace SkillSample;
+namespace ImageEngineSample;
 
 public class MainWindowViewModel : ObservableRecipient
 {

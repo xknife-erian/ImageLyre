@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using MathNet.Numerics.LinearAlgebra.Complex;
 
-namespace SkillSample;
+namespace ImageEngineSample;
 
 public class MathNetSample
 {

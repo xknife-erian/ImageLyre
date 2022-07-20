@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -21,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ImageLad.Services.ImageStore\ImageLad.ImageEngine.csproj" />
+    <ProjectReference Include="..\ImageLad.Base\ImageLad.Base.csproj" />
     <ProjectReference Include="..\ImageLad.Services.Macros\ImageLad.Services.Macros.csproj" />
   </ItemGroup>
 

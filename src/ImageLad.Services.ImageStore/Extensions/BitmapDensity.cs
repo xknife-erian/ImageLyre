@@ -1,6 +1,4 @@
-﻿using System.Drawing.Imaging;
-using ImageMagick;
-
+﻿
 // ReSharper disable once CheckNamespace
 namespace ImageMagick;
 

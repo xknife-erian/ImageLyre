@@ -4,8 +4,6 @@ using System.Windows.Input;
 using ImageLad.ImageEngine;
 using ImageLad.Services.Macros;
 using ImageLad.Services.Macros.Beats;
-using ImageLad.ImageEngine.Enums;
-using ImageMagick;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 

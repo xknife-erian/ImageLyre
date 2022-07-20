@@ -1,27 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.4.0" />
-    <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
-    <PackageReference Include="Magick.NET-Q16-HDRI-x64" Version="11.3.0" />
-    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="NKnife" Version="22.0.0" />
-    <PackageReference Include="NLog" Version="5.0.1" />
-    <PackageReference Include="OpenCvSharp4" Version="4.6.0.20220608" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-    <PackageReference Include="System.Memory" Version="4.5.5" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="6.4.0" />
+		<PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
+		<PackageReference Include="Magick.NET-Q16-HDRI-x64" Version="11.3.0" />
+		<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+		<PackageReference Include="NKnife" Version="22.0.0" />
+		<PackageReference Include="NLog" Version="5.0.1" />
+		<PackageReference Include="OpenCvSharp4" Version="4.6.0.20220608" />
+		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+		<PackageReference Include="System.Memory" Version="4.5.5" />
+		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ImageLad.Base\ImageLad.Base.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ImageLad.Base\ImageLad.Base.csproj" />
+	</ItemGroup>
 
 </Project>

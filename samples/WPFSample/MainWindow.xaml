@@ -22,7 +22,7 @@
         <TabControl Margin="10" Grid.Column="0">
             <TabItem Header="灰度直方图" Height="30">
                 <ctl:HistogramPanel Margin="10" BorderThickness="0.5" BorderBrush="Black"
-                                    GrayHistogramSeries="{Binding Histogram}" />
+                                    GrayHistograms="{Binding Histogram}" />
             </TabItem>
         </TabControl>
         <Grid Grid.Column="1" Margin="0,10,10,10">

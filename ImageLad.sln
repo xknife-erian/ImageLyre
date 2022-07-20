@@ -39,9 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Services.Importer"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{BABB04BF-5435-4C98-A482-3961DA5182C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Skills", "src\ImageLad.Skills\ImageLad.Skills.csproj", "{73C7EF1A-512A-4091-A210-3EF27A058B04}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillSample", "samples\SkillSample\SkillSample.csproj", "{F86F2D68-9D9D-44B2-A399-66AEBD24E8AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageEngineSample", "samples\ImageEngineSample\ImageEngineSample.csproj", "{F86F2D68-9D9D-44B2-A399-66AEBD24E8AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,10 +95,6 @@ Global
 		{141F6248-6627-4026-8400-8BF5E540E33E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{141F6248-6627-4026-8400-8BF5E540E33E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{141F6248-6627-4026-8400-8BF5E540E33E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73C7EF1A-512A-4091-A210-3EF27A058B04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73C7EF1A-512A-4091-A210-3EF27A058B04}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73C7EF1A-512A-4091-A210-3EF27A058B04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73C7EF1A-512A-4091-A210-3EF27A058B04}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F86F2D68-9D9D-44B2-A399-66AEBD24E8AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F86F2D68-9D9D-44B2-A399-66AEBD24E8AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F86F2D68-9D9D-44B2-A399-66AEBD24E8AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
