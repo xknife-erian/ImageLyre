@@ -10,11 +10,10 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ImageLad.Base.IoC;
 using ImageLad.Managers;
-using ImageLad.Views;
 using ImageLad.Base;
 using ImageLad.NLog;
-using ImageLad.ViewModels;
-using ImageLad.Views.Utils;
+using ImageLad.UI.Views;
+using ImageLad.UI.Views.Utils;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using NLog;
 
@@ -99,8 +98,8 @@ namespace ImageLad
             builder.RegisterModule<Modules>();
             builder.RegisterModule<ImageEngine.IoC.Modules>();
             builder.RegisterModule<Services.Macros.IoC.Modules>();
-            builder.RegisterModule<Views.IoC.Modules>();
-            builder.RegisterModule<ViewModels.IoC.Modules>();
+            builder.RegisterModule<UI.Views.IoC.Modules>();
+            builder.RegisterModule<UI.ViewModels.IoC.Modules>();
             return new AutofacServiceProvider(builder.Build());
         }
     }

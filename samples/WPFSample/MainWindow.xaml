@@ -3,10 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ctl="clr-namespace:ImageLad.Controls;assembly=ImageLad.Controls"
-        xmlns:converters="clr-namespace:ImageLad.Views.Converters;assembly=ImageLad.Views"
-        xmlns:drawing="clr-namespace:ImageLad.Views.Converters.Drawing;assembly=ImageLad.Views"
         xmlns:local="clr-namespace:WPFSample"
+        xmlns:controls="clr-namespace:ImageLad.UI.Controls;assembly=ImageLad.UI.Controls"
+        xmlns:drawing="clr-namespace:ImageLad.UI.Views.Converters.Drawing;assembly=ImageLad.UI.Views"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         d:DataContext="{d:DesignInstance {x:Type local:MainViewModel}}"
         Icon="\Main.png"
@@ -21,7 +20,7 @@
         </Grid.ColumnDefinitions>
         <TabControl Margin="10" Grid.Column="0">
             <TabItem Header="灰度直方图" Height="30">
-                <ctl:HistogramPanel Margin="10" BorderThickness="0.5" BorderBrush="Black"
+                <controls:HistogramPanel Margin="10" BorderThickness="0.5" BorderBrush="Black"
                                     GrayHistograms="{Binding Histogram}" />
             </TabItem>
         </TabControl>

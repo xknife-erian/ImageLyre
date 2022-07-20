@@ -1,6 +1,6 @@
 ﻿using System;
 using ImageLad.NLog;
-using ImageLad.Views.Views;
+using ImageLad.UI.Views.Views;
 using NLog;
 using NLog.Targets;
 

@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\ImageLad.UI.ViewModels\ImageLad.UI.ViewModels.csproj" />
     <ProjectReference Include="..\..\src\ImageLad.ViewModels\ImageLad.ViewModels.csproj" />
   </ItemGroup>
 

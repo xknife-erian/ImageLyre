@@ -13,9 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Views", "src\ImageLad.Views\ImageLad.Views.csproj", "{922DC528-56DB-45BB-886C-6AEF34CFA512}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.UI.Views", "src\ImageLad.UI.Views\ImageLad.UI.Views.csproj", "{922DC528-56DB-45BB-886C-6AEF34CFA512}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.ViewModels", "src\ImageLad.ViewModels\ImageLad.ViewModels.csproj", "{2AC1D480-27FE-449C-81CF-D3F623CC491A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.UI.ViewModels", "src\ImageLad.UI.ViewModels\ImageLad.UI.ViewModels.csproj", "{2AC1D480-27FE-449C-81CF-D3F623CC491A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.ImageEngine", "src\ImageLad.Services.ImageStore\ImageLad.ImageEngine.csproj", "{9B4BAB84-29A7-4230-BF12-4048E4FF20FD}"
 EndProject
@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ViewModelsTest", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ViewTest", "tests\UTest.ViewTest\UTest.ViewTest.csproj", "{36CF8FD0-25F3-4324-B471-FE59AA7A5AD5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Controls", "src\ImageLad.Controls\ImageLad.Controls.csproj", "{255F6EF6-2493-4334-BF34-D4876EF04A95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.UI.Controls", "src\ImageLad.UI.Controls\ImageLad.UI.Controls.csproj", "{255F6EF6-2493-4334-BF34-D4876EF04A95}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFSample", "samples\WPFSample\WPFSample.csproj", "{04D19F9E-16E6-4519-9624-76E9330F1602}"
 EndProject

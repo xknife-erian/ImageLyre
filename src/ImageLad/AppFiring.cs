@@ -1,4 +1,4 @@
-﻿using ImageLad.ViewModels;
+﻿using ImageLad.UI.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 
 namespace ImageLad;

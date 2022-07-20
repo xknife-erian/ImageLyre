@@ -21,8 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ImageLad.Services.Importer\ImageLad.Services.Importer.csproj" />
-    <ProjectReference Include="..\ImageLad.ViewModels\ImageLad.ViewModels.csproj" />
-    <ProjectReference Include="..\ImageLad.Views\ImageLad.Views.csproj" />
+    <ProjectReference Include="..\ImageLad.UI.Views\ImageLad.UI.Views.csproj" />
   </ItemGroup>
 
   <ItemGroup>

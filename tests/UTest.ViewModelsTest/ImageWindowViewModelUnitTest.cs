@@ -1,5 +1,5 @@
 using FluentAssertions;
-using ImageLad.ViewModels;
+using ImageLad.UI.ViewModels;
 using Xunit;
 
 namespace UTest.ViewModelsTest
