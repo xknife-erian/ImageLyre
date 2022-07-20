@@ -44,7 +44,7 @@ namespace ImageLad
             base.OnStartup(e);
             if (IsStartFromCommandLine(e))
             {
-                var args = e.Args;//这是命令行参数。 TODO:命令行模式待开发。laka, 2022/3/7。
+                var args = e.Args;//这是命令行参数。 TODO:命令行模式待开发。2022/3/7。
                 _Log.Info(args);
             }
             else
