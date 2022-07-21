@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="WPFSample.Controls.Menus"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fluent="urn:fluent-ribbon"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="180"
+             d:DesignWidth="1000"
+             mc:Ignorable="d">
+    <Border VerticalAlignment="Center" DockPanel.Dock="Top">
+        <fluent:Ribbon>
+            <fluent:RibbonTabItem Header="开始">
+                <fluent:RibbonGroupBox Header="下拉框">
+                    <fluent:ComboBox Header="字体"
+                                     InputWidth="100"
+                                     IsEditable="true"
+                                     KeyTip="FD" />
+                    <fluent:ComboBox Header="字体"
+                                     InputWidth="100"
+                                     IsEditable="False"
+                                     KeyTip="FD" />
+                    <fluent:ComboBox Header="字体"
+                                     InputWidth="100"
+                                     IsEditable="False"
+                                     KeyTip="FD" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="项目" IsSelected="True">
+                <fluent:RibbonGroupBox
+                    Header="项目创建"
+                                       IsLauncherVisible="False"
+                                       KeyTip="FG">
+                    <fluent:Button LargeIcon="./Assetss/Menus/folder48.png" />
+                    <fluent:Button LargeIcon="./Assetss/Menus/folder48.png" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+        </fluent:Ribbon>
+    </Border>
+</UserControl>

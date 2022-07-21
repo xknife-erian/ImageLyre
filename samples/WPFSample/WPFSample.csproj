@@ -33,58 +33,61 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="assets\01.jpg">
+    <None Update="Assetss\HistogramSample\01.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\02.jpg">
+    <None Update="Assetss\HistogramSample\02.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\03.png">
+    <None Update="Assetss\HistogramSample\03.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\04.png">
+    <None Update="Assetss\HistogramSample\04.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\05.jpg">
+    <None Update="Assetss\HistogramSample\05.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\06.jpg">
+    <None Update="Assetss\HistogramSample\06.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\07.jpg">
+    <None Update="Assetss\HistogramSample\07.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\08.jpg">
+    <None Update="Assetss\HistogramSample\08.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\09.jpg">
+    <None Update="Assetss\HistogramSample\09.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\25.jpg">
+    <None Update="Assetss\HistogramSample\25.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\26.jpg">
+    <None Update="Assetss\HistogramSample\26.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\27.jpg">
+    <None Update="Assetss\HistogramSample\27.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\94.JPG">
+    <None Update="Assetss\HistogramSample\94.JPG">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\95.JPG">
+    <None Update="Assetss\HistogramSample\95.JPG">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\96.JPG">
+    <None Update="Assetss\HistogramSample\96.JPG">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\97.JPG">
+    <None Update="Assetss\HistogramSample\97.JPG">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\98.JPG">
+    <None Update="Assetss\HistogramSample\98.JPG">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="assets\99.JPG">
+    <None Update="Assetss\HistogramSample\99.JPG">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assetss\Menus\folder48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
