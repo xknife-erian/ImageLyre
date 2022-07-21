@@ -90,7 +90,7 @@ namespace ImageLad.ImageEngine.ColorTypeConvert
 		}
 
 		#region Methods
-		public override bool Equals(Object obj) 
+		public override bool Equals(object obj) 
 		{
 			if(obj==null || GetType()!=obj.GetType()) return false;
 

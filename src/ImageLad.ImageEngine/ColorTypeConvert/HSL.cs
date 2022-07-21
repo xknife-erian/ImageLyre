@@ -3,37 +3,37 @@ using System.ComponentModel;
 namespace ImageLad.ImageEngine.ColorTypeConvert
 {
 	/// <summary>
-	/// Structure to define HSB.
+	/// Structure to define HSL.
 	/// </summary>
-	public struct HSB
+	public struct HSL
 	{
 		/// <summary>
-		/// Gets an empty HSB structure;
+		/// Gets an empty HSL structure;
 		/// </summary>
-		public static readonly HSB Empty = new HSB();
+		public static readonly HSL Empty = new HSL();
 
 		#region Fields
 		private double hue;
 		private double saturation;
-		private double brightness;
+		private double luminance;
 		#endregion
 
 		#region Operators
-		public static bool operator ==(HSB item1, HSB item2)
+		public static bool operator ==(HSL item1, HSL item2)
 		{
 			return (
 				item1.Hue == item2.Hue 
 				&& item1.Saturation == item2.Saturation 
-				&& item1.Brightness == item2.Brightness
+				&& item1.Luminance == item2.Luminance
 				);
 		}
 
-		public static bool operator !=(HSB item1, HSB item2)
+		public static bool operator !=(HSL item1, HSL item2)
 		{
 			return (
 				item1.Hue != item2.Hue 
 				|| item1.Saturation != item2.Saturation 
-				|| item1.Brightness != item2.Brightness
+				|| item1.Luminance != item2.Luminance
 				);
 		}
 
@@ -73,46 +73,47 @@ namespace ImageLad.ImageEngine.ColorTypeConvert
 		} 
 
 		/// <summary>
-		/// Gets or sets the brightness component.
+		/// Gets or sets the luminance component.
 		/// </summary>
-		[Description("Brightness component"),]
-		public double Brightness 
+		[Description("Luminance component"),]
+		public double Luminance 
 		{ 
 			get
 			{
-				return brightness;
+				return luminance;
 			} 
 			set
 			{ 
-				brightness = (value>1)? 1 : ((value<0)? 0 : value); 
+				luminance = (value>1)? 1 : ((value<0)? 0 : value); 
 			} 
-		} 
+		}
+
 		#endregion
 
 		/// <summary>
-		/// Creates an instance of a HSB structure.
+		/// Creates an instance of a HSL structure.
 		/// </summary>
 		/// <param name="h">Hue value.</param>
 		/// <param name="s">Saturation value.</param>
-		/// <param name="b">Brightness value.</param>
-		public HSB(double h, double s, double b) 
+		/// <param name="l">Lightness value.</param>
+		public HSL(double h, double s, double l) 
 		{
 			hue = (h>360)? 360 : ((h<0)?0:h); 
 			saturation = (s>1)? 1 : ((s<0)?0:s);
-			brightness = (b>1)? 1 : ((b<0)?0:b);
+			luminance = (l>1)? 1 : ((l<0)?0:l);
 		}
 
 		#region Methods
-		public override bool Equals(Object obj) 
+		public override bool Equals(object obj) 
 		{
 			if(obj==null || GetType()!=obj.GetType()) return false;
 
-			return (this == (HSB)obj);
+			return (this == (HSL)obj);
 		}
 
 		public override int GetHashCode() 
 		{
-			return Hue.GetHashCode() ^ Saturation.GetHashCode() ^ Brightness.GetHashCode();
+			return Hue.GetHashCode() ^ Saturation.GetHashCode() ^ Luminance.GetHashCode();
 		}
 
 		#endregion

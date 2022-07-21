@@ -1,4 +1,6 @@
-﻿namespace ImageLad.ImageEngine.Jobs;
+﻿using System;
+
+namespace ImageLad.ImageEngine.Jobs;
 
 /// <summary>
 /// 图像处理器

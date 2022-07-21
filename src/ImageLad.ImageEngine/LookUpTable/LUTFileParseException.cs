@@ -1,4 +1,6 @@
-﻿namespace ImageLad.ImageEngine.LookUpTable
+﻿using System;
+
+namespace ImageLad.ImageEngine.LookUpTable
 {
     public class LUTFileParseException : Exception
     {

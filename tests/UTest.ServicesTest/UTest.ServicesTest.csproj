@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ImageLad.Base\ImageLad.Base.csproj" />
-    <ProjectReference Include="..\..\src\ImageLad.Services.ImageStore\ImageLad.ImageEngine.csproj" />
+    <ProjectReference Include="..\..\src\ImageLad.ImageEngine\ImageLad.ImageEngine.csproj" />
     <ProjectReference Include="..\..\src\ImageLad.Services.Importer\ImageLad.Services.Importer.csproj" />
     <ProjectReference Include="..\..\src\ImageLad.Services.Macros\ImageLad.Services.Macros.csproj" />
   </ItemGroup>

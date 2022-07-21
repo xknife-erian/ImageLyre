@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.UI.Views", "src\Im
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.UI.ViewModels", "src\ImageLad.UI.ViewModels\ImageLad.UI.ViewModels.csproj", "{2AC1D480-27FE-449C-81CF-D3F623CC491A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.ImageEngine", "src\ImageLad.Services.ImageStore\ImageLad.ImageEngine.csproj", "{9B4BAB84-29A7-4230-BF12-4048E4FF20FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.ImageEngine", "src\ImageLad.ImageEngine\ImageLad.ImageEngine.csproj", "{9B4BAB84-29A7-4230-BF12-4048E4FF20FD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLad.Services.Macros", "src\ImageLad.Services.Macros\ImageLad.Services.Macros.csproj", "{CE539F9A-C1F2-4F45-8D20-18E5E74E34B5}"
 EndProject

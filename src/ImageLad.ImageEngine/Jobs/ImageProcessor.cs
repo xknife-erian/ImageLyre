@@ -1,4 +1,7 @@
-﻿namespace ImageLad.ImageEngine.Jobs;
+﻿using System;
+using System.Threading;
+
+namespace ImageLad.ImageEngine.Jobs;
 
 public class ImageProcessor : IImageProcessor
 {

@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ImageLad.Base\ImageLad.Base.csproj" />
-    <ProjectReference Include="..\ImageLad.Services.ImageStore\ImageLad.ImageEngine.csproj" />
+    <ProjectReference Include="..\ImageLad.ImageEngine\ImageLad.ImageEngine.csproj" />
   </ItemGroup>
 
 </Project>

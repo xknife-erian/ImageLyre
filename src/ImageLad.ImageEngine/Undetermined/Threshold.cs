@@ -1,4 +1,6 @@
-﻿namespace ImageLad.ImageEngine.Undetermined;
+﻿using System;
+
+namespace ImageLad.ImageEngine.Undetermined;
 
 /// <summary>
 /// 十三种基于直方图的图像全局二值化算法原理、实现
