@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text.Json.Serialization;
 using System.Windows.Input;
 using ImageLad.ImageEngine;
 using ImageLad.ImageEngine.Analyze;
@@ -10,14 +9,14 @@ using ImageLad.UI.Controls;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 
-namespace WPFSample
+namespace WPFSample.Sub
 {
-    public class MainViewModel : ObservableRecipient
+    public class HistogramSampleViewModel : ObservableRecipient
     {
         private readonly string[] _images;
         private int _currentImage =0;
 
-        public MainViewModel()
+        public HistogramSampleViewModel()
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"assets\");
             if (!Directory.Exists(path))
