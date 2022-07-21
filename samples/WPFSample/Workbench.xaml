@@ -1,11 +1,11 @@
 ﻿<fluent:RibbonWindow x:Class="WPFSample.Workbench"
                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:ctls="clr-namespace:WPFSample.Controls"
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:fluent="urn:fluent-ribbon"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                      xmlns:sub="clr-namespace:WPFSample.Sub"
-                     xmlns:ctls="clr-namespace:WPFSample.Controls"
                      Title="Workbench"
                      Width="1600"
                      Height="800"
@@ -15,7 +15,7 @@
     <Window.Resources />
     <Border>
         <DockPanel>
-            <ctls:Menus DockPanel.Dock="Top" Margin="0,3" />
+            <ctls:Menus DockPanel.Dock="Top" Margin="2,3,2,4"/>
             <Border Height="30" DockPanel.Dock="Bottom">
                 <DockPanel VerticalAlignment="Center">
                     <TextBlock DockPanel.Dock="Left" Text="Success" />

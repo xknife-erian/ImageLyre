@@ -4,34 +4,36 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:fluent="urn:fluent-ribbon"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             d:DesignHeight="180"
+             d:DesignHeight="120"
              d:DesignWidth="1000"
              mc:Ignorable="d">
-    <Border VerticalAlignment="Center" DockPanel.Dock="Top">
-        <fluent:Ribbon>
+    <Border>
+        <fluent:Ribbon DockPanel.Dock="Top">
+            <fluent:Ribbon.Resources>
+                <Style TargetType="{x:Type fluent:ComboBox}">
+                    <Setter Property="Margin" Value="1"></Setter>
+                </Style>
+                <Style TargetType="{x:Type fluent:TextBox}">
+                    <Setter Property="Margin" Value="1"></Setter>
+                </Style>
+            </fluent:Ribbon.Resources>
             <fluent:RibbonTabItem Header="开始">
                 <fluent:RibbonGroupBox Header="下拉框">
-                    <fluent:ComboBox Header="字体"
+                    <fluent:ComboBox Header="城市"
                                      InputWidth="100"
                                      IsEditable="true"
                                      KeyTip="FD" />
-                    <fluent:ComboBox Header="字体"
+                    <fluent:ComboBox Header="省份"
                                      InputWidth="100"
                                      IsEditable="False"
                                      KeyTip="FD" />
-                    <fluent:ComboBox Header="字体"
+                    <fluent:TextBox Header="名称"
                                      InputWidth="100"
-                                     IsEditable="False"
                                      KeyTip="FD" />
                 </fluent:RibbonGroupBox>
-            </fluent:RibbonTabItem>
-            <fluent:RibbonTabItem Header="项目" IsSelected="True">
-                <fluent:RibbonGroupBox
-                    Header="项目创建"
-                                       IsLauncherVisible="False"
-                                       KeyTip="FG">
-                    <fluent:Button LargeIcon="./Assets/Menus/folder48.png" />
-                    <fluent:Button LargeIcon="./Assets/Menus/folder48.png" />
+                <fluent:RibbonGroupBox>
+                    <fluent:Button LargeIcon="./Assets/Menus/folder48.png" Size="Large" Header="位置"></fluent:Button>
+                    <fluent:Button LargeIcon="./Assets/Menus/settings48.png" Size="Large" Header="选项"></fluent:Button>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
