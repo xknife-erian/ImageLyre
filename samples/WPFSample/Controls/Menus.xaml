@@ -30,8 +30,8 @@
                     Header="项目创建"
                                        IsLauncherVisible="False"
                                        KeyTip="FG">
-                    <fluent:Button LargeIcon="./Assetss/Menus/folder48.png" />
-                    <fluent:Button LargeIcon="./Assetss/Menus/folder48.png" />
+                    <fluent:Button LargeIcon="./Assets/Menus/folder48.png" />
+                    <fluent:Button LargeIcon="./Assets/Menus/folder48.png" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
