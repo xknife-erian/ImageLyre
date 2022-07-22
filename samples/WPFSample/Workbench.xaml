@@ -5,11 +5,13 @@
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:fluent="urn:fluent-ribbon"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                     xmlns:sub="clr-namespace:WPFSample.Sub"
+                     xmlns:panes="clr-namespace:WPFSample.Panes"
                      xmlns:wpfSample="clr-namespace:WPFSample"
+                     xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
                      Title="Workbench"
                      Width="1600"
                      Height="800"
+                     md:DialogServiceViews.IsRegistered="True"
                      d:DataContext="{d:DesignInstance {x:Type wpfSample:WorkbenchViewModel}}"
                      DataContext="{Binding Source={StaticResource Locator}, Path=Workbench}"
                      Icon="\Main.png"
@@ -32,7 +34,7 @@
                 </TabControl.Resources>
                 <TabItem Header="HistogramSample">
                     <Border>
-                        <sub:HistogramSample DataContext="{Binding HistogramSampleVm}" />
+                        <panes:HistogramSample DataContext="{Binding HistogramSampleVm}" />
                     </Border>
                 </TabItem>
             </TabControl>

@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using ImageLad.ImageEngine;
 using ImageLad.ImageEngine.Analyze;
 using ImageLad.UI.Controls;
+using ImageLad.UI.ViewModels;
+using ImageLad.UI.Views.Utils;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using MvvmDialogs;
 
 namespace WPFSample.Panes
 {
@@ -15,15 +20,42 @@ namespace WPFSample.Panes
     {
         private readonly string[] _images;
         private int _currentImage =0;
+        private IDialogService _dialogService;
 
-        public HistogramSampleViewModel()
+        public HistogramSampleViewModel(IDialogService dialogService)
         {
+            _dialogService = dialogService;
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Assets\HistogramSample\");
             if (!Directory.Exists(path))
                 return;
             _images = Directory.GetFiles(path);
+        }
 
-            ReadImage();
+        private void ReadPhotos()
+        {
+            _dialogService.Show(this, new ProgressViewModel());
+            var i = 0;
+            foreach (var file in _images)
+            {
+                if (i > 5)
+                    break;
+                i++;
+                var target = new ImageTarget(file);
+                target.Open();
+                var bmp = target.Bitmap;
+                Photos.Add(bmp);
+
+                var histogram = GrayHistogram.Compute(bmp, GrayFormula.Weighted);
+                Histograms.Add(new()
+                {
+                    Histogram = histogram,
+                    Color = Color.CadetBlue,
+                    Visible = true
+                });
+
+                var fileInfo = new FileInfo(file);
+                Info = $"{fileInfo.Name.ToUpper()}, {fileInfo.Length / 1000}k, {histogram}";
+            }
         }
 
         private void ReadImage()
@@ -49,7 +81,7 @@ namespace WPFSample.Panes
 
         #region 为界面准备的可被绑定的属性
         
-        private List<UiGrayHistogram> _histograms;
+        private List<UiGrayHistogram> _histograms = new();
         private string _info;
         private Bitmap _image;
 
@@ -75,6 +107,10 @@ namespace WPFSample.Panes
         }
 
         #endregion
+
+        public ObservableCollection<Bitmap> Photos { get; set; } = new();
+
+        public ICommand ReadPhotosCommand => new RelayCommand(ReadPhotos);
 
         public ICommand OpenLastImageCommand => new RelayCommand(LastImage);
 

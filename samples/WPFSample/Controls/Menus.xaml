@@ -32,12 +32,12 @@
                                     KeyTip="FD" />
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox>
-                    <fluent:Button LargeIcon="./Assets/Menus/folder48.png"
-                                   Size="Large"
-                                   Header="位置" />
-                    <fluent:Button LargeIcon="./Assets/Menus/settings48.png"
-                                   Size="Large"
-                                   Header="选项" />
+                    <fluent:Button Header="位置"
+                                   LargeIcon="./Assets/Menus/folder48.png"
+                                   Size="Large" />
+                    <fluent:Button Header="选项"
+                                   LargeIcon="./Assets/Menus/settings48.png"
+                                   Size="Large" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
