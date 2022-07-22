@@ -10,10 +10,10 @@
                      Title="Workbench"
                      Width="1600"
                      Height="800"
+                     d:DataContext="{d:DesignInstance {x:Type wpfSample:WorkbenchViewModel}}"
                      Icon="\Main.png"
                      WindowStartupLocation="CenterScreen"
                      DataContext="{Binding Source={StaticResource Locator}, Path=Workbench}"
-                     d:DataContext="{d:DesignInstance {x:Type wpfSample:WorkbenchViewModel}}"
                      mc:Ignorable="d">
     <Window.Resources />
     <Border>
@@ -32,7 +32,7 @@
                 </TabControl.Resources>
                 <TabItem Header="HistogramSample">
                     <Border>
-                        <sub:HistogramSample DataContext="{Binding HistogramSampleVm}"/>
+                        <sub:HistogramSample DataContext="{Binding HistogramSampleVm}" />
                     </Border>
                 </TabItem>
             </TabControl>
