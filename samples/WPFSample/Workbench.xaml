@@ -5,7 +5,7 @@
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:fluent="urn:fluent-ribbon"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                     xmlns:sub="clr-namespace:WPFSample.Sub"
+                     xmlns:panes="clr-namespace:WPFSample.Panes"
                      Title="Workbench"
                      Width="1600"
                      Height="800"
@@ -29,7 +29,7 @@
                 </TabControl.Resources>
                 <TabItem Header="HistogramSample">
                     <Border>
-                        <sub:HistogramSample />
+                        <panes:HistogramSample />
                     </Border>
                 </TabItem>
             </TabControl>

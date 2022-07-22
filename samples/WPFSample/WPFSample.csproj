@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Sub\HistogramSampleViewModel.cs">
+    <Compile Update="Panes\HistogramSampleViewModel.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>

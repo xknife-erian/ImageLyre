@@ -9,7 +9,7 @@ using ImageLad.UI.Controls;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 
-namespace WPFSample.Sub
+namespace WPFSample.Panes
 {
     public class HistogramSampleViewModel : ObservableRecipient
     {
