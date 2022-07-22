@@ -12,7 +12,7 @@
                 Height="250"
                 d:DataContext="{d:DesignInstance {x:Type viewModels:WorkbenchViewModel}}"
                 md:DialogServiceViews.IsRegistered="True"
-                DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
+                DataContext="{Binding Source={StaticResource Locator}, Path=Workbench}"
                 Icon="/ImageLad.UI.Views;component/Assets/Images/imagelad.png"
                 mc:Ignorable="d">
     <f:RibbonWindow.Resources>

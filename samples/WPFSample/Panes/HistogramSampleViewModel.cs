@@ -18,7 +18,7 @@ namespace WPFSample.Panes
 
         public HistogramSampleViewModel()
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"assets\");
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Assets\HistogramSample\");
             if (!Directory.Exists(path))
                 return;
             _images = Directory.GetFiles(path);

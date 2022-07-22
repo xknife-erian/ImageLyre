@@ -17,8 +17,10 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.4.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Fluent.Ribbon" Version="9.0.4" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+    <PackageReference Include="MvvmDialogs" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
