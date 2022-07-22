@@ -10,7 +10,6 @@ namespace WPFSample
     {
         public Workbench()
         {
-            DataContext = new WorkbenchViewModel();
             InitializeComponent();
         }
     }

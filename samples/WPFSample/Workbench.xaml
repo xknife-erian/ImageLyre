@@ -6,16 +6,19 @@
                      xmlns:fluent="urn:fluent-ribbon"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                      xmlns:sub="clr-namespace:WPFSample.Sub"
+                     xmlns:wpfSample="clr-namespace:WPFSample"
                      Title="Workbench"
                      Width="1600"
                      Height="800"
                      Icon="\Main.png"
                      WindowStartupLocation="CenterScreen"
+                     DataContext="{Binding Source={StaticResource Locator}, Path=Workbench}"
+                     d:DataContext="{d:DesignInstance {x:Type wpfSample:WorkbenchViewModel}}"
                      mc:Ignorable="d">
     <Window.Resources />
     <Border>
         <DockPanel>
-            <ctls:Menus DockPanel.Dock="Top" Margin="2,3,2,4"/>
+            <ctls:Menus Margin="2,3,2,4" DockPanel.Dock="Top" />
             <Border Height="30" DockPanel.Dock="Bottom">
                 <DockPanel VerticalAlignment="Center">
                     <TextBlock DockPanel.Dock="Left" Text="Success" />
@@ -29,7 +32,7 @@
                 </TabControl.Resources>
                 <TabItem Header="HistogramSample">
                     <Border>
-                        <sub:HistogramSample />
+                        <sub:HistogramSample DataContext="{Binding HistogramSampleVm}"/>
                     </Border>
                 </TabItem>
             </TabControl>

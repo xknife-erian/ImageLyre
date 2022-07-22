@@ -12,6 +12,7 @@ using ImageLad.Base.IoC;
 using ImageLad.Managers;
 using ImageLad.Base;
 using ImageLad.NLog;
+using ImageLad.UI.ViewModels;
 using ImageLad.UI.Views;
 using ImageLad.UI.Views.Utils;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
@@ -19,6 +20,15 @@ using NLog;
 
 namespace ImageLad
 {
+    public class ViewModelLocator
+    {
+        public ViewModelLocator()
+        {
+            Workbench = Ioc.Default.GetRequiredService<WorkbenchViewModel>();
+        }
+        public WorkbenchViewModel Workbench { get; set; }
+    }
+
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
@@ -96,7 +106,6 @@ namespace ImageLad
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule<Modules>();
-            builder.RegisterModule<ImageEngine.IoC.Modules>();
             builder.RegisterModule<Services.Macros.IoC.Modules>();
             builder.RegisterModule<UI.Views.IoC.Modules>();
             builder.RegisterModule<UI.ViewModels.IoC.Modules>();
