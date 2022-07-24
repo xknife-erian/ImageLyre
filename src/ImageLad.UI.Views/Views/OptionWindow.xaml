@@ -4,9 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:ImageLad.UI.ViewModels;assembly=ImageLad.UI.ViewModels"
-        mc:Ignorable="d" WindowStartupLocation="CenterOwner"
-        Title="选项" Height="380" Width="800"
-        d:DataContext="{d:DesignInstance {x:Type viewModels:OptionViewModel}}">
+        Title="选项"
+        Width="800"
+        Height="380"
+        d:DataContext="{d:DesignInstance {x:Type viewModels:OptionViewModel}}"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -16,23 +19,30 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="170" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="4,0">
+        <Grid Grid.Row="0"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"
+              Margin="4,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="150" Width="200" />
+                <ColumnDefinition Width="200" MinWidth="150" />
                 <ColumnDefinition Width="4" />
-                <ColumnDefinition MinWidth="200" Width="*" />
+                <ColumnDefinition Width="*" MinWidth="200" />
             </Grid.ColumnDefinitions>
             <TreeView x:Name="_TreeView_" BorderBrush="#FFe0e0e0">
                 <TreeView.Background>
                     <SolidColorBrush Color="{DynamicResource Gray10}" />
                 </TreeView.Background>
             </TreeView>
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch">
+            <GridSplitter Grid.Column="1"
+                          Width="5"
+                          HorizontalAlignment="Stretch">
                 <GridSplitter.Background>
                     <SolidColorBrush Color="#FFFDFDFD" />
                 </GridSplitter.Background>
             </GridSplitter>
-            <Border Grid.Column="2" Background="#FFd0d0d0" Padding="0.5">
+            <Border Grid.Column="2"
+                    Padding="0.5"
+                    Background="#FFd0d0d0">
                 <StackPanel x:Name="_Panel_" CanVerticallyScroll="True">
                     <StackPanel.Background>
                         <SolidColorBrush Color="{DynamicResource Gray10}" />
@@ -40,9 +50,15 @@
                 </StackPanel>
             </Border>
         </Grid>
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-            <Button Content="确定" Padding="20,0" Margin="5,6,5,10" />
-            <Button Content="取消" Padding="20,0" Margin="5,6,5,10" />
+        <StackPanel Grid.Row="1"
+                    Grid.Column="1"
+                    Orientation="Horizontal">
+            <Button Margin="5,6,5,10"
+                    Padding="20,0"
+                    Content="确定" />
+            <Button Margin="5,6,5,10"
+                    Padding="20,0"
+                    Content="取消" />
         </StackPanel>
     </Grid>
 </Window>

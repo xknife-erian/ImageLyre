@@ -45,8 +45,8 @@ namespace ImageLad
                 return;
             president.OptionManager.Initialize();
             president.ConsoleManager.Initianize();
-            DispatcherHelper.Initialize();
-            LogStack.UIDispatcher = DispatcherHelper.CheckBeginInvokeOnUI;
+            UI.Views.Utils.UI.DispatcherInitialize();
+            LogStack.UIDispatcher = UI.Views.Utils.UI.CheckBeginInvokeOnUI;
         }
 
         protected override void OnStartup(StartupEventArgs e)

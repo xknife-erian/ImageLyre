@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -66,20 +67,23 @@ public class GrayHistogram
     /// <returns>灰度直方图数据数组</returns>
     public static GrayHistogram Compute(Bitmap bitmap, GrayFormula gf)
     {
+        var s = new Stopwatch();
         var m = 0.0;
         var n = 0.0;
         var j = 0;
 
         var his = new GrayHistogram();
-
+        s.Restart();
         var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly,
             bitmap.PixelFormat);
-
         var pixelSize = GetUnitPixelSize(bitmap);
+        s.Stop();
+        var m1 = s.ElapsedMilliseconds;
         int b = 0, g = 1, r = 2; // BGR
 
         unsafe
         {
+            s.Restart();
             var ptr = (byte*) bitmapData.Scan0;
             for (var row = 0; row < bitmap.Height; ++row)
             {
@@ -102,10 +106,13 @@ public class GrayHistogram
 
                 ptr += bitmapData.Stride - bitmapData.Width * pixelSize;
             }
+            s.Stop();
         }
+            var m2 = s.ElapsedMilliseconds;
 
         bitmap.UnlockBits(bitmapData);
 
+        s.Restart();
         his.Mean /= bitmap.Width * bitmap.Height; //均值
         his.StdDev = Math.Sqrt(n / (j - 1)); //标准方差
         his.Mode = CalculateModeValue(his.Array);
@@ -124,7 +131,10 @@ public class GrayHistogram
             }
 
         foreach (var d in his.Array) his.Count += (int) d;
+        s.Stop();
+        var m3= s.ElapsedMilliseconds;
 
+        var str = $"{m1}/////{m2}/////{m3}";
         return his;
     }
 

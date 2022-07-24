@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ImageLad.ImageEngine;
@@ -14,123 +15,93 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using MvvmDialogs;
 
-namespace WPFSample.Panes
-{
-    public class HistogramSampleViewModel : ObservableRecipient
-    {
-        private readonly string[] _images;
-        private int _currentImage =0;
-        private IDialogService _dialogService;
+namespace WPFSample.Panes;
 
-        public HistogramSampleViewModel(IDialogService dialogService)
+public class HistogramSampleViewModel : ObservableRecipient
+{
+    private readonly IDialogService _dialogService;
+    private ObservableCollection<UiGrayHistogram> _histograms = new();
+    private string _info;
+    private ObservableCollection<Bitmap> _photos = new();
+
+    public HistogramSampleViewModel(IDialogService dialogService)
+    {
+        _dialogService = dialogService;
+    }
+
+
+    public ObservableCollection<Bitmap> Photos
+    {
+        get => _photos;
+        set => SetProperty(ref _photos, value);
+    }
+
+    /// <summary>
+    ///     直方图数据
+    /// </summary>
+    public ObservableCollection<UiGrayHistogram> Histograms
+    {
+        get => _histograms;
+        set => SetProperty(ref _histograms, value);
+    }
+
+    public string Info
+    {
+        get => _info;
+        set => SetProperty(ref _info, value);
+    }
+
+    public ICommand ReadPhotosCommand => new RelayCommand(ReadPhotos);
+
+    private void ReadPhotos()
+    {
+        var pvm = new ProgressViewModel();
+        Task.Factory.StartNew(() =>
         {
-            _dialogService = dialogService;
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Assets\HistogramSample\");
             if (!Directory.Exists(path))
                 return;
-            _images = Directory.GetFiles(path);
-        }
-
-        private void ReadPhotos()
-        {
-            _dialogService.Show(this, new ProgressViewModel());
+            var images = Directory.GetFiles(path);
             var i = 0;
-            foreach (var file in _images)
+            pvm.Minimum = 0;
+            pvm.Maximum = images.Length * 2;
+            foreach (var file in images)
             {
-                if (i > 5)
-                    break;
                 i++;
                 var target = new ImageTarget(file);
                 target.Open();
                 var bmp = target.Bitmap;
-                Photos.Add(bmp);
-
-                var histogram = GrayHistogram.Compute(bmp, GrayFormula.Weighted);
-                Histograms.Add(new()
+                UI.RunAsync(() =>
                 {
-                    Histogram = histogram,
-                    Color = Color.CadetBlue,
-                    Visible = true
+                    Photos.Add(bmp);
+                    pvm.Current = i;
+                    pvm.Message = $"{i} - {new FileInfo(file).Name}";
                 });
-
-                var fileInfo = new FileInfo(file);
-                Info = $"{fileInfo.Name.ToUpper()}, {fileInfo.Length / 1000}k, {histogram}";
             }
-        }
 
-        private void ReadImage()
-        {
-            var file = _images[_currentImage];
-
-            var target = new ImageTarget(file);
-            target.Open();
-            var bmp = target.Bitmap;
-
-            var histogram = GrayHistogram.Compute(bmp, GrayFormula.Weighted);
-            Histograms = new List<UiGrayHistogram> {new()
+            var sw = new Stopwatch(); 
+            while (i < images.Length * 2)
             {
-                Histogram = histogram,
-                Color = Color.CadetBlue,
-                Visible = true
-            }};
+                sw.Restart();
+                var histogram = GrayHistogram.Compute(Photos[i - images.Length], GrayFormula.Weighted);
+                sw.Stop();
+                var e = sw.ElapsedMilliseconds;
+                UI.RunAsync(() =>
+                {
+                    Histograms.Add(new UiGrayHistogram
+                    {
+                        Histogram = histogram,
+                        Color = Color.CadetBlue,
+                        Visible = true
+                    });
+                    pvm.Current = i;
+                    pvm.Message = $"{i} - {e}";
+                });
+                i++;
+            }
 
-            var fileInfo = new FileInfo(file);
-            Info = $"{fileInfo.Name.ToUpper()}, {fileInfo.Length / 1000}k, {histogram}";
-            Image = bmp;
-        }
-
-        #region 为界面准备的可被绑定的属性
-        
-        private List<UiGrayHistogram> _histograms = new();
-        private string _info;
-        private Bitmap _image;
-
-        /// <summary>
-        /// 直方图数据
-        /// </summary>
-        public List<UiGrayHistogram> Histograms
-        {
-            get => _histograms;
-            set => SetProperty(ref _histograms, value);
-        }
-
-        public string Info
-        {
-            get => _info;
-            set => SetProperty(ref _info, value);
-        }
-
-        public Bitmap Image
-        {
-            get => _image;
-            set => SetProperty(ref _image, value);
-        }
-
-        #endregion
-
-        public ObservableCollection<Bitmap> Photos { get; set; } = new();
-
-        public ICommand ReadPhotosCommand => new RelayCommand(ReadPhotos);
-
-        public ICommand OpenLastImageCommand => new RelayCommand(LastImage);
-
-        public ICommand OpenNextImageCommand => new RelayCommand(NextImage);
-
-        private void LastImage()
-        {
-            if (_currentImage == 0)
-                _currentImage = _images.Length - 1;
-            else
-                _currentImage--;
-            ReadImage();
-        }   
-        private void NextImage()
-        {
-            if (_currentImage == _images.Length - 1)
-                _currentImage = 0;
-            else
-                _currentImage++;
-            ReadImage();
-        }
+            pvm.Finish();
+        });
+        _dialogService.ShowDialog(this, pvm);
     }
 }

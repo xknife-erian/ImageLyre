@@ -23,7 +23,7 @@ namespace WPFSample
     {
         public App()
         {
-            DispatcherHelper.Initialize();
+            UI.DispatcherInitialize();
             Ioc.Default.ConfigureServices(IocSetup());
         }
 

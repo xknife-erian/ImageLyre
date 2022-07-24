@@ -4,16 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
+using MvvmDialogs;
 
 namespace ImageLad.UI.ViewModels
 {
-    public class ProgressViewModel : ObservableRecipient
+    public class ProgressViewModel : ObservableRecipient, IModalDialogViewModel
     {
         private long _maximum;
         private long _current;
         private string _title;
         private string _message;
         private long _minimum;
+        private bool _closer;
 
         public long Minimum
         {
@@ -43,6 +45,29 @@ namespace ImageLad.UI.ViewModels
         {
             get => _message;
             set => SetProperty(ref _message, value);
+        }
+
+        public bool Closer
+        {
+            get => _closer;
+            set => SetProperty(ref _closer, value);
+        }
+
+        #region Implementation of IModalDialogViewModel
+
+        /// <summary>
+        /// Gets the dialog result value, which is the value that is returned from the
+        /// <see cref="M:MvvmDialogs.IDialogService.ShowDialog(System.ComponentModel.INotifyPropertyChanged,MvvmDialogs.IModalDialogViewModel)" /> and <see cref="M:MvvmDialogs.IDialogService.ShowDialog``1(System.ComponentModel.INotifyPropertyChanged,MvvmDialogs.IModalDialogViewModel)" />
+        /// methods.
+        /// </summary>
+        public bool? DialogResult { get; set; }
+
+        #endregion
+
+        public void Finish()
+        {
+            DialogResult = true;
+            Closer = true;
         }
     }
 }

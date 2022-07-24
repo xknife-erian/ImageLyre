@@ -7,13 +7,13 @@ namespace ImageLad.UI.Views.Utils;
 /// <summary>
 ///     Helper class for dispatcher operations on the UI thread.
 /// </summary>
-public static class DispatcherHelper
+public static class UI
 {
     /// <summary>
     ///     Gets a reference to the UI thread's dispatcher, after the
     ///     <see cref="M:GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize" /> method has been called on the UI thread.
     /// </summary>
-    public static Dispatcher UIDispatcher { get; private set; }
+    public static Dispatcher Dispatcher { get; private set; }
 
     /// <summary>
     ///     Executes an action on the UI thread. If this method is called
@@ -23,7 +23,7 @@ public static class DispatcherHelper
     ///     <para>
     ///         For additional operations on the UI thread, you can get a
     ///         reference to the UI thread's dispatcher thanks to the property
-    ///         <see cref="P:GalaSoft.MvvmLight.Threading.DispatcherHelper.UIDispatcher" />
+    ///         <see cref="P:GalaSoft.MvvmLight.Threading.DispatcherHelper.Dispatcher" />
     ///     </para>
     ///     .
     /// </summary>
@@ -31,20 +31,20 @@ public static class DispatcherHelper
     ///     The action that will be executed on the UI
     ///     thread.
     /// </param>
-    public static void CheckBeginInvokeOnUI(Action action)
+    public static void CheckBeginInvokeOnUI(Action? action)
     {
         if (action == null)
             return;
         CheckDispatcher();
-        if (UIDispatcher.CheckAccess())
+        if (Dispatcher.CheckAccess())
             action();
         else
-            UIDispatcher.BeginInvoke(action);
+            Dispatcher.BeginInvoke(action);
     }
 
     private static void CheckDispatcher()
     {
-        if (UIDispatcher == null)
+        if (Dispatcher == null)
         {
             var stringBuilder = new StringBuilder("The DispatcherHelper is not initialized.");
             stringBuilder.AppendLine();
@@ -62,30 +62,30 @@ public static class DispatcherHelper
     public static DispatcherOperation RunAsync(Action action)
     {
         CheckDispatcher();
-        return UIDispatcher.BeginInvoke(action);
+        return Dispatcher.BeginInvoke(action);
     }
 
     /// <summary>
     ///     This method should be called once on the UI thread to ensure that
-    ///     the <see cref="P:GalaSoft.MvvmLight.Threading.DispatcherHelper.UIDispatcher" /> property is initialized.
+    ///     the <see cref="P:GalaSoft.MvvmLight.Threading.DispatcherHelper.Dispatcher" /> property is initialized.
     ///     <para>
     ///         In a Silverlight application, call this method in the
     ///         Application_Startup event handler, after the MainPage is constructed.
     ///     </para>
     ///     <para>In WPF, call this method on the static App() constructor.</para>
     /// </summary>
-    public static void Initialize()
+    public static void DispatcherInitialize()
     {
-        if (UIDispatcher != null && UIDispatcher.Thread.IsAlive)
+        if (Dispatcher != null && Dispatcher.Thread.IsAlive)
             return;
-        UIDispatcher = Dispatcher.CurrentDispatcher;
+        Dispatcher = Dispatcher.CurrentDispatcher;
     }
 
     /// <summary>
-    ///     Resets the class by deleting the <see cref="P:GalaSoft.MvvmLight.Threading.DispatcherHelper.UIDispatcher" />
+    ///     Resets the class by deleting the <see cref="P:GalaSoft.MvvmLight.Threading.DispatcherHelper.Dispatcher" />
     /// </summary>
     public static void Reset()
     {
-        UIDispatcher = null;
+        Dispatcher = null;
     }
 }

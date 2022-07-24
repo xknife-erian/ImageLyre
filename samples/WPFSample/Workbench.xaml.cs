@@ -12,5 +12,18 @@ namespace WPFSample
         {
             InitializeComponent();
         }
+
+
+        private void Button1Base_OnClick(object sender, RoutedEventArgs e)
+        {
+            var d = new ProgressDialog();
+            d.ShowDialog();
+        }
+
+        private void Button2Base_OnClick(object sender, RoutedEventArgs e)
+        {
+            var d = new ProgressDialog();
+            d.Show();
+        }
     }
 }

@@ -5,10 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:drawing="clr-namespace:ImageLad.UI.Views.Converters.Drawing;assembly=ImageLad.UI.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
              xmlns:panes="clr-namespace:WPFSample.Panes"
              d:DataContext="{d:DesignInstance {x:Type panes:HistogramSampleViewModel}}"
              d:DesignHeight="450"
              d:DesignWidth="800"
+             md:DialogServiceViews.IsRegistered="True"
              mc:Ignorable="d">
     <UserControl.Resources>
         <drawing:Bitmap2BitmapSourceConverter x:Key="ImageConverter" />
@@ -22,7 +24,7 @@
                                  Margin="10"
                                  BorderBrush="Black"
                                  BorderThickness="0.5"
-                                 GrayHistograms="{Binding Histograms}" />
+                                 GrayHistograms="{Binding Histograms, Mode=TwoWay}" />
         <Border Grid.Column="1"
                 Margin="10"
                 Background="LightGray"
@@ -34,25 +36,33 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
-                <Border Grid.Row="1">
-                    <ItemsControl HorizontalAlignment="Center" ItemsSource="{Binding Photos}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Margin="6">
-                                    <Image Width="200"
-                                           Height="120"
-                                           Source="{Binding Converter={StaticResource ImageConverter}}"
-                                           Stretch="UniformToFill" />
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                </Border>
+                <ItemsControl Grid.Row="1"
+                              ItemsSource="{Binding Photos}">
+                    <ItemsControl.Template>
+                        <ControlTemplate TargetType="ItemsControl">
+                            <ScrollViewer Padding="{TemplateBinding Padding}"
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          VerticalScrollBarVisibility="Auto">
+                                <ItemsPresenter HorizontalAlignment="Center" />
+                            </ScrollViewer>
+                        </ControlTemplate>
+                    </ItemsControl.Template>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="6">
+                                <Image Width="200"
+                                       Height="120"
+                                       Source="{Binding Converter={StaticResource ImageConverter}}"
+                                       Stretch="UniformToFill" />
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
                 <Border Grid.Row="2">
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -64,8 +74,8 @@
                                  TextAlignment="Center" />
                         <Button Width="150"
                                 Height="30"
-                                Content="载入图像" 
-                                Command="{Binding ReadPhotosCommand}"/>
+                                Command="{Binding ReadPhotosCommand}"
+                                Content="载入图像" />
                     </StackPanel>
                 </Border>
             </Grid>

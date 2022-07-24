@@ -65,7 +65,7 @@
     <None Update="Assets\HistogramSample\25.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Assets\HistogramSample\26.jpg">
+    <None Update="Assets\HistogramSample\10.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\HistogramSample\27.jpg">

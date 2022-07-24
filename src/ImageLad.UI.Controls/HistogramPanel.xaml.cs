@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
+using Accessibility;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -21,12 +24,12 @@ public partial class HistogramPanel : UserControl
     #region GrayHistograms
 
     public static readonly DependencyProperty GrayHistogramsProperty = DependencyProperty.Register(
-        nameof(GrayHistograms), typeof(List<UiGrayHistogram>), typeof(HistogramPanel),
-        new PropertyMetadata(default(List<UiGrayHistogram>), OnGrayHistogramsChanged));
+        nameof(GrayHistograms), typeof(ObservableCollection<UiGrayHistogram>), typeof(HistogramPanel),
+        new PropertyMetadata(default(ObservableCollection<UiGrayHistogram>), OnGrayHistogramsChanged));
 
-    public List<UiGrayHistogram> GrayHistograms
+    public ObservableCollection<UiGrayHistogram> GrayHistograms
     {
-        get => (List<UiGrayHistogram>)GetValue(GrayHistogramsProperty);
+        get => (ObservableCollection<UiGrayHistogram>)GetValue(GrayHistogramsProperty);
         set => SetValue(GrayHistogramsProperty, value);
     }
 
@@ -36,7 +39,16 @@ public partial class HistogramPanel : UserControl
             return;
 
         var plot = panel._Plot_;
-        var histograms = (List<UiGrayHistogram>)e.NewValue;
+        var histograms = (ObservableCollection<UiGrayHistogram>)e.NewValue;
+        histograms.CollectionChanged += (_, he) =>
+        {
+            foreach (UiGrayHistogram hist in he.NewItems)
+            {
+                var series = BuildHistogramSeries(hist);
+                plot.Model.Series.Add(series);
+                plot.InvalidatePlot();
+            }
+        };
         plot.Model = new PlotModel();
 
         var bottomAxis = new LinearAxis
