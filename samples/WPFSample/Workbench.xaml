@@ -24,9 +24,7 @@
             <Border Height="30" DockPanel.Dock="Bottom">
                 <DockPanel VerticalAlignment="Center">
                     <TextBlock DockPanel.Dock="Left" Text="Success" />
-                    <Button DockPanel.Dock="Left" Content="DialogTest1" Click="Button1Base_OnClick"></Button>
-                    <Button DockPanel.Dock="Left" Content="DialogTest2" Click="Button2Base_OnClick"></Button>
-                    <Border></Border>
+                    <Border />
                 </DockPanel>
             </Border>
             <TabControl TabStripPlacement="Left">

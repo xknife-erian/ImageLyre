@@ -70,7 +70,7 @@
                         <TextBox Width="50"
                                  Margin="0,0,10,0"
                                  VerticalContentAlignment="Center"
-                                 Text="6"
+                                 Text="{Binding PhotoCount, Mode=TwoWay}"
                                  TextAlignment="Center" />
                         <Button Width="150"
                                 Height="30"

@@ -23,6 +23,7 @@ public class HistogramSampleViewModel : ObservableRecipient
     private ObservableCollection<UiGrayHistogram> _histograms = new();
     private string _info;
     private ObservableCollection<Bitmap> _photos = new();
+    private ushort _photoCount=8;
 
     public HistogramSampleViewModel(IDialogService dialogService)
     {
@@ -51,10 +52,18 @@ public class HistogramSampleViewModel : ObservableRecipient
         set => SetProperty(ref _info, value);
     }
 
+    public ushort PhotoCount
+    {
+        get => _photoCount;
+        set => SetProperty(ref _photoCount, value);
+    }
+
     public ICommand ReadPhotosCommand => new RelayCommand(ReadPhotos);
 
     private void ReadPhotos()
     {
+        Photos.Clear();
+        Histograms.Clear();
         var pvm = new ProgressViewModel();
         Task.Factory.StartNew(() =>
         {
@@ -64,10 +73,12 @@ public class HistogramSampleViewModel : ObservableRecipient
             var images = Directory.GetFiles(path);
             var i = 0;
             pvm.Minimum = 0;
-            pvm.Maximum = images.Length * 2;
+            pvm.Maximum = PhotoCount * 2;
             foreach (var file in images)
             {
                 i++;
+                if (i > PhotoCount - 1)
+                    break;
                 var target = new ImageTarget(file);
                 target.Open();
                 var bmp = target.Bitmap;
@@ -78,12 +89,12 @@ public class HistogramSampleViewModel : ObservableRecipient
                     pvm.Message = $"{i} - {new FileInfo(file).Name}";
                 });
             }
-
+            i = 0;
             var sw = new Stopwatch(); 
-            while (i < images.Length * 2)
+            while (i < Photos.Count)
             {
                 sw.Restart();
-                var histogram = GrayHistogram.Compute(Photos[i - images.Length], GrayFormula.Weighted);
+                var histogram = GrayHistogram.Compute(Photos[i], GrayFormula.Weighted);
                 sw.Stop();
                 var e = sw.ElapsedMilliseconds;
                 UI.RunAsync(() =>

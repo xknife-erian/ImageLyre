@@ -42,11 +42,19 @@ public partial class HistogramPanel : UserControl
         var histograms = (ObservableCollection<UiGrayHistogram>)e.NewValue;
         histograms.CollectionChanged += (_, he) =>
         {
-            foreach (UiGrayHistogram hist in he.NewItems)
+            switch (he.Action)
             {
-                var series = BuildHistogramSeries(hist);
-                plot.Model.Series.Add(series);
-                plot.InvalidatePlot();
+                case NotifyCollectionChangedAction.Reset:
+                    plot.Model.Series.Clear();
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    foreach (UiGrayHistogram hist in he.NewItems)
+                    {
+                        var series = BuildHistogramSeries(hist);
+                        plot.Model.Series.Add(series);
+                        plot.InvalidatePlot();
+                    }
+                    break;
             }
         };
         plot.Model = new PlotModel();
