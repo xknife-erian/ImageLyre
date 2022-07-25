@@ -36,8 +36,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
-                <ItemsControl Grid.Row="1"
-                              ItemsSource="{Binding Photos}">
+                <ItemsControl Grid.Row="1" ItemsSource="{Binding Photos}">
                     <ItemsControl.Template>
                         <ControlTemplate TargetType="ItemsControl">
                             <ScrollViewer Padding="{TemplateBinding Padding}"
@@ -49,7 +48,9 @@
                     </ItemsControl.Template>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Margin="6">
+                            <Border Margin="6" BorderThickness="2" BorderBrush="Transparent"
+                                    MouseEnter="Photo_OnMouseEnter"
+                                    MouseLeave="Photo_OnMouseLeave">
                                 <Image Width="200"
                                        Height="120"
                                        Source="{Binding Converter={StaticResource ImageConverter}}"

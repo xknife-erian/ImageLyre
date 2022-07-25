@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ImageLad.ImageEngine;
@@ -19,11 +19,14 @@ namespace WPFSample.Panes;
 
 public class HistogramSampleViewModel : ObservableRecipient
 {
+    private static readonly Random _Random = new((int) DateTime.Now.Ticks);
     private readonly IDialogService _dialogService;
+
+    private readonly List<Color> _colors = new();
     private ObservableCollection<UiGrayHistogram> _histograms = new();
     private string _info;
+    private ushort _photoCount = 8;
     private ObservableCollection<Bitmap> _photos = new();
-    private ushort _photoCount=8;
 
     public HistogramSampleViewModel(IDialogService dialogService)
     {
@@ -62,6 +65,7 @@ public class HistogramSampleViewModel : ObservableRecipient
 
     private void ReadPhotos()
     {
+        _colors.Clear();
         Photos.Clear();
         Histograms.Clear();
         var pvm = new ProgressViewModel();
@@ -77,7 +81,7 @@ public class HistogramSampleViewModel : ObservableRecipient
             foreach (var file in images)
             {
                 i++;
-                if (i > PhotoCount - 1)
+                if (i > PhotoCount)
                     break;
                 var target = new ImageTarget(file);
                 target.Open();
@@ -89,24 +93,27 @@ public class HistogramSampleViewModel : ObservableRecipient
                     pvm.Message = $"{i} - {new FileInfo(file).Name}";
                 });
             }
+
             i = 0;
-            var sw = new Stopwatch(); 
+            var sw = new Stopwatch();
             while (i < Photos.Count)
             {
                 sw.Restart();
                 var histogram = GrayHistogram.Compute(Photos[i], GrayFormula.Weighted);
                 sw.Stop();
                 var e = sw.ElapsedMilliseconds;
+                var color = GetColor();
                 UI.RunAsync(() =>
                 {
                     Histograms.Add(new UiGrayHistogram
                     {
                         Histogram = histogram,
-                        Color = Color.CadetBlue,
+                        Color = color,
                         Visible = true
                     });
                     pvm.Current = i;
                     pvm.Message = $"{i} - {e}";
+                    _colors.Add(color);
                 });
                 i++;
             }
@@ -114,5 +121,11 @@ public class HistogramSampleViewModel : ObservableRecipient
             pvm.Finish();
         });
         _dialogService.ShowDialog(this, pvm);
+    }
+
+    private static Color GetColor()
+    {
+        var color = Color.FromArgb(_Random.Next(255), _Random.Next(255), _Random.Next(255));
+        return color;
     }
 }
