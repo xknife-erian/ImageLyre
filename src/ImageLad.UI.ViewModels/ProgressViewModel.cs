@@ -15,7 +15,7 @@ namespace ImageLad.UI.ViewModels
         private string _title;
         private string _message;
         private long _minimum;
-        private bool _closer;
+        private bool _canClosed;
 
         public long Minimum
         {
@@ -47,10 +47,10 @@ namespace ImageLad.UI.ViewModels
             set => SetProperty(ref _message, value);
         }
 
-        public bool Closer
+        public bool CanClosed
         {
-            get => _closer;
-            set => SetProperty(ref _closer, value);
+            get => _canClosed;
+            set => SetProperty(ref _canClosed, value);
         }
 
         #region Implementation of IModalDialogViewModel
@@ -67,7 +67,7 @@ namespace ImageLad.UI.ViewModels
         public void Finish()
         {
             DialogResult = true;
-            Closer = true;
+            CanClosed = true;
         }
     }
 }

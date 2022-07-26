@@ -7,6 +7,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
              xmlns:panes="clr-namespace:WPFSample.Panes"
+             xmlns:attaches="clr-namespace:ImageLad.UI.Controls.Attaches;assembly=ImageLad.UI.Controls"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              d:DataContext="{d:DesignInstance {x:Type panes:HistogramSampleViewModel}}"
              d:DesignHeight="450"
              d:DesignWidth="800"
@@ -36,8 +38,8 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
-                <ItemsControl Grid.Row="1" ItemsSource="{Binding Photos}">
-                    <ItemsControl.Template>
+                <ListView x:Name="_PhotoList_" Grid.Row="1" ItemsSource="{Binding Photos}">
+                    <ListView.Template>
                         <ControlTemplate TargetType="ItemsControl">
                             <ScrollViewer Padding="{TemplateBinding Padding}"
                                           HorizontalScrollBarVisibility="Disabled"
@@ -45,8 +47,8 @@
                                 <ItemsPresenter HorizontalAlignment="Center" />
                             </ScrollViewer>
                         </ControlTemplate>
-                    </ItemsControl.Template>
-                    <ItemsControl.ItemTemplate>
+                    </ListView.Template>
+                    <ListView.ItemTemplate>
                         <DataTemplate>
                             <Border Margin="6" BorderThickness="2" BorderBrush="Transparent"
                                     MouseEnter="Photo_OnMouseEnter"
@@ -57,13 +59,19 @@
                                        Stretch="UniformToFill" />
                             </Border>
                         </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.ItemsPanel>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />
                         </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
+                    </ListView.ItemsPanel>
+
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="SelectionChanged">
+                            <b:InvokeCommandAction Command="{Binding SelectionChangedCommand}" CommandParameter="{Binding SelectedItems, ElementName=_PhotoList_}" />
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                </ListView>
                 <Border Grid.Row="2">
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Center"

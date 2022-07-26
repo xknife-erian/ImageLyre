@@ -24,15 +24,21 @@ public class HistogramSampleViewModel : ObservableRecipient
 
     private readonly List<Color> _colors = new();
     private ObservableCollection<UiGrayHistogram> _histograms = new();
-    private string _info;
+    private string _info = string.Empty;
     private ushort _photoCount = 8;
     private ObservableCollection<Bitmap> _photos = new();
+    private UiGrayHistogram _selectGrayHistogram;
 
     public HistogramSampleViewModel(IDialogService dialogService)
     {
         _dialogService = dialogService;
     }
 
+    public UiGrayHistogram SelectGrayHistogram
+    {
+        get => _selectGrayHistogram;
+        set => SetProperty(ref _selectGrayHistogram, value);
+    }
 
     public ObservableCollection<Bitmap> Photos
     {
@@ -62,6 +68,14 @@ public class HistogramSampleViewModel : ObservableRecipient
     }
 
     public ICommand ReadPhotosCommand => new RelayCommand(ReadPhotos);
+
+    public ICommand SelectionChangedCommand => new RelayCommand<object>(SelectionChanged);
+
+    private void SelectionChanged(object? obj)
+    {
+        if (obj == null || obj is not Bitmap bitmap)
+            return;
+    }
 
     private void ReadPhotos()
     {
@@ -113,6 +127,7 @@ public class HistogramSampleViewModel : ObservableRecipient
                     });
                     pvm.Current = i;
                     pvm.Message = $"{i} - {e}";
+                    SelectGrayHistogram = Histograms[0];
                     _colors.Add(color);
                 });
                 i++;
