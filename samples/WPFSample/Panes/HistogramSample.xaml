@@ -26,7 +26,8 @@
                                  Margin="10"
                                  BorderBrush="Black"
                                  BorderThickness="0.5"
-                                 GrayHistograms="{Binding Histograms, Mode=TwoWay}" />
+                                 GrayHistograms="{Binding Histograms}"
+                                 TopmostIndex="{Binding SelectedIndex, Mode=TwoWay}" />
         <Border Grid.Column="1"
                 Margin="10"
                 Background="LightGray"
@@ -38,7 +39,9 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
-                <ListView x:Name="_PhotoList_" Grid.Row="1" ItemsSource="{Binding Photos}">
+                <ListView x:Name="_PhotoList_"
+                          Grid.Row="1"
+                          ItemsSource="{Binding Photos}">
                     <ListView.Template>
                         <ControlTemplate TargetType="ItemsControl">
                             <ScrollViewer Padding="{TemplateBinding Padding}"
@@ -50,7 +53,9 @@
                     </ListView.Template>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Border Margin="6" BorderThickness="2" BorderBrush="Transparent"
+                            <Border Margin="6"
+                                    BorderThickness="2"
+                                    BorderBrush="Transparent"
                                     MouseEnter="Photo_OnMouseEnter"
                                     MouseLeave="Photo_OnMouseLeave">
                                 <Image Width="200"

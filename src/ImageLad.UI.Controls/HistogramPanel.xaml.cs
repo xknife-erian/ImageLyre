@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows;
@@ -100,6 +101,31 @@ public partial class HistogramPanel : UserControl
             series.Items.Add(new HistogramItem(i, (double)i + 1, hist.Histogram.Array[i],
                 (int)hist.Histogram.Array[i]));
         return series;
+    }
+
+    #endregion
+
+    #region TopmostIndex
+
+    public static readonly DependencyProperty TopmostIndexProperty = DependencyProperty.Register(
+        nameof(TopmostIndex), typeof(int), typeof(HistogramPanel), 
+        new PropertyMetadata(0, OnTopmostIndexChanged));
+
+    private static void OnTopmostIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not HistogramPanel panel)
+            return;
+        var index = (int) e.NewValue;
+        var series = panel._Plot_.Model.Series;
+        var serie = series[index];
+        series.RemoveAt(index);
+        series.Insert(0, serie);
+    }
+
+    public int TopmostIndex
+    {
+        get => (int) GetValue(TopmostIndexProperty);
+        set => SetValue(TopmostIndexProperty, value);
     }
 
     #endregion
