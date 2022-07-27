@@ -74,7 +74,7 @@ public class HistogramSampleViewModel : ObservableRecipient
 
     private void SelectionChanged(object? obj)
     {
-        if (obj == null || obj is not IList list)
+        if (obj == null || obj is not IList list || list.Count<=0)
             return;
         SelectedIndex = _photos.IndexOf((Bitmap) list[0]);
     }
@@ -118,7 +118,8 @@ public class HistogramSampleViewModel : ObservableRecipient
                 var histogram = GrayHistogram.Compute(Photos[i], GrayFormula.Weighted);
                 sw.Stop();
                 var e = sw.ElapsedMilliseconds;
-                var color = GetColor();
+                //var color = GetColor();
+                var color = _preColors[i];
                 UI.RunAsync(() =>
                 {
                     Histograms.Add(new UiGrayHistogram
@@ -138,6 +139,8 @@ public class HistogramSampleViewModel : ObservableRecipient
         });
         _dialogService.ShowDialog(this, pvm);
     }
+
+    private static List<Color> _preColors = new List<Color>() {Color.Red, Color.Green, Color.Blue};
 
     private static Color GetColor()
     {
