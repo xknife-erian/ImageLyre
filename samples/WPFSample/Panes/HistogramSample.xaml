@@ -70,7 +70,6 @@
                             <WrapPanel />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
-
                     <b:Interaction.Triggers>
                         <b:EventTrigger EventName="SelectionChanged">
                             <b:InvokeCommandAction Command="{Binding SelectionChangedCommand}" CommandParameter="{Binding SelectedItems, ElementName=_PhotoList_}" />

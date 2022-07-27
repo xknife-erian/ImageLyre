@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -25,7 +26,7 @@ public class HistogramSampleViewModel : ObservableRecipient
     private readonly List<Color> _colors = new();
     private ObservableCollection<UiGrayHistogram> _histograms = new();
     private string _info = string.Empty;
-    private ushort _photoCount = 8;
+    private ushort _photoCount = 6;
     private ObservableCollection<Bitmap> _photos = new();
     private int _selectedIndex;
 
@@ -73,9 +74,9 @@ public class HistogramSampleViewModel : ObservableRecipient
 
     private void SelectionChanged(object? obj)
     {
-        if (obj == null || obj is not Bitmap bitmap)
+        if (obj == null || obj is not IList list)
             return;
-        SelectedIndex = _photos.IndexOf(bitmap);
+        SelectedIndex = _photos.IndexOf((Bitmap) list[0]);
     }
 
     private void ReadPhotos()

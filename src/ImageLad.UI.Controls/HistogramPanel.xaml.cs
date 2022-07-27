@@ -119,7 +119,8 @@ public partial class HistogramPanel : UserControl
         var series = panel._Plot_.Model.Series;
         var serie = series[index];
         series.RemoveAt(index);
-        series.Insert(0, serie);
+        series.Add(serie);
+        panel._Plot_.InvalidatePlot();
     }
 
     public int TopmostIndex
