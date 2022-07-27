@@ -26,7 +26,7 @@ public class HistogramSampleViewModel : ObservableRecipient
     private readonly List<Color> _colors = new();
     private ObservableCollection<UiGrayHistogram> _histograms = new();
     private string _info = string.Empty;
-    private ushort _photoCount = 6;
+    private ushort _photoCount = 3;
     private ObservableCollection<Bitmap> _photos = new();
     private int _selectedIndex;
 

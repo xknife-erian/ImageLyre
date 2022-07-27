@@ -116,11 +116,13 @@ public partial class HistogramPanel : UserControl
         if (d is not HistogramPanel panel)
             return;
         var index = (int) e.NewValue;
-        var series = panel._Plot_.Model.Series;
-        var serie = series[index];
+        var plot = panel._Plot_;
+        var series = plot.Model.Series;
+        var se = series[index];
+        if (se == null) return;
         series.RemoveAt(index);
-        series.Add(serie);
-        panel._Plot_.InvalidatePlot();
+        series.Add(se);
+        plot.InvalidatePlot();
     }
 
     public int TopmostIndex
