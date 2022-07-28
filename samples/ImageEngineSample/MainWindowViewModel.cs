@@ -183,7 +183,6 @@ public class MainWindowViewModel : ObservableRecipient
                     {
                         Photo = _photos[index];
                         _bitmap.Lock();
-                        var stride = (_imageRect.Width * _bitmap.Format.BitsPerPixel) / 8;
                         var array = new byte[_photoBytes[index].Length];
                         Buffer.BlockCopy(_photoBytes[index], 0, array, 0, _photoBytes[index].Length);
                         BytesUtil.ReverseImageStream(_photoBytes[index], array, 3);
