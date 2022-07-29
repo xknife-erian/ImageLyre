@@ -1,68 +1,68 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Drawing;
+using System.Windows.Media.Imaging;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using ImageLad.ImageEngine.Analyze;
 
-namespace CalcHistSample
+namespace CalcHistSample;
+
+internal class Program
 {
-    internal class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-            BenchmarkRunner.Run<CalcHistImpl>();
-        }
+        Console.WriteLine("Hello, World!");
+        BenchmarkRunner.Run<CalcHistImpl>();
+    }
+}
+
+public class CalcHistImpl
+{
+    private const string IMAGE = @".\Assets\25.jpg";
+
+    private static string GetImagePath()
+    {
+        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, IMAGE);
+        return path;
     }
 
-    public class CalcHistImpl
+    [Benchmark]
+    public void EmguCV_CalcHist()
     {
-        [Benchmark]
-        public void EmguCV_CalcHist()
-        {
-            var imgGray = new Mat();
-            var hist = new Mat();
-            int[] channels = new int[] { 0 };  //初始化数组
-            float[] ranges = new float[] { 0, 255 };
-            int[] histSize = new int[] { 256 };
-            VectorOfMat vMatImgs = new VectorOfMat();
-            vMatImgs.Push(imgGray);
-            CvInvoke.CalcHist(vMatImgs, channels, new Mat(), hist, histSize, ranges, false);
-        }
+        //  1.加载原图
+        var image1 = new Image<Bgr, byte>(GetImagePath());
+        var image0 = image1.Mat.Clone();
 
-        [Benchmark]
-        public void Lad_CalcHist1()
-        {
-            GrayHistogram.Compute(null, GrayFormula.Average);
-        }
+        // 2. 原图转灰度
+        var imgGray = new Mat();
+        CvInvoke.CvtColor(image0, imgGray, ColorConversion.Bgr2Gray);
 
-        [Benchmark]
-        public void Lad_CalcHist2()
-        {
-            GrayHistogram.Compute(null, GrayFormula.Weighted);
-        }
+        // 3. 计算直方图
+        var hist = new Mat();
+        int[] channels = new int[] { 0 };  //初始化数组
+        float[] ranges = new float[] { 0, 255 };
+        int[] histSize = new int[] { 256 };
+        VectorOfMat vMat = new VectorOfMat();
+        vMat.Push(imgGray);
+        CvInvoke.CalcHist(vMat, channels, new Mat(), hist, histSize, ranges, false);
     }
 
-    class Program1
+    [Benchmark]
+    public void Lad_CalcHist1()
     {
-        private static List<int> employees;
-        static void aMain(string[] args)
-        {
-            employees = new List<int>();
-            employees.Add(1);
-            employees.Add(2);
-            employees.Add(3);
-            employees.Add(4);
-            employees.Add(5);
-            employees.Add(6);
-            var histogram = employees.GroupBy(employee => employee.Age)
-                .Select(g => new { Key = g.Key.ToString(), Tally = g.Count() })
-                .OrderByDescending(chartStat => chartStat.Tally).ToList();
-            foreach (var item in histogram)
-            {
-                Console.WriteLine("Age: {0}, Tally: {1}", item.Key, item.Tally);
-            }
-            Console.ReadLine();
-        }
+        using var stream = File.OpenRead(GetImagePath());
+        var bitmap = new Bitmap(stream);
+        GrayHistogram.Compute(bitmap, GrayFormula.Average);
+    }
+
+    [Benchmark]
+    public void Lad_CalcHist2()
+    {
+        using var stream = File.OpenRead(GetImagePath());
+        var bitmap = new Bitmap(stream);
+        GrayHistogram.Compute(bitmap, GrayFormula.Weighted);
     }
 }
