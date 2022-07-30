@@ -1,25 +1,15 @@
 ﻿using System.Drawing;
-using System.Windows.Media.Imaging;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using ImageLad.ImageEngine.Analyze;
 
-namespace CalcHistSample;
+namespace ImageProcessBenchmark;
 
-internal class Program
-{
-    static void Main(string[] args)
-    {
-        Console.WriteLine("Hello, World!");
-        BenchmarkRunner.Run<CalcHistImpl>();
-    }
-}
-
-public class CalcHistImpl
+[MemoryDiagnoser]
+public class CalcGrayHistogram
 {
     private const string IMAGE = @".\Assets\25.jpg";
 
@@ -33,18 +23,17 @@ public class CalcHistImpl
     public void EmguCV_CalcHist()
     {
         //  1.加载原图
-        var image1 = new Image<Bgr, byte>(GetImagePath());
-        var image0 = image1.Mat.Clone();
+        var image = new Image<Bgr, byte>(GetImagePath());
 
         // 2. 原图转灰度
         var imgGray = new Mat();
-        CvInvoke.CvtColor(image0, imgGray, ColorConversion.Bgr2Gray);
+        CvInvoke.CvtColor(image, imgGray, ColorConversion.Bgr2Gray);
 
         // 3. 计算直方图
         var hist = new Mat();
-        int[] channels = new int[] { 0 };  //初始化数组
-        float[] ranges = new float[] { 0, 255 };
-        int[] histSize = new int[] { 256 };
+        int[] channels = { 0 };  //初始化数组
+        float[] ranges = { 0, 255 };
+        int[] histSize = { 256 };
         VectorOfMat vMat = new VectorOfMat();
         vMat.Push(imgGray);
         CvInvoke.CalcHist(vMat, channels, new Mat(), hist, histSize, ranges, false);

@@ -1,13 +1,13 @@
 ﻿using System.Runtime.InteropServices;
 using BenchmarkDotNet.Attributes;
 
-namespace BenchmarkSample;
+namespace MiscBenchmark;
 
 [MemoryDiagnoser]
-public class TwoDArrayImpl
+public class TwoDimensionalArray2OneDimensionalArray
 {
     private double[,] _input;
-    public TwoDArrayImpl()
+    public TwoDimensionalArray2OneDimensionalArray()
     {
         _input = new double[2048, 2048];
         for (int i = 0; i < 2048; i++)

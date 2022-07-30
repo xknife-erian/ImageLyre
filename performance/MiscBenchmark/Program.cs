@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using BenchmarkDotNet.Running;
-using BenchmarkSample;
+using MiscBenchmark;
 
 Console.WriteLine("Hello, World!");
-BenchmarkRunner.Run<TwoDArrayImpl>();
+BenchmarkRunner.Run<TwoDimensionalArray2OneDimensionalArray>();
