@@ -15,6 +15,7 @@ using ImageLad.UI.Views.Utils;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using MvvmDialogs;
+using OpenCvSharp;
 
 namespace WPFSample.Panes;
 
@@ -81,6 +82,7 @@ public class HistogramSampleViewModel : ObservableRecipient
 
     private void ReadPhotos()
     {
+        string[] photoFiles;
         _colors.Clear();
         Photos.Clear();
         Histograms.Clear();
@@ -90,11 +92,11 @@ public class HistogramSampleViewModel : ObservableRecipient
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\Assets\HistogramSample\");
             if (!Directory.Exists(path))
                 return;
-            var images = Directory.GetFiles(path);
+            photoFiles = Directory.GetFiles(path);
             var i = 0;
             pvm.Minimum = 0;
             pvm.Maximum = PhotoCount * 2;
-            foreach (var file in images)
+            foreach (var file in photoFiles)
             {
                 i++;
                 if (i > PhotoCount)
@@ -112,14 +114,14 @@ public class HistogramSampleViewModel : ObservableRecipient
 
             i = 0;
             var sw = new Stopwatch();
-            while (i < Photos.Count)
+            while (i < PhotoCount)
             {
                 sw.Restart();
-                var histogram = GrayHistogram.Compute(Photos[i], GrayFormula.Weighted);
+                Mat mat = new Mat(photoFiles[i], ImreadModes.Grayscale);
+                var histogram = GrayHistogram.Compute(mat);
                 sw.Stop();
                 var e = sw.ElapsedMilliseconds;
-                //var color = GetColor();
-                var color = _preColors[i];
+                var color = GetColor();
                 UI.RunAsync(() =>
                 {
                     Histograms.Add(new UiGrayHistogram
@@ -139,8 +141,6 @@ public class HistogramSampleViewModel : ObservableRecipient
         });
         _dialogService.ShowDialog(this, pvm);
     }
-
-    private static List<Color> _preColors = new List<Color>() {Color.Red, Color.Green, Color.Blue};
 
     private static Color GetColor()
     {

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using OpenCvSharp;
 
 namespace ImageLad.ImageEngine.Analyze;
 
@@ -11,6 +12,15 @@ namespace ImageLad.ImageEngine.Analyze;
 /// </summary>
 public class GrayHistogram
 {
+    public GrayHistogram()
+    {
+        
+    }
+
+    public GrayHistogram(float[] array)
+    {
+        Array = array;
+    }
     /// <summary>
     ///     总像素数
     /// </summary>
@@ -45,7 +55,7 @@ public class GrayHistogram
     /// <summary>
     ///     图像灰度直方图数据
     /// </summary>
-    public double[] Array { get; } = new double[256];
+    public float[] Array { get; set; } 
 
     #region Overrides of Object
 
@@ -62,79 +72,52 @@ public class GrayHistogram
     /// <summary>
     ///     计算指定的图像灰度直方图
     /// </summary>
-    /// <param name="bitmap">指定的图像</param>
-    /// <param name="gf">转换灰度的算法</param>
+    /// <param name="mat">指定的图像</param>
     /// <returns>灰度直方图数据数组</returns>
-    public static GrayHistogram Compute(Bitmap bitmap, GrayFormula gf)
+    public static GrayHistogram Compute(Mat mat)
     {
-        var s = new Stopwatch();
+        var result = new Mat();
+        Cv2.CalcHist(new[] {mat}, new[] {0}, new Mat(), result, 1, new[] {256}, new[] {new Rangef(0F, 256F)});
+        result.GetArray(out float[] array);
+        var his = new GrayHistogram(array);
+        return his;
+    }
+
+    /// <summary>
+    ///     计算指定的图像灰度直方图
+    /// </summary>
+    /// <param name="bitmap">指定的图像</param>
+    /// <returns>灰度直方图数据数组</returns>
+    public static GrayHistogram ComputeBase(Bitmap bitmap)
+    {
         var m = 0.0;
         var n = 0.0;
         var j = 0;
 
         var his = new GrayHistogram();
-        s.Restart();
         var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly,
             bitmap.PixelFormat);
         var pixelSize = GetUnitPixelSize(bitmap);
-        s.Stop();
-        var m1 = s.ElapsedMilliseconds;
         int b = 0, g = 1, r = 2; // BGR
 
         unsafe
         {
-            s.Restart();
-            var ptr = (byte*) bitmapData.Scan0;
+            var ptr = (byte*)bitmapData.Scan0;
             for (var row = 0; row < bitmap.Height; ++row)
             {
                 for (var col = 0; col < bitmap.Width; ++col)
                 {
                     var mean = ColorUtil.GetGrayValue(ptr[r], ptr[g], ptr[b]);
                     ptr += pixelSize;
-
-                    //计算均值
-                    his.Mean += mean;
-
-                    //计算标准方差
-                    j++;
-                    var tmpM = m;
-                    m += (mean - tmpM) / j;
-                    n += (mean - tmpM) * (mean - m);
-
                     his.Array[mean]++;
                 }
 
                 ptr += bitmapData.Stride - bitmapData.Width * pixelSize;
             }
-            s.Stop();
         }
-            var m2 = s.ElapsedMilliseconds;
 
         bitmap.UnlockBits(bitmapData);
-
-        s.Restart();
-        his.Mean /= bitmap.Width * bitmap.Height; //均值
-        his.StdDev = Math.Sqrt(n / (j - 1)); //标准方差
-        his.Mode = CalculateModeValue(his.Array);
-        for (var i = 0; i < his.Array.Length; i++)
-            if (his.Array[i] != 0)
-            {
-                his.Min = i; //最小值
-                break;
-            }
-
-        for (var i = his.Array.Length - 1; i >= 0; i--)
-            if (his.Array[i] != 0)
-            {
-                his.Max = i; //最大值
-                break;
-            }
-
-        foreach (var d in his.Array) his.Count += (int) d;
-        s.Stop();
-        var m3= s.ElapsedMilliseconds;
-
-        var str = $"{m1}/////{m2}/////{m3}";
+        
         return his;
     }
 
