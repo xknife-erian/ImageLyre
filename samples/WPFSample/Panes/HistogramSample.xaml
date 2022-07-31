@@ -3,19 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:ImageLad.UI.Controls;assembly=ImageLad.UI.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:drawing="clr-namespace:ImageLad.UI.Views.Converters.Drawing;assembly=ImageLad.UI.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
              xmlns:panes="clr-namespace:WPFSample.Panes"
-             xmlns:attaches="clr-namespace:ImageLad.UI.Controls.Attaches;assembly=ImageLad.UI.Controls"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:converters="clr-namespace:ImageLad.UI.Views.Converters;assembly=ImageLad.UI.Views"
              d:DataContext="{d:DesignInstance {x:Type panes:HistogramSampleViewModel}}"
              d:DesignHeight="450"
              d:DesignWidth="800"
              md:DialogServiceViews.IsRegistered="True"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <drawing:Bitmap2BitmapSourceConverter x:Key="ImageConverter" />
+        <converters:Mat2WriteableBitmapConverter x:Key="ImageConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>

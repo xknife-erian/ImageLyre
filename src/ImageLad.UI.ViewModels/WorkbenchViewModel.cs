@@ -146,51 +146,51 @@ public class WorkbenchViewModel : ObservableRecipient
         var vm = ActivatedImageViewModel;
         if (vm == null)
             return;
-        var bpp = ImageUtil.GetBitsPerPixel(vm.Bitmap);
-        var format = ImageUtil.GetImageFormat(vm.Bitmap);
-        IsGray = false;
-        IsRGB = false;
-        IsHSV = false;
-        IsCMYK = false;
-        IsLab = false;
-        Is8Bit = false;
-        Is16Bit = false;
-        Is24Bit = false;
-        Is32Bit = false;
-        switch (bpp)
-        {
-            case BitsPerPixel.Bit8:
-                Is8Bit = true;
-                break;
-            case BitsPerPixel.Bit16:
-                Is16Bit = true;
-                break;
-            case BitsPerPixel.Bit24:
-                Is24Bit = true;
-                break;
-            case BitsPerPixel.Bit32:
-                Is32Bit = true;
-                break;
-        }
-
-        switch (format)
-        {
-            case ImageLadFormat.RGB:
-                IsRGB = true;
-                break;
-            case ImageLadFormat.CMYK:
-                IsCMYK = true;
-                break;
-            case ImageLadFormat.HSV:
-                IsHSV = true;
-                break;
-            case ImageLadFormat.Gray:
-                IsGray = true;
-                break;
-            case ImageLadFormat.Lab:
-                IsLab = true;
-                break;
-        }
+        // var bpp = ImageUtil.GetBitsPerPixel(vm.BmpMat);
+        // var format = ImageUtil.GetImageFormat(vm.BmpMat);
+        // IsGray = false;
+        // IsRGB = false;
+        // IsHSV = false;
+        // IsCMYK = false;
+        // IsLab = false;
+        // Is8Bit = false;
+        // Is16Bit = false;
+        // Is24Bit = false;
+        // Is32Bit = false;
+        // switch (bpp)
+        // {
+        //     case BitsPerPixel.Bit8:
+        //         Is8Bit = true;
+        //         break;
+        //     case BitsPerPixel.Bit16:
+        //         Is16Bit = true;
+        //         break;
+        //     case BitsPerPixel.Bit24:
+        //         Is24Bit = true;
+        //         break;
+        //     case BitsPerPixel.Bit32:
+        //         Is32Bit = true;
+        //         break;
+        // }
+        //
+        // switch (format)
+        // {
+        //     case ImageLadFormat.RGB:
+        //         IsRGB = true;
+        //         break;
+        //     case ImageLadFormat.CMYK:
+        //         IsCMYK = true;
+        //         break;
+        //     case ImageLadFormat.HSV:
+        //         IsHSV = true;
+        //         break;
+        //     case ImageLadFormat.Gray:
+        //         IsGray = true;
+        //         break;
+        //     case ImageLadFormat.Lab:
+        //         IsLab = true;
+        //         break;
+        // }
     }
 
     #endregion

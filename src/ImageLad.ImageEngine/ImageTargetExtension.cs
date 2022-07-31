@@ -80,7 +80,7 @@ public static class ImageTargetExtension
         magickImage.ColorSpace = ColorSpace.Gray;
         using var memStream = new MemoryStream();
         magickImage.Write(memStream);
-        target.Bitmap = new Bitmap(memStream);
+        target.BmpMat = new BmpMat(memStream);
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ public static class ImageTargetExtension
         magickImage.ColorSpace = ColorSpace.RGB;
         using var memStream = new MemoryStream();
         magickImage.Write(memStream);
-        target.Bitmap = new Bitmap(memStream);
+        target.BmpMat = new BmpMat(memStream);
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public static class ImageTargetExtension
         magickImage.ColorSpace = ColorSpace.CMYK;
         using var memStream = new MemoryStream();
         magickImage.Write(memStream);
-        target.Bitmap = new Bitmap(memStream);
+        target.BmpMat = new BmpMat(memStream);
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ public static class ImageTargetExtension
         magickImage.ColorSpace = ColorSpace.Lab;
         using var memStream = new MemoryStream();
         magickImage.Write(memStream);
-        target.Bitmap = new Bitmap(memStream);
+        target.BmpMat = new BmpMat(memStream);
     }
 
     /// <summary>
@@ -128,7 +128,7 @@ public static class ImageTargetExtension
         magickImage.ColorSpace = ColorSpace.HSV;
         using var memStream = new MemoryStream();
         magickImage.Write(memStream);
-        target.Bitmap = new Bitmap(memStream);
+        target.BmpMat = new BmpMat(memStream);
     }
 
     /// <summary>
@@ -140,7 +140,7 @@ public static class ImageTargetExtension
         magickImage.Depth = 8;
         using var memStream = new MemoryStream();
         magickImage.Write(memStream);
-        target.Bitmap = new Bitmap(memStream);
+        target.BmpMat = new BmpMat(memStream);
     }
 
     /// <summary>
@@ -152,7 +152,7 @@ public static class ImageTargetExtension
         magickImage.Depth = 16;
         using var memStream = new MemoryStream();
         magickImage.Write(memStream);
-        target.Bitmap = new Bitmap(memStream);
+        target.BmpMat = new BmpMat(memStream);
     }
 
     /// <summary>
@@ -164,7 +164,7 @@ public static class ImageTargetExtension
         magickImage.Depth = 24;
         using var memStream = new MemoryStream();
         magickImage.Write(memStream);
-        target.Bitmap = new Bitmap(memStream);
+        target.BmpMat = new BmpMat(memStream);
     }
 
     /// <summary>
@@ -176,6 +176,6 @@ public static class ImageTargetExtension
         magickImage.Depth = 32;
         using var memStream = new MemoryStream();
         magickImage.Write(memStream);
-        target.Bitmap = new Bitmap(memStream);
+        target.BmpMat = new BmpMat(memStream);
     }
  */

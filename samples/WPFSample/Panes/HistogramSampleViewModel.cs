@@ -28,7 +28,7 @@ public class HistogramSampleViewModel : ObservableRecipient
     private ObservableCollection<UiGrayHistogram> _histograms = new();
     private string _info = string.Empty;
     private ushort _photoCount = 3;
-    private ObservableCollection<Bitmap> _photos = new();
+    private ObservableCollection<Mat> _photos = new();
     private int _selectedIndex;
 
     public HistogramSampleViewModel(IDialogService dialogService)
@@ -42,7 +42,7 @@ public class HistogramSampleViewModel : ObservableRecipient
         set => SetProperty(ref _selectedIndex, value);
     }
 
-    public ObservableCollection<Bitmap> Photos
+    public ObservableCollection<Mat> Photos
     {
         get => _photos;
         set => SetProperty(ref _photos, value);
@@ -77,7 +77,7 @@ public class HistogramSampleViewModel : ObservableRecipient
     {
         if (obj == null || obj is not IList list || list.Count<=0)
             return;
-        SelectedIndex = _photos.IndexOf((Bitmap) list[0]);
+        SelectedIndex = _photos.IndexOf((Mat) list[0]);
     }
 
     private void ReadPhotos()
@@ -103,7 +103,7 @@ public class HistogramSampleViewModel : ObservableRecipient
                     break;
                 var target = new ImageTarget(file);
                 target.Open();
-                var bmp = target.Bitmap;
+                var bmp = target.BmpMat;
                 UI.RunAsync(() =>
                 {
                     Photos.Add(bmp);

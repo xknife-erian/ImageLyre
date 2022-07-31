@@ -6,6 +6,8 @@ using ImageLad.Services.Macros;
 using ImageLad.Services.Macros.Beats;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
+using OpenCvSharp;
+using Point = System.Drawing.Point;
 
 namespace ImageLad.UI.ViewModels;
 
@@ -21,15 +23,15 @@ public class ImageViewModel : ObservableRecipient
     #region 界面属性
 
     private ImageTarget? _imageTarget;
-    private Bitmap? _bitmap;
+    private Mat? _bmpMat;
     private int _top;
     private int _left;
     private PixelFormat _pixelFormat;
 
-    public Bitmap? Bitmap
+    public Mat? BmpMat
     {
-        get => _bitmap;
-        set => SetProperty(ref _bitmap, value);
+        get => _bmpMat;
+        set => SetProperty(ref _bmpMat, value);
     }
 
     public ImageTarget? Target
@@ -70,8 +72,7 @@ public class ImageViewModel : ObservableRecipient
         _imageTarget = new ImageTarget(path);
         var command = new OpenBeat(_imageTarget);
         _macro.DoCurrent(command);
-        Bitmap = _imageTarget.Bitmap;
-        //PixelFormat = Bitmap.PixelFormat;
+        BmpMat = _imageTarget.BmpMat;
     }
     public void ToGray()
     {
@@ -79,8 +80,7 @@ public class ImageViewModel : ObservableRecipient
             return;
         var beat = new ToGrayBeat(_imageTarget);
         _macro?.DoCurrent(beat);
-        Bitmap = _imageTarget.Bitmap;
-        PixelFormat = Bitmap.PixelFormat;
+        BmpMat = _imageTarget.BmpMat;
     }
 
     public void ToRGB()
@@ -89,8 +89,7 @@ public class ImageViewModel : ObservableRecipient
             return;
         var beat = new ToRGBBeat(_imageTarget);
         _macro?.DoCurrent(beat);
-        Bitmap = _imageTarget.Bitmap;
-        //PixelFormat = Bitmap.PixelFormat;
+        BmpMat = _imageTarget.BmpMat;
     }
 
     public void ToCMYK()
@@ -99,8 +98,7 @@ public class ImageViewModel : ObservableRecipient
             return;
         var beat = new ToCMYKBeat(_imageTarget);
         _macro?.DoCurrent(beat);
-        Bitmap = _imageTarget.Bitmap;
-        //PixelFormat = Bitmap.PixelFormat;
+        BmpMat = _imageTarget.BmpMat;
     }
 
     public void ToHSV()
@@ -109,8 +107,7 @@ public class ImageViewModel : ObservableRecipient
             return;
         var beat = new ToHSVBeat(_imageTarget);
         _macro?.DoCurrent(beat);
-        Bitmap = _imageTarget.Bitmap;
-        //PixelFormat = Bitmap.PixelFormat;
+        BmpMat = _imageTarget.BmpMat;
     }
 
     public void ToLab()
@@ -119,8 +116,7 @@ public class ImageViewModel : ObservableRecipient
             return;
         var beat = new ToLabBeat(_imageTarget);
         _macro?.DoCurrent(beat);
-        Bitmap = _imageTarget.Bitmap;
-        //PixelFormat = Bitmap.PixelFormat;
+        BmpMat = _imageTarget.BmpMat;
     }
 
     public void To8Bit()
@@ -129,8 +125,7 @@ public class ImageViewModel : ObservableRecipient
             return;
         var beat = new To8BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
-        Bitmap = _imageTarget.Bitmap;
-        //PixelFormat = Bitmap.PixelFormat;
+        BmpMat = _imageTarget.BmpMat;
     }
 
     public void To16Bit()
@@ -139,8 +134,7 @@ public class ImageViewModel : ObservableRecipient
             return;
         var beat = new To16BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
-        Bitmap = _imageTarget.Bitmap;
-        //PixelFormat = Bitmap.PixelFormat;
+        BmpMat = _imageTarget.BmpMat;
     }
 
     public void To24Bit()
@@ -149,8 +143,7 @@ public class ImageViewModel : ObservableRecipient
             return;
         var beat = new To24BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
-        Bitmap = _imageTarget.Bitmap;
-        //PixelFormat = Bitmap.PixelFormat;
+        BmpMat = _imageTarget.BmpMat;
     }
 
     public void To32Bit()
@@ -159,8 +152,7 @@ public class ImageViewModel : ObservableRecipient
             return;
         var beat = new To32BitBeat(_imageTarget);
         _macro?.DoCurrent(beat);
-        Bitmap = _imageTarget.Bitmap;
-        //PixelFormat = Bitmap.PixelFormat;
+        BmpMat = _imageTarget.BmpMat;
     }
 
     public ICommand WindowActivated => new RelayCommand(OnWindowActivated);

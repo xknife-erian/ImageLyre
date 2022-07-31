@@ -7,9 +7,9 @@ namespace ImageLad.ImageEngine;
 public static partial class ImageUtil
 {
 
-    /// <summary>Generates a Bitmap from data on the range [0, 255]</summary>
+    /// <summary>Generates a BmpMat from data on the range [0, 255]</summary>
     /// <param name="data">The data to use.</param>
-    /// <returns>A Bitmap</returns>
+    /// <returns>A BmpMat</returns>
     public static Bitmap BitmapFrom2dArray(double[,] data)
     {
         int length1 = data.GetLength(1);
@@ -32,8 +32,8 @@ public static partial class ImageUtil
         return bitmap;
     }
 
-    /// <summary>Generates a sample Bitmap.</summary>
-    /// <returns>A sample Bitmap</returns>
+    /// <summary>Generates a sample BmpMat.</summary>
+    /// <returns>A sample BmpMat</returns>
     public static Bitmap SampleImage() => BitmapFrom2dArray(SampleImageData());
 
     /// <summary>Returns a sample 2D array of grayscale values.</summary>

@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.IO;
-using ImageMagick;
+using OpenCvSharp;
 
 namespace ImageLad.ImageEngine;
 
@@ -15,7 +15,7 @@ public class ImageTarget : ITarget
     }
 
     public FileInfo FileInfo { get; private set; }
-    public Bitmap? Bitmap { get; set; }
+    public Mat? BmpMat { get; set; }
 
     #region Implementation of ITarget
 
@@ -24,8 +24,7 @@ public class ImageTarget : ITarget
     /// </summary>
     public void Open()
     {
-        using var stream = FileInfo.Open(FileMode.Open);
-        Bitmap = new Bitmap(stream);
+        BmpMat = new Mat(FileInfo.FullName);
     }
 
     /// <summary>
@@ -33,8 +32,8 @@ public class ImageTarget : ITarget
     /// </summary>
     public void Close()
     {
-        Bitmap?.Dispose();
-        Bitmap = null;
+        BmpMat?.Dispose();
+        BmpMat = null;
     }
 
     #endregion

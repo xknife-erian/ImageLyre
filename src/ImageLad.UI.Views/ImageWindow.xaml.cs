@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
 using System.Windows;
 using ImageLad.UI.ViewModels;
+using OpenCvSharp;
+using Window = System.Windows.Window;
 
 namespace ImageLad.UI.Views;
 
@@ -20,14 +22,14 @@ public partial class ImageWindow : Window
         var vm = (ImageViewModel) DataContext;
         Top = vm.Top;
         Left = vm.Left;
-        AdjustWindowSize(vm.Bitmap);
+        AdjustWindowSize(vm.BmpMat);
     }
 
     /// <summary>
     /// 调整窗体大小
     /// </summary>
     /// <param name="bmp"></param>
-    private void AdjustWindowSize(Bitmap? bmp)
+    private void AdjustWindowSize(Mat? bmp)
     {
         var bmpHeight = 0;
         if (bmp != null)

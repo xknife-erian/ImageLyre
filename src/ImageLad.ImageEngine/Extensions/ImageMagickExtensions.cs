@@ -26,7 +26,7 @@ public enum BitmapDensity
 public static class ImageMagickExtensions
 {
     // [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "False positive.")]
-    // public static Bitmap ToBitmap(this MagickImage src, BitmapDensity bitmapDensity)
+    // public static BmpMat ToBitmap(this MagickImage src, BitmapDensity bitmapDensity)
     // {
     //     var mapping = "BGR";
     //     var format = PixelFormat.Format24bppRgb;
@@ -48,7 +48,7 @@ public static class ImageMagickExtensions
     //
     //         using (IPixelCollection<float> pixels = image.GetPixelsUnsafe())
     //         {
-    //             var bitmap = new Bitmap(image.Width, image.Height, format);
+    //             var bitmap = new BmpMat(image.Width, image.Height, format);
     //             var rect = new Rectangle(0, 0, image.Width, image.Height);
     //             var data = bitmap.LockBits(rect, ImageLockMode.ReadWrite, format);
     //             var destination = data.Scan0;
@@ -72,17 +72,17 @@ public static class ImageMagickExtensions
     //     }
     // }
     //
-    // public static Bitmap ToBitmap(this MagickImage src)
+    // public static BmpMat ToBitmap(this MagickImage src)
     // {
     //     return ToBitmap(src, BitmapDensity.Ignore);
     // }
     //
-    // public static Bitmap ToBitmap(this MagickImage src, ImageFormat imageFormat)
+    // public static BmpMat ToBitmap(this MagickImage src, ImageFormat imageFormat)
     // {
     //     return ToBitmap(src, imageFormat, BitmapDensity.Ignore);
     // }
     //
-    // public static Bitmap ToBitmap(this MagickImage src, ImageFormat imageFormat, BitmapDensity bitmapDensity)
+    // public static BmpMat ToBitmap(this MagickImage src, ImageFormat imageFormat, BitmapDensity bitmapDensity)
     // {
     //     src.Format = GetMagickFormatFromImageFormat(imageFormat);
     //
@@ -91,14 +91,14 @@ public static class ImageMagickExtensions
     //     memStream.Position = 0;
     //
     //     /* Do not dispose the memStream, the bitmap owns it. */
-    //     var bitmap = new Bitmap(memStream);
+    //     var bitmap = new BmpMat(memStream);
     //
     //     SetBitmapDensity(src, bitmap, bitmapDensity);
     //
     //     return bitmap;
     // }
     //
-    // public static void FromBitmap(this MagickImage src, Bitmap bitmap)
+    // public static void FromBitmap(this MagickImage src, BmpMat bitmap)
     // {
     //     using (var memStream = new MemoryStream())
     //     {
@@ -122,7 +122,7 @@ public static class ImageMagickExtensions
     //            format.Guid.Equals(ImageFormat.Tiff.Guid);
     // }
     //
-    // public static void SetBitmapDensity(this MagickImage src, Bitmap bitmap, BitmapDensity bitmapDensity)
+    // public static void SetBitmapDensity(this MagickImage src, BmpMat bitmap, BitmapDensity bitmapDensity)
     // {
     //     if (bitmapDensity == BitmapDensity.Use)
     //     {
