@@ -25,6 +25,6 @@ public class MatSampleViewModel : ObservableRecipient
 
     public ICommand BuildRandomImageCommand => new RelayCommand(() =>
     {
-        Bitmap = new Mat(new[] {1}, MatType.CV_8SC3, Scalar.Red);
+        Bitmap = new Mat(512,512, MatType.CV_8SC3, Scalar.Red);
     });
 }
