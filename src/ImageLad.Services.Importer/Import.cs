@@ -5,7 +5,7 @@ namespace ImageLad.Services.Importer
 {
     public static class Import
     {
-        [DllImport("Wrapper\\library.dll", EntryPoint = "sum")]
-        public static extern int sum(int v1, int v2);
+        [DllImport("Wrapper\\libuntitled2.dll", EntryPoint = "hello")]
+        public static extern int hello(int v1, int v2, int v3);
     }
 }

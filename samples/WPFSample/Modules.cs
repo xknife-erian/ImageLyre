@@ -31,6 +31,7 @@ public class Modules : Module
         builder.RegisterType<Workbench>().AsImplementedInterfaces().AsSelf().SingleInstance();
         builder.RegisterType<WorkbenchViewModel>().AsImplementedInterfaces().AsSelf().SingleInstance();
         builder.RegisterType<HistogramSampleViewModel>().AsImplementedInterfaces().AsSelf().SingleInstance();
+        builder.RegisterType<MatSampleViewModel>().AsImplementedInterfaces().AsSelf().SingleInstance();
     }
 
     #endregion

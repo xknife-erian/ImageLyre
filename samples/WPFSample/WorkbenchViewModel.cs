@@ -11,11 +11,13 @@ namespace WPFSample
     public class WorkbenchViewModel: ObservableRecipient
     {
 
-        public WorkbenchViewModel(HistogramSampleViewModel histogramSampleVm)
+        public WorkbenchViewModel(HistogramSampleViewModel histogramSampleVm, MatSampleViewModel matSampleVm)
         {
             HistogramSampleVm = histogramSampleVm;
+            MatSampleVm = matSampleVm;
         }
 
         public HistogramSampleViewModel HistogramSampleVm { get; set; }
+        public MatSampleViewModel MatSampleVm { get; set; }
     }
 }

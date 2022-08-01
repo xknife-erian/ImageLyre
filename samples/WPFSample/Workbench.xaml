@@ -34,8 +34,13 @@
                     </Style>
                 </TabControl.Resources>
                 <TabItem Header="HistogramSample">
-                    <Border>
+                    <Border Background="DimGray">
                         <panes:HistogramSample DataContext="{Binding HistogramSampleVm}" />
+                    </Border>
+                </TabItem>         
+                <TabItem Header="MatSample" IsSelected="True">
+                    <Border Background="LightGray">
+                        <panes:MatSample DataContext="{Binding MatSampleVm}" />
                     </Border>
                 </TabItem>
             </TabControl>

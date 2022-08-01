@@ -9,8 +9,8 @@ namespace UTest.ServicesTest.Importer
         [Fact()]
         public void BaseTest()
         {
-            var result = Import.sum(1, 2);
-            result.Should().Be(3);
+            var result = Import.hello(1, 2, 3);
+            result.Should().Be(6);
         }
     }
 }
