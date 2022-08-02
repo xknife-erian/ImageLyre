@@ -23,27 +23,34 @@ public class MatSampleViewModel : ObservableRecipient
         set => SetProperty(ref _bitmap, value);
     }
 
+    /// <summary>
+    /// 创建一个二维矩阵，并填充指定的颜色
+    /// </summary>
     public ICommand BuildRandomImageCommand => new RelayCommand(() =>
     {
-        //创建一个二维矩阵，并填充指定的颜色
         Bitmap = new Mat(128, 256, MatType.CV_8SC3, Scalar.Red);
     });
 
+    /// <summary>
+    /// 创建一个二维矩阵，并填充为马赛克
+    /// </summary>
     public ICommand BuildMosaicCommand => new RelayCommand(() =>
     {
         var width = 128;
         var height = 256;
+
+        var side = 16;
 
         var array = new byte[width * height];
         var j = 0;
         var c = true;
         for (int i = 0; i < array.Length; i++)
         {
-            if (j >= 16)
+            if (j >= side)
             {
                 j = 0;
                 c = !c;
-                if (i % width == 0 && i / width % 16 == 0)
+                if (i % width == 0 && i / width % side == 0)
                     c = !c;
             }
 

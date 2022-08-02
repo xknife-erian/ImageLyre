@@ -31,6 +31,9 @@
                         Command="{Binding BuildRandomImageCommand}" />
                 <Button DockPanel.Dock="Top"
                         Content="马赛克"
+                        Command="{Binding BuildMosaicCommand}" />     
+                <Button DockPanel.Dock="Top"
+                        Content="模拟视频FPS=10"
                         Command="{Binding BuildMosaicCommand}" />
                 <Rectangle />
             </DockPanel>
