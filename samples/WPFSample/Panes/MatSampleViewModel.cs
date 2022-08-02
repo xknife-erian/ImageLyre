@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -38,26 +39,59 @@ public class MatSampleViewModel : ObservableRecipient
     {
         var width = 128;
         var height = 256;
-
         var side = 16;
 
+        var array = BuildArray(side, width, height, true);
+
+        Bitmap = new Mat(new[] {height, width}, MatType.CV_8SC1, array);
+    });
+
+    public ICommand BuildMockVideoCommand => new RelayCommand(() =>
+    {
+        var width = 128;
+        var height = 256;
+        var side = 16;
+
+        var a1 = BuildArray(side, width, height, false);
+        var a2 = BuildArray(side, width, height, true);
+
+        Bitmap = new Mat(new[] {height, width}, MatType.CV_8SC1, a1);
+
+        var flag = true;
+        Task.Factory.StartNew(() =>
+        {
+            while (true)
+            {
+                for (int i = 0; i < width * height; i++)
+                {
+                    Bitmap.Set(i, flag ? a1[i] : a2[i]);
+                }
+
+                Thread.Sleep(200);
+                flag = !flag;
+            }
+        });
+    });
+
+    private static byte[] BuildArray(int side, int width, int height, bool flag)
+    {
         var array = new byte[width * height];
         var j = 0;
-        var c = true;
         for (int i = 0; i < array.Length; i++)
         {
             if (j >= side)
             {
                 j = 0;
-                c = !c;
+                flag = !flag;
                 if (i % width == 0 && i / width % side == 0)
-                    c = !c;
+                    flag = !flag;
             }
 
-            array[i] = c ? (byte) 0xEE : (byte) 0x33;
+            array[i] = flag ? (byte) 0xEE : (byte) 0x33;
             j++;
         }
 
-        Bitmap = new Mat(new[] {height, width}, MatType.CV_8SC1, array);
-    });
+        return array;
+    }
+
 }

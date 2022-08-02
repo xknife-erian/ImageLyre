@@ -33,8 +33,8 @@
                         Content="马赛克"
                         Command="{Binding BuildMosaicCommand}" />     
                 <Button DockPanel.Dock="Top"
-                        Content="模拟视频FPS=10"
-                        Command="{Binding BuildMosaicCommand}" />
+                        Content="模拟视频FPS=5"
+                        Command="{Binding BuildMockVideoCommand}" />
                 <Rectangle />
             </DockPanel>
             <WrapPanel Grid.Column="2" />
