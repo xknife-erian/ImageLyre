@@ -44,9 +44,10 @@ public class MatSampleViewModel : ObservableRecipient
         var array = BuildArray(side, width, height, true);
 
         Bitmap = new Mat(new[] {height, width}, MatType.CV_8SC1, array);
+        //Bitmap = new Mat(new[] {height, width}, MatType.CV_8SC3, Scalar.Blue);
     });
 
-    public ICommand BuildMockVideoCommand => new RelayCommand(() =>
+    public unsafe ICommand BuildMockVideoCommand => new RelayCommand(() =>
     {
         var width = 128;
         var height = 256;
@@ -55,22 +56,49 @@ public class MatSampleViewModel : ObservableRecipient
         var a1 = BuildArray(side, width, height, false);
         var a2 = BuildArray(side, width, height, true);
 
-        Bitmap = new Mat(new[] {height, width}, MatType.CV_8SC1, a1);
-
-        var flag = true;
-        Task.Factory.StartNew(() =>
+        Bitmap = new Mat(width, height, MatType.CV_8SC1, new Scalar(1));
+        for (int i = 1; i < Bitmap.Rows - 1; i++)
         {
-            while (true)
+            IntPtr a = Bitmap.Ptr(i);
+            byte* b = (byte*)a.ToPointer();
+            for (int j = 1; j < Bitmap.Cols - 1; j++)
             {
-                for (int i = 0; i < width * height; i++)
-                {
-                    Bitmap.Set(i, flag ? a1[i] : a2[i]);
-                }
-
-                Thread.Sleep(200);
-                flag = !flag;
+                b[j] = 200;
             }
-        });
+        }
+
+        // for (int i = 0; i < Bitmap.Rows; i++)
+        // {
+        //     for (int j = 0; j < Bitmap.Cols; j++)
+        //     {
+        //         //Bitmap.Set(i, flag ? a1[i] : a2[i]);
+        //         // Bitmap.At<byte>(i, j) = 0xFF;
+        //         // Bitmap.SetTo(Scalar.IndianRed);
+        //         Bitmap.Set(i, j, 0x88);
+        //     }
+        // }
+
+
+        //Bitmap = new Mat(new[] {height, width}, MatType.CV_8SC1, a1);
+
+        // var flag = true;
+        // Task.Factory.StartNew(() =>
+        // {
+        //     while (true)
+        //     {
+        //         for (int i = 0; i < Bitmap.Rows; i++)
+        //         {
+        //             for (int j = 0; j < Bitmap.Cols; j++)
+        //             {
+        //                 //Bitmap.Set(i, flag ? a1[i] : a2[i]);
+        //                 Bitmap.At<byte>(i, j) = flag ? a1[i * side + j] : a2[i * side + j];
+        //             }
+        //         }
+        //
+        //         Thread.Sleep(200);
+        //         flag = !flag;
+        //     }
+        // });
     });
 
     private static byte[] BuildArray(int side, int width, int height, bool flag)
