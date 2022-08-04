@@ -1,10 +1,10 @@
 ﻿<UserControl x:Class="WPFSample.Panes.MatSample"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:panes="clr-namespace:WPFSample.Panes"
              xmlns:converters="clr-namespace:ImageLad.UI.Views.Converters;assembly=ImageLad.UI.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:panes="clr-namespace:WPFSample.Panes"
              d:DataContext="{d:DesignInstance {x:Type panes:MatSampleViewModel}}"
              d:DesignHeight="600"
              d:DesignWidth="900"
@@ -26,15 +26,15 @@
                         <Setter Property="Padding" Value="5" />
                     </Style>
                 </DockPanel.Resources>
-                <Button DockPanel.Dock="Top"
+                <Button Command="{Binding BuildRandomImageCommand}"
                         Content="256x128图像"
-                        Command="{Binding BuildRandomImageCommand}" />
-                <Button DockPanel.Dock="Top"
+                        DockPanel.Dock="Top" />
+                <Button Command="{Binding BuildMosaicCommand}"
                         Content="马赛克"
-                        Command="{Binding BuildMosaicCommand}" />     
-                <Button DockPanel.Dock="Top"
+                        DockPanel.Dock="Top" />
+                <Button Command="{Binding BuildMockVideoCommand}"
                         Content="模拟视频FPS=5"
-                        Command="{Binding BuildMockVideoCommand}" />
+                        DockPanel.Dock="Top" />
                 <Rectangle />
             </DockPanel>
             <WrapPanel Grid.Column="2" />
@@ -43,7 +43,7 @@
                         Height="512"
                         BorderBrush="DarkGreen"
                         BorderThickness="0.4">
-                    <Image Source="{Binding Bitmap, Converter={StaticResource _MatConverter_}}" Stretch="None" />
+                    <Image Source="{Binding Bitmap, Mode=TwoWay, Converter={StaticResource _MatConverter_}}" Stretch="None" />
                 </Border>
             </Grid>
         </Grid>
