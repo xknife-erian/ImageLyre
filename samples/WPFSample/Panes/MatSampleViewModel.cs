@@ -14,9 +14,10 @@ namespace WPFSample.Panes;
 
 public class MatSampleViewModel : ObservableRecipient
 {
+    private int _side = 16;
     private Mat? _bitmap;
-    public int ImageWidth { get; } = 400;
-    public int ImageHeight { get; } = 400;
+    public int ImageWidth { get; } = 256;
+    public int ImageHeight { get; } = 128;
 
     public Mat? Bitmap
     {
@@ -37,78 +38,23 @@ public class MatSampleViewModel : ObservableRecipient
     /// </summary>
     public ICommand BuildMosaicCommand => new RelayCommand(() =>
     {
-        var width = 128;
-        var height = 256;
-        var side = 16;
-
-        var array = BuildArray(side, width, height, true);
-
-        Bitmap = new Mat(new[] {height, width}, MatType.CV_8UC1, array);
-        //Bitmap = new Mat(new[] {height, width}, MatType.CV_8SC3, Scalar.Blue);
+        var array = BuildArray(_side, ImageWidth, ImageHeight, true);
+        Bitmap = new Mat(new[] { ImageWidth, ImageHeight }, MatType.CV_8SC1, array);
     });
 
-    public unsafe ICommand BuildMockVideoCommand => new RelayCommand(() =>
+    public ICommand BuildMockVideoCommand => new RelayCommand(() =>
     {
-        var width = 256;
-        var height = 128;
-        var side = 16;
-
-        var a1 = BuildArray(side, width, height, false);
-        var a2 = BuildArray(side, width, height, true);
-
-        Bitmap = new Mat(width, height, MatType.CV_8UC1, new Scalar(0x00));
-
-
-        // for (int i = 0; i < mat.Rows; i++)
-        // {
-        //     IntPtr a = mat.Ptr(i);
-        //     byte* b = (byte*)a.ToPointer();
-        //     for (int j = 0; j < mat.Cols; j++)
-        //     {
-        //         b[j] = 0x33;
-        //     }
-        // }
-        //
-        // for (int i = 0; i < mat.Rows; i++)
-        // {
-        //     for (int j = 0; j < mat.Cols; j++)
-        //     {
-        //         //Bitmap.Set(i, flag ? a1[i] : a2[i]);
-        //         // Bitmap.At<byte>(i, j) = 0xFF;
-        //         // Bitmap.SetTo(Scalar.IndianRed);
-        //         //mat.Set(i, j, 0xdd);
-        //     }
-        // }
-
-
-        
+        var a1 = BuildArray(_side, ImageWidth, ImageHeight, false);
+        var a2 = BuildArray(_side, ImageWidth, ImageHeight, true);
+       
         var flag = true;
         Task.Factory.StartNew(() =>
         {
             while (true)
             {
-                var mat = new Mat(width, height, MatType.CV_8UC1, new Scalar(0xFF));
-
-                // for (int i = 0; i < mat.Rows; i++)
-                // {
-                //     for (int j = 0; j < mat.Cols; j++)
-                //     {
-                //         mat.At<byte>(i, j) = flag ? a1[i * side + j] : a2[i * side + j];
-                //     }
-                // }
-
-                for (int i = 0; i < mat.Rows; i++)
-                {
-                    IntPtr a = mat.Ptr(i);
-                    byte* b = (byte*)a.ToPointer();
-                    for (int j = 0; j < mat.Cols; j++)
-                    {
-                        b[j] = flag ? a1[i * side + j] : a2[i * side + j];
-                    }
-                }
-
-                Bitmap = mat;
-
+                Bitmap = flag 
+                    ? new Mat(ImageWidth, ImageHeight, MatType.CV_8UC1, a1) 
+                    : new Mat(ImageWidth, ImageHeight, MatType.CV_8UC1, a2);
                 Thread.Sleep(300);
                 flag = !flag;
             }
