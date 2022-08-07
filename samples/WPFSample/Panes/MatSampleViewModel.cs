@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using ImageLad.UI.Views.Utils;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using OpenCvSharp;
@@ -14,10 +15,10 @@ namespace WPFSample.Panes;
 
 public class MatSampleViewModel : ObservableRecipient
 {
-    private int _side = 16;
+    private int _side = 32;
     private Mat? _bitmap;
-    public int ImageWidth { get; } = 256;
-    public int ImageHeight { get; } = 128;
+    public int ImageWidth { get; } = 128;
+    public int ImageHeight { get; } = 256;
 
     public Mat? Bitmap
     {
@@ -42,22 +43,35 @@ public class MatSampleViewModel : ObservableRecipient
         Bitmap = new Mat(new[] { ImageWidth, ImageHeight }, MatType.CV_8SC1, array);
     });
 
+    private bool _mockFlag = false;
+
     public ICommand BuildMockVideoCommand => new RelayCommand(() =>
     {
+        _mockFlag = !_mockFlag;
+        if (!_mockFlag)
+            return;
+
         var a1 = BuildArray(_side, ImageWidth, ImageHeight, false);
         var a2 = BuildArray(_side, ImageWidth, ImageHeight, true);
-       
+
         var flag = true;
         Task.Factory.StartNew(() =>
         {
-            while (true)
+            var timer = new System.Timers.Timer();
+            timer.Interval = 120;
+            timer.Elapsed += (_, _) =>
             {
-                Bitmap = flag 
-                    ? new Mat(ImageWidth, ImageHeight, MatType.CV_8UC1, a1) 
-                    : new Mat(ImageWidth, ImageHeight, MatType.CV_8UC1, a2);
-                Thread.Sleep(300);
-                flag = !flag;
-            }
+                UI.RunAsync(() =>
+                {
+                    Bitmap = flag
+                        ? new Mat(ImageWidth, ImageHeight, MatType.CV_8UC1, a1)
+                        : new Mat(ImageWidth, ImageHeight, MatType.CV_8UC1, a2);
+                    flag = !flag;
+                });
+                if (!_mockFlag)
+                    timer.Stop();
+            };
+            timer.Start();
         });
     });
 
