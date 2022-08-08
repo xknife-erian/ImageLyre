@@ -55,7 +55,7 @@ public class MatSampleViewModel : ObservableRecipient
                 Bitmap = flag 
                     ? new Mat(ImageWidth, ImageHeight, MatType.CV_8UC1, a1) 
                     : new Mat(ImageWidth, ImageHeight, MatType.CV_8UC1, a2);
-                Thread.Sleep(300);
+                Thread.Sleep(120);
                 flag = !flag;
             }
         });
