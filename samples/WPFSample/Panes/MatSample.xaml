@@ -10,10 +10,10 @@
              d:DesignWidth="900"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <converters:Mat2WriteableBitmapConverter x:Key="_MatConverter_" />
+        <converters:Mat2WriteableBitmapConverter x:Key="MatConverter" />
     </UserControl.Resources>
     <Border>
-        <Grid>
+        <Grid x:Name="_Grid_">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="*" />
@@ -43,7 +43,7 @@
                         Height="512"
                         BorderBrush="DarkGreen"
                         BorderThickness="0.4">
-                    <Image Source="{Binding Bitmap, Mode=TwoWay, Converter={StaticResource _MatConverter_}}" Stretch="None" />
+                    <Image Source="{Binding Bitmap, Mode=TwoWay, Converter={StaticResource MatConverter}}" Stretch="None" />
                 </Border>
             </Grid>
         </Grid>
