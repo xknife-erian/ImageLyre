@@ -1,6 +1,5 @@
-![Lyric](https://www.monstersandcritics.com/wp-content/uploads/2021/03/Lyric-Chanel.jpg) 
-> [from](https://www.monstersandcritics.com/celebrity/who-was-lyric-chanel-instagram-sensation-dies-at-13-after-a-prolonged-battle-with-brain-cancer/)
-# ImageLad
+![Lyric](https://www.lyricopera.org/globalassets/1920season/don-giovanni/don_giovanni_PDP_1600x1015.jpg) 
+# ImageLyric 
 
 ## 序言：但行好事，莫问前程
 
