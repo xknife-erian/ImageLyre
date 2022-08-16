@@ -1,4 +1,4 @@
-![Lad](https://www.kidsgen.com/short_stories/images/lenny.png)
+![Lyric](https://www.monstersandcritics.com/wp-content/uploads/2021/03/Lyric-Chanel.jpg) ![from](https://www.monstersandcritics.com/celebrity/who-was-lyric-chanel-instagram-sensation-dies-at-13-after-a-prolonged-battle-with-brain-cancer/)
 # ImageLad
 
 ## 序言：但行好事，莫问前程
