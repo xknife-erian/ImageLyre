@@ -16,13 +16,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ImageLad.ImageEngine\ImageLad.ImageEngine.csproj" />
+    <ProjectReference Include="..\..\src\ImageLyric.ImageEngine\ImageLyric.ImageEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Assets\25.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="BenchmarkDotNet.Artifacts\" />
   </ItemGroup>
 
 </Project>

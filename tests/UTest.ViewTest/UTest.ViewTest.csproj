@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ImageLad.UI.Views\ImageLad.UI.Views.csproj" />
+    <ProjectReference Include="..\..\src\ImageLyric.UI.Views\ImageLyric.UI.Views.csproj" />
   </ItemGroup>
 
 </Project>

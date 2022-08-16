@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using Autofac;
-using ImageLad.UI.ViewModels;
-using ImageLad.UI.Views.Dialogs;
+using ImageLyric.UI.ViewModels;
+using ImageLyric.UI.Views.Dialogs;
 using MvvmDialogs;
 using MvvmDialogs.DialogTypeLocators;
 using WPFSample.Panes;

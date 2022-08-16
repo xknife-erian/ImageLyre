@@ -1,4 +1,4 @@
-﻿using ImageLad;
+﻿using ImageLyric;
 
 namespace UTest.ServicesTest.Macros.Demos;
 

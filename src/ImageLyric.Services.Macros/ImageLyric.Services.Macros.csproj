@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="6.4.0" />
+		<PackageReference Include="NKnife" Version="22.0.0" />
+		<PackageReference Include="NLog" Version="5.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ImageLyric.Base\ImageLyric.Base.csproj" />
+		<ProjectReference Include="..\ImageLyric.ImageEngine\ImageLyric.ImageEngine.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Converters\**" />
+    <Compile Remove="Themes\**" />
+    <EmbeddedResource Remove="Converters\**" />
+    <EmbeddedResource Remove="Themes\**" />
+    <None Remove="Converters\**" />
+    <None Remove="Themes\**" />
+    <Page Remove="Converters\**" />
+    <Page Remove="Themes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OxyPlot.Wpf" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ImageLyric.Base\ImageLyric.Base.csproj" />
+    <ProjectReference Include="..\ImageLyric.ImageEngine\ImageLyric.ImageEngine.csproj" />
+  </ItemGroup>
+
+</Project>

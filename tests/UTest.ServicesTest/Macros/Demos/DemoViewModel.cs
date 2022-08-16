@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ImageLad.ImageEngine;
-using ImageLad.Services.Macros;
+using ImageLyric.Services.Macros;
 
 namespace UTest.ServicesTest.Macros.Demos
 {

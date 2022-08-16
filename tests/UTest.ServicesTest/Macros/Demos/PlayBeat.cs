@@ -1,5 +1,5 @@
-﻿using ImageLad;
-using ImageLad.Services.Macros;
+﻿using ImageLyric;
+using ImageLyric.Services.Macros;
 
 namespace UTest.ServicesTest.Macros.Demos;
 

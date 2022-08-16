@@ -6,8 +6,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using ImageLad.ImageEngine;
-using ImageLad.ImageEngine.LookUpTable;
+using ImageLyric.ImageEngine;
+using ImageLyric.ImageEngine.LookUpTable;
 using Color = System.Drawing.Color;
 
 namespace LUTSample;
