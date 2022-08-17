@@ -5,11 +5,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="copy ..\..\libc\imglyric\cmake-build-debug\libimglyric.dll Wrapper\" />
+  </Target>
+
   <ItemGroup>
-    <None Update="Wrapper\library.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Wrapper\libuntitled2.dll">
+    <None Update="Wrapper\libimglyric.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
