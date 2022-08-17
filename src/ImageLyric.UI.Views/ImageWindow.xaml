@@ -23,7 +23,7 @@
         </b:EventTrigger>
     </b:Interaction.Triggers>
     <Window.Resources>
-        <drawing:Bitmap2BitmapSourceConverter x:Key="ImageConverter" />
+        <converters:Mat2WriteableBitmapConverter x:Key="ImageConverter" />
         <converters:PixelFormatConverter x:Key="FormatString" />
     </Window.Resources>
     <Grid>
