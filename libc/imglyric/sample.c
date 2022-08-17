@@ -2,6 +2,6 @@
 
 #include <stdio.h>
 
-__declspec(dllexport) void hello(void) {
-    printf("Hello, World!\n");
+__declspec(dllexport) int calc(int a, int b, int c, int d) {
+    return (a + b) * (c + d);
 }
