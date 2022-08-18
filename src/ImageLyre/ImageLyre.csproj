@@ -5,11 +5,11 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>ImageLyric.ico</ApplicationIcon>
+    <ApplicationIcon>ImageLyre.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="ImageLyric.ico" />
+    <Content Include="ImageLyre.ico" />
   </ItemGroup>
 
   <ItemGroup>

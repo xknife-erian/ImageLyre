@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
-project(imglyric C)
+project(imglyre C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_library(imglyric SHARED sample.c)
+add_library(imglyre SHARED sample.c)

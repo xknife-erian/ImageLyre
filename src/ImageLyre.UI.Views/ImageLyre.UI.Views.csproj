@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <None Remove="Assets\Fonts\FontAwesome6.otf" />
-    <None Remove="Assets\Images\imagelad.png" />
+    <None Remove="Assets\Images\ImageLaye.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,7 +33,7 @@
     <Resource Include="Assets\Fonts\FontAwesome6.otf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Images\imagelad.png">
+    <Resource Include="Assets\Images\ImageLaye.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

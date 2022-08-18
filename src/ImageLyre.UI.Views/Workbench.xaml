@@ -13,7 +13,7 @@
                 d:DataContext="{d:DesignInstance {x:Type viewModels1:WorkbenchViewModel}}"
                 md:DialogServiceViews.IsRegistered="True"
                 DataContext="{Binding Source={StaticResource Locator}, Path=Workbench}"
-                Icon="/ImageLyre.UI.Views;component/Assets/Images/imagelad.png"
+                Icon="/ImageLyre.UI.Views;component/Assets/Images/ImageLaye.png"
                 mc:Ignorable="d">
     <f:RibbonWindow.Resources>
         <Style x:Key="MenuButton" TargetType="f:Button">
