@@ -28,10 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ImageLyric.Base\ImageLyric.Base.csproj" />
-    <ProjectReference Include="..\..\src\ImageLyric.ImageEngine\ImageLyric.ImageEngine.csproj" />
-    <ProjectReference Include="..\..\src\ImageLyric.Services.Importer\ImageLyric.Services.Importer.csproj" />
-    <ProjectReference Include="..\..\src\ImageLyric.Services.Macros\ImageLyric.Services.Macros.csproj" />
+    <ProjectReference Include="..\..\src\ImageLyre.Base\ImageLyre.Base.csproj" />
+    <ProjectReference Include="..\..\src\ImageLyre.ImageEngine\ImageLyre.ImageEngine.csproj" />
+    <ProjectReference Include="..\..\src\ImageLyre.Services.Importer\ImageLyre.Services.Importer.csproj" />
+    <ProjectReference Include="..\..\src\ImageLyre.Services.Macros\ImageLyre.Services.Macros.csproj" />
   </ItemGroup>
 
   <ItemGroup>

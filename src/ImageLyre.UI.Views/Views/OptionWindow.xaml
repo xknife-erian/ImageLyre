@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:ImageLyric.UI.ViewModels;assembly=ImageLyric.UI.ViewModels"
+        xmlns:viewModels1="clr-namespace:ImageLyric.UI.ViewModels;assembly=ImageLyre.UI.ViewModels"
         Title="选项"
         Width="800"
         Height="380"
-        d:DataContext="{d:DesignInstance {x:Type viewModels:OptionViewModel}}"
+        d:DataContext="{d:DesignInstance {x:Type viewModels1:OptionViewModel}}"
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d">
     <Grid>

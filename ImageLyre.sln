@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyric", "src\ImageLyric\ImageLyric.csproj", "{B7394000-F600-4118-AA7E-F0DF8BABCCFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyre", "src\ImageLyre\ImageLyre.csproj", "{B7394000-F600-4118-AA7E-F0DF8BABCCFC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{661B75C6-7367-4B61-B662-398AC704500B}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,15 +13,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyric.UI.Views", "src\ImageLyric.UI.Views\ImageLyric.UI.Views.csproj", "{922DC528-56DB-45BB-886C-6AEF34CFA512}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyre.UI.Views", "src\ImageLyre.UI.Views\ImageLyre.UI.Views.csproj", "{922DC528-56DB-45BB-886C-6AEF34CFA512}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyric.UI.ViewModels", "src\ImageLyric.UI.ViewModels\ImageLyric.UI.ViewModels.csproj", "{2AC1D480-27FE-449C-81CF-D3F623CC491A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyre.UI.ViewModels", "src\ImageLyre.UI.ViewModels\ImageLyre.UI.ViewModels.csproj", "{2AC1D480-27FE-449C-81CF-D3F623CC491A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyric.ImageEngine", "src\ImageLyric.ImageEngine\ImageLyric.ImageEngine.csproj", "{9B4BAB84-29A7-4230-BF12-4048E4FF20FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyre.ImageEngine", "src\ImageLyre.ImageEngine\ImageLyre.ImageEngine.csproj", "{9B4BAB84-29A7-4230-BF12-4048E4FF20FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyric.Services.Macros", "src\ImageLyric.Services.Macros\ImageLyric.Services.Macros.csproj", "{CE539F9A-C1F2-4F45-8D20-18E5E74E34B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyre.Services.Macros", "src\ImageLyre.Services.Macros\ImageLyre.Services.Macros.csproj", "{CE539F9A-C1F2-4F45-8D20-18E5E74E34B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyric.Base", "src\ImageLyric.Base\ImageLyric.Base.csproj", "{8AAFD43C-4523-47E8-B5F5-EC435EDFEA73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyre.Base", "src\ImageLyre.Base\ImageLyre.Base.csproj", "{8AAFD43C-4523-47E8-B5F5-EC435EDFEA73}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ServicesTest", "tests\UTest.ServicesTest\UTest.ServicesTest.csproj", "{C4E19516-2322-4240-87F5-55A7B50B36BB}"
 EndProject
@@ -31,11 +31,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ViewModelsTest", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTest.ViewTest", "tests\UTest.ViewTest\UTest.ViewTest.csproj", "{36CF8FD0-25F3-4324-B471-FE59AA7A5AD5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyric.UI.Controls", "src\ImageLyric.UI.Controls\ImageLyric.UI.Controls.csproj", "{255F6EF6-2493-4334-BF34-D4876EF04A95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyre.UI.Controls", "src\ImageLyre.UI.Controls\ImageLyre.UI.Controls.csproj", "{255F6EF6-2493-4334-BF34-D4876EF04A95}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFSample", "samples\WPFSample\WPFSample.csproj", "{04D19F9E-16E6-4519-9624-76E9330F1602}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyric.Services.Importer", "src\ImageLyric.Services.Importer\ImageLyric.Services.Importer.csproj", "{141F6248-6627-4026-8400-8BF5E540E33E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyre.Services.Importer", "src\ImageLyre.Services.Importer\ImageLyre.Services.Importer.csproj", "{141F6248-6627-4026-8400-8BF5E540E33E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{BABB04BF-5435-4C98-A482-3961DA5182C7}"
 EndProject

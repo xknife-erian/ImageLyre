@@ -4,16 +4,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:viewModels="clr-namespace:ImageLyric.UI.ViewModels;assembly=ImageLyric.UI.ViewModels"
-    xmlns:drawing="clr-namespace:ImageLyric.UI.Views.Converters.Drawing"
     xmlns:converters="clr-namespace:ImageLyric.UI.Views.Converters"
+    xmlns:viewModels1="clr-namespace:ImageLyric.UI.ViewModels;assembly=ImageLyre.UI.ViewModels"
     x:Class="ImageLyric.UI.Views.ImageWindow"
     mc:Ignorable="d"
     WindowStartupLocation="Manual"
     x:Name="_Window_"
     Title="{Binding Target.FileInfo.Name}"
     d:DesignHeight="200" d:DesignWidth="400"
-    d:DataContext="{d:DesignInstance {x:Type viewModels:ImageViewModel}}">
+    d:DataContext="{d:DesignInstance {x:Type viewModels1:ImageViewModel}}">
     <b:Interaction.Triggers>
         <b:EventTrigger EventName="Activated">
             <b:InvokeCommandAction Command="{Binding WindowActivated}" />

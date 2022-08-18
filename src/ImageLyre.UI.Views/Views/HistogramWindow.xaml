@@ -3,12 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:controls="clr-namespace:ImageLyric.UI.Controls;assembly=ImageLyric.UI.Controls"
-        xmlns:viewModels="clr-namespace:ImageLyric.UI.ViewModels;assembly=ImageLyric.UI.ViewModels"
+        xmlns:controls1="clr-namespace:ImageLyric.UI.Controls;assembly=ImageLyre.UI.Controls"
+        xmlns:viewModels1="clr-namespace:ImageLyric.UI.ViewModels;assembly=ImageLyre.UI.ViewModels"
         mc:Ignorable="d"
         ShowInTaskbar="False"
         Title="HistogramWindow" Height="500" Width="500"
-        d:DataContext="{d:DesignInstance {x:Type viewModels:HistogramViewModel}}">
+        d:DataContext="{d:DesignInstance {x:Type viewModels1:HistogramViewModel}}">
     <Grid>
         <Grid.Resources>
         </Grid.Resources>
@@ -16,7 +16,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <controls:HistogramPanel Grid.Row="0" />
+        <controls1:HistogramPanel Grid.Row="0" />
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*" />

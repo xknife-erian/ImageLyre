@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ImageLyric.Services.Importer\ImageLyric.Services.Importer.csproj" />
-    <ProjectReference Include="..\ImageLyric.UI.Views\ImageLyric.UI.Views.csproj" />
+    <ProjectReference Include="..\ImageLyre.Services.Importer\ImageLyre.Services.Importer.csproj" />
+    <ProjectReference Include="..\ImageLyre.UI.Views\ImageLyre.UI.Views.csproj" />
   </ItemGroup>
 
   <ItemGroup>

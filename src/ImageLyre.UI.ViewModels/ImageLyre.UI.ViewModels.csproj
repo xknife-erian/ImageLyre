@@ -21,9 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <ProjectReference Include="..\ImageLyric.Base\ImageLyric.Base.csproj" />
-	  <ProjectReference Include="..\ImageLyric.ImageEngine\ImageLyric.ImageEngine.csproj" />
-	  <ProjectReference Include="..\ImageLyric.Services.Macros\ImageLyric.Services.Macros.csproj" />
+	  <ProjectReference Include="..\ImageLyre.Base\ImageLyre.Base.csproj" />
+	  <ProjectReference Include="..\ImageLyre.ImageEngine\ImageLyre.ImageEngine.csproj" />
+	  <ProjectReference Include="..\ImageLyre.Services.Macros\ImageLyre.Services.Macros.csproj" />
   </ItemGroup>
 
 </Project>

@@ -19,6 +19,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ImageLyric.Base\ImageLyric.Base.csproj" />
+		<ProjectReference Include="..\ImageLyre.Base\ImageLyre.Base.csproj" />
 	</ItemGroup>
 </Project>

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ImageLyric.ImageEngine\ImageLyric.ImageEngine.csproj" />
+    <ProjectReference Include="..\..\src\ImageLyre.ImageEngine\ImageLyre.ImageEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>
