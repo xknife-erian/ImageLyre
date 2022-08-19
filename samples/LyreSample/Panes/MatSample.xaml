@@ -10,7 +10,7 @@
              d:DesignWidth="900"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <converters:Mat2WriteableBitmapConverter x:Key="MatConverter" />
+        <converters:Mat2WriteableBitmapConverter x:Key="_MatConverter_" />
     </UserControl.Resources>
     <Border>
         <Grid x:Name="_Grid_">
@@ -29,6 +29,10 @@
                 <Button Command="{Binding BuildRandomImageCommand}"
                         Content="256x128图像"
                         DockPanel.Dock="Top" />
+                <Button Command="{Binding UpdateMatCommand}"
+                        Content="Update 256x128图像"
+                        DockPanel.Dock="Top" />
+                <Rectangle Height="10" DockPanel.Dock="Top"></Rectangle>
                 <Button Command="{Binding BuildMosaicCommand}"
                         Content="马赛克"
                         DockPanel.Dock="Top" />
@@ -43,7 +47,7 @@
                         Height="512"
                         BorderBrush="DarkGreen"
                         BorderThickness="0.4">
-                    <Image Source="{Binding Bitmap, Mode=TwoWay, Converter={StaticResource MatConverter}}" Stretch="None" />
+                    <Image Source="{Binding ImgMat, Mode=TwoWay, Converter={StaticResource _MatConverter_}}" Stretch="None" />
                 </Border>
             </Grid>
         </Grid>

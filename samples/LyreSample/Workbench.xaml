@@ -9,8 +9,8 @@
                      xmlns:controls="clr-namespace:LyreSample.Controls"
                      xmlns:panes="clr-namespace:LyreSample.Panes"
                      Title="Workbench"
-                     Width="1600"
-                     Height="800"
+                     Width="1200"
+                     Height="700"
                      md:DialogServiceViews.IsRegistered="True"
                      d:DataContext="{d:DesignInstance {x:Type wpfSample:WorkbenchViewModel}}"
                      DataContext="{Binding Source={StaticResource Locator}, Path=Workbench}"
@@ -20,14 +20,16 @@
     <Window.Resources />
     <Border>
         <DockPanel>
-            <!--fluent菜单试验-->
+            <!--  fluent菜单试验  -->
             <controls:Menus Margin="2,3,2,4" DockPanel.Dock="Top" />
+            <!--  状态栏  -->
             <Border Height="30" DockPanel.Dock="Bottom">
                 <DockPanel VerticalAlignment="Center">
                     <TextBlock DockPanel.Dock="Left" Text="Success" />
                     <Border />
                 </DockPanel>
             </Border>
+            <!--Sample载体-->
             <TabControl TabStripPlacement="Left">
                 <TabControl.Resources>
                     <Style TargetType="{x:Type TabItem}">
@@ -38,14 +40,14 @@
                     <Border Background="DimGray">
                         <panes:HistogramSample DataContext="{Binding HistogramSampleVm}" />
                     </Border>
-                </TabItem>         
+                </TabItem>
                 <TabItem Header="MatSample" IsSelected="True">
                     <Border Background="LightGray">
                         <panes:MatSample DataContext="{Binding MatSampleVm}" />
                     </Border>
-                </TabItem>     
+                </TabItem>
                 <TabItem Header="Cam">
-                    <Border Background="LightGray">
+                    <Border Background="LightYellow">
                         <panes:CamSample DataContext="{Binding CamSampleVm}" />
                     </Border>
                 </TabItem>

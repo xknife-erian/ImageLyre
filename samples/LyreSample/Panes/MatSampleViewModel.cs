@@ -9,15 +9,15 @@ namespace LyreSample.Panes;
 
 public class MatSampleViewModel : ObservableRecipient
 {
-    private int _side = 32;
-    private Mat? _bitmap;
-    public int ImageWidth { get; } = 128;
-    public int ImageHeight { get; } = 256;
+    private int _side = 16;
+    private Mat? _imgMat;
+    public int ImageColumns { get; } = 128;
+    public int ImageRows { get; } = 256;
 
-    public Mat? Bitmap
+    public Mat? ImgMat
     {
-        get => _bitmap;
-        set => SetProperty(ref _bitmap, value);
+        get => _imgMat;
+        set => SetProperty(ref _imgMat, value);
     }
 
     /// <summary>
@@ -25,7 +25,12 @@ public class MatSampleViewModel : ObservableRecipient
     /// </summary>
     public ICommand BuildRandomImageCommand => new RelayCommand(() =>
     {
-        Bitmap = new Mat(128, 256, MatType.CV_8UC3, Scalar.Red);
+        ImgMat = new Mat(ImageRows, ImageColumns, MatType.CV_8UC3, Scalar.Red);
+    });
+
+    public ICommand UpdateMatCommand => new RelayCommand(() =>
+    {
+        //TODO:试验更新Mat的内部值
     });
 
     /// <summary>
@@ -33,8 +38,8 @@ public class MatSampleViewModel : ObservableRecipient
     /// </summary>
     public ICommand BuildMosaicCommand => new RelayCommand(() =>
     {
-        var array = BuildArray(_side, ImageWidth, ImageHeight, true);
-        Bitmap = new Mat(new[] { ImageWidth, ImageHeight }, MatType.CV_8SC1, array);
+        var array = BuildArray(_side, ImageColumns, ImageRows, true);
+        ImgMat = new Mat(new[] { ImageRows, ImageColumns }, MatType.CV_8SC1, array);
     });
 
     private bool _mockFlag = false;
@@ -45,8 +50,8 @@ public class MatSampleViewModel : ObservableRecipient
         if (!_mockFlag)
             return;
 
-        var a1 = BuildArray(_side, ImageWidth, ImageHeight, false);
-        var a2 = BuildArray(_side, ImageWidth, ImageHeight, true);
+        var a1 = BuildArray(_side, ImageColumns, ImageRows, false);
+        var a2 = BuildArray(_side, ImageColumns, ImageRows, true);
 
         var flag = true;
         Task.Factory.StartNew(() =>
@@ -57,9 +62,9 @@ public class MatSampleViewModel : ObservableRecipient
             {
                 UI.RunAsync(() =>
                 {
-                    Bitmap = flag
-                        ? new Mat(ImageWidth, ImageHeight, MatType.CV_8UC1, a1)
-                        : new Mat(ImageWidth, ImageHeight, MatType.CV_8UC1, a2);
+                    ImgMat = flag
+                        ? new Mat(ImageRows, ImageColumns,  MatType.CV_8UC1, a1)
+                        : new Mat(ImageRows,ImageColumns,  MatType.CV_8UC1, a2);
                     flag = !flag;
                 });
                 if (!_mockFlag)
@@ -69,9 +74,9 @@ public class MatSampleViewModel : ObservableRecipient
         });
     });
 
-    private static byte[] BuildArray(int side, int width, int height, bool flag)
+    private static byte[] BuildArray(int side, int cols, int rows, bool flag)
     {
-        var array = new byte[width * height];
+        var array = new byte[cols * rows];
         var j = 0;
         for (int i = 0; i < array.Length; i++)
         {
@@ -79,7 +84,7 @@ public class MatSampleViewModel : ObservableRecipient
             {
                 j = 0;
                 flag = !flag;
-                if (i % width == 0 && i / width % side == 0)
+                if (i % cols == 0 && i / cols % side == 0)
                     flag = !flag;
             }
 
