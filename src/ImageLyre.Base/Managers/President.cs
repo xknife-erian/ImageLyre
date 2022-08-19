@@ -1,4 +1,4 @@
-﻿namespace ImageLyric.Managers
+﻿namespace ImageLyre.Managers
 {
     /// <summary>
     /// 总裁(president)。管理所有的经理(manager)。

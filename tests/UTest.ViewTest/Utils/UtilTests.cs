@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 using FluentAssertions;
-using ImageLyric.UI.Views.Utils;
+using ImageLyre.UI.Views.Utils;
 using Xunit;
 using ImagingPixelFormat = System.Drawing.Imaging.PixelFormat;
 using MediaPixelFormat = System.Windows.Media.PixelFormat;

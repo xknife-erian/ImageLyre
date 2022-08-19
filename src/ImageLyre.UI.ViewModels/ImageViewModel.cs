@@ -1,14 +1,14 @@
 ﻿using System.Drawing.Imaging;
 using System.Windows.Input;
-using ImageLyric.ImageEngine;
-using ImageLyric.Services.Macros;
-using ImageLyric.Services.Macros.Beats;
+using ImageLyre.ImageEngine;
+using ImageLyre.Services.Macros;
+using ImageLyre.Services.Macros.Beats;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using OpenCvSharp;
 using Point = System.Drawing.Point;
 
-namespace ImageLyric.UI.ViewModels;
+namespace ImageLyre.UI.ViewModels;
 
 public class ImageViewModel : ObservableRecipient
 {

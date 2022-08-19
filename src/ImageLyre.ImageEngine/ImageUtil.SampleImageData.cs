@@ -2,7 +2,7 @@
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace ImageLyric.ImageEngine;
+namespace ImageLyre.ImageEngine;
 
 public static partial class ImageUtil
 {

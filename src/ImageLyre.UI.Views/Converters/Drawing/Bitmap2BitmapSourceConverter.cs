@@ -6,7 +6,7 @@ using System.Windows.Data;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
-namespace ImageLyric.UI.Views.Converters.Drawing;
+namespace ImageLyre.UI.Views.Converters.Drawing;
 
 [ValueConversion(typeof(Bitmap), typeof(WriteableBitmap))]
 public class Bitmap2BitmapSourceConverter : IValueConverter

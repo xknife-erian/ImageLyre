@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Drawing;
-using ImageLyric.NLog;
+using ImageLyre.NLog;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
-namespace ImageLyric.UI.ViewModels;
+namespace ImageLyre.UI.ViewModels;
 
 public class LoggerViewModel : ObservableRecipient
 {

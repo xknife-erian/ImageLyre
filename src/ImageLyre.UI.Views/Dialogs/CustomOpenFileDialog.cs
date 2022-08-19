@@ -4,7 +4,7 @@ using MvvmDialogs.FrameworkDialogs;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
 using Ookii.Dialogs.Wpf;
 
-namespace ImageLyric.UI.Views.Dialogs
+namespace ImageLyre.UI.Views.Dialogs
 {
     public class CustomOpenFileDialog : IFrameworkDialog
     {

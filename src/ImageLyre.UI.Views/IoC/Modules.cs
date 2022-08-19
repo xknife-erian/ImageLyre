@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using ImageLyric.UI.Views.Dialogs;
+using ImageLyre.UI.Views.Dialogs;
 using MvvmDialogs;
 
-namespace ImageLyric.UI.Views.IoC;
+namespace ImageLyre.UI.Views.IoC;
 
 public class Modules : Module
 {

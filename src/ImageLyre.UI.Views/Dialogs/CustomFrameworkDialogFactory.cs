@@ -1,7 +1,7 @@
 ﻿using MvvmDialogs.FrameworkDialogs;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
 
-namespace ImageLyric.UI.Views.Dialogs
+namespace ImageLyre.UI.Views.Dialogs
 {
     public class CustomFrameworkDialogFactory : DefaultFrameworkDialogFactory
     {

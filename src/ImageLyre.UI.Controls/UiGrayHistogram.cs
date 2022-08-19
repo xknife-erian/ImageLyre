@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using ImageLyric.ImageEngine.Analyze;
+using ImageLyre.ImageEngine.Analyze;
 
-namespace ImageLyric.UI.Controls;
+namespace ImageLyre.UI.Controls;
 
 public sealed class UiGrayHistogram
 {

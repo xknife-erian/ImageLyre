@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using OpenCvSharp;
 
-namespace ImageLyric.ImageEngine.Analyze;
+namespace ImageLyre.ImageEngine.Analyze;
 
 /// <summary>
 ///     图像的灰度直方图是一种反映图像色调分布的直方图，其绘制每个色调值的像素数。每个色调值的像素数也称为频率(frequency)。

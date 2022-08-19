@@ -1,7 +1,7 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using MvvmDialogs;
 
-namespace ImageLyric.UI.ViewModels
+namespace ImageLyre.UI.ViewModels
 {
     public class ProgressViewModel : ObservableRecipient, IModalDialogViewModel
     {

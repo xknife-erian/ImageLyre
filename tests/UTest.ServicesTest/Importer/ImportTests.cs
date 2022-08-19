@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using ImageLyric.Services.Importer;
+using ImageLyre.Services.Importer;
 using Xunit;
 
 namespace UTest.ServicesTest.Importer;

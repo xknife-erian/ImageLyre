@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
-namespace ImageLyric.UI.ViewModels
+namespace ImageLyre.UI.ViewModels
 {
     public class OptionViewModel : ObservableRecipient
     {

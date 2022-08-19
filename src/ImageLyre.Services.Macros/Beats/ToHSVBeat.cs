@@ -1,7 +1,7 @@
-﻿using ImageLyric.ImageEngine;
+﻿using ImageLyre.ImageEngine;
 using NLog;
 
-namespace ImageLyric.Services.Macros.Beats;
+namespace ImageLyre.Services.Macros.Beats;
 
 public class ToHSVBeat : BaseMacroBeat
 {

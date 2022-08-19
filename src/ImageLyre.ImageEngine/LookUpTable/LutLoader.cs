@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 
-namespace ImageLyric.ImageEngine.LookUpTable;
+namespace ImageLyre.ImageEngine.LookUpTable;
 
 /// <summary>
 ///     打开ImageJ look-up tables (LUTs)文件。包括：

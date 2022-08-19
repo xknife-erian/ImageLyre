@@ -2,7 +2,7 @@
 using System.Text;
 using System.Windows.Threading;
 
-namespace ImageLyric.UI.Views.Utils;
+namespace ImageLyre.UI.Views.Utils;
 
 /// <summary>
 ///     Helper class for dispatcher operations on the UI thread.

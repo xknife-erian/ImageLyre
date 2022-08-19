@@ -1,9 +1,9 @@
 ﻿using System.Windows;
-using ImageLyric.UI.ViewModels;
+using ImageLyre.UI.ViewModels;
 using OpenCvSharp;
 using Window = System.Windows.Window;
 
-namespace ImageLyric.UI.Views;
+namespace ImageLyre.UI.Views;
 
 /// <summary>
 ///     ImageWindow.xaml 的交互逻辑

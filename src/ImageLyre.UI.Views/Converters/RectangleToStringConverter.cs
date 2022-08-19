@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace ImageLyric.UI.Views.Converters;
+namespace ImageLyre.UI.Views.Converters;
 
 [ValueConversion(typeof(Rectangle), typeof(string))]
 public class RectangleToStringConverter : IValueConverter
@@ -30,7 +30,7 @@ public class RectangleToStringConverter : IValueConverter
     /// <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     #endregion

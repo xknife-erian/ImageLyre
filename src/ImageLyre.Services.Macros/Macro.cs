@@ -1,4 +1,4 @@
-﻿namespace ImageLyric.Services.Macros;
+﻿namespace ImageLyre.Services.Macros;
 
 /// <summary>
 /// 宏。

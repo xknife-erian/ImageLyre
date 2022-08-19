@@ -4,7 +4,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
-using ImageLyric.ImageEngine.Analyze;
+using ImageLyre.ImageEngine.Analyze;
 using OpenCvSharp;
 using ImreadModes = Emgu.CV.CvEnum.ImreadModes;
 using Mat = Emgu.CV.Mat;

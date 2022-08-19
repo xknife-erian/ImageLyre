@@ -1,6 +1,6 @@
 using FluentAssertions;
-using ImageLyric;
-using ImageLyric.Services.Macros.Beats;
+using ImageLyre;
+using ImageLyre.Services.Macros.Beats;
 using Xunit;
 
 namespace UTest.ServicesTest.Macros.Commands

@@ -1,10 +1,10 @@
 ﻿using System;
-using ImageLyric.NLog;
-using ImageLyric.UI.Views.Views;
+using ImageLyre.NLog;
+using ImageLyre.UI.Views.Views;
 using NLog;
 using NLog.Targets;
 
-namespace ImageLyric;
+namespace ImageLyre;
 
 [Target(nameof(LoggerWindow))]
 public class NlogTarget : Target

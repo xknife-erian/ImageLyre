@@ -6,7 +6,7 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 
-namespace ImageLyric.UI.Controls;
+namespace ImageLyre.UI.Controls;
 
 /// <summary>
 ///     HistogramPanel.xaml 的交互逻辑

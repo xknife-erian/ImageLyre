@@ -1,4 +1,4 @@
-﻿namespace ImageLyric.ImageEngine;
+﻿namespace ImageLyre.ImageEngine;
 
 public static class ImageTargetExtension
 {

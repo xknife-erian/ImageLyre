@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace ImageLyric.Services.Importer
+namespace ImageLyre.Services.Importer
 {
     public static class Import
     {

@@ -1,6 +1,6 @@
 ﻿using NLog;
 
-namespace ImageLyric.Services.Macros.Beats;
+namespace ImageLyre.Services.Macros.Beats;
 
 public class OpenBeat : BaseMacroBeat
 {

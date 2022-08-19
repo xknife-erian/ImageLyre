@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using NLog;
 
-namespace ImageLyric.NLog;
+namespace ImageLyre.NLog;
 
 public sealed class LogStack
 {

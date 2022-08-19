@@ -2,9 +2,9 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using ImageLyric.ImageEngine.Enums;
+using ImageLyre.ImageEngine.Enums;
 
-namespace ImageLyric.ImageEngine;
+namespace ImageLyre.ImageEngine;
 
 public static partial class ImageUtil
 {

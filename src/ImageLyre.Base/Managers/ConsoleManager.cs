@@ -1,4 +1,4 @@
-﻿namespace ImageLyric.Managers
+﻿namespace ImageLyre.Managers
 {
     public class ConsoleManager
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using ImageLyric.UI.ViewModels;
-using ImageLyric.UI.Views.Views;
+using ImageLyre.UI.ViewModels;
+using ImageLyre.UI.Views.Views;
 using MvvmDialogs.DialogTypeLocators;
 
-namespace ImageLyric.UI.Views;
+namespace ImageLyre.UI.Views;
 
 public class DialogTypeLocator : IDialogTypeLocator
 {

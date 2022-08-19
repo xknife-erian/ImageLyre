@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace ImageLyric.ImageEngine.Jobs;
+namespace ImageLyre.ImageEngine.Jobs;
 
 public class ImageProcessSetting
 {

@@ -5,7 +5,7 @@ using System.Windows.Media.Imaging;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 
-namespace ImageLyric.UI.Views.Converters
+namespace ImageLyre.UI.Views.Converters
 {
     public class Mat2WriteableBitmapConverter : IValueConverter
     {

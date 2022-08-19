@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using OpenCvSharp;
 
-namespace ImageLyric.ImageEngine;
+namespace ImageLyre.ImageEngine;
 
 /// <summary>
 /// 描述一个被操作的目标

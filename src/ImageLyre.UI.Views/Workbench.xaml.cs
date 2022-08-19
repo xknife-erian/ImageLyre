@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
-using ImageLyric.Managers;
-using ImageLyric.UI.ViewModels;
+using ImageLyre.Managers;
+using ImageLyre.UI.ViewModels;
 using NKnife;
 using NLog;
 
-namespace ImageLyric.UI.Views;
+namespace ImageLyre.UI.Views;
 
 /// <summary>
 ///     Interaction logic for Workbench.xaml

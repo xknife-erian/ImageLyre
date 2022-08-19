@@ -1,5 +1,5 @@
-﻿using ImageLyric;
-using ImageLyric.Services.Macros;
+﻿using ImageLyre;
+using ImageLyre.Services.Macros;
 
 namespace UTest.ServicesTest.Macros.Demos;
 

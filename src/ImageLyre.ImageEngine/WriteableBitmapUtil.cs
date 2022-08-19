@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace ImageLyric.ImageEngine
+namespace ImageLyre.ImageEngine
 {
     public class WriteableBitmapUtil
     {

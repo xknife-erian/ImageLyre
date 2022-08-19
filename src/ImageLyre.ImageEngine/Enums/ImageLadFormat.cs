@@ -1,4 +1,4 @@
-﻿namespace ImageLyric.ImageEngine.Enums;
+﻿namespace ImageLyre.ImageEngine.Enums;
 
 public enum ImageLadFormat
 {

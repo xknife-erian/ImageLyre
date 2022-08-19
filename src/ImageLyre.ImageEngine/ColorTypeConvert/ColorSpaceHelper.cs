@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 
-namespace ImageLyric.ImageEngine.ColorTypeConvert;
+namespace ImageLyre.ImageEngine.ColorTypeConvert;
 
 /// <summary>
 ///     Provides methods to convert from a color space to an other.

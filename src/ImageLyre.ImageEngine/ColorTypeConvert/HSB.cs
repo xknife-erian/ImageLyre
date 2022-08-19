@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace ImageLyric.ImageEngine.ColorTypeConvert
+namespace ImageLyre.ImageEngine.ColorTypeConvert
 {
 	/// <summary>
 	/// Structure to define HSB.

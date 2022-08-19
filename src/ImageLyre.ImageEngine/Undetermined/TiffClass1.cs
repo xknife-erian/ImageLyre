@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using BitMiracle.LibTiff.Classic;
 
-namespace ImageLyric.ImageEngine.Undetermined
+namespace ImageLyre.ImageEngine.Undetermined
 {
     internal class TiffClass1
     {

@@ -1,4 +1,4 @@
-﻿namespace ImageLyric.ImageEngine.Undetermined
+﻿namespace ImageLyre.ImageEngine.Undetermined
 {
     public class AutoColorLevels
     {

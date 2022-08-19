@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using ImageLyric.IoC;
-using ImageLyric.Managers;
-using ImageLyric.NLog;
-using ImageLyric.UI.ViewModels;
-using ImageLyric.UI.Views;
+using ImageLyre.IoC;
+using ImageLyre.Managers;
+using ImageLyre.NLog;
+using ImageLyre.UI.ViewModels;
+using ImageLyre.UI.Views;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using NLog;
 
-namespace ImageLyric
+namespace ImageLyre
 {
     public class ViewModelLocator
     {
@@ -100,9 +100,9 @@ namespace ImageLyric
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule<Modules>();
-            builder.RegisterModule<ImageLyric.Services.Macros.IoC.Modules>();
-            builder.RegisterModule<ImageLyric.UI.Views.IoC.Modules>();
-            builder.RegisterModule<ImageLyric.UI.ViewModels.IoC.Modules>();
+            builder.RegisterModule<Services.Macros.IoC.Modules>();
+            builder.RegisterModule<UI.Views.IoC.Modules>();
+            builder.RegisterModule<UI.ViewModels.IoC.Modules>();
             return new AutofacServiceProvider(builder.Build());
         }
     }

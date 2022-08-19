@@ -1,14 +1,14 @@
-﻿<Window x:Class="ImageLyric.UI.Views.Views.HistogramWindow"
+﻿<Window x:Class="ImageLyre.UI.Views.Views.HistogramWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:controls1="clr-namespace:ImageLyric.UI.Controls;assembly=ImageLyre.UI.Controls"
-        xmlns:viewModels1="clr-namespace:ImageLyric.UI.ViewModels;assembly=ImageLyre.UI.ViewModels"
+        xmlns:vm="clr-namespace:ImageLyre.UI.ViewModels;assembly=ImageLyre.UI.ViewModels"
+        xmlns:ctls="clr-namespace:ImageLyre.UI.Controls;assembly=ImageLyre.UI.Controls"
         mc:Ignorable="d"
         ShowInTaskbar="False"
         Title="HistogramWindow" Height="500" Width="500"
-        d:DataContext="{d:DesignInstance {x:Type viewModels1:HistogramViewModel}}">
+        d:DataContext="{d:DesignInstance {x:Type vm:HistogramViewModel}}">
     <Grid>
         <Grid.Resources>
         </Grid.Resources>
@@ -16,7 +16,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <controls1:HistogramPanel Grid.Row="0" />
+        <ctls:HistogramPanel Grid.Row="0" />
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*" />

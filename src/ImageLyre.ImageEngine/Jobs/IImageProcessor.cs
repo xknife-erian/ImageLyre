@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ImageLyric.ImageEngine.Jobs;
+namespace ImageLyre.ImageEngine.Jobs;
 
 /// <summary>
 /// 图像处理器

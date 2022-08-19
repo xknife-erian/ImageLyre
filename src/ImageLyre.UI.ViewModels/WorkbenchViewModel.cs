@@ -6,7 +6,7 @@ using MvvmDialogs;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
 using NLog;
 
-namespace ImageLyric.UI.ViewModels;
+namespace ImageLyre.UI.ViewModels;
 
 public class WorkbenchViewModel : ObservableRecipient
 {

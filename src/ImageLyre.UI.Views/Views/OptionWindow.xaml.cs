@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using ImageLyric.UI.ViewModels;
+using ImageLyre.UI.ViewModels;
 
-namespace ImageLyric.UI.Views.Views
+namespace ImageLyre.UI.Views.Views
 {
     /// <summary>
     /// OptionWindow.xaml 的交互逻辑

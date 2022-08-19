@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-namespace ImageLyric.UI.ViewModels.IoC
+namespace ImageLyre.UI.ViewModels.IoC
 {
     public class Modules : Module
     {

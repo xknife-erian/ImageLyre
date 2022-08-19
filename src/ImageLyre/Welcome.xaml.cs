@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace ImageLyric
+namespace ImageLyre
 {
     /// <summary>
     /// Interaction logic for Welcome.xaml

@@ -1,6 +1,6 @@
-﻿using ImageLyric.ImageEngine;
+﻿using ImageLyre.ImageEngine;
 
-namespace ImageLyric.Services.Macros;
+namespace ImageLyre.Services.Macros;
 
 public abstract class BaseMacroBeat : IMacroBeat
 {

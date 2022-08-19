@@ -1,6 +1,6 @@
 ﻿using NLog;
 
-namespace ImageLyric.NLog;
+namespace ImageLyre.NLog;
 
 public class Log
 {

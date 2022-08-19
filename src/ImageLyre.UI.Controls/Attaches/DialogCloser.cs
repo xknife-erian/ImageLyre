@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace ImageLyric.UI.Controls.Attaches
+namespace ImageLyre.UI.Controls.Attaches
 {
     public static class DialogCloser
     {

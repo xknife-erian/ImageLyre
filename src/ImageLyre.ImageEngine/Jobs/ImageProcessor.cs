@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace ImageLyric.ImageEngine.Jobs;
+namespace ImageLyre.ImageEngine.Jobs;
 
 public class ImageProcessor : IImageProcessor
 {

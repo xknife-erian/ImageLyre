@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Drawing;
-using ImageLyric.Utils;
+using ImageLyre.Utils;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
-namespace ImageLyric.UI.ViewModels
+namespace ImageLyre.UI.ViewModels
 {
     public class HistogramViewModel : ObservableRecipient
     {

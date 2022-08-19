@@ -2,7 +2,7 @@
 using ImagingPixelFormat = System.Drawing.Imaging.PixelFormat;
 using MediaPixelFormat = System.Windows.Media.PixelFormat;
 
-namespace ImageLyric.UI.Views.Utils;
+namespace ImageLyre.UI.Views.Utils;
 
 public class Util
 {

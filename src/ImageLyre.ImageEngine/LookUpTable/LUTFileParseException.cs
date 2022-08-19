@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ImageLyric.ImageEngine.LookUpTable
+namespace ImageLyre.ImageEngine.LookUpTable
 {
     public class LUTFileParseException : Exception
     {

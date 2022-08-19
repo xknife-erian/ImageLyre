@@ -1,6 +1,6 @@
 ﻿using NKnife;
 
-namespace ImageLyric.Managers;
+namespace ImageLyre.Managers;
 
 /// <summary>
 /// 选项与用户习惯服务

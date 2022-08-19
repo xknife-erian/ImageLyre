@@ -1,16 +1,16 @@
-﻿<f:RibbonWindow x:Class="ImageLyric.UI.Views.Workbench"
+﻿<f:RibbonWindow x:Class="ImageLyre.UI.Views.Workbench"
                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                xmlns:converters="clr-namespace:ImageLyric.UI.Views.Converters"
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                 xmlns:f="urn:fluent-ribbon"
                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                 xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-                xmlns:viewModels1="clr-namespace:ImageLyric.UI.ViewModels;assembly=ImageLyre.UI.ViewModels"
+                xmlns:vm="clr-namespace:ImageLyre.UI.ViewModels;assembly=ImageLyre.UI.ViewModels"
+                xmlns:conv="clr-namespace:ImageLyre.UI.Views.Converters"
                 Title="ImageLyric"
                 Width="800"
                 Height="250"
-                d:DataContext="{d:DesignInstance {x:Type viewModels1:WorkbenchViewModel}}"
+                d:DataContext="{d:DesignInstance {x:Type vm:WorkbenchViewModel}}"
                 md:DialogServiceViews.IsRegistered="True"
                 DataContext="{Binding Source={StaticResource Locator}, Path=Workbench}"
                 Icon="/ImageLyre.UI.Views;component/Assets/Images/ImageLaye.png"
@@ -50,7 +50,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <converters:RectangleToStringConverter x:Key="RectString" />
+        <conv:RectangleToStringConverter x:Key="RectString" />
     </f:RibbonWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>

@@ -1,4 +1,4 @@
-﻿namespace ImageLyric;
+﻿namespace ImageLyre;
 
 /// <summary>
 /// 本接口描述一个宏节拍。

@@ -3,7 +3,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace ImageLyric.UI.Views.Converters
+namespace ImageLyre.UI.Views.Converters
 {
     [ValueConversion(typeof(PixelFormat), typeof(string))]
     public class PixelFormatConverter : IValueConverter
@@ -30,7 +30,7 @@ namespace ImageLyric.UI.Views.Converters
         /// <returns>A converted value. If the method returns <see langword="null" />, the valid null value is used.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         #endregion

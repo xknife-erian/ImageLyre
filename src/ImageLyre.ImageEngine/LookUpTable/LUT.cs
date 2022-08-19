@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace ImageLyric.ImageEngine.LookUpTable;
+namespace ImageLyre.ImageEngine.LookUpTable;
 
 public class LUT
 {

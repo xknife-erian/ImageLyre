@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace ImageLyric.Utils;
+namespace ImageLyre.Utils;
 
 public static partial class DataGen
 {

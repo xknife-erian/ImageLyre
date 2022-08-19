@@ -1,4 +1,4 @@
-﻿namespace ImageLyric;
+﻿namespace ImageLyre;
 
 /// <summary>
 /// 描述一个被操作的目标

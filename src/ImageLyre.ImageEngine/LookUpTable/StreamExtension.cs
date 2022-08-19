@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace ImageLyric.ImageEngine.LookUpTable;
+namespace ImageLyre.ImageEngine.LookUpTable;
 
 public static class StreamExtension
 {

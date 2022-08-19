@@ -1,4 +1,4 @@
-namespace ImageLyric.ImageEngine.ColorTypeConvert
+namespace ImageLyre.ImageEngine.ColorTypeConvert
 {
 	/// <summary>
 	/// Structure to define YUV.

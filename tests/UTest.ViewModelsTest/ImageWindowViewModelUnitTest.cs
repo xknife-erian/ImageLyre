@@ -1,5 +1,5 @@
 using FluentAssertions;
-using ImageLyric.UI.ViewModels;
+using ImageLyre.UI.ViewModels;
 using Xunit;
 
 namespace UTest.ViewModelsTest

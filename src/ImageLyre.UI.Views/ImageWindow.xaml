@@ -4,15 +4,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:converters="clr-namespace:ImageLyric.UI.Views.Converters"
-    xmlns:viewModels1="clr-namespace:ImageLyric.UI.ViewModels;assembly=ImageLyre.UI.ViewModels"
-    x:Class="ImageLyric.UI.Views.ImageWindow"
+    xmlns:vm="clr-namespace:ImageLyre.UI.ViewModels;assembly=ImageLyre.UI.ViewModels"
+    xmlns:conv="clr-namespace:ImageLyre.UI.Views.Converters"
+    x:Class="ImageLyre.UI.Views.ImageWindow"
     mc:Ignorable="d"
     WindowStartupLocation="Manual"
     x:Name="_Window_"
     Title="{Binding Target.FileInfo.Name}"
     d:DesignHeight="200" d:DesignWidth="400"
-    d:DataContext="{d:DesignInstance {x:Type viewModels1:ImageViewModel}}">
+    d:DataContext="{d:DesignInstance {x:Type vm:ImageViewModel}}">
     <b:Interaction.Triggers>
         <b:EventTrigger EventName="Activated">
             <b:InvokeCommandAction Command="{Binding WindowActivated}" />
@@ -22,8 +22,8 @@
         </b:EventTrigger>
     </b:Interaction.Triggers>
     <Window.Resources>
-        <converters:Mat2WriteableBitmapConverter x:Key="ImageConverter" />
-        <converters:PixelFormatConverter x:Key="FormatString" />
+        <conv:Mat2WriteableBitmapConverter x:Key="_ImageConverter_" />
+        <conv:PixelFormatConverter x:Key="_FormatString_" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -33,7 +33,7 @@
         <TabControl Grid.Row="0">
             <TabItem Header="图像" Height="20" Padding="10,0">
                 <StackPanel x:Name="_MiddlePanel_" Background="DarkGray">
-                    <Image x:Name="_Image_" Stretch="Uniform" Source="{Binding BmpMat, Converter={StaticResource ImageConverter}}" />
+                    <Image x:Name="_Image_" Stretch="Uniform" Source="{Binding BmpMat, Converter={StaticResource _ImageConverter_}}" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="B" Height="20" Padding="10,0">
@@ -54,7 +54,7 @@
         </TabControl>
 
         <StatusBar x:Name="_StatusBar_" Grid.Row="1" Height="26">
-            <TextBlock Padding="0" Margin="1,0" Text="{Binding PixelFormat,Converter={StaticResource FormatString}}" />
+            <TextBlock Padding="0" Margin="1,0" Text="{Binding PixelFormat,Converter={StaticResource _FormatString_}}" />
             <TextBlock Padding="0" Margin="1,0" Text="{Binding ElementName=_Window_,Path=Top }" />
             <TextBlock Padding="0" Margin="1,0" Text="{Binding ElementName=_Window_,Path=Left}" />
         </StatusBar>

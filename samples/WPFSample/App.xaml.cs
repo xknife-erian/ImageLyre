@@ -2,7 +2,7 @@
 using System.Windows;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using ImageLyric.UI.Views.Utils;
+using ImageLyre.UI.Views.Utils;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 
 namespace WPFSample

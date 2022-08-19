@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 
-namespace ImageLyric.ImageEngine
+namespace ImageLyre.ImageEngine
 {
     /// <summary>
     /// 图像(<see cref="Bitmap"/>) 扩展

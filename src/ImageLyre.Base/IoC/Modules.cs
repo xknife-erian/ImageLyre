@@ -1,7 +1,7 @@
 ﻿using Autofac;
-using ImageLyric.Managers;
+using ImageLyre.Managers;
 
-namespace ImageLyric.IoC
+namespace ImageLyre.IoC
 {
     public class Modules : Module
     {
