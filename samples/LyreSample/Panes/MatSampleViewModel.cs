@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using ImageLyre.UI.Views.Utils;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -10,14 +11,14 @@ namespace LyreSample.Panes;
 public class MatSampleViewModel : ObservableRecipient
 {
     private int _side = 16;
-    private Mat? _imgMat;
+    private Mat? _imageMat;
     public int ImageColumns { get; } = 128;
     public int ImageRows { get; } = 256;
 
-    public Mat? ImgMat
+    public Mat? ImageMat
     {
-        get => _imgMat;
-        set => SetProperty(ref _imgMat, value);
+        get => _imageMat;
+        set => SetProperty(ref _imageMat, value);
     }
 
     /// <summary>
@@ -25,12 +26,36 @@ public class MatSampleViewModel : ObservableRecipient
     /// </summary>
     public ICommand BuildRandomImageCommand => new RelayCommand(() =>
     {
-        ImgMat = new Mat(ImageRows, ImageColumns, MatType.CV_8UC3, Scalar.Red);
+        ImageMat = new Mat(ImageRows, ImageColumns, MatType.CV_8UC3, Scalar.Red);
     });
 
     public ICommand UpdateMatCommand => new RelayCommand(() =>
     {
-        //TODO:试验更新Mat的内部值
+        if (ImageMat == null)
+            return;
+        Mat mat = Mat.Zeros(ImageMat.Rows, ImageMat.Cols, MatType.CV_8UC3);
+        if (ImageMat.Channels() == 3)
+        {
+            for (int i = 0; i < ImageMat.Height; i++)
+            {
+                for (int j = 0; j < ImageMat.Width; j++)
+                {
+                    mat.Set(i, j, new Vec3b(0, 255, 0));
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < ImageMat.Height; i++)
+            {
+                for (int j = 0; j < ImageMat.Width; j++)
+                {
+                    ImageMat.Set(i, j, Scalar.Yellow);
+                }
+            }
+        }
+
+        ImageMat = mat;
     });
 
     /// <summary>
@@ -39,7 +64,7 @@ public class MatSampleViewModel : ObservableRecipient
     public ICommand BuildMosaicCommand => new RelayCommand(() =>
     {
         var array = BuildArray(_side, ImageColumns, ImageRows, true);
-        ImgMat = new Mat(new[] { ImageRows, ImageColumns }, MatType.CV_8SC1, array);
+        ImageMat = new Mat(new[] { ImageRows, ImageColumns }, MatType.CV_8SC1, array);
     });
 
     private bool _mockFlag = false;
@@ -62,7 +87,7 @@ public class MatSampleViewModel : ObservableRecipient
             {
                 UI.RunAsync(() =>
                 {
-                    ImgMat = flag
+                    ImageMat = flag
                         ? new Mat(ImageRows, ImageColumns,  MatType.CV_8UC1, a1)
                         : new Mat(ImageRows,ImageColumns,  MatType.CV_8UC1, a2);
                     flag = !flag;

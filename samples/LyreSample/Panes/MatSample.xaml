@@ -47,7 +47,7 @@
                         Height="512"
                         BorderBrush="DarkGreen"
                         BorderThickness="0.4">
-                    <Image Source="{Binding ImgMat, Mode=TwoWay, Converter={StaticResource _MatConverter_}}" Stretch="None" />
+                    <Image Source="{Binding ImageMat, Mode=TwoWay, Converter={StaticResource _MatConverter_}}" Stretch="None" />
                 </Border>
             </Grid>
         </Grid>
