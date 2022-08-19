@@ -1,0 +1,54 @@
+﻿<fluent:RibbonWindow x:Class="LyreSample.Workbench"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:fluent="urn:fluent-ribbon"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+                     xmlns:wpfSample="clr-namespace:LyreSample"
+                     xmlns:controls="clr-namespace:LyreSample.Controls"
+                     xmlns:panes="clr-namespace:LyreSample.Panes"
+                     Title="Workbench"
+                     Width="1600"
+                     Height="800"
+                     md:DialogServiceViews.IsRegistered="True"
+                     d:DataContext="{d:DesignInstance {x:Type wpfSample:WorkbenchViewModel}}"
+                     DataContext="{Binding Source={StaticResource Locator}, Path=Workbench}"
+                     Icon="\Main.png"
+                     WindowStartupLocation="CenterScreen"
+                     mc:Ignorable="d">
+    <Window.Resources />
+    <Border>
+        <DockPanel>
+            <controls:Menus Margin="2,3,2,4" DockPanel.Dock="Top" />
+            <Border Height="30" DockPanel.Dock="Bottom">
+                <DockPanel VerticalAlignment="Center">
+                    <TextBlock DockPanel.Dock="Left" Text="Success" />
+                    <Border />
+                </DockPanel>
+            </Border>
+            <TabControl TabStripPlacement="Left">
+                <TabControl.Resources>
+                    <Style TargetType="{x:Type TabItem}">
+                        <Setter Property="Height" Value="40" />
+                    </Style>
+                </TabControl.Resources>
+                <TabItem Header="HistogramSample">
+                    <Border Background="DimGray">
+                        <panes:HistogramSample DataContext="{Binding HistogramSampleVm}" />
+                    </Border>
+                </TabItem>         
+                <TabItem Header="MatSample" IsSelected="True">
+                    <Border Background="LightGray">
+                        <panes:MatSample DataContext="{Binding MatSampleVm}" />
+                    </Border>
+                </TabItem>     
+                <TabItem Header="Cam">
+                    <Border Background="LightGray">
+                        <panes:CamSample DataContext="{Binding CamSampleVm}" />
+                    </Border>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+    </Border>
+</fluent:RibbonWindow>
