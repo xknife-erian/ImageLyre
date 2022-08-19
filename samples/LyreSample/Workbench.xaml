@@ -20,6 +20,7 @@
     <Window.Resources />
     <Border>
         <DockPanel>
+            <!--fluent菜单试验-->
             <controls:Menus Margin="2,3,2,4" DockPanel.Dock="Top" />
             <Border Height="30" DockPanel.Dock="Bottom">
                 <DockPanel VerticalAlignment="Center">
