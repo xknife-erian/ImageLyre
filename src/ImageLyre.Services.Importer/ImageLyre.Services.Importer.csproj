@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Folder Include="Wrapper\" />
+    <Folder Include="Wrapper\" />
   </ItemGroup>
 
 </Project>
