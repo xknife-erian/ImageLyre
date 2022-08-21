@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="Wrapper\libimglyre.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Wrapper\libimglyric.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -15,5 +18,9 @@
     <Folder Include="Wrapper\" />
     <Folder Include="Wrapper\" />
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="copy ..\..\libc\imglyre\cmake-build-debug\libimglyre.dll .\Wrapper\" />
+  </Target>
 
 </Project>
