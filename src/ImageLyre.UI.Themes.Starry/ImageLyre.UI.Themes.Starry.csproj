@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <RootNamespace>TVS.Ginkgo.Themes.Starry</RootNamespace>
+    <TargetFrameworks>net472</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+    <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>False</SignAssembly>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Version>4.70.1</Version>
+    <AssemblyVersion>4.70.1</AssemblyVersion>
+    <FileVersion>4.70.1</FileVersion>
+    <PackageVersion>4.70.1</PackageVersion>
+    <Company>TVS</Company>
+    <Product>TVS.Ginkgo.Themes.Starry</Product>
+    <Copyright>2017-2022</Copyright>
+    <Description></Description>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl></RepositoryUrl>
+    <PackageId>TVS.Ginkgo.Themes.Starry</PackageId>
+    <Authors></Authors>
+    <IsPublishable>False</IsPublishable>
+    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="**\*.png" />
+  </ItemGroup>
+
+  <!-- NuGet Packaging -->
+  <ItemGroup>
+    <PackageReference Include="Dirkster.AvalonDock" Version="4.70.1" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+  </ItemGroup>
+
+</Project>

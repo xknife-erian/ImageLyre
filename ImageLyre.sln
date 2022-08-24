@@ -47,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiscBenchmark", "performanc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LyreSample", "samples\LyreSample\LyreSample.csproj", "{0A40687A-2BBB-4EC7-BB88-E1EF7C9623E0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageLyre.UI.Themes.Starry", "src\ImageLyre.UI.Themes.Starry\ImageLyre.UI.Themes.Starry.csproj", "{853DF6F7-BA49-4E60-8189-38E6B2AD0B8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{0A40687A-2BBB-4EC7-BB88-E1EF7C9623E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A40687A-2BBB-4EC7-BB88-E1EF7C9623E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A40687A-2BBB-4EC7-BB88-E1EF7C9623E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{853DF6F7-BA49-4E60-8189-38E6B2AD0B8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{853DF6F7-BA49-4E60-8189-38E6B2AD0B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{853DF6F7-BA49-4E60-8189-38E6B2AD0B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{853DF6F7-BA49-4E60-8189-38E6B2AD0B8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
