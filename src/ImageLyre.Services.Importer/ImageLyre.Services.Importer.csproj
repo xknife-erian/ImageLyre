@@ -9,13 +9,9 @@
     <None Update="Wrapper\libimglyre.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Wrapper\libimglyric.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Wrapper\" />
     <Folder Include="Wrapper\" />
   </ItemGroup>
 
