@@ -9,10 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
-    <PackageReference Include="Emgu.CV" Version="4.5.5.4823" />
-    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.5.5.4823" />
-    <PackageReference Include="OpenCvSharp4.Windows" Version="4.6.0.20220608" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+    <PackageReference Include="Emgu.CV" Version="4.8.1.5350" />
+    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.8.1.5350" />
+    <PackageReference Include="OpenCvSharp4.Windows" Version="4.9.0.20240103" />
   </ItemGroup>
 
   <ItemGroup>
