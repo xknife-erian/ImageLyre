@@ -15,8 +15,4 @@
     <Folder Include="Wrapper\" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="copy ..\..\libc\imglyre\cmake-build-debug\libimglyre.dll .\Wrapper\" />
-  </Target>
-
 </Project>
