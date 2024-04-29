@@ -3,7 +3,7 @@ using System.Windows;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ImageLyre.UI.Views.Utils;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace LyreSample
 {

@@ -9,7 +9,7 @@ using ImageLyre.Managers;
 using ImageLyre.NLog;
 using ImageLyre.UI.ViewModels;
 using ImageLyre.UI.Views;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using NLog;
 
 namespace ImageLyre

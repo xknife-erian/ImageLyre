@@ -3,8 +3,8 @@ using System.Windows.Input;
 using ImageLyre.ImageEngine;
 using ImageLyre.Services.Macros;
 using ImageLyre.Services.Macros.Beats;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using OpenCvSharp;
 using Point = System.Drawing.Point;
 

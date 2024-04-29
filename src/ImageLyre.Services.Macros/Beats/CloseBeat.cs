@@ -2,14 +2,9 @@
 
 namespace ImageLyre.Services.Macros.Beats;
 
-public class CloseBeat : BaseMacroBeat
+public class CloseBeat(ITarget target) : BaseMacroBeat(target)
 {
-    private static readonly ILogger _Log = LogManager.GetCurrentClassLogger();
-
-    public CloseBeat(ITarget target) 
-        : base(target)
-    {
-    }
+    private static readonly ILogger s_log = LogManager.GetCurrentClassLogger();
 
     /// <summary>
     /// 完成命令的操作
@@ -20,12 +15,12 @@ public class CloseBeat : BaseMacroBeat
         try
         {
             Target.Close();
-            _Log.Info($"{ImageTarget.FileInfo.FullName} 已关闭。");
+            s_log.Info($"{ImageTarget.FileInfo.FullName} 已关闭。");
             return true;
         }
         catch (Exception e)
         {
-            _Log.Warn(e);
+            s_log.Warn(e);
             return false;
         }
     }

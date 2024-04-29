@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Drawing;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ImageLyre.Utils;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace ImageLyre.UI.ViewModels
 {

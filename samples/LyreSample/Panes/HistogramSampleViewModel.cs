@@ -12,8 +12,8 @@ using ImageLyre.ImageEngine.Analyze;
 using ImageLyre.UI.Controls;
 using ImageLyre.UI.ViewModels;
 using ImageLyre.UI.Views.Utils;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MvvmDialogs;
 using OpenCvSharp;
 

@@ -18,8 +18,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.0.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
-    <PackageReference Include="Fluent.Ribbon" Version="10.0.4" />
-    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+    <PackageReference Include="Fluent.Ribbon" Version="10.1.0" />
     <PackageReference Include="MvvmDialogs" Version="9.1.2" />
     <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.9.0.20240103" />
   </ItemGroup>

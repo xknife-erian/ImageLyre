@@ -10,12 +10,7 @@ public class Macro
     /// <summary>
     /// 动作的管理集合
     /// </summary>
-    private readonly LinkedList<IMacroBeat> _commands;
-
-    public Macro()
-    {
-        _commands = new LinkedList<IMacroBeat>();
-    }
+    private readonly LinkedList<IMacroBeat> _commands = new();
 
     /// <summary>
     /// 执行一个或多个命令。当命令执行完成后，将命令置入管理集合中。

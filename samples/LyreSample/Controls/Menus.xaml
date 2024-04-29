@@ -20,15 +20,12 @@
             <fluent:RibbonTabItem Header="开始">
                 <fluent:RibbonGroupBox Header="下拉框">
                     <fluent:ComboBox Header="城市"
-                                     InputWidth="100"
                                      IsEditable="true"
                                      KeyTip="FD" />
                     <fluent:ComboBox Header="省份"
-                                     InputWidth="100"
                                      IsEditable="False"
                                      KeyTip="FD" />
                     <fluent:TextBox Header="名称"
-                                    InputWidth="100"
                                     KeyTip="FD" />
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox>
