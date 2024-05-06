@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <PackageReference Include="Sdcb.SimdCodecs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ImageLyre.Kernel\ImageLyre.Kernel.csproj" />
-  </ItemGroup>
-</Project>

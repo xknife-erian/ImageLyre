@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- 命名空间与工程名一致，沿用沧溟的 Module/Feature 插件命名；CA1716 的 VB 关键字顾虑不适用于本仓。 -->
+    <NoWarn>$(NoWarn);CA1716</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AtomUI.Desktop.Controls" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Cangming.PicoPlugins" />
+    <PackageReference Include="Cangming.PicoPlugins.Avalonias" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <!-- 命名空间与工程名一致，沿用沧溟的 Module/Feature 插件命名；CA1716 的 VB 关键字顾虑不适用于本仓。 -->
+    <NoWarn>$(NoWarn);CA1716</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libs\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

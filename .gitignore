@@ -362,3 +362,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# 测试夹具缓存：ImageJ 安装包等大体积外部文件，本地保留、不入库
+tests/fixtures/cache/

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Cangming.PicoPlugins" />
+    <PackageReference Include="Cangming.PicoPlugins.Avalonias" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libs\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

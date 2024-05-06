@@ -1,6 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="..\ImageLyre.Kernel\ImageLyre.Kernel.csproj" />
-    <ProjectReference Include="..\ImageLyre.Plugins\ImageLyre.Plugins.csproj" />
-  </ItemGroup>
-</Project>

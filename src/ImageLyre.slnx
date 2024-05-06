@@ -1,13 +1,23 @@
 <Solution>
   <Folder Name="/Apps/">
-    <Project Path="Apps/ImageLyre.Desktop/ImageLyre.Desktop.csproj" />
+    <Project Path="Apps/ImageLyre.App/ImageLyre.App.csproj" />
+    <Project Path="Apps/ImageLyre.Bootstrap/ImageLyre.Bootstrap.csproj" />
   </Folder>
   <Folder Name="/Libs/">
-    <Project Path="Libs/ImageLyre.Kernel/ImageLyre.Kernel.csproj" />
-    <Project Path="Libs/ImageLyre.Imaging/ImageLyre.Imaging.csproj" />
-    <Project Path="Libs/ImageLyre.Codecs/ImageLyre.Codecs.csproj" />
     <Project Path="Libs/ImageLyre.Plugins/ImageLyre.Plugins.csproj" />
-    <Project Path="Libs/ImageLyre.Sandbox/ImageLyre.Sandbox.csproj" />
-    <Project Path="Libs/ImageLyre.UI/ImageLyre.UI.csproj" />
+    <Project Path="Libs/ImageLyre.Shell.Contracts/ImageLyre.Shell.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/Modules/">
+    <Project Path="Modules/ImageLyre.Module.PluginCenter/ImageLyre.Module.PluginCenter.csproj" />
+    <Project Path="Modules/ImageLyre.Module.Workbench/ImageLyre.Module.Workbench.csproj" />
+  </Folder>
+  <Folder Name="/Features/">
+    <Project Path="Features/ImageLyre.Feature.About/ImageLyre.Feature.About.csproj" />
+    <Project Path="Features/ImageLyre.Feature.PluginCenter/ImageLyre.Feature.PluginCenter.csproj" />
+    <Project Path="Features/ImageLyre.Feature.Version/ImageLyre.Feature.Version.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="../tests/ImageLyre.Architecture.Tests/ImageLyre.Architecture.Tests.csproj" />
+    <Project Path="../tests/ImageLyre.Plugins.Tests/ImageLyre.Plugins.Tests.csproj" />
   </Folder>
 </Solution>

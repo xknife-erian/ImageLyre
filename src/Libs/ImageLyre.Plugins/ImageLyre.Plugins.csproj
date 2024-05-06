@@ -1,5 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <ItemGroup>
-    <ProjectReference Include="..\ImageLyre.Kernel\ImageLyre.Kernel.csproj" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>ImageLyre.Plugins.Tests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cangming.Logs" />
+    <PackageReference Include="Cangming.PicoPlugins" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>

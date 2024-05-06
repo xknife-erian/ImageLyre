@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PluginDictionary>
+  <Plugin Id="Test.Feature" Header="测试" IsEnable="true">
+    <Category Id="Test.Menu.Help" Header="帮助">
+      <Group Id="Test.Help.Top" Header="">
+        <Focal Id="Test.Help.About" Header="关于" Command="ShowAboutCommand" Order="1" />
+        <Focal Id="Test.Help.Second" Header="第二项" Command="SecondCommand" Order="2" />
+      </Group>
+      <Group Id="Test.Help.More" Header="更多">
+        <Focal Id="Test.Help.Nested" Header="嵌套项" Command="NestedCommand" />
+      </Group>
+    </Category>
+  </Plugin>
+</PluginDictionary>

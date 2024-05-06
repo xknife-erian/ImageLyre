@@ -7,9 +7,14 @@
 
         <Company>Beijing RAY Everest Biotechnology Co., Ltd</Company>
         <Product>ImageLyre</Product>
-        <Copyright>Copyright © 2022 - $([System.DateTime]::Today.ToString(yyyy)) RAY Everest.</Copyright>
+        <Copyright>Copyright &#169; 2022 - $([System.DateTime]::Today.ToString(yyyy)) RAY Everest.</Copyright>
         <Version>0.1.0</Version>
         <VersionPrefix>0.1.0</VersionPrefix>
         <NeutralLanguage>zh-CN</NeutralLanguage>
+
+        <!-- 工程基座：分析器与可复现构建，见 docs/design/lukan/DESIGN-0002-cangming-engineering-base.md -->
+        <AnalysisLevel>latest-recommended</AnalysisLevel>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
     </PropertyGroup>
 </Project>
