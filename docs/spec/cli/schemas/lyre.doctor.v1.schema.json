@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.doctor.v1.json",
+  "title": "lyre.doctor/v1",
+  "type": "object",
+  "required": ["schema", "runtime", "stateDirWritable", "outRoot", "grantedRoots"],
+  "properties": {
+    "schema": { "type": "string", "const": "lyre.doctor/v1" },
+    "runtime": { "type": "string" },
+    "hostPath": { "type": ["string", "null"] },
+    "hostHash": { "type": ["string", "null"] },
+    "hostVersion": { "type": ["string", "null"] },
+    "protocolVersion": { "type": ["string", "null"] },
+    "policyId": { "type": ["string", "null"] },
+    "grantedRoots": { "type": "array", "items": { "type": "string" } },
+    "outRoot": { "type": "string" },
+    "stateDirWritable": { "type": "boolean" },
+    "auditSink": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

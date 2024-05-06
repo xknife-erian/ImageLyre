@@ -1,0 +1,289 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.sidecar.v1.json",
+  "title": "lyre.sidecar/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "toolVersion",
+    "buildHash",
+    "runtime",
+    "imagejBaseline",
+    "inputSha256",
+    "calibration",
+    "roi",
+    "plugins",
+    "threshold",
+    "quality",
+    "options",
+    "outputCsv",
+    "timestamp",
+    "skipped"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "lyre.sidecar/v1"
+    },
+    "toolVersion": {
+      "type": "string"
+    },
+    "buildHash": {
+      "type": "string"
+    },
+    "runtime": {
+      "type": "string"
+    },
+    "imagejBaseline": {
+      "type": "string"
+    },
+    "inputSha256": {
+      "type": "string"
+    },
+    "calibration": {
+      "$ref": "https://imagelyre.dev/schema/lyre.calibration.v1.json"
+    },
+    "roi": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "roiIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "file",
+            "inline",
+            "wholeImage"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "path",
+        "sha256",
+        "roiIds"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "const": "file"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "const": "inline"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sha256": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "const": "wholeImage"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "const": null
+              },
+              "sha256": {
+                "const": null
+              },
+              "roiIds": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "options": {
+      "type": "object",
+      "required": [
+        "measurements",
+        "decimals",
+        "nanPolicy",
+        "threads",
+        "slice"
+      ],
+      "properties": {
+        "measurements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decimals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nanPolicy": {
+          "type": "string"
+        },
+        "threads": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "slice": {
+          "type": "object",
+          "required": [
+            "z",
+            "t"
+          ],
+          "properties": {
+            "z": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "t": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "outputCsv": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "planHash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "quality": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "stableFields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "trust": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "threshold": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "artifactHash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "skipped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "roiId",
+          "reason"
+        ],
+        "properties": {
+          "roiId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

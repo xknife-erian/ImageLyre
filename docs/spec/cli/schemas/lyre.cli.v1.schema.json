@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.cli.v1.json",
+  "title": "lyre.cli/v1",
+  "description": "ImageLyre CLI 的 stdout JSON 信封。命令结果放在 data，错误放在 error；stdout 不得含非 JSON 字节。",
+  "type": "object",
+  "required": [
+    "schema",
+    "contractVersion",
+    "toolVersion",
+    "command",
+    "mode",
+    "invocationId",
+    "ok",
+    "data",
+    "warnings",
+    "error"
+  ],
+  "properties": {
+    "schema": {
+      "const": "lyre.cli/v1"
+    },
+    "toolVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "platform": {
+      "type": "string"
+    },
+    "command": {
+      "type": "string",
+      "enum": [
+        "info",
+        "measure",
+        "export",
+        "batch",
+        "schema",
+        "version",
+        "capabilities",
+        "doctor",
+        "calibrate",
+        "roi"
+      ]
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "data": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "error": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/error"
+        }
+      ]
+    },
+    "contractVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "execute",
+        "plan"
+      ]
+    },
+    "invocationId": {
+      "type": "string"
+    },
+    "planHash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "partial": {
+      "type": "boolean"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "ok": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "error": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ok": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "error": {
+            "$ref": "#/$defs/error"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "error": {
+      "type": "object",
+      "required": [
+        "code",
+        "codeVersion",
+        "message",
+        "hint",
+        "hintCode",
+        "retryable",
+        "retryArgv"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "usage.invalid",
+            "input.not_found",
+            "input.decode.corrupt",
+            "input.calibration.missing",
+            "analysis.timeout",
+            "analysis.cancelled",
+            "output.exists",
+            "output.write_failed",
+            "resource.exhausted",
+            "sandbox.unavailable",
+            "internal.unexpected",
+            "output.outside_root",
+            "permission.denied",
+            "consent.required",
+            "plan.stale",
+            "license.missing",
+            "license.expired",
+            "sandbox.start_failed",
+            "sandbox.crashed"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "hint": {
+          "type": "string"
+        },
+        "input": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "details": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "codeVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "hintCode": {
+          "type": "string"
+        },
+        "retryArgv": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "retryPlanHash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "output": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "bytes",
+        "sidecar"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sidecar": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

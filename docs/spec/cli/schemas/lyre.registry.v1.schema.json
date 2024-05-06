@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.registry.v1.json",
+  "title": "lyre.registry/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "contractVersion",
+    "registryVersion",
+    "schemaHash",
+    "commands",
+    "schemas"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "lyre.registry/v1"
+    },
+    "contractVersion": {
+      "type": "string"
+    },
+    "registryVersion": {
+      "type": "string"
+    },
+    "schemaHash": {
+      "type": "string"
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "inputSchema",
+          "outputSchema",
+          "errorCodes",
+          "exitCodes"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "subcommands": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "inputSchema": {
+            "type": "string"
+          },
+          "outputSchema": {
+            "type": "string"
+          },
+          "dataSchema": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "errorCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exitCodes": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "availability": {
+            "type": "string",
+            "enum": [
+              "implemented",
+              "preview",
+              "planned"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "schemas": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

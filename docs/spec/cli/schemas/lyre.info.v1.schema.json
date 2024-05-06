@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.info.v1.json",
+  "title": "lyre.info/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "path",
+    "sha256",
+    "width",
+    "height",
+    "bitDepth",
+    "channels",
+    "calibration",
+    "slices",
+    "frames"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "lyre.info/v1"
+    },
+    "path": {
+      "type": "string"
+    },
+    "sha256": {
+      "type": "string"
+    },
+    "width": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "height": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "bitDepth": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "channels": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "calibration": {
+      "$ref": "https://imagelyre.dev/schema/lyre.calibration.v1.json"
+    },
+    "slices": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "frames": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.version.v1.json",
+  "title": "lyre.version/v1",
+  "type": "object",
+  "required": ["schema", "toolVersion", "contractVersion", "buildHash"],
+  "properties": {
+    "schema": { "type": "string", "const": "lyre.version/v1" },
+    "toolVersion": { "type": "string" },
+    "contractVersion": { "type": "string" },
+    "buildHash": { "type": "string" },
+    "artifactHash": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}
