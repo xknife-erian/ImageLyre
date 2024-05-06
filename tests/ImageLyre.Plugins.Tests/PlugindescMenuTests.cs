@@ -4,10 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
-using ImageLyre.Shell.Contracts;
+using ImageLyre.Plugins;
+using ImageLyre.UI.Contracts;
 using Xunit;
 
-namespace ImageLyre.Plugins.Tests;
+namespace ImageLyre.Presentation.Tests;
 
 /// <summary>校验 `.plugindesc` 解析与命令绑定：描述文件是菜单唯一真源，命令按名字解析。</summary>
 public sealed class PlugindescMenuTests

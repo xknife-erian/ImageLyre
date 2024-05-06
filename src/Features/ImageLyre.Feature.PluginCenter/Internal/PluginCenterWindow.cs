@@ -6,21 +6,19 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Cangming.PicoPlugins.Core;
-using Cangming.PicoPlugins.Core.Features;
-using ImageLyre.Shell.Contracts;
+using ImageLyre.Contracts;
+using ImageLyre.UI.Contracts;
 
-namespace ImageLyre.Module.PluginCenter.Internal;
+namespace ImageLyre.Feature.PluginCenter.Internal;
 
 /// <summary>插件中心窗口：左侧插件与运行期启停，右侧区域（槽位）清单。</summary>
 /// <remarks>
-///     窗口直接读写沧溟的插件管理器与区域管理器，不经过任何中间缓存：
-///     启停按钮调用的就是管理器的方法，刷新按钮重新读一次列表，避免界面与真实状态脱节。
+///     窗口只消费 <see cref="IPluginCenter" /> 的只读快照与操作，不直接引用插件管理器或槽位管理器；
+///     提供数据的模块因此可以不含任何界面类型。
 /// </remarks>
-internal sealed class PluginCenterWindow : AtomUIWindow, IPluginCenter
+internal sealed class PluginCenterWindow : AtomUIWindow
 {
-    private readonly IPluginManager _pluginManager;
-    private readonly ISlotManager _slots;
+    private readonly IPluginCenter _center;
 
     private readonly ListBox _pluginList = new();
     private readonly ListBox _slotList = new();
@@ -28,10 +26,9 @@ internal sealed class PluginCenterWindow : AtomUIWindow, IPluginCenter
 
     private List<string> _pluginIds = [];
 
-    internal PluginCenterWindow(IPluginManager pluginManager, ISlotManager slots)
+    internal PluginCenterWindow(IPluginCenter center)
     {
-        _pluginManager = pluginManager;
-        _slots = slots;
+        _center = center;
 
         Title = "插件中心";
         Width = 980;
@@ -40,10 +37,12 @@ internal sealed class PluginCenterWindow : AtomUIWindow, IPluginCenter
 
         Content = BuildLayout();
         Refresh();
+
+        _center.Changed += (_, _) => Refresh();
+        Closed += (_, _) => _center.Changed -= OnCenterChanged;
     }
 
-    /// <inheritdoc />
-    public Window CreateWindow() => this;
+    private void OnCenterChanged(object? sender, EventArgs args) => Refresh();
 
     private DockPanel BuildLayout()
     {
@@ -56,7 +55,7 @@ internal sealed class PluginCenterWindow : AtomUIWindow, IPluginCenter
             Margin = new Thickness(0, 8, 0, 0),
         };
 
-        buttons.Children.Add(CreateButton("刷新", Refresh));
+        buttons.Children.Add(CreateButton("刷新", () => _center.Refresh()));
         buttons.Children.Add(CreateButton("启用", () => SetEnabledAsync(true)));
         buttons.Children.Add(CreateButton("禁用", () => SetEnabledAsync(false)));
         buttons.Children.Add(CreateButton("启动", StartAsync));
@@ -125,30 +124,24 @@ internal sealed class PluginCenterWindow : AtomUIWindow, IPluginCenter
         return button;
     }
 
-    /// <summary>重新读取插件与区域列表。</summary>
+    /// <summary>重新读取插件与区域快照。</summary>
     private void Refresh()
     {
         var selectedIndex = _pluginList.SelectedIndex;
 
-        _pluginIds = [];
-        var rows = new List<string>();
+        var plugins = _center.Plugins;
+        _pluginIds = plugins.Select(plugin => plugin.Id).ToList();
+        _pluginList.ItemsSource = plugins
+            .Select(plugin => $"{plugin.Name}  ·  {plugin.Id}  ·  v{plugin.Version}  ·  {plugin.State}")
+            .ToArray();
+        _pluginList.SelectedIndex = selectedIndex >= 0 && selectedIndex < _pluginIds.Count ? selectedIndex : (plugins.Count > 0 ? 0 : -1);
 
-        foreach (var plugin in _pluginManager.Plugins.OrderBy(plugin => plugin.GetType().Name, StringComparer.Ordinal))
-        {
-            var info = _pluginManager.GetPluginInfo(plugin.GetType());
-            _pluginIds.Add(info.Id);
-            rows.Add($"{info.Name}  ·  {info.Id}  ·  v{info.Version}  ·  {plugin.State}");
-        }
-
-        _pluginList.ItemsSource = rows;
-        _pluginList.SelectedIndex = selectedIndex >= 0 && selectedIndex < rows.Count ? selectedIndex : (rows.Count > 0 ? 0 : -1);
-
-        _slotList.ItemsSource = _slots.GetAllSlots()
-            .OrderBy(slot => slot.Name, StringComparer.Ordinal)
-            .Select(slot => $"{slot.Name}  ·  {_slots.GetSlotContents(slot.Name).Count} 项")
+        var slots = _center.Slots;
+        _slotList.ItemsSource = slots
+            .Select(slot => $"{slot.Name}  ·  {slot.AttachmentCount} 项")
             .ToArray();
 
-        _status.Text = $"插件 {rows.Count} 个 · 区域 {_slots.GetAllSlots().Count} 个";
+        _status.Text = $"插件 {plugins.Count} 个 · 区域 {slots.Count} 个";
     }
 
     private string? SelectedPluginId =>
@@ -166,10 +159,7 @@ internal sealed class PluginCenterWindow : AtomUIWindow, IPluginCenter
             return;
         }
 
-        var result = enabled
-            ? await _pluginManager.EnablePluginAsync(pluginId).ConfigureAwait(true)
-            : await _pluginManager.DisablePluginAsync(pluginId).ConfigureAwait(true);
-
+        var result = await _center.SetEnabledAsync(pluginId, enabled).ConfigureAwait(true);
         _status.Text = $"{(enabled ? "启用" : "禁用")} {pluginId}：{(result ? "成功" : "状态不允许")}";
         Refresh();
     }
@@ -184,7 +174,7 @@ internal sealed class PluginCenterWindow : AtomUIWindow, IPluginCenter
             return;
         }
 
-        var result = await _pluginManager.StartPluginAsync(pluginId).ConfigureAwait(true);
+        var result = await _center.StartAsync(pluginId).ConfigureAwait(true);
         _status.Text = $"启动 {pluginId}：{(result ? "成功" : "状态不允许")}";
         Refresh();
     }
@@ -199,7 +189,7 @@ internal sealed class PluginCenterWindow : AtomUIWindow, IPluginCenter
             return;
         }
 
-        var result = await _pluginManager.StopPluginAsync(pluginId).ConfigureAwait(true);
+        var result = await _center.StopAsync(pluginId).ConfigureAwait(true);
         _status.Text = $"停止 {pluginId}：{(result ? "成功" : "状态不允许")}";
         Refresh();
     }

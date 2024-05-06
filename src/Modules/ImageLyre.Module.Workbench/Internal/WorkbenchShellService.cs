@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 using Cangming.PicoPlugins.Core.Features;
-using ImageLyre.Shell.Contracts;
+using ImageLyre.UI.Contracts;
 
 namespace ImageLyre.Module.Workbench.Internal;
 

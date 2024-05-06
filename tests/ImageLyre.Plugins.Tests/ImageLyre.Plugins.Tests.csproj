@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Libs\ImageLyre.Plugins\ImageLyre.Plugins.csproj" />
-    <ProjectReference Include="..\..\src\Libs\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Libs\ImageLyre.UI.Contracts\ImageLyre.UI.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

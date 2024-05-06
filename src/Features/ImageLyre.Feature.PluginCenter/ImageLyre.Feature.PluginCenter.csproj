@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="AtomUI.Desktop.Controls" />
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Cangming.PicoPlugins" />
     <PackageReference Include="Cangming.PicoPlugins.Avalonias" />
@@ -8,8 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Libs\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
     <ProjectReference Include="..\..\Libs\ImageLyre.Plugins\ImageLyre.Plugins.csproj" />
-    <ProjectReference Include="..\..\Libs\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+    <ProjectReference Include="..\..\Libs\ImageLyre.UI.Contracts\ImageLyre.UI.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

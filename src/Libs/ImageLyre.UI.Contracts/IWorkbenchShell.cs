@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace ImageLyre.Shell.Contracts;
+namespace ImageLyre.UI.Contracts;
 
 /// <summary>工作台壳契约：插件与宿主之间只通过它交换窗口，互不认识实现类型。</summary>
 public interface IWorkbenchShell

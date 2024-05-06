@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cangming.PicoPlugins.Core.Features;
-using ImageLyre.Shell.Contracts;
+using ImageLyre.UI.Contracts;
 
 namespace ImageLyre.Module.Workbench.Internal.Menu;
 

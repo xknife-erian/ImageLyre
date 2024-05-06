@@ -7,7 +7,7 @@ namespace ImageLyre.App;
 
 /// <summary>Avalonia 应用壳：只把主窗口编排结果挂到桌面生命周期上。</summary>
 /// <remarks>本类必须声明为 <c>partial</c>：AtomUI 的源生成器会为它补启动挂接，漏掉编译期即报错。</remarks>
-public partial class App : Application
+public partial class App : Avalonia.Application
 {
     private readonly Func<Window> _composeMainWindow;
 

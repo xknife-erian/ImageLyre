@@ -3,6 +3,11 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Cangming.PicoPlugins" />
+    <PackageReference Include="System.Reactive" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

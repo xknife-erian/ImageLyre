@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 using Cangming.Logs;
-using ImageLyre.Shell.Contracts;
+using ImageLyre.UI.Contracts;
 using Microsoft.Extensions.Logging;
 
 namespace ImageLyre.Plugins;

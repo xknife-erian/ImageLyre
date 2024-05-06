@@ -38,8 +38,8 @@
 | 日志 | `Cangming.Logs.Contracts`、`Cangming.Logs`、`Cangming.Logs.NLog`；测试用 `Cangming.Logs.xUnit` |
 | 插件 | `Cangming.PicoPlugins`、`Cangming.PicoPlugins.Avalonias` |
 | 沙箱 | `Cangming.PicoPlugins.Sandbox.Contracts`、`Cangming.PicoPlugins.Sandbox`、`Cangming.PicoPlugins.SandboxHost` |
-| 外壳 | `Cangming.Shell.Contracts`、`Cangming.Shell`、`Cangming.Shell.Documents` |
-| 平台 | `Cangming.Platform.Contracts`、`Cangming.Platform` |
+| 外壳 | 参考其契约划分，不直接依赖；基座自建（ADR-0008） |
+| 平台 | 参考其契约划分，不直接依赖；基座自建（ADR-0008） |
 | 工作区 | `Cangming.Workspace.Contracts`、`Cangming.Workspace` |
 | 数据 | `Cangming.Data.Contracts`、`Cangming.Data.Sqlite` |
 
@@ -72,6 +72,27 @@ flowchart TD
 ### 2.6 工程落点
 
 保留五类落点：`src/Apps/`（启动工程与装配工程）、`src/Libs/`（契约与业务类库）、`src/Modules/`（插件容器模块，如工作台）、`src/Features/`（界面功能插件，如关于与版本号）、`tests/`（测试，名称以 `.Tests` 结尾）。启动工程命名 `ImageLyre.App`，装配工程命名 `ImageLyre.Bootstrap`，两者都放在 `src/Apps/` 下；可执行入口不得引用另一个可执行入口，共用能力下沉到类库型装配工程。不使用 Mercury 的 `Modules/Features/Drivers/Sidecars/Projects` 五段式，因为那是多产品、多驱动、多定制项目的规模产物；目录结构是规模的函数。
+
+### 2.7 类库规划
+
+**基座（技术内核）只放契约、插件 SDK 与主题；其余一切实现都是插件**，落在 Modules 与 Features。因此 Libs 恒为四个工程，不随业务增长而膨胀：
+
+| 工程 | 放什么 |
+| :--- | :--- |
+| `ImageLyre.Contracts` | UI 无关的基座契约：命令、快捷键、上下文键、通知、输出、忙状态、偏好、用户习惯、最近文件与文件服务、文档会话、撤销、诊断、本地化、主题、事件总线、后台任务、插件管理面；不含任何图像概念 |
+| `ImageLyre.UI.Contracts` | 依赖 Avalonia 的契约：宿主壳、区域名、槽位、附件、图标与对话框宿主 |
+| `ImageLyre.Plugins` | 插件 SDK：模块与 Feature 封装、code-first 菜单、`plugindesc` 读取与命令绑定 |
+| `ImageLyre.Themes` | 主题资源、设计令牌与主题清单 |
+
+每个工程里有哪些分区、从沧溟取哪几份、哪七处自建、依赖与判定规则如何由测试守住，见 `docs/design/lukan/DESIGN-0003-libs-layering.md`；本节只留结论，不重复那份清单。依赖方向是一条向下的链：`Plugins → UI.Contracts → Contracts`，`Themes` 是独立资源包，不在这条链上。
+
+0.10 修正：原表把 `Contracts` 的依赖标为沧溟 `PicoPlugins`，与工程实际不符——该工程没有任何包引用，`IPluginCenter` 用的是自建描述符；原表另把 `Themes` 的依赖写成 AtomUI 而未说清它是独立资源包，两处一并改。
+
+**基座实现同样是插件**：首选项、用户习惯、命令注册与快捷键、通知与输出面板、文档会话与撤销、诊断，各自以 Module 形式落在 `src/Modules`，只依赖 `Contracts`，互不引用。
+
+**所有实现都是插件**：工作台壳与各功能以 Module 或 Feature 形式落在 `src/Modules` 与 `src/Features`。业务契约（图像、ROI、结果、测量）随业务插件定义，不进 Libs——判断标准是：把 ImageLyre 换成任何一个桌面软件，这套基座仍然成立。
+
+红线（架构测试）：`Contracts` 不得引用 UI 包、插件 SDK 或实现工程；`UI.Contracts` 只放需要 Avalonia 类型的契约、不放实现；实现工程不得被其契约反向引用，依赖方向单向。三条红线与 DESIGN-0003 §3.1 的 R1 至 R4 是同一组规则的两种措辞，以那份细化版本为准。
 
 ## 3 接口契约
 
@@ -169,6 +190,7 @@ CLI 只引 `Primitive`、`Toolkit`、`Logs`、`PicoPlugins` 与业务契约包�
 | 0.7 | 插件模型落地：菜单结构移入内嵌 `.plugindesc`，新增 `ImageLyre.Plugins` 基类收口解析、命令绑定与槽位附着；明确不做权限层，菜单可用性只来自命令状态。 |
 | 0.8 | 插件装配补两条：按前缀预加载程序集（沧溟只扫已加载程序集），以及用户级 plugins.json 禁用名单在扫描前生效；同时记录四项未落地（按所有者摘除、依赖与顺序、日志分区、开发指南）。 |
 | 0.9 | 从 Mercury 的 App 与 Bootstrap 迁入启动链：NLog 落盘与控制台双通道、未处理异常记录、线程池收尾、区域附着诊断；明确不做单实例。 |
+| 0.10 | §2.7 类库规划改由 `docs/design/lukan/DESIGN-0003-libs-layering.md` 承载：四个工程改为四行职责表，删去与工程实际不符的依赖标注，红线措辞让位给那份文档的 R1 至 R4；分区、取用清单与自建项不再在本节重复。 |
 
 ## 7 待办
 

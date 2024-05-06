@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj" />
-    <ProjectReference Include="..\..\Libs\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+    <ProjectReference Include="..\..\Libs\ImageLyre.UI.Contracts\ImageLyre.UI.Contracts.csproj" />
     <ProjectReference Include="..\..\Modules\ImageLyre.Module.PluginCenter\ImageLyre.Module.PluginCenter.csproj" />
     <ProjectReference Include="..\..\Modules\ImageLyre.Module.Workbench\ImageLyre.Module.Workbench.csproj" />
     <ProjectReference Include="..\..\Features\ImageLyre.Feature.About\ImageLyre.Feature.About.csproj" />

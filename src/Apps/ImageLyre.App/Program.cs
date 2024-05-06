@@ -10,7 +10,7 @@ using Cangming.Toolkit.Avalonias.AtomUI;
 using ImageLyre.App.Startup;
 using ImageLyre.Bootstrap;
 using ImageLyre.Bootstrap.Services;
-using ImageLyre.Shell.Contracts;
+using ImageLyre.UI.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

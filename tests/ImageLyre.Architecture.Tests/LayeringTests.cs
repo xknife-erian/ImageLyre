@@ -64,4 +64,22 @@ public sealed class LayeringTests
             }
         }
     }
+    [Fact]
+    public void ContractsDoNotReferenceUiPackages()
+    {
+        string[] uiPrefixes = ["Avalonia", "AtomUI", "SkiaSharp"];
+
+        var contracts = Repository.Projects("src").Single(project => project.Name == "ImageLyre.Contracts");
+
+        var offenders = contracts.PackageReferences
+            .Where(package => uiPrefixes.Any(prefix => package.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
+            .Concat(contracts.ProjectReferences.Where(reference =>
+                reference.Contains("ImageLyre.UI.Contracts", StringComparison.Ordinal)
+                || reference.Contains("ImageLyre.Plugins", StringComparison.Ordinal)))
+            .ToArray();
+
+        Assert.True(
+            offenders.Length == 0,
+            $"契约工程不得依赖界面栈或插件 SDK：{string.Join("、", offenders)}");
+    }
 }

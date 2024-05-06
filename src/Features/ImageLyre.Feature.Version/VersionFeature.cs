@@ -3,7 +3,7 @@ using Cangming.PicoPlugins;
 using Cangming.PicoPlugins.Avalonias.Core;
 using Cangming.PicoPlugins.Core.Features;
 using Cangming.PicoPlugins.Core.Modules;
-using ImageLyre.Shell.Contracts;
+using ImageLyre.UI.Contracts;
 
 namespace ImageLyre.Feature.Version;
 

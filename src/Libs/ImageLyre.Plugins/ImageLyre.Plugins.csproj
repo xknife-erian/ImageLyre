@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+    <ProjectReference Include="..\ImageLyre.UI.Contracts\ImageLyre.UI.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

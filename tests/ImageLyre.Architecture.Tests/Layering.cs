@@ -15,15 +15,15 @@ internal static class Layering
         ["ImageLyre.Kernel"] = [],
         ["ImageLyre.Imaging"] = ["ImageLyre.Kernel"],
         ["ImageLyre.Codecs"] = ["ImageLyre.Kernel"],
-        ["ImageLyre.Plugins"] = ["ImageLyre.Kernel"],
-        ["ImageLyre.Sandbox"] = ["ImageLyre.Kernel", "ImageLyre.Plugins"],
-        ["ImageLyre.UI"] = ["ImageLyre.Kernel", "ImageLyre.Plugins", "ImageLyre.Sandbox"],
+        ["ImageLyre.Presentation"] = ["ImageLyre.Kernel"],
+        ["ImageLyre.Sandbox"] = ["ImageLyre.Kernel", "ImageLyre.Presentation"],
+        ["ImageLyre.UI"] = ["ImageLyre.Kernel", "ImageLyre.Presentation", "ImageLyre.Sandbox"],
         ["ImageLyre.Headless"] =
         [
             "ImageLyre.Kernel",
             "ImageLyre.Imaging",
             "ImageLyre.Codecs",
-            "ImageLyre.Plugins",
+            "ImageLyre.Presentation",
             "ImageLyre.Sandbox",
         ],
         ["ImageLyre.Cli"] =
@@ -32,7 +32,7 @@ internal static class Layering
             "ImageLyre.Kernel",
             "ImageLyre.Imaging",
             "ImageLyre.Codecs",
-            "ImageLyre.Plugins",
+            "ImageLyre.Presentation",
             "ImageLyre.Sandbox",
         ],
         ["ImageLyre.Desktop"] =
@@ -41,7 +41,7 @@ internal static class Layering
             "ImageLyre.Kernel",
             "ImageLyre.Imaging",
             "ImageLyre.Codecs",
-            "ImageLyre.Plugins",
+            "ImageLyre.Presentation",
             "ImageLyre.Sandbox",
             "ImageLyre.UI",
         ],

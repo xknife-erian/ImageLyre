@@ -4,8 +4,11 @@
     <Project Path="Apps/ImageLyre.Bootstrap/ImageLyre.Bootstrap.csproj" />
   </Folder>
   <Folder Name="/Libs/">
+    <File Path="Libs/README.md" />
+    <Project Path="Libs/ImageLyre.Contracts/ImageLyre.Contracts.csproj" />
     <Project Path="Libs/ImageLyre.Plugins/ImageLyre.Plugins.csproj" />
-    <Project Path="Libs/ImageLyre.Shell.Contracts/ImageLyre.Shell.Contracts.csproj" />
+    <Project Path="Libs/ImageLyre.Themes/ImageLyre.Themes.csproj" />
+    <Project Path="Libs/ImageLyre.UI.Contracts/ImageLyre.UI.Contracts.csproj" />
   </Folder>
   <Folder Name="/Modules/">
     <Project Path="Modules/ImageLyre.Module.PluginCenter/ImageLyre.Module.PluginCenter.csproj" />
