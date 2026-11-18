@@ -1,0 +1,88 @@
+<!--
+  html-report / findings.html
+  用法：整块粘贴到 review.html 的 {{SECTIONS}} 内，替换计数、模块筛选按钮与示例行。
+  结构约束：每条“主记录 <tr class="f">”后面必须紧跟一条“详情 <tr class="detail">”，
+            两条的 data-id / data-for 必须一致（小写编号，如 p1-1），否则展开与锚点都会失效。
+-->
+<section id="findings">
+  <h2><span class="kicker">Findings</span>问题台账</h2>
+  <p class="section-intro">共 {{TOTAL}} 项：{{P1_COUNT}} 项 P1（会让业务结果或资源状态出错）、{{P2_COUNT}} 项 P2（健壮性、生命周期与可维护性）。点击任意一行展开证据与修复方向；点击代码引用直接复制 <code>文件:行号</code>。</p>
+
+  <div class="toolbar">
+    <div class="chips" role="group" aria-label="按级别筛选">
+      <button class="chip active" data-sev-filter="all">全部<b>{{TOTAL}}</b></button>
+      <button class="chip" data-sev-filter="P1">P1<b>{{P1_COUNT}}</b></button>
+      <button class="chip" data-sev-filter="P2">P2<b>{{P2_COUNT}}</b></button>
+    </div>
+    <div class="chips" role="group" aria-label="按模块筛选">
+      <button class="chip active" data-mod-filter="all">全部模块</button>
+      <!-- {{MODULE_CHIPS}}：每个模块一条，值与行上的 data-mod 完全一致
+      <button class="chip" data-mod-filter="引擎">引擎</button>
+      -->
+      {{MODULE_CHIPS}}
+    </div>
+    <input id="q" type="search" placeholder="搜索问题、文件、模块…" aria-label="搜索问题">
+    <button class="ghost" id="toggle-all">展开全部</button>
+    <span class="count" id="shown-count">显示 {{TOTAL}} / {{TOTAL}}</span>
+  </div>
+
+  <div class="table-card card">
+    <table class="findings" id="findings-table">
+      <thead>
+        <tr>
+          <th style="width:76px">编号</th>
+          <th style="width:62px">级别</th>
+          <th style="width:104px">模块</th>
+          <th style="width:36%">问题</th>
+          <th>后果</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 示例（P1）：复制这一对 <tr> 生成一条，删掉注释即可 -->
+        <tr class="f" data-sev="P1" data-mod="{{MODULE}}" data-id="{{ID_LOWER}}">
+          <td class="id"><span class="caret">▸</span>{{ID}}</td>
+          <td><span class="tag p1">P1</span></td>
+          <td>{{MODULE_LABEL}}</td>
+          <td class="title">{{PROBLEM}}</td>
+          <td class="impact">{{IMPACT}}</td>
+        </tr>
+        <tr class="detail" data-for="{{ID_LOWER}}" hidden><td colspan="5"><div class="detail-inner">
+          <div>
+            <h5>证据</h5>
+            <div class="refs">
+              <code class="ref">{{REF_1}}</code>
+              <code class="ref">{{REF_2}}</code>
+            </div>
+            <p style="margin-top:6px">{{EVIDENCE_NOTE}}</p>
+          </div>
+          <div>
+            <h5>修复方向</h5>
+            <p>{{FIX}}</p>
+          </div>
+        </div></td></tr>
+
+        <!-- 示例（P2）：data-sev 改 P2，徽章 class 改 tag p2 -->
+        <tr class="f" data-sev="P2" data-mod="{{MODULE}}" data-id="{{ID_LOWER}}">
+          <td class="id"><span class="caret">▸</span>{{ID}}</td>
+          <td><span class="tag p2">P2</span></td>
+          <td>{{MODULE_LABEL}}</td>
+          <td class="title">{{PROBLEM}}</td>
+          <td class="impact">{{IMPACT}}</td>
+        </tr>
+        <tr class="detail" data-for="{{ID_LOWER}}" hidden><td colspan="5"><div class="detail-inner">
+          <div>
+            <h5>证据</h5>
+            <div class="refs">
+              <code class="ref">{{REF_1}}</code>
+            </div>
+            <p style="margin-top:6px">{{EVIDENCE_NOTE}}</p>
+          </div>
+          <div>
+            <h5>修复方向</h5>
+            <p>{{FIX}}</p>
+          </div>
+        </div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>

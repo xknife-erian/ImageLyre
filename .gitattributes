@@ -1,0 +1,30 @@
+# 行尾策略：仓库与工作区统一 LF（与游刃仓一致）。
+# 这样同一份内容在不同机器上哈希一致，跨仓比对（技能同步、迁移前后 diff）不会因行尾产生假差异。
+* text=auto eol=lf
+
+# Windows 解释器与 VS 解决方案保持 CRLF，避免 cmd 解析与 IDE 重写带来的噪声。
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.sln text eol=crlf
+*.slnx text eol=crlf
+*.sln.DotSettings text eol=crlf
+
+# 二进制文件不做行尾与合并处理。
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.bmp binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.nupkg binary
+*.snk binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+
+# 游刃技能副本：必须与真源逐字节一致，显式钉住 LF。
+.agents/skills/** text eol=lf
