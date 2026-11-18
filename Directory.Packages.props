@@ -1,0 +1,19 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageVersion Include="Avalonia" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Desktop" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Diagnostics" Version="12.1.6" />
+
+        <PackageVersion Include="AtomUI.Desktop.Controls" Version="6.2.15" />
+        <PackageVersion Include="AtomUI.Desktop.Controls.DataGrid" Version="6.2.15" />
+
+        <PackageVersion Include="Sdcb.SimdCodecs" Version="2.0.0" />
+        <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    </ItemGroup>
+</Project>

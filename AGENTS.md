@@ -38,9 +38,7 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 
 ## 4 项目现状与约定
 
-2022 年版基于 WPF 与 .NET 6 的实现整体弃用，最后一次完整状态保存在 `legacy/wpf-2022` 分支与 `archive/pre-rebuild-2026-11-18` 标签，主线 `develop` 已清空 `src/`，新系统按启动需求从零重建。新的解决方案与唯一构建入口尚未落地，落地后在本节登记；在那之前不执行全仓构建，测试按工程单独运行。
-
-`tests/`、`samples/`、`performance/`、`libc/` 仍是旧版残留，仅作历史参考，不作为构建依据，清理或重写按后续计划执行。
+2022 年版基于 WPF 与 .NET 6 的实现整体弃用，最后一次完整状态保存在 `legacy/wpf-2022` 分支与 `archive/pre-rebuild-2026-11-18` 标签，主线 `develop` 已清空旧代码。新系统按启动需求重建，唯一构建入口为 `src/ImageLyre.slnx`，桌面入口在 `src/Apps/ImageLyre.Desktop`，`src/Libs/` 按内核、成像、编解码、插件、沙箱与 UI 分层；构建命令为 `dotnet build src/ImageLyre.slnx`。`tests/` 预留给 M1 阶段按 TDD 建立的测试工程。
 
 少而硬的共同约定：目录与文件搬家一律 `git mv`，删除用 `git rm`，禁止复制后把原目录留在原处；行尾与编码以 `.gitattributes`、`.editorconfig` 为准，新增文件交给 git 自动归一化；提交信息用中文并带 scoped 前缀，一次提交只做一件事。
 
@@ -48,11 +46,13 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 
 | 路径 | 用途 |
 | :--- | :--- |
-| `src/` | 新架构源码落点，当前为空，等待新解决方案落地 |
+| `src/ImageLyre.slnx` | 唯一构建入口 |
+| `src/Apps/ImageLyre.Desktop` | Avalonia + AtomUI 桌面入口 |
+| `src/Libs/` | 内核、成像、编解码、插件、沙箱与 UI 六个类库 |
+| `tests/` | 测试工程落点，M1 建立 |
 | `docs/` | 文档体系，规则入口 `docs/README.md` |
 | `.agents/skills/` | 游刃技能的下游副本，只读 |
 | `.agents/user-profile/<用户名>/` | 各人的 AI 配置档案，`.agents/` 下唯一的个人落点 |
-| `tests/`、`samples/`、`performance/`、`libc/` | 2022 年版残留，待新架构落地后处理 |
 | `README.md` | 项目背景与历史缘由 |
 
 ## 6 任务闭环

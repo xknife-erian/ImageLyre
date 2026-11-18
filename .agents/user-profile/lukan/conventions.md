@@ -19,7 +19,7 @@ author: lukan
 
 ## 构建与测试
 
-- 新解决方案落定前不定义全仓构建；旧 `ImageLyre.sln` 与 2022 年版工程已弃用。
+- 唯一构建入口为 `src/ImageLyre.slnx`；2022 年版工程已归档，不在其中继续加代码。
 - 单工程构建：`dotnet build src/<项目>/<项目>.csproj -c Debug`，工程路径随新骨架落地。
 - 测试按工程单独执行，不套全仓命令；新代码按 `tdd-and-unit-testing` 技能推进。
 

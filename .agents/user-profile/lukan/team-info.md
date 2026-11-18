@@ -6,7 +6,7 @@
 | :--- | :--- |
 | 产品 | ImageLyre，跨平台显微图像分析系统，目标是替代 ImageJ / Fiji |
 | 技术栈 | C# / .NET 10；AtomUI（界面一等公民）+ AvaloniaUI；SkiaSharp 视口；SimdCodecs 编解码；自研 SIMD 算子 |
-| 构建目标 | 待新解决方案落定，旧 `ImageLyre.sln` 已弃用 |
+| 构建目标 | `src/ImageLyre.slnx`（`dotnet build src/ImageLyre.slnx`） |
 | 文档入口 | `docs/README.md`；架构基线 `docs/spec/startup-requirements.md` |
 
 ## 我的位置
