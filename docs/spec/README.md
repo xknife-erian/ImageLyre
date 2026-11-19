@@ -6,9 +6,9 @@
 
 | 文件 | 说明 |
 | :--- | :--- |
-| `product-requirements.md` / `.html` | 产品需求文档 2.3，md 为源，HTML 为阅读版 |
+| `product-requirements.md` / `.html` | 产品需求文档 2.4，md 为源，HTML 为阅读版 |
 | `startup-requirements.md` | 启动需求与架构基线 1.4 |
-| `M1-acceptance-matrix.xlsx` | 62 条 P0 验收台账，含 M1 范围与说明 |
+| `M1-acceptance-matrix.xlsx` | 67 条 P0 验收台账，含 M1 范围与说明 |
 | `M1-imagej-fixture.md` | M1a 的 ImageJ 对照环境、fixture 组成与黄金数据集 v0.1 |
 | `M1-interaction-spec.md` | M1a 的窗口骨架、操作流程、键位、状态与交互验收 |
 | `README.md` | 本目录的布局与规则 |
