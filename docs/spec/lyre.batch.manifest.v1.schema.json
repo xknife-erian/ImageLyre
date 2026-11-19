@@ -54,6 +54,43 @@
             "items": {
               "type": "string"
             }
+          },
+          "pixelSizeX": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "pixelSizeY": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "calibration": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "slice": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "wholeImage": {
+            "type": "boolean"
+          },
+          "frame": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
           }
         },
         "additionalProperties": false

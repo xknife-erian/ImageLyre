@@ -15,6 +15,7 @@
 | 2.6 | 2026-11-19 | 定稿 | lukan | Agent-first CLI：能力发现、全能力覆盖、计划与流式、批处理升 P0、MCP 与插件命令；CLI 从自动化附属升为与桌面并列的产品入口 |
 | 2.7 | 2026-11-19 | 定稿 | lukan | Agent 接口六专家评审收口：补齐契约注册表、capabilities 信封、plan/event/audit Schema、路径与信任边界、MCP/插件写入授权、批处理预算与 VAL-008 评测；M2 拆为 M2a/M2b |
 | 2.8 | 2026-11-19 | 评审稿 | lukan | v1 范围收口：MCP/插件 CLI 与全能力 CLI 延后到 v2/P1；统一 ROI/batch 单一 Schema；planHash、retryArgv、审计字段与批处理终止语义；VAL-008 改为点估计 + 下限口径 |
+| 2.9 | 2026-11-19 | 定稿（条件） | lukan | v1.1 轻量收口：移除 plan/confirm/events/audit/policy/options 的 v1 承诺，CLI-010 移 P1；固定可写根与审计 sink；补 info/version/doctor Schema；CLI P0 8 条、P1 4 条 |
 | 渲染版 | [HTML](product-requirements.html) | — | — | — |
 
 ## 0 摘要
@@ -81,7 +82,7 @@ ImageLyre 是一款面向科研显微图像的跨平台桌面定量分析软件�
 4. 复核他人结果时，能看到测量参数、校准来源与软件版本，并用同一份输入复现。
 5. 课题组统一分析口径时，一套配置、一份工程与一份验证报告能在多台机器与多人之间传递。
 6. 当 AI 或外部流水线需要调用时，用纯 CLI 与 JSON 结果完成校准、ROI、测量与导出，不需要模拟桌面操作。
-7. 让 agent 自主完成多步分析：先 `--plan` 预演，再执行、读事件流、按错误码重试，最后用输出 SHA 与 sidecar 复核。
+7. 让 agent 自主完成多步分析：先读 capabilities 选工具，再执行、按错误码重试，最后用输出 SHA 与 sidecar 复核。
 
 ### 2.3 核心工作流
 
@@ -390,16 +391,16 @@ flowchart LR
 
 CLI 是独立入口，不依赖 AtomUI、Avalonia、SkiaSharp 或 `ImageLyre.UI`，只引用 Kernel、Imaging、Codecs、Plugins、Sandbox 与 headless 会话层；桌面与 CLI 共用该层，因此同一输入、同一构建、同一线程数下的结果必须逐值一致。AI 与外部流水线只消费 stdout 的 JSON、事件流与退出码，不解析自然语言。项目落点为 `src/Apps/ImageLyre.Cli`，CLI-only 产物与 `lyre-sandbox-host` 的拓扑见 ADR-0006；MCP 属 v2，不在 v1。`lyre` 是唯一无头入口，AUTO-004 复用 `lyre` 命令组合，Python 脚本执行仍属 AUTO-001/002。
 
-CLI 把「工具说明、图像元数据、插件返回值」一律视为**数据**，只有命令名与参数名可作为指令；写命令可选 `--plan` 预演，给出计划时执行必须用 `--confirm <planHash>` 绑定，避免 agent 先预演、再换参数执行。
+CLI 把「工具说明、图像元数据、插件返回值」一律视为**数据**，只有命令名与参数名可作为指令；v1 不提供 plan/confirm 开关；写命令必须显式输出路径，执行结果用 outputs 的 SHA 与 sidecar 复核。
 
 #### 5.17.1 命令与参数
 
-CLI 默认输出 JSON；`--text` 才输出人类可读文本。未给 `--cwd` 时，所有路径参数必须为绝对路径。`--plan`、`--dry-run`、`--events`、`--audit`、`--confirm`、`--out-root`、`--policy`、`--cwd`、`--timeout`、`--cache-budget` 为全局参数，对所有写命令生效。
+CLI 默认输出 JSON；`--text` 才输出人类可读文本。未给 `--cwd` 时，所有路径参数必须为绝对路径。`--out-dir`、`--cwd`、`--timeout`、`--cache-budget` 为全局参数；v1.1 不提供 `--plan`/`--confirm`/`--events`/`--audit`/`--policy` 的 CLI 开关，对所有写命令生效。
 
 | 命令 | 优先级 | 用途 | 关键参数 |
 | :--- | :--- | :--- | :--- |
 | `lyre info <image>` | P0 | 只读：位深、尺寸、通道、校准、输入 SHA-256；不改文件 | `--json`/`--text` |
-| `lyre measure <image> --roi <path>` | P0 | 单图测量，JSON 到 stdout | `--pixel-size-x`/`--pixel-size-y`（`--pixel-size` 为等值简写）、`--known-distance`/`--pixels`、`--unit`、`--z-step`、`--calibration`、`--roi`/`--roi-json`/`--roi-stdin`、`--whole-image`、`--measurements`、`--options`、`--threads`、`--slice`、`--out` |
+| `lyre measure <image> --roi <path>` | P0 | 单图测量，JSON 到 stdout | `--pixel-size-x`/`--pixel-size-y`（`--pixel-size` 为等值简写）、`--known-distance`/`--pixels`、`--unit`、`--z-step`、`--calibration`、`--roi`/`--roi-json`/`--roi-stdin`、`--whole-image`、`--measurements`、`--threads`、`--slice`、`--frame`、`--out` |
 | `lyre export <image> --roi <path> --csv <path>` | P0 | 测量并写 CSV 与 sidecar | 同上，加 `--sidecar`、`--overwrite` |
 | `lyre batch --manifest <path\|->` | P0 | 批处理，输出索引 JSON | `--jobs`、`--out-dir`、`--out-template`、`--timeout`、`--item-timeout`、`--max-items`、`--max-output-bytes`、`--overwrite` |
 | `lyre schema` | P0 | 输出契约注册表：命令、参数、全部 Schema、退出码、错误码 | `--json`（默认）、`--schema-version` |
@@ -407,31 +408,30 @@ CLI 默认输出 JSON；`--text` 才输出人类可读文本。未给 `--cwd` �
 | `lyre capabilities` | P0 | 输出 `lyre.agent/v1` 工具清单，放在信封 `data` | `--detail=summary\|schema\|full`、`--tool`、`--limit`、`--cursor`、`--plugins none` |
 | `lyre doctor` | P0 | 环境自检：运行时、沙箱宿主、路径、权限、版本 | `--json` |
 | `lyre calibrate set` | P0 | 只写显式 `--calibration-out` 文件，不写隐式会话 | `--image`、`--pixel-size`、`--known-distance`/`--pixels`、`--unit`、`--z-step`、`--calibration-out` |
-| `lyre roi create\|convert` | P0 | 创建或转换 ROI：JSON 集合 ↔ `.roi/.zip` | `--roi`/`--roi-json`/`--roi-stdin`、`--type`、`--points`、`--out`、`--overwrite` |
+| `lyre roi create\|convert` | P0 | 创建或转换 ROI：JSON 集合 ↔ `.roi/.zip` | `--roi`/`--roi-json`/`--roi-stdin`、`--type`、`--points`、`--center`、`--radii`、`--angle`、`--out`、`--overwrite` |
 
 ```bash
 lyre capabilities --detail=schema --tool measure
-lyre measure /data/sample.tif --roi /data/cells.zip --pixel-size 0.1 --plan
-lyre measure /data/sample.tif --roi /data/cells.zip --pixel-size 0.1 --confirm <planHash>
-lyre export /data/sample.tif --roi /data/cells.zip --csv /data/out/out.csv --sidecar auto --out-root /data/out
+lyre measure /data/sample.tif --roi /data/cells.zip --pixel-size 0.1 --unit um
+lyre export /data/sample.tif --roi /data/cells.zip --csv /data/out/out.csv --sidecar auto --out-dir /data/out
 lyre batch --manifest /data/files.json --out-dir /data/out --jobs 4 --cache-budget 2048
 ```
 
 **测量范围**：v1 的 `measure`/`export` 只接受面积型 ROI（rectangle/polygon/ellipse/freehand）；point/line 可创建/转换，但测量入口返回 `usage.invalid`，不进 v1 数值结果。
 
-**校准**：`info` 读取文件内校准；`measure`/`export` 优先使用文件校准，`--calibration <file>` 读取 `lyre.calibration/v1`，`--pixel-size-x`/`--pixel-size-y` 与 `--unit` 只在本次会话覆盖，`--pixel-size` 是 x=y 的简写；`--known-distance` 加 `--pixels` 是另一种写法。文件无校准且无覆盖时返回 3 与 `input.calibration.missing`。校准优先级固定为：`--pixel-size-x/y`/`--known-distance`+`--pixels` + `--unit` > `--calibration` 文件 > 图像内嵌 > 缺失报 3；物理单位必须显式 `--unit`，`source` 区分 embedded/calibration-file/cli-override/none，sidecar 记录校准文件 path 与 sha256。`lyre calibrate set` 只写显式 `--calibration-out` 文件，不提供隐式会话状态。
+**校准**：`--calibration` 文件自身必须是完整来源（x/y 比率与 unit 均非空），单独使用即合法；只给 x、只给单位或文件字段不全返回 `usage.invalid`。`--unit` 只在 CLI 覆盖时必填，文件与内嵌校准使用自带单位；优先级为 `--pixel-size-x/y`+`--unit` > `--calibration <file>` > 图像内嵌 > 缺失报 3。`--pixel-size-x`/`--pixel-size-y` 与 `--unit` 只在本次会话覆盖，`--pixel-size` 是 x=y 的简写；`--known-distance` 加 `--pixels` 是另一种写法。文件无校准且无覆盖时返回 3 与 `input.calibration.missing`。校准优先级固定为：`--pixel-size-x/y`/`--known-distance`+`--pixels` + `--unit` > `--calibration` 文件 > 图像内嵌 > 缺失报 3；物理单位必须显式 `--unit`，`source` 区分 embedded/calibration-file/cli-override/none，sidecar 记录校准文件 path 与 sha256。`lyre calibrate set` 只写显式 `--calibration-out` 文件，不提供隐式会话状态。
 
-**ROI**：`--roi` 接受 ImageJ `.roi`/`.zip`；`--roi-json` 与 `--roi-stdin` 接受 `lyre.roi/v1` 集合，支持 rectangle、polygon、ellipse、freehand、point、line 六类；ellipse 为 `center`、`radii`、`angle`，freehand 为闭合点列，多边形按顶点顺序；坐标固定为像素，校准由图像或命令行覆盖决定。集合内每个 ROI 带稳定 `roiId`（内容哈希）、`name`、`z`、`t`；`composite` 用 `operator` 与 `children` 表示 AND/OR/XOR，`point` 允许一个或多个点，freehand 必须首尾闭合。
+**ROI**：`--roi` 接受 ImageJ `.roi`/`.zip`；`--roi-json` 与 `--roi-stdin` 接受 `lyre.roi/v1` 集合，支持 rectangle、polygon、ellipse、freehand、point、line 六类；`roi create` 的 ellipse 用 `center`、`radii`、`angle`，rectangle 用两个对角点，freehand 为闭合点列，多边形按顶点顺序；坐标固定为像素，校准由图像或命令行覆盖决定。集合内每个 ROI 带稳定 `roiId`（内容哈希）、`name`、`z`、`t`；`composite` 用 `operator` 与 `children` 表示 AND/OR/XOR，`point` 允许一个或多个点，freehand 必须首尾闭合。
 
-**输出**：`measure`/`export` 的 `data` 按 `lyre.measure/v1` 校验，`data.outputs[]` 按 `lyre.cli/v1.$defs.output`；export 必填 `path`、`sha256`、`bytes` 与 `sidecar`，sidecar 固定命名为 `<csv>.sidecar.json`，按 `lyre.sidecar/v1` 校验，`--sidecar` 只允许 `auto|on`。
+**输出**：`measure`/`export` 的 `data` 按 `lyre.measure/v1` 校验，`data.outputs[]` 按 `lyre.cli/v1.$defs.output`；export 必填 `path`、`sha256`、`bytes` 与 `sidecar`，sidecar 固定命名为 `<csv>.sidecar.json`；sidecar 与 measure data 必须记录 ROI 的 path、sha256、roiIds，CSV 数据行按 roiIds 同序，按 `lyre.sidecar/v1` 校验，`--sidecar` 只允许 `auto|on`。
 
-**测量选项**：`--measurements` 取附录 B.1 的子集，缺省为 B.1 全集；`Mode` 随 CLI-009 留到 P1，v1 不纳入 B.1。`--options` 接受与 LAB-001 共用的配置档，但不得覆盖 §6.4 的小数位、NaN 与列序。`--threads` 缺省 1，`--slice` 支持 `n` 或 `all`，线程数与 slice 写入结果与 sidecar。`--slice all` 只输出 JSON 逐片结果；CSV 仅在单 slice 时导出，B.1 增 `Slice` 列后才放开逐片 CSV，避免与基线列冲突。
+**测量选项**：`--measurements` 取附录 B.1 的子集，缺省为 B.1 全集；`Mode` 随 CLI-009 留到 P1，v1 不纳入 B.1。`--threads` 缺省 1，`--slice` 支持 `n` 或 `all`，线程数与 slice 写入结果与 sidecar。ROI 的 z/t 为 0 或 null 表示未指定，施加到所选片；1 表示 1-based 片号。`--slice` 是 1-based Z 索引，`--frame` 是 1-based T 索引；2D 图缺省 z=1、t=1，T 栈缺省 t=1，Z 栈必须显式给 `--slice n` 或 `--slice all`，否则 `usage.invalid`。`--slice all` 只允许 measure 并输出逐片结果；export 与 batch 禁止 `all`，CSV 仅在单 slice 时导出。export/batch 只处理 z/t 为空或等于所选 `--slice`/`--frame` 的 ROI；不匹配的 ROI 在 warnings 或索引中显式标 skipped，一个都不匹配返回 `usage.invalid`。每个 measure 结果的 `slice{z,t}` 必填，sidecar 的 `options.slice{z,t}` 必填，batch 索引每项记录 `slice`/`frame`。
 
-**批处理**：manifest 支持 `{"files":[...]}`（可省略 `schema`，缺省 v1）或 JSON Lines（每行一个 `files[]` 项），相对路径按 manifest 所在目录解析；`--out-template` 缺省 `{stem}_results.csv`，产物必须落在 `--out-dir` 或 `--out-root` 内。`--jobs` 缺省 1，`--cache-budget` 单位 MiB，缺省为可用内存的 50%，硬上限 64 GiB；`--max-items` 缺省 1000、硬上限 10000；`--timeout` 缺省 30 分钟，`--item-timeout` 缺省 10 分钟；输出总量缺省 1 GiB。超预算返回 9。批处理终态 `termination` 必填：completed/max_items/max_output_bytes/timeout/cancelled/circuit_open/item_timeout；取消返回 7，单项超时按 item 记 failed/8，熔断后剩余项标 skipped、退出 8。输出冲突按目标文件系统大小写规则归一化后判定，冲突即 `output.exists`，`--overwrite` 同时作用于 CSV 与 sidecar。批处理无状态，不提供断点续跑；有状态批处理属 AUTO-003（P1）。退出码优先级为 6（超时）> 8（部分失败）> 9（资源不足）；`--max-items` 截断属正常完成，退出 0，索引标 `notAttempted`。
+**批处理**：manifest 支持 `{"files":[...]}`（可省略 `schema`，缺省 v1）或 JSON Lines（每行一个 `files[]` 项），每项可含 `pixelSizeX`/`pixelSizeY`、`calibration` 文件、`slice`/`frame`（1-based 整数，不接受 all）；Z 栈项必须显式 `slice`，缺失按 item 返回 `usage.invalid`，`frame` 缺省 1。相对路径按 manifest 所在目录解析；`--out-template` 缺省 `{stem}_results.csv`，产物必须落在 `--out-dir` 内，而 `--out-dir` 必须 realpath 到安装策略固定的可写根内。`--jobs` 缺省 1，`--cache-budget` 单位 MiB，缺省为可用内存的 50%，硬上限 64 GiB；`--max-items` 缺省 1000、硬上限 10000；`--timeout` 缺省 30 分钟，`--item-timeout` 缺省 10 分钟；输出总量缺省 1 GiB。超预算返回 9。批处理终态 `termination` 必填：completed/max_items/max_output_bytes/timeout/cancelled/circuit_open/item_timeout；取消返回 7，单项超时按 item 记 failed/8，熔断后剩余项标 skipped、退出 8。输出冲突按目标文件系统大小写规则归一化后判定，冲突即 `output.exists`，`--overwrite` 同时作用于 CSV 与 sidecar。批处理无状态，不提供断点续跑；有状态批处理属 AUTO-003（P1）。退出码优先级为 6（超时）> 8（部分失败）> 9（资源不足）；`--max-items` 截断属正常完成，退出 0，索引标 `notAttempted`。
 
 #### 5.17.2 契约注册表、JSON 与退出码
 
-`lyre schema` 发布命令、参数、横切 Schema、退出码与错误码；`lyre capabilities` 另行发布工具元数据，二者由同一构建生成并做一致性校验；MCP 与插件 CLI 是 v2 设计，不在 v1 契约、命令枚举与 capabilities 中登记。stdout 只输出 JSON（UTF-8 无 BOM、LF），日志走 stderr 或 `--log-file`；`--events` 模式下 stderr 每行都是 `lyre.event/v1`，不再混入自由文本。
+`lyre schema` 发布命令、参数、横切 Schema、退出码与错误码；`lyre capabilities` 另行发布工具元数据，二者由同一构建生成并做一致性校验；MCP 与插件 CLI 是 v2 设计，不在 v1 契约、命令枚举与 capabilities 中登记。stdout 只输出 JSON（UTF-8 无 BOM、LF），日志走 stderr；`--events` 模式下 stderr 每行都是 `lyre.event/v1`，不再混入自由文本。
 
 信封固定为：
 
@@ -451,7 +451,7 @@ lyre batch --manifest /data/files.json --out-dir /data/out --jobs 4 --cache-budg
 }
 ```
 
-`capabilities` 使用同一信封，`data` 按 `lyre.agent/v1` 校验；`lyre schema` 的 `schemas` 登记 `lyre.registry/v1`、`lyre.cli/v1`、`lyre.agent/v1`、`lyre.measure/v1`、`lyre.sidecar/v1`、`lyre.roi/v1`、`lyre.plan/v1`、`lyre.event/v1`、`lyre.audit/v1`、`lyre.batch.manifest/v1`、`lyre.batch/v1`、`lyre.calibration/v1`、`lyre.host/v1`。
+`capabilities` 使用同一信封，`data` 按 `lyre.agent/v1` 校验；`lyre schema` 的 `schemas` 登记 `lyre.registry/v1`、`lyre.args/v1`、`lyre.cli/v1`、`lyre.agent/v1`、`lyre.info/v1`、`lyre.version/v1`、`lyre.doctor/v1`、`lyre.measure/v1`、`lyre.sidecar/v1`、`lyre.roi/v1`、`lyre.batch.manifest/v1`、`lyre.batch/v1`、`lyre.calibration/v1`、`lyre.host/v1`；plan/event/audit 属 v1.1。
 
 错误对象固定为 `{code, codeVersion, message, hint, hintCode, input, details, retryable, retryArgv, retryPlanHash}`；`code` 是跨版本封闭枚举，与 locale 无关；`retryArgv` 是可执行文件加参数数组，不经过 shell。
 
@@ -465,7 +465,7 @@ lyre batch --manifest /data/files.json --out-dir /data/out --jobs 4 --cache-budg
 | `analysis.cancelled` | 收到取消 | true，显式重试 |
 | `output.exists` | 目标存在且未 `--overwrite` | true，加 `--overwrite` |
 | `output.write_failed` | 写 CSV/sidecar 失败 | true，换路径 |
-| `output.outside_root` | 输出越出 `--out-root` | false |
+| `output.outside_root` | 输出越出固定可写根 | false |
 | `resource.exhausted` | 内存、并发或磁盘预算不足 | true，降 `--jobs`/`--threads` |
 | `permission.denied` | 只读模式或被策略拒绝 | false |
 | `consent.required` | 需要人工确认 | true，确认后重试 |
@@ -492,31 +492,24 @@ lyre batch --manifest /data/files.json --out-dir /data/out --jobs 4 --cache-budg
 | 8 | 批处理部分失败（索引逐项给 code） |
 | 9 | 资源不足 |
 
-#### 5.17.3 计划、事件与审计
+#### 5.17.3 v1.1 计划、事件与审计（不在 v1）
 
-- `lyre.plan/v1` 固定输出 `command`、`resolvedArgv`、`cwd`、`reads[{path,sha256}]`、`writes[{path,mode,exists}]`、`effectiveSideEffects`、`permissions`、`requiresHost`、`hostVersion`/`protocolVersion`、`estimates{estimatedMs,peakBytes,outputBytes}`、`preconditions`、`planHash`；`planHash` 覆盖宿主版本。
-- `planHash` 覆盖 `cwd`、`resolvedArgv`、`reads` 的 `path` 与 `sha256`、`writes` 的 `path` 与 `mode`、stdin 内容哈希；执行时 `--confirm <planHash>` 绑定这些输入，任一变化返回 `plan.stale`。`output.exists` 的重试必须重新 plan，不能只加 `--overwrite` 后复用旧 hash；错误对象同时返回 `retryPlanHash` 供 agent 直接确认。
-- pipeline 与 `.lyre` AnalysisRun 属 v2/P1，不在 v1；v1 的 `run` 已移除，agent 用多条命令组合并在 audit 中串联。
-- `--plan`/`--dry-run` 只输出计划，不写文件；`--dry-run` 是 `--plan` 的别名。由 `--plan` 产生的计划，执行必须带 `--confirm <planHash>`；直接执行允许，但同样写 audit。执行前重算输入/输出身份，不一致返回 `plan.stale`；计划与执行共用同一参数/路径解析器。
-- stdin 输入在 plan 时落成内容哈希，执行不匹配即拒绝；`--out-template` 与 `--overwrite` 的存在性判断都进入计划。
-- `lyre.event/v1` 固定 `seq`、`commandId`、`ts`、`type`、`phase`、`itemIndex`、`progress`、`terminal`；`--events` 写 stderr，每行一个对象，结束必有 `done`。
-- 审计 sink 由安装策略/宿主固定且 append-only，所有写命令强制写入；`--audit <path>` 只追加副本，不允许省略 sink。sink 不可写时先返回 `permission.denied`，不得先写产物。sink 记录 `lyre.audit/v1` JSONL：`ts`、`phase(start|end)`、`invocationId`、`parentId`、`planHash`、`tool`、`originKind`、`argsDigest`、`inputSha256`、`resolvedArgv`、`reads[]`、`writes[]`、`decision`、`errorCode`、`exitCode`、`durationMs`；执行前写 start 并 fsync（exitCode/durationMs 为 null），结束写 end（两者必填）；拒绝与确认也记录。`lyre schema` 发布 `lyre.audit/v1`。
+`--plan`/`--confirm`/`--events`/`--audit`/`--policy` 与 plan/event/audit 三个 Schema 推迟到 v1.1/M3（CLI-010 P1）。v1 的写命令不提供这些开关；审计由安装策略固定的后台 sink 自动记录，不需要 CLI 参数，也不开放路径。v1 最小 sink 契约：固定路径、append-only；写 start（exitCode/durationMs 为 null）并 fsync 后才允许写任何产物；结束写 end；sink 不可写先返回 `permission.denied` 且不得产生输出；容量上限与轮转由安装策略固定。pipeline 与 `.lyre` AnalysisRun 同属 v2。
 
 #### 5.17.4 安全、路径与资源
 
-- 可写根：`--out-root`（可重复）是唯一允许写入的根；策略由安装策略/宿主固定，agent 不能覆盖。v1 包内嵌经签名的默认 policy，首次运行在用户状态目录生成 owner-only 的 policy 与 append-only sink（Windows `%LOCALAPPDATA%\ImageLyre`、POSIX `$XDG_STATE_HOME/imagelyre`），OCI 需挂载可写状态卷；有效 out-root = `--out-root` ∩ grantedRoots，无交集即 `permission.denied`。`--out-dir`、`--calibration-out`、`measure --out`、`--log-file` 都必须先 realpath 并落在允许的 out-root 内，`--audit` sink 是唯一例外。CSV、sidecar、ROI、模板展开结果先 realpath 再校验前缀，越界返回 `output.outside_root`。
-- 人工确认：`consent.required` 由宿主 UI/TTY 执行；CLI 非交互时只返回该 code 与 `retryPlanHash`，不得由 agent 自行确认。
+- 可写根由安装策略固定：Windows `%LOCALAPPDATA%\ImageLyre\out`，POSIX `$XDG_STATE_HOME/imagelyre/out`（未设时 `$HOME/.local/state/imagelyre/out`），macOS `$HOME/Library/Application Support/ImageLyre/out`；`--out-dir`、`--calibration-out`、`measure --out`、`roi --out`、`--csv` 与 sidecar 路径都必须 realpath 后落在该根内，且不得与任一输入同路径；v1 没有可扩大根的 CLI 开关；OCI 需挂载可写状态卷。审计 sink 在同一状态目录的 `audit/`，append-only，不开放路径参数。
 - 输入与输出拒绝符号链接、硬链接、设备、FIFO 与 ADS；输出按 §8.3 原子提交，CSV 与 sidecar 成组提交。
 - 默认不联网；输入只读；无 `--cwd` 时相对路径拒绝；manifest 内相对路径相对 manifest 所在目录解析。
 - 工具描述、图像元数据、插件返回值都是不可信数据，不进入指令位；`lyre.agent/v1` 用 `origin`、`publisher`、`signed`、`trust` 标注来源与信任级别。
 - `--jobs` 上限为 `min(核数, 缓存预算 / 单任务峰值)`；批处理还有 `--timeout`、`--item-timeout`、`--max-items`、`--max-output-bytes`；超限返回 9 并保留已完成项。
-- 重试策略：`sandbox.crashed` 最多 3 次并熔断；`plugin.failed` 最多 3 次；`resource.exhausted` 降并发；`permission.denied`、`consent.required`、`plan.stale` 不自动重试。
+- 重试策略：`sandbox.crashed` 最多 3 次并熔断；`plugin.failed` 最多 3 次；`resource.exhausted` 降并发；`permission.denied`、`consent.required` 不自动重试。
 
 #### 5.17.5 Agent 接口、MCP 与插件
 
 - `lyre capabilities` 输出 `lyre.cli/v1` 信封，`data` 按 `lyre.agent/v1` 校验；工具项含 `id`、`name`、`summary`、`originKind`、`originRef`、`availability`、`inputSchema`、`outputSchema`、`sideEffects`、`permissions`、`prerequisites`、`produces`、`errors`、`examples[{argv,arguments,description,expectExitCode}]`、`retry`、`validation`、`limits`、`version`。
 - 工具清单支持 `--detail=summary|schema|full`、`--tool`、`--limit/--cursor`；summary ≤ 8 KB，单工具 full ≤ 16 KB；工具名只允许 `^[a-z][a-z0-9_-]{0,63}$`，内置名不可被插件遮蔽。
-- `inputSchema`/`outputSchema` 必须是自包含的 object Schema，禁止外部 `$ref`，输入侧用 `mode` 枚举代替 `oneOf`；示例必须能被对应 Schema 校验。
+- `inputSchema` 由 `lyre.args/v1#/$defs/<command>` 内联展开，`outputSchema` 由对应 data Schema 内联；二者必须是自包含 object Schema，禁止外部 `$ref`，输入侧用 `mode` 枚举代替 `oneOf`；示例必须能被对应 Schema 校验。
 - `validation` 含 `imagejBaseline`、`toleranceClass`、`goldenDatasetVersion`、`reportUri`、`lastVerified`，让 agent 按可信度选工具。
 - MCP 与插件 CLI 作为 v2 设计，不进入 v1 契约、command 枚举与 capabilities；v1 的 `originKind` 只有 `builtin`，`originRef` 为 v2 预留。MCP 的写入白名单、常驻宿主池与版本协商在 v2 设计评审中单独冻结。
 
@@ -524,7 +517,7 @@ lyre batch --manifest /data/files.json --out-dir /data/out --jobs 4 --cache-budg
 
 CLI-only 标准格式包为 NativeAOT 单文件 `lyre`（免安装 tar.gz 或 OCI 镜像），不含 AtomUI、示例数据与 Python，包体 ≤ 100 MB、`lyre version`/`lyre info` 冷启动 ≤ 1.5 秒；厂商格式与插件另带 `lyre-sandbox-host`（含 .NET 10 JIT 运行时，≤ 120 MB），两者合计 ≤ 220 MB，厂商格式冷启动单独计量；厂商格式与插件经 `lyre-sandbox-host`（JIT）执行，宿主缺失时标准格式仍可用，厂商格式报 `sandbox.unavailable`。SYS-007/SYS-011 增加 CLI 产物行，CI 断言 CLI 输出目录不含 `Avalonia*`、`AtomUI*`、`SkiaSharp*` 与 `ImageLyre.UI`。
 
-CLI 与桌面的对照：同一构建、同一 `--threads`、同一选项集下，JSON 指标按 §6.5 B 类 `1e-9` 相对差，CSV 按 §6.7 逐字节，sidecar 只比稳定字段（排除 timestamp，保留 buildHash、inputSha256、threads、options、planHash）；`buildHash` 是产品级（提交 + 契约版本，CLI 与桌面相同），`artifactHash` 记录单产物哈希。VAL-004 增加「非默认校准 + 非默认测量选项」的 CLI ↔ 桌面用例。
+CLI 与桌面的对照：同一构建、同一 `--threads`、同一选项集下，JSON 指标按 §6.5 B 类 `1e-9` 相对差，CSV 按 §6.7 逐字节，sidecar 只比稳定字段（排除 timestamp，保留 buildHash、inputSha256、threads、options）；`buildHash` 是产品级（提交 + 契约版本，CLI 与桌面相同），`artifactHash` 记录单产物哈希。VAL-004 增加「非默认校准 + 非默认测量选项」的 CLI ↔ 桌面用例。
 
 | 编号 | 需求与验收要点 | 优先级 |
 | :--- | :--- | :--- |
@@ -534,10 +527,10 @@ CLI 与桌面的对照：同一构建、同一 `--threads`、同一选项集下�
 | CLI-004 | AI 调用约束：无交互提示；支持 stdin ROI/清单；`--timeout` 与取消产出部分结果与专门退出码；同一输入重复执行一致；不依赖 locale 与 TTY | P0 |
 | CLI-005 | 批处理：manifest（JSON/JSONL）、`--jobs`、`--cache-budget`、`--timeout`/`--item-timeout`、`--max-items`、`--out-template`、冲突与覆盖、索引按输入序、部分失败 8；无状态 | P0 |
 | CLI-006 | 与桌面一致：同一构建、同一线程数、同一选项集下，JSON 按 B 类容差、CSV 逐字节、sidecar 稳定字段一致；含非默认校准用例 | P0 |
-| CLI-007 | 安全与路径：默认不联网、输入只读、`--out-root` 可写根、相对路径需 `--cwd`、覆盖需 `--overwrite`、无隐式配置 | P0 |
+| CLI-007 | 安全与路径：默认不联网、输入只读、`--out-dir` 落在固定可写根、相对路径需 `--cwd`、覆盖需 `--overwrite`、无隐式配置 | P0 |
 | CLI-008 | Agent 能力发现：`capabilities` 走信封且 `data` 按 `lyre.agent/v1` 校验，含输入/输出 Schema、副作用、权限、前置、产出、错误、示例、验证元数据；支持分页与 detail | P0 |
 | CLI-009 | 全能力 CLI（P1/M3）：以附录「P0 分析能力 ↔ CLI 命令」矩阵为口径，覆盖阈值、滤波、栈投影、通道拆分等 P0 算子；v1 只承诺分析闭环（info/measure/export/calibrate/roi/batch） | P1 |
-| CLI-010 | 计划、事件与审计：`lyre.plan/v1` 预演零写入，`--confirm <planHash>` 绑定执行；`lyre.event/v1` 进度流；`lyre.audit/v1` 可回放 | P0 |
+| CLI-010 | 计划、事件与审计（v1.1/P1）：`lyre.plan/v1`、`lyre.event/v1`、`lyre.audit/v1` 的 CLI 开关与回放；v1 不提供 | P1 |
 | CLI-011 | MCP 服务（v2）：`lyre mcp serve --stdio` 暴露同一工具与资源，默认只读、`--allow-write` 白名单、不联网、版本协商与 task/cancel；不在 v1 契约 | P1 |
 | CLI-012 | 插件 CLI 扩展（v2）：插件注册带 Schema 的命令，强制沙箱，带授权与 hostApiRange；仅 headless-safe 槽位；不在 v1 契约 | P1 |
 
@@ -686,11 +679,11 @@ NativeAOT 仅用于主启动器与 CLI，插件宿主与 Python 运行时使用 
 | :--- | :--- | :--- |
 | M1 技术闭环 | IO-001、VIEW-001~005、ROI-001~004、MEAS-001~004、VAL-002 打通 | 内部演示完成端到端测量，黄金数据集 v0.1 入库 |
 | M2a MVP 核心 | 桌面 P0 核心 + CLI `info`/`measure`/`export`/`schema`/`version`/`capabilities`/`doctor` | P0 兼容用例核心全过；冻结 implemented 子集，planned 命令用 availability 标注 |
-| M2b Agent CLI | `batch`、`--plan`/事件/审计、`calibrate`/`roi`、VAL-008 | CLI-005/010 全过，agent 评测达到 §9 指标 |
-| M3 Beta | AUTO-001~009、PLUG-001~015、PRJ-001~009、LAB-001~004、VAL-005~007、SYS-006~013、LIC-001/003、CLI-009/011/012 全部通过 | 外部用户可安装、批处理与工程恢复可用 |
+| M2b Agent CLI | `batch`、`calibrate`/`roi`、VAL-008 | CLI-005 与 VAL-008 全过，agent 评测达到 §9 指标 |
+| M3 Beta | AUTO-001~009、PLUG-001~015、PRJ-001~009、LAB-001~004、VAL-005~007、SYS-006~013、LIC-001/003、CLI-009/010/011/012 全部通过 | 外部用户可安装、批处理与工程恢复可用 |
 | M4 GA | 其余 P1 需求与 VAL-004 补齐，安装包、迁移指南与验证报告齐备 | 发布门禁全部通过 |
 
-矩阵中的 `M2` 是候选池，不是 56 条 P0 一次交付的承诺；M2a/M2b 只取上表列出的子集，未列入的 P0 顺延 M3。M3 退出标准同时包含剩余 P0 与 P1。
+矩阵中的 `M2` 是候选池，不是 55 条 P0 一次交付的承诺；M2a/M2b 只取上表列出的子集，未列入的 P0 顺延 M3。M3 退出标准同时包含剩余 P0 与 P1。
 
 ```mermaid
 flowchart LR
@@ -764,8 +757,8 @@ flowchart LR
 | 许可与商业模式 | 1 | 2 | 0 | 3 |
 | 系统、设置与分发 | 3 | 9 | 2 | 14 |
 | 可访问性 | 3 | 2 | 0 | 5 |
-| CLI 工作模式 | 9 | 3 | 0 | 12 |
-| 合计 | 72 | 65 | 7 | 144 |
+| CLI 工作模式 | 8 | 4 | 0 | 12 |
+| 合计 | 71 | 66 | 7 | 144 |
 
 ## 附录 B 测量基线与 ImageJ 对照
 

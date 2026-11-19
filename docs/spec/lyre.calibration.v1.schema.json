@@ -69,7 +69,78 @@
         "null"
       ],
       "exclusiveMinimum": 0
+    },
+    "calibrationFile": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "const": "calibration-file"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "calibrationFile"
+        ],
+        "properties": {
+          "pixelSizeX": {
+            "type": "number"
+          },
+          "pixelSizeY": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "enum": [
+              "embedded",
+              "cli-override"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pixelSizeX": {
+            "type": "number"
+          },
+          "pixelSizeY": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
 }

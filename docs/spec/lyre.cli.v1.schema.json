@@ -212,7 +212,8 @@
       "required": [
         "path",
         "sha256",
-        "bytes"
+        "bytes",
+        "sidecar"
       ],
       "properties": {
         "path": {

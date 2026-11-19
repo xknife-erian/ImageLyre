@@ -17,7 +17,8 @@
     "quality",
     "options",
     "outputCsv",
-    "timestamp"
+    "timestamp",
+    "skipped"
   ],
   "properties": {
     "schema": {
@@ -40,7 +41,7 @@
       "type": "string"
     },
     "calibration": {
-      "type": "object"
+      "$ref": "https://imagelyre.dev/schema/lyre.calibration.v1.json"
     },
     "roi": {
       "type": "object",
@@ -62,9 +63,82 @@
           "items": {
             "type": "string"
           }
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "file",
+            "inline",
+            "wholeImage"
+          ]
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "path",
+        "sha256",
+        "roiIds"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "const": "file"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "const": "inline"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sha256": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "const": "wholeImage"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "const": null
+              },
+              "sha256": {
+                "const": null
+              },
+              "roiIds": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
     },
     "options": {
       "type": "object",
@@ -72,7 +146,8 @@
         "measurements",
         "decimals",
         "nanPolicy",
-        "threads"
+        "threads",
+        "slice"
       ],
       "properties": {
         "measurements": {
@@ -93,11 +168,22 @@
           "minimum": 1
         },
         "slice": {
-          "type": [
-            "integer",
-            "string",
-            "null"
-          ]
+          "type": "object",
+          "required": [
+            "z",
+            "t"
+          ],
+          "properties": {
+            "z": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "t": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -178,6 +264,25 @@
         "string",
         "null"
       ]
+    },
+    "skipped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "roiId",
+          "reason"
+        ],
+        "properties": {
+          "roiId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
     }
   },
   "additionalProperties": false

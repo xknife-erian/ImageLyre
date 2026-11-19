@@ -86,14 +86,16 @@
               "integer",
               "null"
             ],
-            "minimum": 0
+            "minimum": 0,
+            "description": "0/null = 未指定，施加到所选片；>=1 为 1-based Z"
           },
           "t": {
             "type": [
               "integer",
               "null"
             ],
-            "minimum": 0
+            "minimum": 0,
+            "description": "0/null = 未指定，施加到所选片；>=1 为 1-based T"
           },
           "name": {
             "type": "string"

@@ -1,0 +1,465 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.args.v1.json",
+  "title": "lyre.args/v1",
+  "type": "object",
+  "$defs": {
+    "global": {
+      "type": "object",
+      "properties": {
+        "outDir": {
+          "type": "string"
+        },
+        "cwd": {
+          "type": "string"
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cacheBudget": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "text": {
+          "type": "boolean"
+        },
+        "json": {
+          "type": "boolean"
+        }
+      }
+    },
+    "measureCommon": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string"
+        },
+        "roi": {
+          "type": "string"
+        },
+        "roiJson": {
+          "type": "string"
+        },
+        "roiStdin": {
+          "type": "boolean"
+        },
+        "wholeImage": {
+          "type": "boolean"
+        },
+        "pixelSize": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pixelSizeX": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pixelSizeY": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "knownDistance": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pixels": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "unit": {
+          "type": "string"
+        },
+        "zStep": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "calibration": {
+          "type": "string"
+        },
+        "measurements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "threads": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "slice": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "frame": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "info": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/global"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "image"
+      ],
+      "unevaluatedProperties": false
+    },
+    "measure": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/global"
+        },
+        {
+          "$ref": "#/$defs/measureCommon"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "out": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "image"
+      ],
+      "unevaluatedProperties": false
+    },
+    "export": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/global"
+        },
+        {
+          "$ref": "#/$defs/measureCommon"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "csv": {
+          "type": "string"
+        },
+        "sidecar": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on"
+          ]
+        },
+        "overwrite": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "image",
+        "csv"
+      ],
+      "unevaluatedProperties": false
+    },
+    "batch": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/global"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "string"
+        },
+        "outDir": {
+          "type": "string"
+        },
+        "outTemplate": {
+          "type": "string"
+        },
+        "jobs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "itemTimeout": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxItems": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxOutputBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "overwrite": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "manifest",
+        "outDir"
+      ],
+      "unevaluatedProperties": false
+    },
+    "schema": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/global"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "version": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/global"
+        }
+      ],
+      "type": "object",
+      "unevaluatedProperties": false
+    },
+    "capabilities": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/global"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "detail": {
+          "type": "string",
+          "enum": [
+            "summary",
+            "schema",
+            "full"
+          ]
+        },
+        "tool": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cursor": {
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "doctor": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/global"
+        }
+      ],
+      "type": "object",
+      "unevaluatedProperties": false
+    },
+    "calibrate": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/global"
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string"
+        },
+        "pixelSizeX": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pixelSizeY": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "knownDistance": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "pixels": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "unit": {
+          "type": "string"
+        },
+        "zStep": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "calibrationOut": {
+          "type": "string"
+        },
+        "pixelSize": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "image",
+        "calibrationOut"
+      ],
+      "unevaluatedProperties": false
+    },
+    "roi": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "create"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "type"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "create"
+              },
+              "type": {
+                "const": "ellipse"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "center",
+              "radii",
+              "angle"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "create"
+              },
+              "type": {
+                "enum": [
+                  "rectangle",
+                  "polygon",
+                  "freehand",
+                  "point",
+                  "line"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "points"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "convert"
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": [
+                  "roi"
+                ]
+              },
+              {
+                "required": [
+                  "roiJson"
+                ]
+              },
+              {
+                "required": [
+                  "roiStdin"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "create",
+            "convert"
+          ]
+        },
+        "roi": {
+          "type": "string"
+        },
+        "roiJson": {
+          "type": "string"
+        },
+        "roiStdin": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "rectangle",
+            "polygon",
+            "ellipse",
+            "freehand",
+            "point",
+            "line"
+          ]
+        },
+        "points": {
+          "type": "array"
+        },
+        "out": {
+          "type": "string"
+        },
+        "overwrite": {
+          "type": "boolean"
+        },
+        "center": {
+          "type": "array"
+        },
+        "radii": {
+          "type": "array"
+        },
+        "angle": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "action",
+        "out"
+      ],
+      "unevaluatedProperties": false
+    }
+  },
+  "additionalProperties": false
+}

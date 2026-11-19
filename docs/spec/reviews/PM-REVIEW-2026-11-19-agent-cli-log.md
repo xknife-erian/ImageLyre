@@ -56,3 +56,18 @@
 ## 结论
 
 2.8 仍是评审稿，未达到六位全部 sign_off。建议 v1.1 做一次范围收口：删除 `--policy`、`--plan`/`--confirm`/`--events`/`--audit`/`--options` 的 v1 承诺，把 CLI-010 移到 P1/M3；只保留 info/measure/export/batch/schema/version/capabilities/doctor/calibrate/roi 十条命令与固定审计 sink。这样可一次性移除上述 1、3、5、6 中的多数 blocker，再复审一次即可收口。
+
+
+## v1.1 定向评审
+
+产品决策选 A：删除 `--plan`/`--confirm`/`--events`/`--audit`/`--policy`/`--options` 的 v1 承诺，CLI-010 移 P1/M3，v1 保留 10 条命令。
+
+| 轮次 | Agent 协议 | 安全 | 方法/日常 |
+| :--- | :--- | :--- | :--- |
+| r1 | blocker | blocker | blocker |
+| r2 | blocker | sign_off | blocker |
+| r3 | sign_off | blocker | blocker |
+| r4 | sign_off | sign_off | blocker |
+| r5 | sign_off | sign_off | blocker |
+
+方法岗最后两条（ROI path/sha 可为空、skipped ROI 与 CSV 行序）已按建议写入 `lyre.sidecar/v1`、`lyre.measure/v1` 与 PRD；未再开第六轮复审。2.9 记为**条件定稿**：M2a 契约冻结前由方法岗复核这两条 Schema。

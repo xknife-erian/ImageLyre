@@ -5,6 +5,7 @@
   "type": "object",
   "required": [
     "schema",
+    "roi",
     "input",
     "calibration",
     "options",
@@ -95,6 +96,7 @@
         "type": "object",
         "required": [
           "roiId",
+          "slice",
           "metrics"
         ],
         "properties": {
@@ -105,10 +107,22 @@
             "type": "string"
           },
           "slice": {
-            "type": [
-              "object",
-              "null"
-            ]
+            "type": "object",
+            "required": [
+              "z",
+              "t"
+            ],
+            "properties": {
+              "z": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "t": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "additionalProperties": false
           },
           "metrics": {
             "type": "object",
@@ -226,6 +240,109 @@
       }
     },
     "outputs": {
+      "type": "array",
+      "items": {
+        "$ref": "https://imagelyre.dev/schema/lyre.cli.v1.json#/$defs/output"
+      }
+    },
+    "roi": {
+      "type": "object",
+      "required": [
+        "source",
+        "path",
+        "sha256",
+        "roiIds"
+      ],
+      "properties": {
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "roiIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "file",
+            "inline",
+            "wholeImage"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "const": "file"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "const": "inline"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "sha256": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "const": "wholeImage"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "const": null
+              },
+              "sha256": {
+                "const": null
+              },
+              "roiIds": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "skipped": {
       "type": "array",
       "items": {
         "type": "object"

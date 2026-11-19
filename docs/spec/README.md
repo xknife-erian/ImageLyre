@@ -6,9 +6,9 @@
 
 | 文件 | 说明 |
 | :--- | :--- |
-| `product-requirements.md` / `.html` | 产品需求文档 2.8，md 为源，HTML 为阅读版 |
+| `product-requirements.md` / `.html` | 产品需求文档 2.9，md 为源，HTML 为阅读版 |
 | `startup-requirements.md` | 启动需求与架构基线 1.4 |
-| `M1-acceptance-matrix.xlsx` | 72 条 P0 验收台账，含 M1 范围与说明 |
+| `M1-acceptance-matrix.xlsx` | 71 条 P0 验收台账，含 M1 范围与说明 |
 | `M1-imagej-fixture.md` | M1a 的 ImageJ 对照环境、fixture 组成与黄金数据集 v0.1 |
 | `M1-interaction-spec.md` | M1a 的窗口骨架、操作流程、键位、状态与交互验收 |
 | `lyre.*.schema.json` | CLI/Agent 契约：信封、工具清单、ROI、plan、event、audit、pipeline、batch、calibration |
