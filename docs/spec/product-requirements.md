@@ -505,7 +505,7 @@ CLI 与桌面的对照以同一 headless 会话层为准：同一构建、同一
 | CLI-006 | 与桌面一致：同一构建、同一线程数、同一选项集下，JSON 按 B 类容差、CSV 逐字节、sidecar 稳定字段一致；含非默认校准用例 | P0 |
 | CLI-007 | 安全与路径：默认不联网、输入只读、输出与 sidecar 显式、相对路径需 `--cwd`、覆盖需 `--overwrite`、无隐式配置 | P0 |
 | CLI-008 | Agent 能力发现：`lyre capabilities --json` 输出 `lyre.agent/v1` 工具清单，含输入/输出 Schema、副作用、权限、示例与成本；agent 无需读文档即可选工具 | P0 |
-| CLI-009 | 全能力 CLI：桌面 P0 分析操作（校准、ROI 创建/转换、测量、导出、批处理、工程打开/保存）都有对应命令、Schema 与示例，不允许「只有界面能做」 | P0 |
+| CLI-009 | 全能力 CLI：桌面 P0 分析操作（校准、ROI 创建/转换、测量、导出、批处理）都有对应命令、Schema 与示例，不允许「只有界面能做」 | P0 |
 | CLI-010 | 计划与流式：`--plan`/`--dry-run` 预演不写文件；`--events ndjson` 输出进度事件；超时/取消保留事件与部分结果，agent 可据此重试 | P0 |
 | CLI-011 | MCP 服务：`lyre mcp serve --stdio` 暴露同一工具与资源，默认只读、写入显式开启、不联网；MCP 版本协商与工具 Schema 一致 | P1 |
 | CLI-012 | 插件 CLI 扩展：插件注册带 Schema 的命令，桌面与 CLI 共用注册表，沙箱执行；`lyre plugin list --json` 可发现 | P1 |
