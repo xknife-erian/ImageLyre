@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.measure.v1.json",
+  "title": "lyre.measure/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "input",
+    "calibration",
+    "options",
+    "results"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "lyre.measure/v1"
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "calibration": {
+      "$ref": "https://imagelyre.dev/schema/lyre.calibration.v1.json"
+    },
+    "options": {
+      "type": "object",
+      "required": [
+        "measurements",
+        "decimals",
+        "nanPolicy",
+        "threads"
+      ],
+      "properties": {
+        "measurements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Area",
+              "Mean",
+              "StdDev",
+              "Min",
+              "Max",
+              "Perim.",
+              "IntDen",
+              "Median",
+              "Skew",
+              "Kurt",
+              "X",
+              "Y",
+              "Feret",
+              "FeretAngle",
+              "MinFeret",
+              "Circ.",
+              "N"
+            ]
+          }
+        },
+        "decimals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nanPolicy": {
+          "type": "string"
+        },
+        "threads": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "slice": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "roiId",
+          "metrics"
+        ],
+        "properties": {
+          "roiId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slice": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "Area": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Mean": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "StdDev": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Min": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Max": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Perim.": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "IntDen": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Median": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Skew": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Kurt": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "X": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Y": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Feret": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "FeretAngle": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "MinFeret": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Circ.": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "N": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "roiType": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

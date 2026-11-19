@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.calibration.v1.json",
+  "title": "lyre.calibration/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "source",
+    "pixelSizeX",
+    "pixelSizeY",
+    "unit"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "lyre.calibration/v1"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "embedded",
+        "calibration-file",
+        "cli-override",
+        "none"
+      ]
+    },
+    "pixelSize": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "exclusiveMinimum": 0
+    },
+    "unit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "zStep": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "exclusiveMinimum": 0
+    },
+    "image": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "inputSha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pixelSizeX": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "exclusiveMinimum": 0
+    },
+    "pixelSizeY": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "exclusiveMinimum": 0
+    }
+  },
+  "additionalProperties": false
+}

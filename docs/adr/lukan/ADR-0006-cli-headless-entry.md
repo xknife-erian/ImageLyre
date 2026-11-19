@@ -2,10 +2,10 @@
 
 | 项 | 值 |
 | :--- | :--- |
-| 状态 | 已接受 |
+| 状态 | 已接受（v1 决策 1–6；决策 7 留 v2） |
 | 日期 | 2026-11-19 |
 | 决策人 | lukan |
-| 关联 | PRD 2.5 §5.17、ADR-0004、启动需求 §8.5 |
+| 关联 | PRD 2.8 §5.17、ADR-0004、启动需求 §3/§4 |
 
 ## 1 背景
 
@@ -18,9 +18,12 @@ PRD 2.5 要求 `lyre` 在无显示、无 TTY 的环境完成分析闭环，并�
 1. **新增 headless 会话层**：把校准、ROI 解析、测量选项、CSV/sidecar、批处理编排收敛到不依赖 UI 的会话层；Desktop 与 CLI 只负责参数解析、呈现与进程生命周期，二者共享该层作为唯一结果来源。
 2. **CLI 作为独立应用**：`src/Apps/ImageLyre.Cli` 只引用 Kernel、Imaging、Codecs、Plugins、Sandbox 与 headless 会话层，不引用 AtomUI、Avalonia、SkiaSharp 或 `ImageLyre.UI`。
 3. **AOT/JIT 分工**：`lyre` 使用 NativeAOT 单文件分发；`lyre-sandbox-host` 使用 JIT，承载厂商格式解码与插件执行。CLI 在主进程内处理标准 TIFF/BigTIFF 与内置算子；需要宿主时按 ADR-0004 启动沙箱，宿主缺失或版本不匹配返回 `sandbox.unavailable`，标准格式仍可降级运行。
-4. **唯一无头入口**：`lyre` 是唯一无头入口，AUTO-004 的流水线执行复用 `lyre run`，不再另建第二套无头入口；Python 脚本执行仍由 AUTO-001/002 提供，CLI 不依赖 Python。
+
+   3.1 **v1 宿主契约**：policy 固定 `lyre-sandbox-host` 的 hostPath 与 sha256，v1 不接受同目录或环境变量覆盖；`doctor`、plan 与 audit 输出 hostPath、hostHash、hostVersion、protocolVersion；hash 或 protocolVersion 主版本不一致即 `sandbox.unavailable`。一次 invocation 内每个 worker 至多一个宿主；stdin EOF、SIGINT、SIGTERM、Windows Ctrl+C 先停宿主再退出（取消退 7）；宿主崩溃记 `sandbox.crashed`、该项 failed/8，连续 3 次熔断。宿主自身的 hostVersion/protocolVersion 由 `lyre.host/v1` 发布。
+4. **唯一无头入口**：`lyre` 是唯一无头入口，AUTO-004 复用 `lyre` 的命令组合与批处理，不另建第二套无头入口；`run`/pipeline 属 v2。Python 脚本执行仍由 AUTO-001/002 提供，CLI 不依赖 Python。
 5. **CLI-only 分发**：提供 NativeAOT 单文件、免安装 tar.gz 与 OCI 镜像，不含 AtomUI、示例数据与 Python；CLI 包体 ≤ 100 MB、冷启动 ≤ 1.5 秒，与桌面安装包分开计量。
 6. **契约先行**：`lyre.cli/v1` 的 JSON Schema、退出码与错误码随 `lyre schema` 发布，并入库为 `docs/spec/lyre.cli.v1.schema.json`；契约只增字段，主版本不兼容时拒绝运行。
+7. **（v2 待定，不属于 v1）常驻与第二进程**：MCP 会话为「1 个 `lyre mcp serve` ↔ N 个按需或池化的 `lyre-sandbox-host`」；宿主池按会话隔离、设上限与回收超时，`--jobs`/`--cache-budget` 由会话参数约束。stdin EOF、SIGINT/SIGTERM、Windows Ctrl+C 必须关闭全部子进程（POSIX 进程组、Windows Job Object），不得留下孤儿宿主。
 
 ## 3 备选方案
 

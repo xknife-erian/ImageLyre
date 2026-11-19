@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.host.v1.json",
+  "title": "lyre.host/v1",
+  "type": "object",
+  "required": ["schema", "hostVersion", "protocolVersion", "supportedFormats", "maxWorkers"],
+  "properties": {
+    "schema": { "type": "string", "const": "lyre.host/v1" },
+    "hostVersion": { "type": "string" },
+    "protocolVersion": { "type": "string" },
+    "supportedFormats": { "type": "array", "items": { "type": "string" } },
+    "maxWorkers": { "type": "integer", "minimum": 1 }
+  },
+  "additionalProperties": false
+}

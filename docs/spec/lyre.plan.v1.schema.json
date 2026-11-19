@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.plan.v1.json",
+  "title": "lyre.plan/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "contractVersion",
+    "command",
+    "resolvedArgv",
+    "cwd",
+    "reads",
+    "writes",
+    "planHash"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "lyre.plan/v1"
+    },
+    "contractVersion": {
+      "type": "string"
+    },
+    "command": {
+      "type": "string"
+    },
+    "resolvedArgv": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cwd": {
+      "type": "string"
+    },
+    "reads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "writes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "mode",
+          "exists"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "create",
+              "overwrite",
+              "append"
+            ]
+          },
+          "exists": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "effectiveSideEffects": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "none",
+          "write",
+          "network"
+        ]
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requiresHost": {
+      "type": "boolean"
+    },
+    "estimates": {
+      "type": "object",
+      "properties": {
+        "estimatedMs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "peakBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "outputBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "preconditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "planHash": {
+      "type": "string"
+    },
+    "hostVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "protocolVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

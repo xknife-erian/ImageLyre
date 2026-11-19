@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.batch.manifest.v1.json",
+  "title": "lyre.batch.manifest/v1",
+  "type": "object",
+  "required": [
+    "files"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "lyre.batch.manifest/v1"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "maxLength": 4096
+          },
+          "roi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pixelSize": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "zStep": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "measurements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "maxItems": 10000
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "threads": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "measurements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

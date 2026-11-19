@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.batch.v1.json",
+  "title": "lyre.batch/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "termination",
+    "items"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "lyre.batch/v1"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "index",
+          "input",
+          "status",
+          "exitCode",
+          "errorCode"
+        ],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "input": {
+            "type": "string"
+          },
+          "inputSha256": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "outputSha256": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sidecar": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "failed",
+              "skipped",
+              "notAttempted"
+            ]
+          },
+          "exitCode": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "errorCode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "retryArgv": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "ok"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "output",
+                "outputSha256",
+                "sidecar"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "termination": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "max_items",
+        "max_output_bytes",
+        "timeout",
+        "cancelled",
+        "circuit_open",
+        "item_timeout"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

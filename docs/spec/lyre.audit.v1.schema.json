@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.audit.v1.json",
+  "title": "lyre.audit/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "ts",
+    "phase",
+    "invocationId",
+    "planHash",
+    "tool",
+    "originKind",
+    "argsDigest",
+    "resolvedArgv",
+    "reads",
+    "writes",
+    "decision"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "lyre.audit/v1"
+    },
+    "invocationId": {
+      "type": "string"
+    },
+    "parentId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "planHash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tool": {
+      "type": "string"
+    },
+    "argsDigest": {
+      "type": "string"
+    },
+    "inputSha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny",
+        "confirm"
+      ]
+    },
+    "exitCode": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "durationMs": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "ts": {
+      "type": "string"
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "start",
+        "end"
+      ]
+    },
+    "originKind": {
+      "type": "string",
+      "enum": [
+        "builtin"
+      ]
+    },
+    "errorCode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "stepId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "writes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "mode"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "create",
+              "overwrite",
+              "append"
+            ]
+          },
+          "exists": {
+            "type": "boolean"
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "resolvedArgv": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "policyId": {
+      "type": "string"
+    },
+    "outRoots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hostPath": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hostHash": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "toolVersion": {
+      "type": "string"
+    },
+    "buildHash": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "const": "end"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "exitCode",
+          "durationMs"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "phase": {
+            "const": "start"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "exitCode": {
+            "const": null
+          },
+          "durationMs": {
+            "const": null
+          }
+        }
+      }
+    }
+  ]
+}

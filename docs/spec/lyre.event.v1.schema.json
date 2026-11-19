@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.event.v1.json",
+  "title": "lyre.event/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "seq",
+    "commandId",
+    "ts",
+    "type",
+    "terminal"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "lyre.event/v1"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "commandId": {
+      "type": "string"
+    },
+    "ts": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "start",
+        "progress",
+        "item",
+        "log",
+        "error",
+        "done"
+      ]
+    },
+    "phase": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "itemIndex": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "progress": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "message": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "terminal": {
+      "type": "boolean"
+    },
+    "invocationId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
