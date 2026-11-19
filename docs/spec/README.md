@@ -6,10 +6,10 @@
 
 | 目录 | 内容 |
 | :--- | :--- |
-| `requirements/` | `product-requirements.md` / `.html`，产品需求文档 3.4，md 为源 |
+| `requirements/` | `product-requirements.md` / `.html`，产品需求文档 4.0，md 为源 |
 | `requirements/` | `core-1.0-boundary.md`，Core 1.0 的 15 个产品结果与 P0 收口边界 |
 | `baseline/` | `startup-requirements.md`，启动需求与架构基线 1.4 |
-| `m1/` | `M1-acceptance-matrix.xlsx`、`M1-imagej-fixture.md`、`M1-interaction-spec.md` |
+| `m1/` | `Core-1.0-acceptance-matrix.xlsx`、`M1-imagej-fixture.md`、`M1-interaction-spec.md`；旧 M1 台账在 `archive/` |
 | `cli/` | `cli-contract.md` 与 `schemas/lyre.*.schema.json`，CLI 与 Agent 的技术契约 |
 
 交付物是研发排期、实现与验收的共同依据；改动须走评审，不能以过程稿替代。
@@ -30,7 +30,7 @@
 2. 过程文档以 `PM-` 开头，后接 `PLAN-`、`REVIEW-`、`STATUS-` 类型标记。
 3. 交付物按版本演进；过程文档按日期累积，不追改历史。
 4. 历史的 `docs/adr/`、`docs/design/`、`docs/daily/` 继续保留，但产品经理的新产出不再写入那些目录。
-5. 执行台账以 GitHub Issues（仓库 `xknife-erian/ImageLyre`）与 `m1/M1-acceptance-matrix.xlsx` 为准；Gitee Issue 与 Milestone 停用。
+5. 执行台账以 GitHub Issues（仓库 `xknife-erian/ImageLyre`）与 `m1/Core-1.0-acceptance-matrix.xlsx` 为准；Gitee Issue 与 Milestone 停用。
 
 ## 与其它目录的关系
 
