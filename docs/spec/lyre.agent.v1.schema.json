@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.agent.v1.json",
+  "title": "lyre.agent/v1",
+  "description": "ImageLyre 面向 AI agent 的工具清单。由 `lyre capabilities --json` 输出，供 agent 选择工具、构造参数与判断副作用；每个工具的 inputSchema/outputSchema 本身是 JSON Schema。",
+  "type": "object",
+  "required": ["schema", "toolVersion", "tools"],
+  "properties": {
+    "schema": { "const": "lyre.agent/v1" },
+    "toolVersion": { "type": "string", "minLength": 1 },
+    "tools": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/tool" }
+    },
+    "resources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/resource" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "tool": {
+      "type": "object",
+      "required": [
+        "name",
+        "summary",
+        "inputSchema",
+        "outputSchema",
+        "sideEffects",
+        "permissions",
+        "examples",
+        "cost",
+        "version"
+      ],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z][a-z0-9_.-]*$" },
+        "summary": { "type": "string", "minLength": 1 },
+        "inputSchema": { "type": "object" },
+        "outputSchema": { "type": "object" },
+        "sideEffects": { "enum": ["none", "write", "network"] },
+        "permissions": {
+          "type": "array",
+          "items": { "enum": ["read", "write", "network"] },
+          "uniqueItems": true
+        },
+        "examples": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["argv", "description"],
+            "properties": {
+              "argv": { "type": "array", "items": { "type": "string" } },
+              "description": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "cost": { "enum": ["cheap", "medium", "expensive"] },
+        "version": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "resource": {
+      "type": "object",
+      "required": ["uri", "name", "mimeType"],
+      "properties": {
+        "uri": { "type": "string" },
+        "name": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

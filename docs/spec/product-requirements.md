@@ -12,19 +12,20 @@
 | 2.3 | 2026-11-18 | 定稿 | lukan | 签核修订：PLUG-003 升 P0 并纳入权限与拓扑验收；CSV 只含基线列并删除诊断扩展；组合预算改按字节；离线全量包补体积门禁；容差补 D/E/F 类 |
 | 2.4 | 2026-11-19 | 评审稿 | lukan | 新增 CLI 工作模式：纯命令行闭环、版本化 JSON、退出码与 AI 调用约束；CLI 五项 P0、两项 P1，待评审 |
 | 2.5 | 2026-11-19 | 定稿 | lukan | 增量评审收口：补 CLI 命令/参数表、JSON Schema、退出码与错误码、校准/ROI/选项输入、批处理与 CLI-only 分发；AUTO-004 复用 `lyre`，CLI-007 升 P0 |
+| 2.6 | 2026-11-19 | 定稿 | lukan | Agent-first CLI：能力发现、全能力覆盖、计划与流式、批处理升 P0、MCP 与插件命令；CLI 从自动化附属升为与桌面并列的产品入口 |
 | 渲染版 | [HTML](product-requirements.html) | — | — | — |
 
 ## 0 摘要
 
 ImageLyre 是一款面向科研显微图像的跨平台桌面定量分析软件，以 ImageJ 的操作习惯与结果口径为基线，用 .NET 10、AtomUI 与自研插件沙箱重做日常分析工作流。它要解决的不是「再做一个图像查看器」，而是让研究者在不改变既有操作经验的前提下，把导入、校准、选区、测量、复核与导出这条链路做得更快、更稳、更可复现，并且能用 Python、插件与纯 CLI 把重复劳动批量化。
 
-产品边界是「日常定量分析闭环 + 可扩展插件底座 + 可验证的科研输出」：P0 覆盖格式读写、视图、ROI、测量、导出、溯源与纯 CLI 闭环；P1 覆盖颗粒分析、工程文件、Python、插件市场、企业插件、安装部署与团队协作；P2 覆盖配准、共定位、三维与 AI 增强，均以插件或增强功能形式提供。
+产品边界是「日常定量分析闭环 + 可扩展插件底座 + 可验证的科研输出」：P0 覆盖格式读写、视图、ROI、测量、导出、溯源、纯 CLI 闭环与 Agent 接口；P1 覆盖颗粒分析、工程文件、Python、插件市场、企业插件、安装部署与团队协作；P2 覆盖配准、共定位、三维与 AI 增强，均以插件或增强功能形式提供。
 
 ## 1 产品定位
 
 ### 1.1 一句话定义
 
-面向生物显微、荧光、电镜与一般科学定量场景的开源桌面分析平台：ImageJ 用户零迁移成本上手，结果可与 ImageJ 对照，插件与脚本可沙箱并行执行，核心开源、企业插件增值。
+面向生物显微、荧光、电镜与一般科学定量场景的开源分析平台：桌面端让 ImageJ 用户零迁移成本上手，CLI 端让 AI agent 无需读文档即可发现、组合并调用全部分析能力；两端共享同一结果内核，核心开源、企业插件增值。
 
 ### 1.2 目标与非目标
 
@@ -35,6 +36,7 @@ ImageLyre 是一款面向科研显微图像的跨平台桌面定量分析软件�
 3. 重复分析从手工操作变成脚本与批处理，插件崩溃不拖垮主程序。
 4. Windows、Linux 与 macOS 界面与结果一致，核心功能完全离线可用。
 5. 纯 CLI 模式可在无显示、无交互的环境完成同一分析闭环，供 AI 与外部流水线直接调用。
+6. AI agent 通过 `lyre capabilities` 就能发现工具、读懂输入输出 Schema、预演副作用并稳定重试，不需要读自然语言文档。
 
 **非目标**：
 
@@ -49,12 +51,12 @@ ImageLyre 是一款面向科研显微图像的跨平台桌面定量分析软件�
 
 | 产品 | 优势 | 相对 ImageLyre 的缺口 |
 | :--- | :--- | :--- |
-| ImageJ / Fiji | 生态最大、习惯成熟、免费 | 界面陈旧、单线程、插件全局状态、Java 运行时、批处理弱 |
+| ImageJ / Fiji | 生态最大、习惯成熟、免费 | 无 agent 工具契约（JSON Schema、稳定退出码、能力发现）、界面陈旧、单线程、插件全局状态、Java 运行时、批处理弱 |
 | QuPath | 病理全切片与标注强 | 面向病理流程，通用显微定量与 ROI 兼容弱 |
 | CellProfiler | 流水线化批量分析强 | 交互式探索弱，学习曲线陡 |
 | 商业平台（Imaris、ZEN、NIS-Elements 等） | 采集与分析一体、售后完善 | 昂贵、绑定硬件、导出与脚本自由度低 |
 
-差异化落在三点：习惯兼容（操作与结果口径向 ImageJ 对齐）、架构现代（AtomUI 界面、插件沙箱、Python 一等公民、跨平台）、无授权负担（核心以木兰宽松许可证 v2 完全开源，不引入 AGPL 依赖）。核心完全开源，企业插件以商业授权提供，两者共用同一插件市场与沙箱；免费用户不缺核心能力，商业用户为增强功能、批量规模与支持付费。
+差异化落在四点：习惯兼容（操作与结果口径向 ImageJ 对齐）、架构现代（AtomUI 界面、插件沙箱、Python 一等公民、跨平台）、Agent 原生（`lyre capabilities` 工具清单、版本化 JSON Schema、稳定退出码、MCP）、无授权负担（核心以木兰宽松许可证 v2 完全开源，不引入 AGPL 依赖）。核心完全开源，企业插件以商业授权提供，两者共用同一插件市场与沙箱；免费用户不缺核心能力，商业用户为增强功能、批量规模与支持付费。
 
 ## 2 用户与场景
 
@@ -67,6 +69,7 @@ ImageLyre 是一款面向科研显微图像的跨平台桌面定量分析软件�
 | 成像平台技术员 | 显微镜平台工程师 | 多格式读取、批量部署、稳定 | 厂商格式互不兼容、软件崩溃丢进度 |
 | 方法开发者 | 算法、生信背景 | 插件与脚本扩展、接口清晰、可调试 | ImageJ 插件耦合全局状态、调试困难 |
 | 教学用户 | 讲师、学生 | 免费、免管理员安装、机房可批量部署 | 机器受限、许可证复杂、无外网 |
+| AI agent / 流水线 | 外部 LLM、脚本、CI | 可发现、可预演、可重试、结果可校验 | 现有工具无工具清单、无 JSON Schema、错误码与退出码不稳定 |
 
 ### 2.2 核心任务（JTBD）
 
@@ -76,6 +79,7 @@ ImageLyre 是一款面向科研显微图像的跨平台桌面定量分析软件�
 4. 复核他人结果时，能看到测量参数、校准来源与软件版本，并用同一份输入复现。
 5. 课题组统一分析口径时，一套配置、一份工程与一份验证报告能在多台机器与多人之间传递。
 6. 当 AI 或外部流水线需要调用时，用纯 CLI 与 JSON 结果完成校准、ROI、测量与导出，不需要模拟桌面操作。
+7. 让 agent 自主完成多步分析：先 `--plan` 预演，再执行、读事件流、按错误码重试，最后用输出 SHA 与 sidecar 复核。
 
 ### 2.3 核心工作流
 
@@ -103,6 +107,7 @@ flowchart LR
 4. **默认离线、网络分级**：核心路径零网络请求；市场、更新、遥测与授权属于显式或可关闭的网络功能。
 5. **渐进式复杂度**：新手五分钟完成测量，进阶用户再接触录制、脚本、插件与批处理。
 6. **失败可恢复**：长任务可取消、插件崩溃不波及主进程、异常有可读原因与可导出的诊断包。
+7. **Agent 可调用是一等公民**：每个 P0 分析能力都有 CLI 命令、版本化 JSON Schema、示例与退出码；界面不是唯一入口，agent 不需要模拟点击。
 
 ## 4 信息架构与核心对象
 
@@ -380,7 +385,7 @@ flowchart LR
 
 ### 5.17 CLI 工作模式
 
-CLI 是独立入口，不依赖 AtomUI、Avalonia、SkiaSharp 或 `ImageLyre.UI`，只引用 Kernel、Imaging、Codecs、Plugins 与 Sandbox；它与桌面共享同一 headless 会话层，由该层统一完成校准、ROI、测量、CSV 与 sidecar 编排，因此同一输入、同一构建、同一线程数下的结果必须逐值一致。AI 与外部流水线只消费 stdout 的 JSON 与退出码，不解析自然语言。项目落点为 `src/Apps/ImageLyre.Cli`，CLI-only 产物与 `lyre-sandbox-host` 的拓扑见 ADR-0006；`lyre` 是唯一无头入口，AUTO-004 的流水线执行复用该入口，Python 脚本执行仍属 AUTO-001/002。本节经 2026-11-19 三位专家增量评审，记录见 `docs/spec/reviews/PM-REVIEW-2026-11-19-cli-incremental.md`。
+CLI 是独立入口，不依赖 AtomUI、Avalonia、SkiaSharp 或 `ImageLyre.UI`，只引用 Kernel、Imaging、Codecs、Plugins 与 Sandbox；它与桌面共享同一 headless 会话层，由该层统一完成校准、ROI、测量、CSV 与 sidecar 编排，因此同一输入、同一构建、同一线程数下的结果必须逐值一致。AI 与外部流水线只消费 stdout 的 JSON 与退出码，不解析自然语言。项目落点为 `src/Apps/ImageLyre.Cli`，CLI-only 产物与 `lyre-sandbox-host` 的拓扑见 ADR-0006；`lyre` 是唯一无头入口，AUTO-004 的流水线执行复用该入口，Python 脚本执行仍属 AUTO-001/002。本节 2.5 的 CLI 契约经 2026-11-19 三位专家增量评审，记录见 `docs/spec/reviews/PM-REVIEW-2026-11-19-cli-incremental.md`；2.6 新增的 Agent 接口为产品负责人定向，待 M2 设计评审细化。
 
 #### 5.17.1 命令与参数
 
@@ -392,9 +397,15 @@ CLI 默认输出 JSON；`--text` 才输出人类可读文本。未给 `--cwd` �
 | `lyre measure <image> --roi <path>` | P0 | 单图测量，JSON 到 stdout | `--pixel-size`、`--known-distance`/`--pixels`、`--unit`、`--z-step`、`--roi-json`、`--roi-stdin`、`--measurements`、`--options`、`--threads`、`--out` |
 | `lyre export <image> --roi <path> --csv <path>` | P0 | 测量并写 CSV 与 sidecar | 同上，加 `--sidecar`、`--overwrite` |
 | `lyre run <pipeline.json>` | P0 | 按顺序执行 info/measure/export，供 CI 与 AI 一条命令调用 | `--json`、`--timeout`、`--cwd` |
-| `lyre batch --manifest <path\|->` | P1 | 批处理，输出索引 JSON | `--jobs`、`--out-dir`、`--out-template`、`--keep-going`、`--fail-fast`、`--overwrite` |
+| `lyre batch --manifest <path\|->` | P0 | 批处理，输出索引 JSON | `--jobs`、`--out-dir`、`--out-template`、`--keep-going`、`--fail-fast`、`--overwrite` |
 | `lyre schema` | P0 | 输出契约：命令、参数、JSON Schema、退出码、错误码 | `--json`（默认）、`--schema-version` |
 | `lyre version` | P0 | 输出 `toolVersion`、`contractVersion`、构建哈希 | `--json` |
+| `lyre capabilities` | P0 | 输出 agent 工具清单：命令、输入/输出 Schema、副作用、示例、成本 | `--json` |
+| `lyre doctor` | P0 | 环境自检：运行时、沙箱宿主、路径、权限、版本 | `--json` |
+| `lyre calibrate set` | P0 | 写会话或工程校准，不修改输入图像 | `--pixel-size`、`--known-distance`/`--pixels`、`--unit`、`--z-step` |
+| `lyre roi create\|convert` | P0 | 创建或转换 ROI：JSON ↔ `.roi/.zip` | `--type`、`--points`、`--out` |
+| `lyre mcp serve` | P1 | 以 MCP stdio 暴露同一工具集 | `--stdio`、`--read-only` |
+| `lyre plugin list\|call` | P1 | 插件 CLI 扩展：列出/调用插件命令 | `--json`、`--sandbox` |
 
 ```bash
 lyre info sample.tif
@@ -410,7 +421,7 @@ lyre batch --manifest files.json --out-dir out --jobs 4
 
 **测量选项**：`--measurements` 取附录 B.1 的子集，逗号分隔；缺省为 B.1 全集。`--options` 接受与 LAB-001 共用的机器可读配置档，但不得覆盖 §6.4 的小数位、NaN 与列序。`--threads` 缺省 1（确定性路径），实际线程数写入结果与 sidecar。
 
-**批处理（P1）**：`--manifest` 接受 `{"files":[...]}` 或 JSON Lines，每项含 `path`、可选 `roi`、`pixelSize`、`unit`、`zStep`、`measurements`；`--jobs` 缺省 1，并受 `--cache-budget` 约束。默认继续处理剩余项，`--fail-fast` 改为首错停止。`--out-template` 缺省 `{stem}_results.csv`，与 `--out-dir` 组合；同名产物冲突时报错，`--overwrite` 同时作用于 CSV 与 sidecar。批处理无状态，不提供断点续跑；有状态批处理属 AUTO-003（P1）。
+**批处理（P0）**：`--manifest` 接受 `{"files":[...]}` 或 JSON Lines，每项含 `path`、可选 `roi`、`pixelSize`、`unit`、`zStep`、`measurements`；`--jobs` 缺省 1，并受 `--cache-budget` 约束。默认继续处理剩余项，`--fail-fast` 改为首错停止。`--out-template` 缺省 `{stem}_results.csv`，与 `--out-dir` 组合；同名产物冲突时报错，`--overwrite` 同时作用于 CSV 与 sidecar。批处理无状态，不提供断点续跑；有状态批处理属 AUTO-003（P1）。
 
 #### 5.17.2 JSON、错误码与退出码
 
@@ -475,15 +486,29 @@ CLI-only 分发为 NativeAOT 单文件 `lyre`（免安装 tar.gz 或 OCI 镜像�
 
 CLI 与桌面的对照以同一 headless 会话层为准：同一构建、同一 `--threads`、同一选项集下，JSON 指标按 §6.5 B 类 `1e-9` 相对差，CSV 按 §6.7 逐字节，sidecar 只比稳定字段（排除 timestamp，保留 buildHash、inputSha256、threads、options）。VAL-004 增加「非默认校准 + 非默认测量选项」的 CLI ↔ 桌面用例。
 
+#### 5.17.5 Agent 接口
+
+- `lyre capabilities --json` 输出 `lyre.agent/v1` 工具清单，每个工具含 `name`、`summary`、`inputSchema`、`outputSchema`、`sideEffects`（none/write）、`permissions`、`examples`、`cost`、`version`；Schema 文件入库为 `docs/spec/lyre.agent.v1.schema.json`。
+- `--plan` 与 `--dry-run` 解析命令、路径、输出与预计副作用，只输出 JSON，不写文件；agent 先预演再执行。
+- `--events ndjson` 把进度事件写到 stderr，最终结果仍走 stdout；`--timeout`/取消时事件与部分结果都保留。
+- `lyre mcp serve --stdio`（P1）用同一工具清单暴露 MCP 工具与资源，默认只读，写入工具需显式开启，不联网。
+- 插件可用 `lyre plugin` 注册带 Schema 的命令（P1），在沙箱内执行，桌面与 CLI 共用同一注册表。
+- Agent 评测：20 个无文档任务，工具选择正确率 ≥ 95%，错误恢复率 ≥ 90%，全部调用可审计。
+
 | 编号 | 需求与验收要点 | 优先级 |
 | :--- | :--- | :--- |
 | CLI-001 | 纯 CLI 闭环：`info` + `measure`（含校准覆盖）+ `export` 在无显示、无 TTY 环境完成，或用 `run` 一条命令串联；验收：CI 脚本跑通并产出 JSON/CSV/sidecar | P0 |
-| CLI-002 | 子命令与参数契约：`info`、`measure`、`export`、`run`、`schema`、`version`（`batch` 为 P1）；参数、必选/互斥、默认值、输出与退出码冻结；未知参数退出 2 | P0 |
+| CLI-002 | 子命令与参数契约：`info`、`measure`、`export`、`run`、`batch`、`schema`、`version`、`capabilities`、`doctor`、`calibrate`、`roi`；参数、必选/互斥、默认值、输出与退出码冻结；未知参数退出 2 | P0 |
 | CLI-003 | 机器契约：默认 JSON 信封、`lyre.cli/v1`、错误 code 封闭枚举、退出码 0–9、`lyre schema` 输出契约与 Schema 文件；stdout 只含 JSON | P0 |
 | CLI-004 | AI 调用约束：无交互提示；支持 stdin ROI/清单；`--timeout` 与取消产出部分结果与专门退出码；同一输入重复执行一致；不依赖 locale 与 TTY | P0 |
-| CLI-005 | 批处理：manifest（JSON/JSONL）、`--jobs`、`--out-template`、冲突与 `--overwrite`、索引 JSON 按输入序、部分失败退出 8；无状态 | P1 |
+| CLI-005 | 批处理：manifest（JSON/JSONL）、`--jobs`、`--out-template`、冲突与 `--overwrite`、索引 JSON 按输入序、部分失败退出 8；无状态 | P0 |
 | CLI-006 | 与桌面一致：同一构建、同一线程数、同一选项集下，JSON 按 B 类容差、CSV 逐字节、sidecar 稳定字段一致；含非默认校准用例 | P0 |
 | CLI-007 | 安全与路径：默认不联网、输入只读、输出与 sidecar 显式、相对路径需 `--cwd`、覆盖需 `--overwrite`、无隐式配置 | P0 |
+| CLI-008 | Agent 能力发现：`lyre capabilities --json` 输出 `lyre.agent/v1` 工具清单，含输入/输出 Schema、副作用、权限、示例与成本；agent 无需读文档即可选工具 | P0 |
+| CLI-009 | 全能力 CLI：桌面 P0 分析操作（校准、ROI 创建/转换、测量、导出、批处理、工程打开/保存）都有对应命令、Schema 与示例，不允许「只有界面能做」 | P0 |
+| CLI-010 | 计划与流式：`--plan`/`--dry-run` 预演不写文件；`--events ndjson` 输出进度事件；超时/取消保留事件与部分结果，agent 可据此重试 | P0 |
+| CLI-011 | MCP 服务：`lyre mcp serve --stdio` 暴露同一工具与资源，默认只读、写入显式开启、不联网；MCP 版本协商与工具 Schema 一致 | P1 |
+| CLI-012 | 插件 CLI 扩展：插件注册带 Schema 的命令，桌面与 CLI 共用注册表，沙箱执行；`lyre plugin list --json` 可发现 | P1 |
 
 ## 6 兼容性与精度规范
 
@@ -615,6 +640,9 @@ NativeAOT 仅用于主启动器与 CLI，插件宿主与 Python 运行时使用 
 | 批处理失败可诊断率 | 100% | 失败任务均有原因与日志 |
 | CLI 闭环成功率 | 100% | 无显示 CI 环境，info → measure（含校准覆盖）→ export，或 `run` 一条命令；JSON Schema 与退出码校验通过 |
 | CLI 包体与冷启动 | ≤ 100 MB；≤ 1.5 秒 | NativeAOT 单文件，基准机 |
+| Agent 工具发现 | 100% | `lyre capabilities` 通过 `lyre.agent/v1`；20 个无文档任务选对工具 |
+| Agent 任务成功率 | ≥ 95% | 20 个多步任务，含错误重试与部分结果恢复 |
+| CLI 命令 Schema 覆盖 | 100% | 每个 P0 命令都有输入/输出 Schema 与示例，CI 校验 |
 | 团队口径一致性 | 两人独立操作导出差异为 0 | 团队配置档演练 |
 
 ## 10 版本路线图
@@ -622,8 +650,8 @@ NativeAOT 仅用于主启动器与 CLI，插件宿主与 Python 运行时使用 
 | 里程碑 | 范围 | 退出标准 |
 | :--- | :--- | :--- |
 | M1 技术闭环 | IO-001、VIEW-001~005、ROI-001~004、MEAS-001~004、VAL-002 打通 | 内部演示完成端到端测量，黄金数据集 v0.1 入库 |
-| M2 MVP（Alpha） | 全部 P0 需求（含 CLI 闭环与 `lyre run`），三平台可运行 | P0 兼容用例全过，验证报告 v1 发布，性能达标 |
-| M3 Beta | AUTO-001~009、PLUG-001~015、PRJ-001~009、LAB-001~004、VAL-005~007、SYS-006~013、LIC-001/003、CLI-005 全部通过 | 外部用户可安装、批处理与工程恢复可用 |
+| M2 MVP（Alpha） | 全部 P0 需求（含 CLI 闭环、Agent 能力发现与全能力 CLI），三平台可运行 | P0 兼容用例全过，验证报告 v1 发布，性能达标 |
+| M3 Beta | AUTO-001~009、PLUG-001~015、PRJ-001~009、LAB-001~004、VAL-005~007、SYS-006~013、LIC-001/003、CLI-011/012 全部通过 | 外部用户可安装、批处理与工程恢复可用 |
 | M4 GA | 其余 P1 需求与 VAL-004 补齐，安装包、迁移指南与验证报告齐备 | 发布门禁全部通过 |
 
 ```mermaid
@@ -673,6 +701,7 @@ flowchart LR
 - [ ] `.lyre` 格式升级、未知字段保留、图像缺失重定位与降级另存演练通过。
 - [ ] 遥测默认关闭，开启前展示清单且可关闭；L0 路径网络请求为零。
 - [ ] CLI 在无显示、无 TTY 的 CI 完成 info → measure（含非默认校准）→ export，或 `run` 一条命令；JSON Schema、退出码与路径/覆盖规则通过，结果与桌面一致。
+- [ ] `lyre capabilities` 通过 `lyre.agent/v1` 校验；20 个 agent 任务无文档完成率 ≥95%、错误恢复 ≥90%；每个 P0 命令有 Schema 与示例。
 - [ ] 可用性测试：≥8 名有经验用户与 ≥8 名无经验用户达到 §9 指标。
 - [ ] 可访问性检查并入验证报告，ACC-001~005 全部通过。
 - [ ] 文档齐备：用户指南、迁移指南、插件 SDK、验证报告与已知问题清单。
@@ -697,8 +726,8 @@ flowchart LR
 | 许可与商业模式 | 1 | 2 | 0 | 3 |
 | 系统、设置与分发 | 3 | 9 | 2 | 14 |
 | 可访问性 | 3 | 2 | 0 | 5 |
-| CLI 工作模式 | 6 | 1 | 0 | 7 |
-| 合计 | 68 | 63 | 7 | 138 |
+| CLI 工作模式 | 10 | 2 | 0 | 12 |
+| 合计 | 72 | 64 | 7 | 143 |
 
 ## 附录 B 测量基线与 ImageJ 对照
 
