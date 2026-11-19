@@ -10,6 +10,7 @@
 | `startup-requirements.md` | 启动需求与架构基线 1.4 |
 | `M1-acceptance-matrix.xlsx` | 62 条 P0 验收台账，含 M1 范围与说明 |
 | `M1-imagej-fixture.md` | M1a 的 ImageJ 对照环境、fixture 组成与黄金数据集 v0.1 |
+| `M1-interaction-spec.md` | M1a 的窗口骨架、操作流程、键位、状态与交互验收 |
 | `README.md` | 本目录的布局与规则 |
 
 根目录文件是研发排期、实现与验收的共同依据；改动须走评审，不能以过程稿替代。
