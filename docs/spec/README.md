@@ -18,7 +18,7 @@
 
 | 目录 | 承载内容 | 命名约定 |
 | :--- | :--- | :--- |
-| `plans/` | 里程碑计划、任务拆解、执行清单 | `PM-PLAN-YYYYMMDD-<主题>.md`；Issue 清单用 `PM-<阶段>-issues.csv` |
+| `plans/` | 里程碑计划、任务拆解 | `PM-PLAN-YYYYMMDD-<主题>.md`；执行状态回填到 `M1-acceptance-matrix.xlsx`，不另设 Issue 清单 |
 | `reviews/` | 专家评审、设计评审、里程碑评审记录 | `PM-REVIEW-YYYY-MM-DD-<主题>.md` |
 | `status/` | 周报、阶段状态、风险与待拍板 | `PM-STATUS-YYYY-MM-DD.md` |
 
@@ -30,6 +30,7 @@
 2. 过程文档以 `PM-` 开头，后接 `PLAN-`、`REVIEW-`、`STATUS-` 类型标记；`PM-` 表示这份文档由产品经理生成，用来与研发自己的记录区分。
 3. 根目录文件按版本演进；过程文档按日期累积，不追改历史。
 4. 历史的 `docs/adr/`、`docs/design/`、`docs/daily/` 继续保留，但产品经理的新产出不再写入那些目录。
+5. 不使用外部 Issue 或看板：执行状态以 `M1-acceptance-matrix.xlsx` 的状态列为唯一台账，周报用 `PM-STATUS`，避免同一状态维护两遍。
 
 ## 与其它目录的关系
 

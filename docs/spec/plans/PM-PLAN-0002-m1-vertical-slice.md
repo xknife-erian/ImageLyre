@@ -100,6 +100,6 @@ flowchart LR
 
 - M1a 可运行演示与演示脚本；
 - ImageJ fixture 记录与黄金数据集 v0.1 清单；
-- M1 验收用例执行记录（对应 `docs/spec/M1-acceptance-matrix.xlsx`）；
-- Gitee Milestone「M1」与 16 个 Issue（M1a 9、M1b 7）；
+- M1 验收用例执行记录（对应 `docs/spec/M1-acceptance-matrix.xlsx` 的状态列）；
+- M1 任务清单与每周状态（`docs/spec/status/PM-STATUS-*.md`），不依赖外部 Issue 看板；
 - 本计划的进度回填与风险更新。
