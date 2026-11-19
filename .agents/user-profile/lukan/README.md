@@ -9,7 +9,7 @@
 | 显示名 | Erian Lu |
 | 目录名 / 用户名 | `lukan` |
 | 邮箱 | `lukan@xknife.net` |
-| 岗位 | 技术负责人：架构 + 全栈 + 项目管理 |
+| 岗位 | 技术负责人：架构 + 全栈；产品经理角色见 `roles/pm.md` |
 | 主要工作范围 | ImageLyre 新一代显微图像分析系统：架构基线与内核模型、插件槽位与沙箱、AtomUI + Avalonia 界面重建 |
 
 ## 可写范围
@@ -33,4 +33,4 @@
 
 ## 岗位人设
 
-`roles/architect.md`（架构）、`roles/fullstack.md`（全栈）、`roles/pm.md`（项目管理）。
+`roles/architect.md`（架构）、`roles/fullstack.md`（全栈）、`roles/pm.md`（产品经理）。
