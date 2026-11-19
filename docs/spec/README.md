@@ -30,7 +30,7 @@
 2. 过程文档以 `PM-` 开头，后接 `PLAN-`、`REVIEW-`、`STATUS-` 类型标记；`PM-` 表示这份文档由产品经理生成，用来与研发自己的记录区分。
 3. 根目录文件按版本演进；过程文档按日期累积，不追改历史。
 4. 历史的 `docs/adr/`、`docs/design/`、`docs/daily/` 继续保留，但产品经理的新产出不再写入那些目录。
-5. 不使用外部 Issue 或看板：执行状态以 `M1-acceptance-matrix.xlsx` 的状态列为唯一台账，周报用 `PM-STATUS`，避免同一状态维护两遍。
+5. 执行台账以 GitHub Issues（仓库 `xknife-erian/ImageLyre`）与 `M1-acceptance-matrix.xlsx` 为准；Gitee Issue 与 Milestone 停用，避免同一状态维护两遍。
 
 ## 与其它目录的关系
 
