@@ -7,6 +7,7 @@
 | 目录 | 内容 |
 | :--- | :--- |
 | `requirements/` | `product-requirements.md` / `.html`，产品需求文档 3.4，md 为源 |
+| `requirements/` | `core-1.0-boundary.md`，Core 1.0 的 15 个产品结果与 P0 收口边界 |
 | `baseline/` | `startup-requirements.md`，启动需求与架构基线 1.4 |
 | `m1/` | `M1-acceptance-matrix.xlsx`、`M1-imagej-fixture.md`、`M1-interaction-spec.md` |
 | `cli/` | `cli-contract.md` 与 `schemas/lyre.*.schema.json`，CLI 与 Agent 的技术契约 |
