@@ -28,7 +28,7 @@
 
 这三类不按用户名分目录，理由是它们的路径常被代码、脚本、其它文档与外部同事直接引用：规范类文档的路径必须稳定，外部资料的标识属于来源方，两者都不适合随个人目录变动；相应地，它们的正文由多人共同评审后修改，不归个人独占。
 
-本项目的 `spec/` 采用「根目录交付物 + 过程子目录」布局：根目录放 PRD、架构基线、验收矩阵与 HTML 阅读版；`plans/`、`reviews/`、`status/` 放计划、评审与周报，过程文档以 `PM-` 开头，后接 `PLAN-`、`REVIEW-`、`STATUS-` 类型标记。
+本项目的 `spec/` 采用「分类交付物 + 过程子目录」布局：`requirements/` 放 PRD，`baseline/` 放架构基线，`m1/` 放 M1 验收与交互文档，`cli/` 放 CLI 契约与 Schema；`plans/`、`reviews/`、`status/` 放计划、评审与周报，过程文档以 `PM-` 开头，后接 `PLAN-`、`REVIEW-`、`STATUS-` 类型标记。
 
 ## 项目自有目录登记表
 
@@ -163,7 +163,7 @@ flowchart TD
 
 在技能条款之外，本体系另加两条目录内约定：标题层级从 `##` 起且每份文件只保留一个一级标题；设计文档与规范文档在正文首部保留版本表，版本号采用 `MAJOR.MINOR`，其中 `MAJOR` 对应不兼容变更、`MINOR` 对应增量变更。
 
-HTML 报告沿用 `docs/spec/product-requirements.html` 的视觉基线，即现代仪器 / 信号：深色封面、浅色正文、全站无衬线、信号蓝强调；不使用其他项目的仪器面板或复古乐谱样式，样式令牌见 `docs/assets/html-report-theme.css`。
+HTML 报告沿用 `docs/spec/requirements/product-requirements.html` 的视觉基线，即现代仪器 / 信号：深色封面、浅色正文、全站无衬线、信号蓝强调；不使用其他项目的仪器面板或复古乐谱样式，样式令牌见 `docs/assets/html-report-theme.css`。
 
 ## 示例索引
 

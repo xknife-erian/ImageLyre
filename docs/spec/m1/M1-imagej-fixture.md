@@ -113,6 +113,6 @@ M1a 只使用 Area、Mean、StdDev、Min、Max、Perim. 六列；其余列保留
 ## 9 交付物
 
 - `tests/fixtures/imagej-1.54f/` 下的完整 fixture 与 `manifest.json`；
-- `docs/spec/M1-acceptance-matrix.xlsx` 中 M1a 行的状态回填；
+- `docs/spec/m1/M1-acceptance-matrix.xlsx` 中 M1a 行的状态回填；
 - 本文件的执行记录（生成日期、执行人、复核人、哈希）；
 - 若发现 PRD 附录 B.1 与实际 ImageJ 输出冲突，提交勘误并在本文记录裁决。

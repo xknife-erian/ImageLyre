@@ -100,6 +100,6 @@ flowchart LR
 
 - M1a 可运行演示与演示脚本；
 - ImageJ fixture 记录与黄金数据集 v0.1 清单；
-- M1 验收用例执行记录（对应 `docs/spec/M1-acceptance-matrix.xlsx` 的状态列）；
+- M1 验收用例执行记录（对应 `docs/spec/m1/M1-acceptance-matrix.xlsx` 的状态列）；
 - GitHub Issues #2–#17 与索引 #18、Milestone #1 `M1 垂直切片`、九个标签；每周状态见 `docs/spec/status/PM-STATUS-*.md`；
 - 本计划的进度回填与风险更新。

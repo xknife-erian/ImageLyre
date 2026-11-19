@@ -21,7 +21,7 @@
 | 1 | CLI-001 的五步闭环与 CLI-002 的六个子命令对不上，没有校准、ROI、测量选项、线程数参数；`open` 未定义 | blocker | 重写命令表，新增 `info`/`measure`/`export`/`run`/`schema`/`version`；`measure`/`export` 接受 `--pixel-size`、`--known-distance`、`--unit`、`--z-step`、`--roi-json`、`--measurements`、`--options`、`--threads`；删除 `open`；`batch` 明确为 P1 |
 | 2 | ROI JSON 全文未定义，与 `.roi/.zip` 的 ImageJ 互操作冲突 | blocker | 钉死 `--roi` 接受 ImageJ `.roi/.zip`；`lyre.roi/v1` 只读 JSON 定义字段、像素坐标、顶点顺序、Z/T，不含校准 |
 | 3 | 退出码缺 1、超时、取消、内部错误；错误 code 非稳定枚举；`schema` 输出范围未定义 | major | 退出码扩到 0–9；错误 code 固定 11 个命名空间；`lyre schema` 输出命令、参数、Schema、退出码、错误码；`--json` 默认，`--text` 才人类可读 |
-| 4 | 缺 JSON Schema 实体，`--json` 开关语义含糊 | major | 新增 `docs/spec/lyre.cli.v1.schema.json`，含信封、错误、校准、ROI、测量、批处理索引；stdout 只含 JSON；契约只增字段 |
+| 4 | 缺 JSON Schema 实体，`--json` 开关语义含糊 | major | 新增 `docs/spec/cli/schemas/lyre.cli.v1.schema.json`，含信封、错误、校准、ROI、测量、批处理索引；stdout 只含 JSON；契约只增字段 |
 | 5 | stdin/清单/批处理索引格式未冻结，缺输出模板与覆盖语义 | major | manifest 支持 JSON 与 JSONL；`--jobs`、`--out-dir`、`--out-template`、`--overwrite` 明确；索引按输入序；部分失败退出 8；无状态 |
 | 6 | 没有 CLI-only 分发物，CI 要装 GUI 包；AUTO-004 与 CLI 入口重复且依赖 P1 Python | major | 新增 ADR-0006：NativeAOT `lyre` + JIT `lyre-sandbox-host`；CLI 包 ≤100 MB、冷启动 ≤1.5 秒；`lyre` 是唯一无头入口，AUTO-004 复用 `lyre run` |
 | 7 | CLI-006 要求 sidecar 逐值一致，但 sidecar 含时间戳，字面不可测；未定义容差与线程数 | major | 改为：同一构建、同一 `--threads`、同一选项集；JSON 按 §6.5 B 类 `1e-9`，CSV 按 §6.7 字节，sidecar 只比稳定字段 |

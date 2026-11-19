@@ -31,8 +31,8 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 
 先读 `docs/README.md`（分类、命名、流转与退役规则），再按任务取用：
 
-- `docs/spec/product-requirements.md`：产品需求文档，定义用户、功能范围、优先级与验收口径，研发排期以它为准；
-- `docs/spec/startup-requirements.md`：新一代系统的启动需求与架构基线，任何设计、计划与评审先以它为前提；
+- `docs/spec/requirements/product-requirements.md`：产品需求文档，定义用户、功能范围、优先级与验收口径，研发排期以它为准；
+- `docs/spec/baseline/startup-requirements.md`：新一代系统的启动需求与架构基线，任何设计、计划与评审先以它为前提；
 - `docs/spec/plans/`、`docs/spec/reviews/`、`docs/spec/status/`：产品经理的过程文档，文件名以 `PM-` 开头并接 `PLAN-`、`REVIEW-`、`STATUS-` 类型标记；
 - `docs/adr/lukan/`、`docs/design/lukan/`、`docs/plans/lukan/`、`docs/analyses/lukan/`、`docs/daily/lukan/`：按类型与用户名归档；
 - `docs/guide/`、`docs/reference/`：面向使用者与外部资料，平铺存放、不按人分。
