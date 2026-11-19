@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://imagelyre.dev/schema/lyre.cli.v1.json",
+  "title": "lyre.cli/v1",
+  "description": "ImageLyre CLI 的 stdout JSON 信封。命令结果放在 data，错误放在 error；stdout 不得含非 JSON 字节。",
+  "type": "object",
+  "required": ["schema", "toolVersion", "command", "ok", "data", "warnings", "error"],
+  "properties": {
+    "schema": { "const": "lyre.cli/v1" },
+    "toolVersion": { "type": "string", "minLength": 1 },
+    "platform": { "type": "string" },
+    "command": { "enum": ["info", "measure", "export", "run", "batch", "schema", "version"] },
+    "ok": { "type": "boolean" },
+    "data": { "type": ["object", "null"] },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "error": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/error" }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "ok": { "const": true } } },
+      "then": { "properties": { "error": { "type": "null" } } }
+    },
+    {
+      "if": { "properties": { "ok": { "const": false } } },
+      "then": { "properties": { "error": { "$ref": "#/$defs/error" } } }
+    }
+  ],
+  "$defs": {
+    "error": {
+      "type": "object",
+      "required": ["code", "message", "hint", "retryable"],
+      "properties": {
+        "code": {
+          "enum": [
+            "usage.invalid",
+            "input.not_found",
+            "input.decode.corrupt",
+            "input.calibration.missing",
+            "analysis.timeout",
+            "analysis.cancelled",
+            "output.exists",
+            "output.write_failed",
+            "resource.exhausted",
+            "sandbox.unavailable",
+            "internal.unexpected"
+          ]
+        },
+        "message": { "type": "string" },
+        "hint": { "type": "string" },
+        "input": { "type": ["string", "null"] },
+        "details": { "type": ["object", "null"] },
+        "retryable": { "type": "boolean" },
+        "retryCommand": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "calibration": {
+      "type": "object",
+      "required": ["source", "pixelSize", "unit", "zStep"],
+      "properties": {
+        "source": { "enum": ["file", "override", "none"] },
+        "pixelSize": { "type": ["number", "null"], "exclusiveMinimum": 0 },
+        "unit": { "type": "string" },
+        "zStep": { "type": ["number", "null"], "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "roi": {
+      "type": "object",
+      "required": ["schema", "type", "points"],
+      "properties": {
+        "schema": { "const": "lyre.roi/v1" },
+        "type": { "enum": ["rectangle", "polygon", "point", "line"] },
+        "points": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              { "type": "number" },
+              { "type": "number" }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "z": { "type": ["integer", "null"], "minimum": 0 },
+        "t": { "type": ["integer", "null"], "minimum": 0 },
+        "name": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "measurement": {
+      "type": "object",
+      "required": ["roi", "metrics"],
+      "properties": {
+        "roi": { "type": "string" },
+        "slice": { "type": ["object", "null"] },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "batchIndex": {
+      "type": "object",
+      "required": ["schema", "items"],
+      "properties": {
+        "schema": { "const": "lyre.batch/v1" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["index", "status", "exitCode", "errorCode", "retryCommand"],
+            "properties": {
+              "index": { "type": "integer", "minimum": 0 },
+              "input": { "type": "string" },
+              "output": { "type": ["string", "null"] },
+              "status": { "enum": ["ok", "failed", "skipped"] },
+              "exitCode": { "type": "integer", "minimum": 0 },
+              "errorCode": { "type": ["string", "null"] },
+              "retryCommand": { "type": ["string", "null"] },
+              "durationMs": { "type": "integer", "minimum": 0 }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

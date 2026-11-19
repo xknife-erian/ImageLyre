@@ -11,6 +11,7 @@
 | 2.2 | 2026-11-18 | 定稿 | lukan | 终审修订：进程拓扑与 ADR-0004 对齐（颗粒分析、栈投影入沙箱），VAL-004 收窄为三类工作流并移至 M4，基线 §6.2 明确标准解码在主进程 |
 | 2.3 | 2026-11-18 | 定稿 | lukan | 签核修订：PLUG-003 升 P0 并纳入权限与拓扑验收；CSV 只含基线列并删除诊断扩展；组合预算改按字节；离线全量包补体积门禁；容差补 D/E/F 类 |
 | 2.4 | 2026-11-19 | 评审稿 | lukan | 新增 CLI 工作模式：纯命令行闭环、版本化 JSON、退出码与 AI 调用约束；CLI 五项 P0、两项 P1，待评审 |
+| 2.5 | 2026-11-19 | 定稿 | lukan | 增量评审收口：补 CLI 命令/参数表、JSON Schema、退出码与错误码、校准/ROI/选项输入、批处理与 CLI-only 分发；AUTO-004 复用 `lyre`，CLI-007 升 P0 |
 | 渲染版 | [HTML](product-requirements.html) | — | — | — |
 
 ## 0 摘要
@@ -270,7 +271,7 @@ flowchart LR
 | AUTO-001 | 内置 CPython 3.12.x（补丁号随安装包锁定）与 numpy，随安装包分发，断网可用；scipy、scikit-image、pandas 以离线可选包提供，安装包总量 ≤ 2.0 GB | P1 |
 | AUTO-002 | 脚本 API 覆盖打开、ROI、测量、阈值、导出、批处理 | P1 |
 | AUTO-003 | 批量队列：进度、取消、失败跳过与继续；状态文件原子写、检查点粒度、重启后续跑与输出幂等；结束输出失败清单 CSV（文件、步骤、错误码、日志偏移） | P1 |
-| AUTO-004 | 无头命令行执行脚本或流水线，三平台 CI 可跑通基准任务，MEAS-010 以它做跨平台验证 | P0 |
+| AUTO-004 | 无头执行 `lyre run` 流水线，复用同一 CLI 与 JSON/退出码契约，不依赖 Python；Python 脚本执行由 AUTO-001/002 提供，三平台 CI 可跑通基准任务 | P0 |
 | AUTO-005 | 脚本错误提示与 traceback 可读，常见错误有中文说明 | P1 |
 | AUTO-006 | Jupyter 或外部 Python 互操作 | P2 |
 | AUTO-007 | 录制：把一次交互操作（校准、ROI、测量、导出）生成可复用脚本，对同一批图像无头运行结果与交互逐值一致 | P1 |
@@ -379,24 +380,110 @@ flowchart LR
 
 ### 5.17 CLI 工作模式
 
-CLI 是独立入口，不依赖 AtomUI、Avalonia 或任何窗口系统，只引用 Kernel、Imaging、Codecs、Plugins 与 Sandbox；它与桌面共享同一测量内核，因此同一输入的结果必须逐值一致。AI 与外部流水线通过 stdout 的 JSON 与退出码判断结果，不解析自然语言，也不驱动界面。项目落点建议 `src/Apps/ImageLyre.Cli`，该约束在 M2 设计文档中冻结。本节为 2.4 新增，待评审后转定稿。
+CLI 是独立入口，不依赖 AtomUI、Avalonia、SkiaSharp 或 `ImageLyre.UI`，只引用 Kernel、Imaging、Codecs、Plugins 与 Sandbox；它与桌面共享同一 headless 会话层，由该层统一完成校准、ROI、测量、CSV 与 sidecar 编排，因此同一输入、同一构建、同一线程数下的结果必须逐值一致。AI 与外部流水线只消费 stdout 的 JSON 与退出码，不解析自然语言。项目落点为 `src/Apps/ImageLyre.Cli`，CLI-only 产物与 `lyre-sandbox-host` 的拓扑见 ADR-0006；`lyre` 是唯一无头入口，AUTO-004 的流水线执行复用该入口，Python 脚本执行仍属 AUTO-001/002。本节经 2026-11-19 三位专家增量评审，记录见 `docs/spec/reviews/PM-REVIEW-2026-11-19-cli-incremental.md`。
+
+#### 5.17.1 命令与参数
+
+CLI 默认输出 JSON；`--text` 才输出人类可读文本。未给 `--cwd` 时，所有路径参数必须为绝对路径。
+
+| 命令 | 优先级 | 用途 | 关键参数 |
+| :--- | :--- | :--- | :--- |
+| `lyre info <image>` | P0 | 只读：位深、尺寸、通道、校准、输入 SHA-256；不改文件 | `--json`/`--text` |
+| `lyre measure <image> --roi <path>` | P0 | 单图测量，JSON 到 stdout | `--pixel-size`、`--known-distance`/`--pixels`、`--unit`、`--z-step`、`--roi-json`、`--roi-stdin`、`--measurements`、`--options`、`--threads`、`--out` |
+| `lyre export <image> --roi <path> --csv <path>` | P0 | 测量并写 CSV 与 sidecar | 同上，加 `--sidecar`、`--overwrite` |
+| `lyre run <pipeline.json>` | P0 | 按顺序执行 info/measure/export，供 CI 与 AI 一条命令调用 | `--json`、`--timeout`、`--cwd` |
+| `lyre batch --manifest <path\|->` | P1 | 批处理，输出索引 JSON | `--jobs`、`--out-dir`、`--out-template`、`--keep-going`、`--fail-fast`、`--overwrite` |
+| `lyre schema` | P0 | 输出契约：命令、参数、JSON Schema、退出码、错误码 | `--json`（默认）、`--schema-version` |
+| `lyre version` | P0 | 输出 `toolVersion`、`contractVersion`、构建哈希 | `--json` |
 
 ```bash
-lyre info sample.tif --json
-lyre measure sample.tif --roi roi.json --json
-lyre export sample.tif --roi roi.json --csv out.csv --json
-lyre schema --json
+lyre info sample.tif
+lyre measure sample.tif --roi cells.zip --pixel-size 0.1 --unit um --threads 1
+lyre export sample.tif --roi cells.zip --csv out.csv --sidecar auto
+lyre run pipeline.json
+lyre batch --manifest files.json --out-dir out --jobs 4
 ```
+
+**校准**：`info` 读取文件内校准；`measure`/`export` 优先使用文件校准，`--pixel-size` 与 `--unit` 只在本次会话覆盖，绝不写回输入文件；`--known-distance` 加 `--pixels` 是 `--pixel-size` 的另一种写法。文件无校准且无覆盖时返回退出码 3 与 `input.calibration.missing`，不补默认值；只有显式 `--unit px` 才允许像素单位。`--z-step` 用于 Z 栈，缺省按文件元数据。
+
+**ROI**：`--roi` 接受 ImageJ `.roi`/`.zip`；`--roi-json` 接受 `lyre.roi/v1`，字段为 `schema`、`type`（rectangle/polygon/point/line）、`points`（像素坐标，多边形按顶点顺序）、`z`、`t`、`name`；`--roi-stdin` 从 stdin 读同一 JSON。坐标基准固定为像素，校准由图像或命令行覆盖决定，JSON 内不重复携带校准。
+
+**测量选项**：`--measurements` 取附录 B.1 的子集，逗号分隔；缺省为 B.1 全集。`--options` 接受与 LAB-001 共用的机器可读配置档，但不得覆盖 §6.4 的小数位、NaN 与列序。`--threads` 缺省 1（确定性路径），实际线程数写入结果与 sidecar。
+
+**批处理（P1）**：`--manifest` 接受 `{"files":[...]}` 或 JSON Lines，每项含 `path`、可选 `roi`、`pixelSize`、`unit`、`zStep`、`measurements`；`--jobs` 缺省 1，并受 `--cache-budget` 约束。默认继续处理剩余项，`--fail-fast` 改为首错停止。`--out-template` 缺省 `{stem}_results.csv`，与 `--out-dir` 组合；同名产物冲突时报错，`--overwrite` 同时作用于 CSV 与 sidecar。批处理无状态，不提供断点续跑；有状态批处理属 AUTO-003（P1）。
+
+#### 5.17.2 JSON、错误码与退出码
+
+stdout 只输出 JSON（UTF-8 无 BOM、LF），日志一律走 stderr；`--json` 模式下 stdout 不含任何非 JSON 字节。`lyre schema` 的 JSON 是唯一契约真源，Schema 文件入库为 `docs/spec/lyre.cli.v1.schema.json`。
+
+```json
+{
+  "schema": "lyre.cli/v1",
+  "toolVersion": "0.1.0+abc123",
+  "command": "measure",
+  "ok": true,
+  "data": {
+    "input": { "path": "/data/sample.tif", "sha256": "…" },
+    "calibration": { "source": "override", "pixelSize": 0.1, "unit": "um", "zStep": null },
+    "options": { "measurements": ["Area", "Mean", "StdDev", "Min", "Max", "Perim."], "threads": 1 },
+    "results": [ { "roi": "cells.zip#0", "metrics": { "Area": 5000, "Mean": 128.4 } } ],
+    "outputs": []
+  },
+  "warnings": [],
+  "error": null
+}
+```
+
+错误对象固定为 `{code, message, hint, input, details, retryable, retryCommand}`；`code` 是跨版本封闭枚举，与 locale 无关，`message` 的语言由 `--lang` 决定：
+
+| code | 含义 |
+| :--- | :--- |
+| `usage.invalid` | 参数组合非法或未知参数 |
+| `input.not_found` | 输入或 ROI 不存在 |
+| `input.decode.corrupt` | 图像解码失败或损坏 |
+| `input.calibration.missing` | 无校准且未提供覆盖 |
+| `analysis.timeout` | 超过 `--timeout` |
+| `analysis.cancelled` | 收到取消 |
+| `output.exists` | 目标存在且未 `--overwrite` |
+| `output.write_failed` | 写 CSV/sidecar 失败 |
+| `resource.exhausted` | 内存或并发预算不足 |
+| `sandbox.unavailable` | 沙箱宿主缺失或版本不匹配 |
+| `internal.unexpected` | 未分类内部错误 |
+
+| 退出码 | 含义 |
+| :--- | :--- |
+| 0 | 成功 |
+| 1 | 内部错误（含未捕获异常与 OOM） |
+| 2 | 用法错误 |
+| 3 | 输入错误（不存在、损坏、缺校准） |
+| 4 | 分析错误（测量失败） |
+| 5 | 输出错误（存在、写入失败） |
+| 6 | 超时（JSON 含部分结果） |
+| 7 | 取消（JSON 含部分结果） |
+| 8 | 批处理部分失败（索引 JSON 逐项给 code） |
+| 9 | 资源不足 |
+
+`lyre schema` 输出 `contractVersion`、`toolVersion`、`commands`、`params`、`exitCodes`、`errorCodes`、`schemas`（信封、ROI、manifest、索引）；契约只增字段，客户端必须忽略未知字段，主版本不兼容时 CLI 拒绝运行，`--schema-version` 用于客户端声明期望版本。
+
+#### 5.17.3 安全、路径与资源
+
+默认不联网；输入只用只读句柄；输出路径必须显式，CSV 与 sidecar 共用同一覆盖判定；无 `--cwd` 时相对路径一律拒绝。默认不读取用户主目录下的隐式配置，`--profile` 显式配置文件属 P1。`--jobs` 的实际上限为 `min(核数, 缓存预算 / 单任务峰值)`，超预算返回 9 并保留已完成项。
+
+#### 5.17.4 分发与一致性
+
+CLI-only 分发为 NativeAOT 单文件 `lyre`（免安装 tar.gz 或 OCI 镜像），不含 AtomUI、示例数据与 Python，包体 ≤ 100 MB、冷启动 ≤ 1.5 秒；厂商格式与插件经 `lyre-sandbox-host`（JIT）执行，宿主缺失时标准格式仍可用，厂商格式报 `sandbox.unavailable`。SYS-007/SYS-011 增加 CLI 产物行，CI 断言 CLI 输出目录不含 `Avalonia*`、`AtomUI*`、`SkiaSharp*` 与 `ImageLyre.UI`。
+
+CLI 与桌面的对照以同一 headless 会话层为准：同一构建、同一 `--threads`、同一选项集下，JSON 指标按 §6.5 B 类 `1e-9` 相对差，CSV 按 §6.7 逐字节，sidecar 只比稳定字段（排除 timestamp，保留 buildHash、inputSha256、threads、options）。VAL-004 增加「非默认校准 + 非默认测量选项」的 CLI ↔ 桌面用例。
 
 | 编号 | 需求与验收要点 | 优先级 |
 | :--- | :--- | :--- |
-| CLI-001 | 纯 CLI 闭环：在无显示、无 TTY 的环境完成打开 → 设置比例尺 → ROI → 测量 → 导出 CSV/JSON；验收：CI 容器内一条命令跑通 | P0 |
-| CLI-002 | 子命令与参数契约：`open`、`info`、`measure`、`export`、`batch`、`schema`；未知参数退出码 2；契约版本化 | P0 |
-| CLI-003 | 机器可读输出：`--json` 固定 `schema: "lyre.cli/v1"`；stdout 只输出 JSON，日志走 stderr；错误对象含 code、message、hint；退出码 0/2/3/4/5 分别表示成功、用法、输入、分析、输出错误 | P0 |
-| CLI-004 | AI 调用约束：全程无交互提示；支持 stdin 传入清单或 ROI；支持 `--timeout` 与取消；同一输入重复执行结果一致；不依赖 locale、TTY 或当前工作目录 | P0 |
-| CLI-005 | 批处理与并发：接受文件清单，支持并发度、失败继续与结果索引 JSON；失败项给出可重试的命令 | P1 |
-| CLI-006 | 与桌面一致：同一图像、同一 ROI、同一选项下，CLI 与桌面的测量值、CSV 列和 sidecar 逐值一致 | P0 |
-| CLI-007 | 安全与权限：默认不联网；输入只读；输出路径必须显式；覆盖已有文件需 `--overwrite`；不读取用户主目录以外的隐式配置 | P1 |
+| CLI-001 | 纯 CLI 闭环：`info` + `measure`（含校准覆盖）+ `export` 在无显示、无 TTY 环境完成，或用 `run` 一条命令串联；验收：CI 脚本跑通并产出 JSON/CSV/sidecar | P0 |
+| CLI-002 | 子命令与参数契约：`info`、`measure`、`export`、`run`、`schema`、`version`（`batch` 为 P1）；参数、必选/互斥、默认值、输出与退出码冻结；未知参数退出 2 | P0 |
+| CLI-003 | 机器契约：默认 JSON 信封、`lyre.cli/v1`、错误 code 封闭枚举、退出码 0–9、`lyre schema` 输出契约与 Schema 文件；stdout 只含 JSON | P0 |
+| CLI-004 | AI 调用约束：无交互提示；支持 stdin ROI/清单；`--timeout` 与取消产出部分结果与专门退出码；同一输入重复执行一致；不依赖 locale 与 TTY | P0 |
+| CLI-005 | 批处理：manifest（JSON/JSONL）、`--jobs`、`--out-template`、冲突与 `--overwrite`、索引 JSON 按输入序、部分失败退出 8；无状态 | P1 |
+| CLI-006 | 与桌面一致：同一构建、同一线程数、同一选项集下，JSON 按 B 类容差、CSV 逐字节、sidecar 稳定字段一致；含非默认校准用例 | P0 |
+| CLI-007 | 安全与路径：默认不联网、输入只读、输出与 sidecar 显式、相对路径需 `--cwd`、覆盖需 `--overwrite`、无隐式配置 | P0 |
 
 ## 6 兼容性与精度规范
 
@@ -526,7 +613,8 @@ NativeAOT 仅用于主启动器与 CLI，插件宿主与 Python 运行时使用 
 | 性能回归 | 不超过同平台基线 10% | 每轮基准脚本 |
 | 插件安装成功率 | ≥ 95% | 官方示例包，含离线安装 |
 | 批处理失败可诊断率 | 100% | 失败任务均有原因与日志 |
-| CLI 闭环成功率 | 100% | 无显示 CI 环境，open → ROI → measure → export；JSON schema 与退出码校验通过 |
+| CLI 闭环成功率 | 100% | 无显示 CI 环境，info → measure（含校准覆盖）→ export，或 `run` 一条命令；JSON Schema 与退出码校验通过 |
+| CLI 包体与冷启动 | ≤ 100 MB；≤ 1.5 秒 | NativeAOT 单文件，基准机 |
 | 团队口径一致性 | 两人独立操作导出差异为 0 | 团队配置档演练 |
 
 ## 10 版本路线图
@@ -534,8 +622,8 @@ NativeAOT 仅用于主启动器与 CLI，插件宿主与 Python 运行时使用 
 | 里程碑 | 范围 | 退出标准 |
 | :--- | :--- | :--- |
 | M1 技术闭环 | IO-001、VIEW-001~005、ROI-001~004、MEAS-001~004、VAL-002 打通 | 内部演示完成端到端测量，黄金数据集 v0.1 入库 |
-| M2 MVP（Alpha） | 全部 P0 需求（含 CLI 闭环），三平台可运行 | P0 兼容用例全过，验证报告 v1 发布，性能达标 |
-| M3 Beta | AUTO-001~009、PLUG-001~015、PRJ-001~009、LAB-001~004、VAL-005~007、SYS-006~013、LIC-001/003、CLI-005/007 全部通过 | 外部用户可安装、批处理与工程恢复可用 |
+| M2 MVP（Alpha） | 全部 P0 需求（含 CLI 闭环与 `lyre run`），三平台可运行 | P0 兼容用例全过，验证报告 v1 发布，性能达标 |
+| M3 Beta | AUTO-001~009、PLUG-001~015、PRJ-001~009、LAB-001~004、VAL-005~007、SYS-006~013、LIC-001/003、CLI-005 全部通过 | 外部用户可安装、批处理与工程恢复可用 |
 | M4 GA | 其余 P1 需求与 VAL-004 补齐，安装包、迁移指南与验证报告齐备 | 发布门禁全部通过 |
 
 ```mermaid
@@ -584,7 +672,7 @@ flowchart LR
 - [ ] 插件市场签名、下架、指定版本安装与企业插件离线授权演练通过。
 - [ ] `.lyre` 格式升级、未知字段保留、图像缺失重定位与降级另存演练通过。
 - [ ] 遥测默认关闭，开启前展示清单且可关闭；L0 路径网络请求为零。
-- [ ] CLI 在无显示、无 TTY 的 CI 完成 open → ROI → measure → export，JSON schema 与退出码通过契约，结果与桌面一致。
+- [ ] CLI 在无显示、无 TTY 的 CI 完成 info → measure（含非默认校准）→ export，或 `run` 一条命令；JSON Schema、退出码与路径/覆盖规则通过，结果与桌面一致。
 - [ ] 可用性测试：≥8 名有经验用户与 ≥8 名无经验用户达到 §9 指标。
 - [ ] 可访问性检查并入验证报告，ACC-001~005 全部通过。
 - [ ] 文档齐备：用户指南、迁移指南、插件 SDK、验证报告与已知问题清单。
@@ -609,8 +697,8 @@ flowchart LR
 | 许可与商业模式 | 1 | 2 | 0 | 3 |
 | 系统、设置与分发 | 3 | 9 | 2 | 14 |
 | 可访问性 | 3 | 2 | 0 | 5 |
-| CLI 工作模式 | 5 | 2 | 0 | 7 |
-| 合计 | 67 | 64 | 7 | 138 |
+| CLI 工作模式 | 6 | 1 | 0 | 7 |
+| 合计 | 68 | 63 | 7 | 138 |
 
 ## 附录 B 测量基线与 ImageJ 对照
 
