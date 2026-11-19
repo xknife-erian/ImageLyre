@@ -6,7 +6,7 @@
 
 | 目录 | 内容 |
 | :--- | :--- |
-| `requirements/` | `product-requirements.md` / `.html`，产品需求文档 3.1，md 为源 |
+| `requirements/` | `product-requirements.md` / `.html`，产品需求文档 3.2，md 为源 |
 | `baseline/` | `startup-requirements.md`，启动需求与架构基线 1.4 |
 | `m1/` | `M1-acceptance-matrix.xlsx`、`M1-imagej-fixture.md`、`M1-interaction-spec.md` |
 | `cli/` | `cli-contract.md` 与 `schemas/lyre.*.schema.json`，CLI 与 Agent 的技术契约 |
