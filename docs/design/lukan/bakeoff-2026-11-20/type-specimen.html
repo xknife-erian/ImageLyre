@@ -44,6 +44,7 @@
   .t1{color:var(--ink)}
   .t2{color:var(--t2)}
   .t3{color:var(--t3)}
+  .zh{letter-spacing:0;text-transform:none;font-weight:500}
   .sig{color:var(--sig)}
 
   /* page head */
@@ -108,13 +109,14 @@
   .menuline{display:flex;gap:14px;font-size:var(--fs12);line-height:var(--lh12);color:var(--ink);padding-bottom:12px;border-bottom:1px solid var(--hair)}
   .panelbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 0 8px;border-bottom:1px solid var(--hair)}
   .ptitle{font-size:var(--fs16);line-height:var(--lh16);font-weight:500;color:var(--ink)}
-  .ptitle .en{font-size:var(--fs10);line-height:var(--lh10);font-weight:600;color:var(--t3);margin-left:6px}
+  .ptitle .en{font-size:var(--fs11);line-height:var(--lh11);font-weight:600;color:var(--t3);margin-left:6px}
   .panelbar .state{font-size:var(--fs11);line-height:var(--lh11);color:var(--t3)}
 
   .seg{padding:9px 0;border-bottom:1px solid var(--hair)}
   .seg:last-child{border-bottom:none}
   .seghead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:6px}
-  .segtitle{font-size:var(--fs11);line-height:var(--lh11);font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--t2)}
+  .segtitle{font-size:var(--fs11);line-height:var(--lh11);font-weight:500;letter-spacing:0;text-transform:none;color:var(--t2)}
+  .segtitle .en{font-weight:600;letter-spacing:.10em;text-transform:uppercase}
   .segtitle .zh{font-weight:500;letter-spacing:0;text-transform:none}
   .segmeta{font-size:var(--fs10);line-height:var(--lh10);color:var(--t3)}
 
@@ -153,6 +155,7 @@
   }
   .status .k{font-size:var(--fs10);line-height:var(--lh10);color:var(--t3);margin-right:3px}
   .status .v{font-family:var(--mono);font-size:var(--fs11);line-height:var(--lh11);color:var(--t2)}
+  .status .role{font-size:var(--fs10);line-height:var(--lh10);color:var(--t3);letter-spacing:0;text-transform:none;margin-right:4px}
 
   .extras{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
   .tip{border:1px solid var(--hair);background:var(--chip);padding:8px 10px;font-size:var(--fs11);line-height:var(--lh11);color:var(--ink)}
@@ -210,13 +213,13 @@
   <header class="head">
     <div>
       <div class="kicker">Typography baseline / 21—22</div>
-      <div class="h1"><span class="w600">ImageLyre</span> <span class="w500">排印基线</span></div>
+      <div class="h1"><span class="w600">ImageLyre</span> <span class="w500 zh">排印基线</span></div>
       <div class="sub">同一套字，亮暗两件衣服；八档、4px 基线、10px 下限。</div>
     </div>
     <div class="headmeta">
       <div class="strong">Type specimen / 2026-11-20</div>
       <div class="row">21 LIGHT · 22 DARK</div>
-      <div class="row">System fonts only · no download</div>
+      <div class="row">UI Segoe UI / SF / PingFang · Mono Cascadia / Consolas</div>
     </div>
   </header>
 
@@ -236,43 +239,43 @@
         </div>
         <div class="scale">
           <div class="srow">
-            <span class="ssize">24</span>
+            <span class="ssize">24/32</span>
             <span class="ssample mono s24">S-094</span>
             <span class="srole">身份主键<span class="en">Identity key</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">20</span>
+            <span class="ssize">20/28</span>
             <span class="ssample mono s20">1240.5<span class="unit14">µm²</span></span>
             <span class="srole">读数 L<span class="en">Primary read</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">18</span>
+            <span class="ssize">18/24</span>
             <span class="ssample s18"><span class="w600">ImageLyre</span> <span class="t2 w400">— sample.tif</span></span>
             <span class="srole">窗口标题<span class="en">Window title</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">16</span>
-            <span class="ssample s16"><span class="w500">标本档案</span> <span class="s10 t3 en w600">Specimen record</span></span>
+            <span class="ssize">16/24</span>
+            <span class="ssample s16"><span class="w500">标本档案</span> <span class="s11 t3 en w600">Specimen record</span></span>
             <span class="srole">面板标题<span class="en">Panel title</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">14</span>
-            <span class="ssample mono s14">1240.5　182.4　21.7</span>
+            <span class="ssize">14/20</span>
+            <span class="ssample mono s14">1240.5 182.4 21.7</span>
             <span class="srole">读数 M<span class="en">Results</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">12</span>
-            <span class="ssample s12">拖动顶点以修改 ROI，结果即时重算。</span>
+            <span class="ssize">12/20</span>
+            <span class="ssample s12">拖动顶点以修改 ROI，结果即时重算。<br>中文行高按 20px 给，英文不贴顶。</span>
             <span class="srole">正文<span class="en">Body</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">11</span>
+            <span class="ssize">11/16</span>
             <span class="ssample s11"><span class="w500">身份</span> / <span class="en w600">Identity</span></span>
-            <span class="srole">段标题<span class="en">Kicker</span></span>
+            <span class="srole">读数 S · 段标题<span class="en">Reading S / kicker</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">10</span>
-            <span class="ssample s10 t3">µm² · µm · µm/px · Ctrl K</span>
+            <span class="ssize">10/16</span>
+            <span class="ssample s10 t3">µm² · µm · µm/px · <span class="mono">Ctrl K</span></span>
             <span class="srole">单位 / 键位<span class="en">Unit / key</span></span>
           </div>
         </div>
@@ -286,7 +289,7 @@
 
         <div class="rolewin">
           <span class="s18 w600">ImageLyre</span><span class="s18 w400 t2">— sample.tif</span>
-          <span class="s11 t3">已保存 <span class="mono">10:42</span></span>
+          <span class="s11 t3">已保存 <span class="mono t2">10:42</span></span>
         </div>
         <div class="menuline">
           <span>File</span><span>Edit</span><span>Image</span><span>Analyze</span><span>Plugins</span><span>Help</span>
@@ -313,7 +316,7 @@
             <div class="field"><span class="k">染色</span><span class="v">H&amp;E · 苏木精-伊红</span></div>
             <div class="field"><span class="k">采集</span><span class="v mono">2026-11-18 09:34</span></div>
             <div class="field"><span class="k">文件</span><span class="v">sample.tif</span></div>
-            <div class="field"><span class="k">位深 / 校准</span><span class="v mono">16-bit · 0.5 µm/px</span></div>
+            <div class="field"><span class="k">位深 / 校准</span><span class="v mono">16-bit · 0.5&nbsp;µm/px</span></div>
           </div>
         </div>
 
@@ -361,18 +364,18 @@
           </div>
         </div>
 
-        <div class="status">
+        <div class="status"><span class="role">状态栏</span>
           <span><span class="k">X</span><span class="v">512</span></span>
           <span><span class="k">Y</span><span class="v">384</span></span>
           <span><span class="k">Pixel</span><span class="v">182</span></span>
           <span><span class="k">Zoom</span><span class="v">200%</span></span>
-          <span><span class="k">Scale</span><span class="v">0.5 µm/px</span></span>
+          <span><span class="k">Scale</span><span class="v">0.5<span class="unit10">µm/px</span></span></span>
         </div>
 
         <div class="extras">
           <div class="tip"><span class="k">Tooltip</span>拖动顶点以修改 ROI</div>
           <div class="palette">
-            <div class="palhead"><span class="t">命令</span><span class="k">Ctrl K</span></div>
+            <div class="palhead"><span class="t">命令面板</span><span class="k">Ctrl K</span></div>
             <div class="palitem"><span>导出 CSV</span><span class="k">Ctrl E</span></div>
             <div class="palitem"><span>回到 100%</span><span class="k">Ctrl 0</span></div>
           </div>
@@ -411,7 +414,7 @@
           </div>
         </div>
         <div class="mnote">小数位固定：Area 1 · Mean 1 · StdDev 1 · Min 0 · Max 0 · Perimeter 1</div>
-        <div class="numdemo"><span class="k">GROUPING</span><span class="v">12 480.5 <span class="unit11">µm²</span></span></div>
+        <div class="numdemo"><span class="k">GROUPING</span><span class="v">12&#8239;480.5&nbsp;<span class="unit11">µm²</span></span></div>
         <div class="numdemo"><span class="k">CSV</span><span class="csv">1240.5,182.4,21.7,96,233,148.2</span></div>
       </div>
 
@@ -423,7 +426,7 @@
         <div class="mix">
           <div class="mixrow"><span class="k">中 ↔ 英</span><span class="v">测量 / <span class="en">Results</span></span></div>
           <div class="mixrow"><span class="k">数 ↔ 量词</span><span class="v">6 个 ROI，3 张切片</span></div>
-          <div class="mixrow"><span class="k">数 ↔ 单位</span><span class="v">1240.5 µm² · 0.5 µm/px</span></div>
+          <div class="mixrow"><span class="k">数 ↔ 单位</span><span class="v">1240.5&nbsp;µm² · 0.5&nbsp;µm/px</span></div>
           <div class="mixrow"><span class="k">句内中英</span><span class="v">导出的 CSV 与界面小数位一致。</span></div>
         </div>
       </div>
@@ -458,43 +461,43 @@
         </div>
         <div class="scale">
           <div class="srow">
-            <span class="ssize">24</span>
+            <span class="ssize">24/32</span>
             <span class="ssample mono s24">S-094</span>
             <span class="srole">身份主键<span class="en">Identity key</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">20</span>
+            <span class="ssize">20/28</span>
             <span class="ssample mono s20">1240.5<span class="unit14">µm²</span></span>
             <span class="srole">读数 L<span class="en">Primary read</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">18</span>
+            <span class="ssize">18/24</span>
             <span class="ssample s18"><span class="w600">ImageLyre</span> <span class="t2 w400">— sample.tif</span></span>
             <span class="srole">窗口标题<span class="en">Window title</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">16</span>
-            <span class="ssample s16"><span class="w500">标本档案</span> <span class="s10 t3 en w600">Specimen record</span></span>
+            <span class="ssize">16/24</span>
+            <span class="ssample s16"><span class="w500">标本档案</span> <span class="s11 t3 en w600">Specimen record</span></span>
             <span class="srole">面板标题<span class="en">Panel title</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">14</span>
-            <span class="ssample mono s14">1240.5　182.4　21.7</span>
+            <span class="ssize">14/20</span>
+            <span class="ssample mono s14">1240.5 182.4 21.7</span>
             <span class="srole">读数 M<span class="en">Results</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">12</span>
-            <span class="ssample s12">拖动顶点以修改 ROI，结果即时重算。</span>
+            <span class="ssize">12/20</span>
+            <span class="ssample s12">拖动顶点以修改 ROI，结果即时重算。<br>中文行高按 20px 给，英文不贴顶。</span>
             <span class="srole">正文<span class="en">Body</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">11</span>
+            <span class="ssize">11/16</span>
             <span class="ssample s11"><span class="w500">身份</span> / <span class="en w600">Identity</span></span>
-            <span class="srole">段标题<span class="en">Kicker</span></span>
+            <span class="srole">读数 S · 段标题<span class="en">Reading S / kicker</span></span>
           </div>
           <div class="srow">
-            <span class="ssize">10</span>
-            <span class="ssample s10 t3">µm² · µm · µm/px · Ctrl K</span>
+            <span class="ssize">10/16</span>
+            <span class="ssample s10 t3">µm² · µm · µm/px · <span class="mono">Ctrl K</span></span>
             <span class="srole">单位 / 键位<span class="en">Unit / key</span></span>
           </div>
         </div>
@@ -508,7 +511,7 @@
 
         <div class="rolewin">
           <span class="s18 w600">ImageLyre</span><span class="s18 w400 t2">— sample.tif</span>
-          <span class="s11 t3">已保存 <span class="mono">10:42</span></span>
+          <span class="s11 t3">已保存 <span class="mono t2">10:42</span></span>
         </div>
         <div class="menuline">
           <span>File</span><span>Edit</span><span>Image</span><span>Analyze</span><span>Plugins</span><span>Help</span>
@@ -535,7 +538,7 @@
             <div class="field"><span class="k">染色</span><span class="v">H&amp;E · 苏木精-伊红</span></div>
             <div class="field"><span class="k">采集</span><span class="v mono">2026-11-18 09:34</span></div>
             <div class="field"><span class="k">文件</span><span class="v">sample.tif</span></div>
-            <div class="field"><span class="k">位深 / 校准</span><span class="v mono">16-bit · 0.5 µm/px</span></div>
+            <div class="field"><span class="k">位深 / 校准</span><span class="v mono">16-bit · 0.5&nbsp;µm/px</span></div>
           </div>
         </div>
 
@@ -583,18 +586,18 @@
           </div>
         </div>
 
-        <div class="status">
+        <div class="status"><span class="role">状态栏</span>
           <span><span class="k">X</span><span class="v">512</span></span>
           <span><span class="k">Y</span><span class="v">384</span></span>
           <span><span class="k">Pixel</span><span class="v">182</span></span>
           <span><span class="k">Zoom</span><span class="v">200%</span></span>
-          <span><span class="k">Scale</span><span class="v">0.5 µm/px</span></span>
+          <span><span class="k">Scale</span><span class="v">0.5<span class="unit10">µm/px</span></span></span>
         </div>
 
         <div class="extras">
           <div class="tip"><span class="k">Tooltip</span>拖动顶点以修改 ROI</div>
           <div class="palette">
-            <div class="palhead"><span class="t">命令</span><span class="k">Ctrl K</span></div>
+            <div class="palhead"><span class="t">命令面板</span><span class="k">Ctrl K</span></div>
             <div class="palitem"><span>导出 CSV</span><span class="k">Ctrl E</span></div>
             <div class="palitem"><span>回到 100%</span><span class="k">Ctrl 0</span></div>
           </div>
@@ -633,7 +636,7 @@
           </div>
         </div>
         <div class="mnote">小数位固定：Area 1 · Mean 1 · StdDev 1 · Min 0 · Max 0 · Perimeter 1</div>
-        <div class="numdemo"><span class="k">GROUPING</span><span class="v">12 480.5 <span class="unit11">µm²</span></span></div>
+        <div class="numdemo"><span class="k">GROUPING</span><span class="v">12&#8239;480.5&nbsp;<span class="unit11">µm²</span></span></div>
         <div class="numdemo"><span class="k">CSV</span><span class="csv">1240.5,182.4,21.7,96,233,148.2</span></div>
       </div>
 
@@ -645,7 +648,7 @@
         <div class="mix">
           <div class="mixrow"><span class="k">中 ↔ 英</span><span class="v">测量 / <span class="en">Results</span></span></div>
           <div class="mixrow"><span class="k">数 ↔ 量词</span><span class="v">6 个 ROI，3 张切片</span></div>
-          <div class="mixrow"><span class="k">数 ↔ 单位</span><span class="v">1240.5 µm² · 0.5 µm/px</span></div>
+          <div class="mixrow"><span class="k">数 ↔ 单位</span><span class="v">1240.5&nbsp;µm² · 0.5&nbsp;µm/px</span></div>
           <div class="mixrow"><span class="k">句内中英</span><span class="v">导出的 CSV 与界面小数位一致。</span></div>
         </div>
       </div>
@@ -670,7 +673,7 @@
 
   <footer class="foot">
     <div>
-      <div class="fl">Not allowed / 禁止</div>
+      <div class="fl">Not allowed <span class="zh">/ 禁止</span></div>
       <div class="list">700 · 斜体 oblique · 描边字 · 阴影字 · 小于 10px · 全大写中文 · 中文加字距或两端对齐 · 颜色代替层级 · 全角数字 · 截断数字与单位</div>
     </div>
     <div class="fr">21/22 同字号、同字重、同行高；<br>只换颜色与材质。8 档 / 4px 基线 / 10px 下限。</div>
