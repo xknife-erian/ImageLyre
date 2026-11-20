@@ -5,6 +5,7 @@ using Cangming.PicoPlugins.Core.Modules;
 using CommunityToolkit.Mvvm.Input;
 using ImageLyre.Feature.PluginCenter.Internal;
 using ImageLyre.Plugins;
+using ImageLyre.UI.Contracts.Slots;
 using ImageLyre.UI.Contracts.Workbench;
 using ImageLyre.Contracts.Hosting;
 
@@ -22,12 +23,16 @@ namespace ImageLyre.Feature.PluginCenter;
     description: "在帮助菜单提供插件中心入口")]
 public sealed class PluginCenterFeature : ImageLyreCodeMenuFeature
 {
+    private ISlotRegistry? _slots;
+
     /// <inheritdoc />
     protected override void DeclareDependencies(IModuleDeclarationBuilder modules) => modules.Optional<IPluginCenter>();
 
     /// <inheritdoc />
     public override void RegisterAttachments(IAttachmentRegistry registry)
     {
+        _slots = registry as ISlotRegistry;
+
         var command = new RelayCommand(OpenPluginCenter);
 
         AttachMenu(registry, "帮助", new MenuCommandAttachment("插件中心", "OpenPluginCenter", command, order: 10));
@@ -42,6 +47,6 @@ public sealed class PluginCenterFeature : ImageLyreCodeMenuFeature
             return;
         }
 
-        new PluginCenterWindow(center).Show();
+        new PluginCenterWindow(center, _slots).Show();
     }
 }

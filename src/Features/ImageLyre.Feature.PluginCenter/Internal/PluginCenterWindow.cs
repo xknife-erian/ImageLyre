@@ -7,28 +7,35 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using ImageLyre.Contracts.Hosting;
+using ImageLyre.UI.Contracts.Slots;
 using ImageLyre.UI.Contracts.Workbench;
 
 namespace ImageLyre.Feature.PluginCenter.Internal;
 
-/// <summary>插件中心窗口：左侧插件与运行期启停，右侧区域（槽位）清单。</summary>
+/// <summary>插件中心窗口：左侧插件与运行期启停，右侧区域（槽位）清单与槽位诊断。</summary>
 /// <remarks>
-///     窗口只消费 <see cref="IPluginCenter" /> 的只读快照与操作，不直接引用插件管理器或槽位管理器；
-///     提供数据的模块因此可以不含任何界面类型。
+///     <para>
+///         插件快照与启停来自 <see cref="IPluginCenter" />；槽位诊断来自界面层的 <see cref="ISlotRegistry" />，
+///         因为诊断属于界面位置的概念，不进无界面的插件契约。
+///     </para>
+///     <para>注册表缺席时两块清单都显示为空，窗口在任何宿主里都能打开。</para>
 /// </remarks>
 internal sealed class PluginCenterWindow : AtomUIWindow
 {
     private readonly IPluginCenter _center;
+    private readonly ISlotRegistry? _slots;
 
     private readonly ListBox _pluginList = new();
     private readonly ListBox _slotList = new();
+    private readonly ListBox _issueList = new();
     private readonly TextBlock _status = new() { Text = "就绪" };
 
     private List<string> _pluginIds = [];
 
-    internal PluginCenterWindow(IPluginCenter center)
+    internal PluginCenterWindow(IPluginCenter center, ISlotRegistry? slots)
     {
         _center = center;
+        _slots = slots;
 
         Title = "插件中心";
         Width = 980;
@@ -74,6 +81,21 @@ internal sealed class PluginCenterWindow : AtomUIWindow
         var slotTitle = new TextBlock { Text = "区域（槽位）", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 0, 0, 6) };
         DockPanel.SetDock(slotTitle, Dock.Top);
         slotPanel.Children.Add(slotTitle);
+
+        var issueBorder = new Border
+        {
+            BorderThickness = new Thickness(1),
+            BorderBrush = Brushes.LightGray,
+            MaxHeight = 160,
+            Child = _issueList,
+        };
+        DockPanel.SetDock(issueBorder, Dock.Bottom);
+        slotPanel.Children.Add(issueBorder);
+
+        var issueTitle = new TextBlock { Text = "槽位诊断", FontWeight = FontWeight.SemiBold, Margin = new Thickness(0, 12, 0, 6) };
+        DockPanel.SetDock(issueTitle, Dock.Bottom);
+        slotPanel.Children.Add(issueTitle);
+
         slotPanel.Children.Add(new Border
         {
             BorderThickness = new Thickness(1),
@@ -124,7 +146,7 @@ internal sealed class PluginCenterWindow : AtomUIWindow
         return button;
     }
 
-    /// <summary>重新读取插件与区域快照。</summary>
+    /// <summary>重新读取插件快照与槽位诊断。</summary>
     private void Refresh()
     {
         var selectedIndex = _pluginList.SelectedIndex;
@@ -136,12 +158,18 @@ internal sealed class PluginCenterWindow : AtomUIWindow
             .ToArray();
         _pluginList.SelectedIndex = selectedIndex >= 0 && selectedIndex < _pluginIds.Count ? selectedIndex : (plugins.Count > 0 ? 0 : -1);
 
-        var slots = _center.Slots;
-        _slotList.ItemsSource = slots
-            .Select(slot => $"{slot.Name}  ·  {slot.AttachmentCount} 项")
+        var diagnostics = _slots?.CompleteRegistration() ?? new SlotDiagnostics([], []);
+
+        _slotList.ItemsSource = diagnostics.Slots
+            .Select(slot => $"{slot.Name}  ·  {slot.Kind}  ·  {slot.Capacity}  ·  {slot.Count} 项  ·  {(slot.Declared ? "已声明" : "未声明")}")
             .ToArray();
 
-        _status.Text = $"插件 {plugins.Count} 个 · 区域 {slots.Count} 个";
+        _issueList.ItemsSource = diagnostics.Issues
+            .GroupBy(issue => issue.Kind)
+            .Select(group => $"{group.Key}  ·  {group.Count()} 条")
+            .ToArray();
+
+        _status.Text = $"插件 {plugins.Count} 个 · 区域 {diagnostics.Slots.Count} 个 · 诊断 {diagnostics.Issues.Count} 条";
     }
 
     private string? SelectedPluginId =>
