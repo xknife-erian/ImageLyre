@@ -3,6 +3,7 @@
 | 版本 | 日期 | 状态 | 作者 | 说明 |
 | :--- | :--- | :--- | :--- | :--- |
 | 1.0 | 2026-11-20 | 现行 | lukan | 把 `typography.md` 的设计值映射为 Avalonia 12.1.6 / AtomUI 6.2.15 可执行规范；只定规范，不含生产代码 |
+| 1.1 | 2026-11-20 | 现行 | lukan | 对齐设计值 1.1：中文只用 400、10 档不给中文；新增 Mermaid 说明为何不用 LayoutTransform，并标注 U3 的 Ant 默认值为待验证假设 |
 
 本文是 `docs/design/lukan/bakeoff-2026-11-20/typography.md`（下称"设计值"）在桌面端的实现口径，读者是接手的 Avalonia 研发与后续验收者。设计值给出的是字体、八档字号、字重、行高、数字规则、对比度与缩放要求；本文只回答一件事：这些数值在 Avalonia 12.1.6 与 AtomUI 6.2.15 上分别落到哪个 API、哪个资源键、哪种类型，以及哪些点因为本仓版本限制只能标为待实测。
 
@@ -135,9 +136,9 @@ flowchart TD
 | `Lyre.Typography.FontFamily.Mono` | `FontFamily` | `Cascadia Mono, Consolas` | 等宽，只放数字与拉丁 |
 | `Lyre.Typography.Size.24` … `.10` | `double` | 24 / 20 / 18 / 16 / 14 / 12 / 11 / 10 | 八档，不允许出现第九个键 |
 | `Lyre.Typography.LineHeight.24` … `.10` | `double` | 32 / 28 / 24 / 24 / 20 / 20 / 16 / 16 | 绝对 DIP |
-| `Lyre.Typography.Weight.Regular` | `FontWeight` | `Normal`（400） | |
-| `Lyre.Typography.Weight.Medium` | `FontWeight` | `Medium`（500） | 仅中文与拉丁按钮/标题 |
-| `Lyre.Typography.Weight.SemiBold` | `FontWeight` | `SemiBold`（600） | 仅拉丁 |
+| `Lyre.Typography.Weight.Regular` | `FontWeight` | `Normal`（400） | 中文唯一可用字重 |
+| `Lyre.Typography.Weight.Medium` | `FontWeight` | `Medium`（500） | 仅拉丁：面板标题、按钮、选中项、命令面板标题 |
+| `Lyre.Typography.Weight.SemiBold` | `FontWeight` | `SemiBold`（600） | 仅拉丁：窗口标题、段标题、表头 |
 | `Lyre.Typography.LetterSpacing.Tight24` | `double` | -0.24 | 设计 -0.01em @24 |
 | `Lyre.Typography.LetterSpacing.Tight18` | `double` | -0.18 | 设计 -0.01em @18 |
 | `Lyre.Typography.LetterSpacing.Caps11` | `double` | 1.10 | 设计 0.10em @11，仅拉丁大写 |
@@ -225,17 +226,19 @@ flowchart TD
 | 样本号（身份主键，一屏一个） | 24 / 32 | Regular | None | Mono | Size.24 + LineHeight.24 + Tight24 |
 | 窗口标题（应用名） | 18 / 24 | SemiBold | Tight18 | Ui | Size.18 + LineHeight.18 |
 | 窗口标题（文件名） | 18 / 24 | Regular | Tight18 | Ui | 同上 |
-| 面板标题 | 16 / 24 | Medium | None | Ui | Size.16 + LineHeight.16 |
+| 面板标题 | 16 / 24 | 拉丁 SemiBold / 中文 Regular | None | Ui | Size.16 + LineHeight.16 |
 | 读数 L | 20 / 28 | Regular | None | Mono | Size.20 + LineHeight.20 |
 | 读数 M（六项 Results） | 14 / 20 | Regular | None | Mono | Size.14 + LineHeight.14 |
 | 读数 S | 11 / 16 | Regular | None | Mono | Size.11 + LineHeight.11 |
 | 正文 / 菜单 / 列表项 | 12 / 20 | Regular | Menu12（仅拉丁菜单） | Ui | Size.12 + LineHeight.12 |
 | 段标题（拉丁大写段标题） | 11 / 16 | SemiBold | Caps11 | Ui | Size.11 + LineHeight.11 |
-| 段标题（中文部分） | 11 / 16 | Medium | None | Ui | 同上，字距用 None |
-| 字段标签 / 表头 | 11 / 16 | Regular / 500（中文）/ 600（拉丁） | None | Ui | Size.11 + LineHeight.11 |
+| 段标题（中文部分） | 11 / 16 | Regular | None | Ui | 同上，字距用 None |
+| 字段标签 / 表头 | 11 / 16 | Regular（中文）/ SemiBold（拉丁） | None（拉丁表头字距 0） | Ui | Size.11 + LineHeight.11 |
 | 单位（L / M / S） | 14 / 11 / 10 | Regular | None | Ui | 对应 Size 与 LineHeight |
 | 状态栏 / 工具提示 | 11 / 16 | Regular | None | Ui | Size.11 + LineHeight.11 |
-| 按钮 / 操作 | 12 / 20 | Medium | None | Ui | Size.12 + LineHeight.12 |
+| 命令面板标题 | 14 / 20 | 拉丁 Medium / 中文 Regular | None | Ui | Size.14 + LineHeight.14 |
+| 命令面板项 / 已保存状态 | 12 / 20、11 / 16 | Regular | None | Ui | 按档取 Size 与 LineHeight |
+| 按钮 / 操作 | 12 / 20 | 拉丁 Medium / 中文 Regular | None | Ui | Size.12 + LineHeight.12 |
 | 快捷键 / 哈希 / 版本 | 10 / 16 | Regular | None | Mono | Size.10 + LineHeight.10 |
 
 ## 5 数字
@@ -335,7 +338,7 @@ AtomUI 控件的模板从它自己的全局令牌取色与取字号，只改本�
 | `Menu` / `MenuItem` | `FontSize`、`FontFamily`、`LineHeight`、`LetterSpacing`（仅拉丁时 0.12） | 是：`MenuToken.TopLevelItemFontSize`、`TopLevelItemFontSizeLG`、`TopLevelItemFontSizeSM`、`TopLevelItemLineHeight`、`TopLevelItemLineHeightLG`、`TopLevelItemLineHeightSM` | 三档压到 12 / 14 / 11，行高统一 20；菜单项文字 12/400 |
 | `ToolTip` | `FontSize`、`LineHeight`、`Foreground` | 否（`ToolTipToken` 已核实没有排印属性） | 只能继承或显式设，务必显式设为 11/16，否则会继承宿主（例如 10 号快捷键提示） |
 | 状态栏（AtomUI 无此控件） | 自建 `Border` + `StackPanel`，内部 `TextBlock` 设 11/16，数值部分 11 Mono | 无 | AtomUI 6.2.15 的控件命名空间里没有 `StatusBar`，必须自建；标签 T3、数值 T2 |
-| `Button` | `FontSize`、`FontWeight`、`LineHeight`、`FontFamily` | 是：`ButtonToken.ContentFontSize`、`ContentFontSizeLG`、`ContentFontSizeSM`、`ContentLineHeight`、`ContentLineHeightLG`、`ContentLineHeightSM`，另有 `FontWeight`（类型竟是 `double`，与 Avalonia 的 `FontWeight` 结构不同，需实测怎么用） | 12/20 + 500；`FontWeight` 令牌类型异常，若不可用则只用样式设 `FontWeight` |
+| `Button` | `FontSize`、`FontWeight`、`LineHeight`、`FontFamily` | 是：`ButtonToken.ContentFontSize`、`ContentFontSizeLG`、`ContentFontSizeSM`、`ContentLineHeight`、`ContentLineHeightLG`、`ContentLineHeightSM`，另有 `FontWeight`（类型竟是 `double`，与 Avalonia 的 `FontWeight` 结构不同，需实测怎么用） | 12/20；拉丁按钮 500、中文按钮 400（设计值 1.1 中文只用 400）；`FontWeight` 令牌类型异常，若不可用则只用样式设 `FontWeight` |
 | `TextBox` / `TextArea` | `FontSize`、`FontFamily`、`LineHeight`（`TextBox.LineHeight` 是继承的附加属性，已核实）、`TextWrapping` | 否（`TextBoxToken` 无排印属性；`TextAreaToken` 只有颜色） | 输入数字的框建议直接用 Mono 族，避免输入内容与显示内容宽度不一致 |
 | `ComboBox` / `ComboBoxItem` | `FontSize`、`FontFamily`、`LineHeight`，以及控件自身的 `OptionFontSize` 属性 | 部分：`ComboBox.OptionFontSize`（控件属性，不是令牌） | 选项 12/20；`OptionFontSize` 必须与 `FontSize` 一致，否则展开后的列表比输入框字大一号 |
 | `Window` 标题 | `WindowTitleBar` 的 `TitleFontSize`、`TitleFontWeight`；`WindowToken.TitleBarHeight` | 是：`WindowTitleBarToken.TitleFontSize`、`TitleFontWeight`、`TitleBarPadding`、`LogoAndTitleSpacing` | 标题 18/600、文件名 18/400（两个 `TextBlock` 拼一行），标题栏高度需随缩放因子重算 |
@@ -375,7 +378,7 @@ AtomUI 控件的模板从它自己的全局令牌取色与取字号，只改本�
 | 600 | **700** | 600 |
 | 700 | 700 | 700 |
 
-两条后果都是设计值必须知道的：中文 500 落在 400 上，所以"面板标题 16/500"与"正文 12/400"在笔画粗细上完全一样，层级只能靠 16 与 12 的字号差与 T1/T2 的颜色差撑住；中文 600 落在 700 上，等于设计值第 3 节明令禁止的 Bold 被系统替换成真 Bold 面（不是合成），这与设计值第 3 节"中文不用 600"的结论一致，但原因要说清：不是 faux bold，而是 YaHei 根本没有 Medium/Semibold 面，匹配算法只能跳到 Bold。反过来拉丁这边 500 与 600 都落到 Segoe UI Semibold，设计值里 500（面板标题）与 600（窗口标题、段标题、表头）在 Windows 上是同一个笔画，区分同样只能靠字号。
+这张表是设计值 1.1 把中文收紧到 400 的直接依据（`typography.md` 版本表 1.1 行写明"按 Avalonia 实测收紧"）。三条后果：中文 500 落在 400 上，若照旧写"面板标题 16/500"则它与"正文 12/400"的笔画完全一样，层级只能靠 16 与 12 的字号差与 T1/T2 的颜色差撑住，因此规范改为中文面板标题直接写 400；中文 600 落在 700 上，是 YaHei 根本没有 Medium/Semibold 面、匹配算法只能跳到真 Bold 的结果，不是 faux bold，正因如此它无法用"关掉合成"规避；反过来拉丁这边 500 与 600 都落到 Segoe UI Semibold，所以拉丁的面板标题（500）与窗口标题、段标题、表头（600）在 Windows 上是同一个笔画，判别只能靠字号与位置。
 
 ### 8.2 等宽族缺字会把列宽打乱
 
@@ -383,7 +386,7 @@ AtomUI 控件的模板从它自己的全局令牌取色与取字号，只改本�
 
 ### 8.3 10px 在 125% 系统缩放下是 12.5 物理像素
 
-设计值第 9 节把 10px 定为硬下限，但 10 DIP 落到物理像素要乘两个因子：系统 125% 时是 12.5 像素，若应用同时放大 125% 则是 15.6 像素；反向的组合（系统 100%、应用 100%）才是 10 像素。真正需要担心的是 10 DIP 的**中文**：YaHei 的汉字推进量正好是一个 em（12px 下实测 12.00 DIP，故 10px 下是 10 DIP），自然行高 12.7 DIP，10px 的汉字笔画会粘连，而设计值把 10 档给了"单位、快捷键、哈希、脚注"，其中哈希与版本号是拉丁与数字（安全）、单位是拉丁（安全）、快捷键是拉丁（安全），**只有脚注可能是中文**，因此建议在 10 档的中文脚注上明确禁止使用，统一升到 11/16（这属于对设计值第 2 节的一次收紧，列入第 10 节待设计确认）。
+设计值第 9 节把 10px 定为硬下限，但 10 DIP 落到物理像素要乘两个因子：系统 125% 时是 12.5 像素，若应用同时放大 125% 则是 15.6 像素；反向的组合（系统 100%、应用 100%）才是 10 像素。真正需要担心的是 10 DIP 的**中文**：YaHei 的汉字推进量正好是一个 em（12px 下实测 12.00 DIP，故 10px 下是 10 DIP），自然行高 12.7 DIP，10px 的汉字笔画会粘连，而设计值原来把 10 档给了"单位、快捷键、哈希、脚注"，其中哈希与版本号是拉丁与数字（安全）、单位是拉丁（安全）、快捷键是拉丁（安全），**只有脚注可能是中文**；设计值 1.1 已据此把 10 档收紧为"拉丁脚注"，并在第 11 节加入"禁止 10px 中文"，因此 Avalonia 侧的落点从"改设计"变成"如何自动拦住中文落进 10 档"，见第 9 节验收与 U11。
 
 ### 8.4 右栏 400px 的挤压
 
@@ -403,8 +406,8 @@ AtomUI 自带的 `AlibabaSans` 字体包随依赖进入输出目录，若默认�
 | 灰度 | 灰度下层级仍成立 | 对渲染结果套 Skia 颜色矩阵（饱和度置 0）转灰度，取每个文字区域的平均灰度，按 T1/T2/T3 三组抽样 | 三组平均灰度必须保持设计值 15.3/8.1/5.0 的同一单调顺序，且相邻两组的灰度差不低于可辨识阈值（建议先按 8 个灰阶试用，再在样张上标定） |
 | 200% | 最小字号 20 物理像素、无截断无重叠 | 把缩放因子设为 2 重新渲染，遍历视觉树收集所有 `TextBlock` 的 `FontSize`、`Bounds` 与所在 `TopLevel.RenderScaling`，断言 `FontSize × 2 × RenderScaling ≥ 20`；再用 `TextLayout` 的 `TextLines.Count` 与 `Width` 判断是否被裁（`TextTrimming != None` 或 `DesiredSize.Width > Bounds.Width` 即视为截断） | 最小物理字号达标、无 `TextTrimming`、无 `DesiredSize` 溢出 |
 | CSV 精度一致 | 界面与 CSV 小数位、数值一致，CSV 无千分位无单位 | 单元测试层面比同一个格式化服务的两端输出：UI 文本去掉 U+202F、U+00A0、单位、并把 U+2212 换回 `-` 之后，必须与 CSV 单元格字符串逐字符相等；六个字段（Area/Mean/StdDev/Min/Max/Perimeter）各取 `0`、负数、超大数、末尾 0 四个边界样本 | 全部样本逐字符相等，且 CSV 中出现 `\u202F`、`\u00A0`、`µ`、`−` 即判失败 |
-| 10px 下限 | 全屏无 10px 以下文字 | 静态侧：在 `tests/ImageLyre.Architecture.Tests` 里扫全部 `.axaml`（沿用该工程现成的 `Repository.cs` 取文件的方式）断言没有小于 10 的 `FontSize` 字面量；运行期侧：遍历视觉树断言每个 `TextBlock.FontSize ≥ 10`（含继承后的有效值） | 两侧均为零命中 |
-| 中文无字距、无 faux bold | 中文没有 letter-spacing、没有 600 | 遍历视觉树，对 `Text` 含 CJK 的 `TextBlock` 断言 `LetterSpacing == 0` 且 `FontWeight` 为 Normal 或 Medium（代码层面无法判 faux bold，需配合 8.1 的截图抽查） | 断言通过 + 截图抽查无 Bold 感 |
+| 10px 下限 | 全屏无 10px 以下文字，且 10 档无中文 | 静态侧：在 `tests/ImageLyre.Architecture.Tests` 里扫全部 `.axaml`（沿用该工程现成的 `Repository.cs` 取文件的方式）断言没有小于 10 的 `FontSize` 字面量；运行期侧：遍历视觉树断言每个 `TextBlock.FontSize ≥ 10`（含继承后的有效值），并对 `FontSize == 10` 的节点断言 `Text` 不含 CJK（设计值 1.1 第 11 节） | 两侧均为零命中 |
+| 中文无字距、无 faux bold | 中文没有 letter-spacing、没有 500/600 | 遍历视觉树，对 `Text` 含 CJK 的 `TextBlock` 断言 `LetterSpacing == 0` 且 `FontWeight == Normal`（设计值 1.1 已把中文收紧到 400）；代码层面无法判 faux bold，需配合 8.1 的截图抽查 | 断言通过 + 截图抽查无 Bold 感 |
 | 中文与拉丁、数字与单位的空格 | NBSP 用对、普通空格用对 | 对格式化输出的字符串做字符级断言（含 U+00A0、U+202F 的位置），并用第 5.4 节的 `LineBreakEnumerator` 方式断言该字符串只有末尾一个断行点 | 断点数量为 1 |
 
 ## 10 未确认项清单
@@ -413,7 +416,7 @@ AtomUI 自带的 `AlibabaSans` 字体包随依赖进入输出目录，若默认�
 | :--- | :--- | :--- | :--- | :--- |
 | U1 | 仓内无法编译 | `global.json` 要求 SDK 10.0.404，本机 10.0.403；`ImageLyre.App` 从未还原；`Cangming.Toolkit.Avalonias.AtomUI` 不在本机缓存 | 装 10.0.404 或降 `global.json`，还原后跑一次 `dotnet build src/ImageLyre.slnx` | 研发 |
 | U2 | `.UseCangmingAtomUI()` 是否暴露 `IThemeManagerBuilder` | 该包未还原，无法看签名 | 还原后查 `AppBuilder` 扩展方法签名；若未暴露，需要在沧溟侧开口子才能调 `WithDefaultFontFamily` 与 `WithInitialTheme` | 研发 / 沧溟 |
-| U3 | AtomUI 全局令牌的实际默认数值 | 主题是编译进程序集的 Avalonia 资源，包内没有可读的 token 文档 | 运行期打印 `ThemeSnapshot` / `DesignToken` 各属性值，核对是否为 14/12/16/20/38/30/24/20/16 | 研发 |
+| U3 | AtomUI 全局令牌的实际默认数值 | 主题是编译进程序集的 Avalonia 资源，包内没有可读的 token 文档 | 运行期打印 `ThemeSnapshot` / `DesignToken` 各属性值；下面的 14/12/16/20/38/30/24/20/16 只是 Ant Design 通行的默认假设，不是本仓核实结论，核对的目的是确认它们是否确实落在八档之外 | 研发 |
 | U4 | `WithToken(string,string)` 的键名拼法 | 只知道签名，不知道字符串约定（大小写、是否等于属性名） | 写一个改 `FontSize` 的最小用例，看界面字号是否变 | 研发 |
 | U5 | `LineHeight` 是否被裁字、与 `LineSpacing` 的叠加规则 | 只核实了属性存在与自然行高，未在真机渲染验证 24/32 临界档 | 渲染 24px 样本号，量行盒高度与字形外接框；再对比 `LineSpacing=2` 的差异 | 研发 |
 | U6 | `FontFeatures` 在运行期是否真的传到整形器 | 只验证了 XAML 编译与 `FontFeatureCollection.Parse`，未验证渲染结果 | 用 `Segoe UI Variable Text` 显示 `1111`，比开/关 tnum 的 `TextBlock` 宽度（预期 10.66 vs 15.16 DIP） | 研发 |
@@ -421,7 +424,7 @@ AtomUI 自带的 `AlibabaSans` 字体包随依赖进入输出目录，若默认�
 | U8 | AtomUI 默认 `FontFamily` 是否为 AlibabaSans | 默认值在编译进程序集的令牌里 | 启动后读 `ThemeManager.FontFamily`，并截图核对字形 | 研发 |
 | U9 | `ButtonToken.FontWeight` 是 `double` 怎么消费 | 类型与 Avalonia 的 `FontWeight` 结构不一致 | 把按钮字重设为 500 与 600 各渲染一次，看实际笔画 | 研发 |
 | U10 | 禁用态与面板底色的具体值 | 设计值只给了五个色层，没给禁用色与面板底 | 按 T3 与底色补测到 3:1，回填设计值第 8 节并复核对比度 | 设计 + 研发 |
-| U11 | 10 档是否允许中文 | 设计值第 2 节把 10 定为"单位、快捷键、哈希、脚注"，脚注可能含中文 | 设计确认：若允许，需给出 10px 中文的可读性依据；若禁止，写进设计值第 11 节禁止清单 | 设计 |
+| U11 | 10 档禁止中文如何自动化拦住 | 设计值 1.1 已拍板禁止（第 11 节），但 Avalonia 没有"按脚本判字体"的属性，只能在测试侧断言 | 运行期遍历视觉树，对 `FontSize == 10` 的节点断言 `Text` 不含 CJK（见第 9 节）；另需约定"单位/快捷键模板不允许绑定中文资源" | 研发 |
 | U12 | "不用样式表"的边界 | 设计值第 0.1 节字面禁止样式表，但 Avalonia 只能靠样式把令牌套上去 | 本文按"颜色不用样式表、排印令牌用样式引用"落地，需设计确认这一解读 | 设计 |
 | U13 | 六项 Results 何时切横向表格 | 400 DIP 下的余量是按字宽估算的（第 8.4 节），未在真机量 | 在 400 DIP 容器里渲染 6 列表头，量每列 `DesiredSize`，据此定切换阈值 | 研发 |
 | U14 | `Avalonia.Headless` 的引入 | 仓库未引用，本机缓存只到 12.1.4 | 在 `Directory.Packages.props` 加 12.1.6 并还原，再建一个渲染快照测试工程 | 研发 |
