@@ -15,4 +15,25 @@ public static class WorkbenchSlots
 
     /// <summary>状态栏区域，默认横向排列。</summary>
     public const string StatusBar = "ImageLyre.StatusBar";
+
+    /// <summary>文档标签条区域。</summary>
+    public const string DocumentTabs = "ImageLyre.DocumentTabs";
+
+    /// <summary>状态栏左段。</summary>
+    public const string StatusBarLeft = "ImageLyre.StatusBar.Left";
+
+    /// <summary>状态栏右段。</summary>
+    public const string StatusBarRight = "ImageLyre.StatusBar.Right";
+
+    /// <summary>状态栏最右段，放版本号一类。</summary>
+    public const string StatusBarRightmost = "ImageLyre.StatusBar.Rightmost";
+
+    /// <summary>右栏容器。</summary>
+    public const string PanelRight = "ImageLyre.Panel.Right";
+
+    /// <summary>右栏的标本档案分区。</summary>
+    public const string PanelRightDossier = "ImageLyre.Panel.Right.Dossier";
+
+    /// <summary>右栏的 Agent 分区。</summary>
+    public const string PanelRightAgent = "ImageLyre.Panel.Right.Agent";
 }

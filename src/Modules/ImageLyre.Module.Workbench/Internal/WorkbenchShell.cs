@@ -56,6 +56,15 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
             registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.Menu, SlotKind.Menu, SlotCapacity.Multiple, "主菜单"));
             registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.StatusBar, SlotKind.StatusBar, SlotCapacity.Multiple, "状态栏"));
             registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.Content, SlotKind.Content, SlotCapacity.Multiple, "主内容区"));
+
+            // 规划表里已定、但当前还没有渲染器的位置先按预留声明，避免 EmptySlot 噪音。
+            registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.DocumentTabs, SlotKind.Content, SlotCapacity.Multiple, "文档标签条", IsReserved: true));
+            registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.StatusBarLeft, SlotKind.StatusBar, SlotCapacity.Multiple, "状态栏左", IsReserved: true));
+            registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.StatusBarRight, SlotKind.StatusBar, SlotCapacity.Multiple, "状态栏右", IsReserved: true));
+            registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.StatusBarRightmost, SlotKind.StatusBar, SlotCapacity.Multiple, "状态栏最右", IsReserved: true));
+            registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.PanelRight, SlotKind.Content, SlotCapacity.Exclusive, "右栏", IsReserved: true));
+            registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.PanelRightDossier, SlotKind.Content, SlotCapacity.Exclusive, "右栏档案", IsReserved: true));
+            registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.PanelRightAgent, SlotKind.Content, SlotCapacity.Exclusive, "右栏 Agent", IsReserved: true));
         }
 
         Title = "ImageLyre";
