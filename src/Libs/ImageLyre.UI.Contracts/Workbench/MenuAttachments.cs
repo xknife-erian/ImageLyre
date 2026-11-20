@@ -1,7 +1,7 @@
 using System.Windows.Input;
 using Cangming.PicoPlugins.Core.Features;
 
-namespace ImageLyre.UI.Contracts;
+namespace ImageLyre.UI.Contracts.Workbench;
 
 /// <summary>菜单项附件：一条菜单项的数据描述，渲染层直接消费它。</summary>
 /// <remarks>

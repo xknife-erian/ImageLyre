@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using Cangming.PicoPlugins.Core.Features;
-using ImageLyre.UI.Contracts;
+using ImageLyre.UI.Contracts.Workbench;
 
 namespace ImageLyre.Plugins;
 

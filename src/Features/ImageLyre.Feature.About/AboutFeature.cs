@@ -9,7 +9,7 @@ using Cangming.PicoPlugins.Core.Features;
 using Cangming.PicoPlugins.Core.Modules;
 using CommunityToolkit.Mvvm.Input;
 using ImageLyre.Plugins;
-using ImageLyre.UI.Contracts;
+using ImageLyre.UI.Contracts.Workbench;
 
 namespace ImageLyre.Feature.About;
 

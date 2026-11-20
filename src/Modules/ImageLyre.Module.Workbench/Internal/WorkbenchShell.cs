@@ -12,7 +12,7 @@ using Cangming.PicoPlugins.Avalonias.Core;
 using Cangming.PicoPlugins.Avalonias.Slots;
 using Cangming.PicoPlugins.Core.Features;
 using ImageLyre.Module.Workbench.Internal.Menu;
-using ImageLyre.UI.Contracts;
+using ImageLyre.UI.Contracts.Workbench;
 using Microsoft.Extensions.Logging;
 
 namespace ImageLyre.Module.Workbench.Internal;

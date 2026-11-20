@@ -5,8 +5,8 @@ using Cangming.PicoPlugins.Core.Modules;
 using CommunityToolkit.Mvvm.Input;
 using ImageLyre.Feature.PluginCenter.Internal;
 using ImageLyre.Plugins;
-using ImageLyre.UI.Contracts;
-using ImageLyre.Contracts;
+using ImageLyre.UI.Contracts.Workbench;
+using ImageLyre.Contracts.Hosting;
 
 namespace ImageLyre.Feature.PluginCenter;
 

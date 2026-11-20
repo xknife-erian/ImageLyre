@@ -4,7 +4,7 @@ using Cangming.PicoPlugins.Core.Features;
 using Cangming.PicoPlugins.Core.Modules;
 using Cangming.PicoPlugins.Core.Support;
 using ImageLyre.Module.Workbench.Internal;
-using ImageLyre.UI.Contracts;
+using ImageLyre.UI.Contracts.Workbench;
 
 namespace ImageLyre.Module.Workbench;
 

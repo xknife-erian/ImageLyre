@@ -11,7 +11,7 @@ using ImageLyre.App.Startup;
 using ImageLyre.Bootstrap;
 using ImageLyre.Bootstrap.Services;
 using ImageLyre.Module.Workbench.Slots;
-using ImageLyre.UI.Contracts;
+using ImageLyre.UI.Contracts.Workbench;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

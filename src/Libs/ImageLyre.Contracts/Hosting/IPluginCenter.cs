@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ImageLyre.Contracts;
+namespace ImageLyre.Contracts.Hosting;
 
 /// <summary>插件中心契约：插件与区域的只读快照，以及运行期的启停操作。</summary>
 /// <remarks>

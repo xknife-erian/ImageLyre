@@ -1,4 +1,4 @@
-namespace ImageLyre.UI.Contracts;
+namespace ImageLyre.UI.Contracts.Workbench;
 
 /// <summary>工作台消耗与提供的区域名称，是壳与插件之间唯一的字符串契约。</summary>
 /// <remarks>

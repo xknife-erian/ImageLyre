@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using ImageLyre.Plugins;
-using ImageLyre.UI.Contracts;
+using ImageLyre.UI.Contracts.Workbench;
 using Xunit;
 
 namespace ImageLyre.Presentation.Tests;

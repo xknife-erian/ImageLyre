@@ -7,7 +7,7 @@ using Cangming.PicoPlugins.Core;
 using Cangming.PicoPlugins.Core.Features;
 using Cangming.PicoPlugins.Core.Modules;
 using Cangming.PicoPlugins.Core.Support;
-using ImageLyre.Contracts;
+using ImageLyre.Contracts.Hosting;
 
 namespace ImageLyre.Module.PluginCenter;
 

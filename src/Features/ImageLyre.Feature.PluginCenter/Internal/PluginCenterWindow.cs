@@ -6,8 +6,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using ImageLyre.Contracts;
-using ImageLyre.UI.Contracts;
+using ImageLyre.Contracts.Hosting;
+using ImageLyre.UI.Contracts.Workbench;
 
 namespace ImageLyre.Feature.PluginCenter.Internal;
 
