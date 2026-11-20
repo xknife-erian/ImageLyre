@@ -6,7 +6,7 @@
 
 | 目录 | 内容 |
 | :--- | :--- |
-| `requirements/` | `product-requirements.md` / `.html`，产品需求文档 4.2，md 为源 |
+| `requirements/` | `product-requirements.md` / `.html`，产品需求文档 4.3，md 为源 |
 | `requirements/` | `core-1.0-boundary.md`，Core 1.0 的 15 个产品结果与 P0 收口边界 |
 | `requirements/` | `measurement-baseline.md`，测量选项、列序、统计口径与 ImageJ 对照容差的唯一真源 |
 | `baseline/` | `startup-requirements.md`，启动需求与架构基线 1.4 |
