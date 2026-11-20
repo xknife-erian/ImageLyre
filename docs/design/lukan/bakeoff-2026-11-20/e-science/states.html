@@ -288,7 +288,7 @@
   html{background:#E8E8E6}
   body{background:#E8E8E6}
   .screen{width:1440px;margin:0 auto 32px}
-  .cap{height:40px;display:flex;align-items:baseline;gap:12px;padding:0 16px;font-size:11px;line-height:16px;color:#707070}
+  .cap{height:40px;display:flex;align-items:center;gap:12px;padding:0 16px;font-size:11px;line-height:16px;color:#707070}
   .cap b{font-weight:600;color:#1B1B1B}
   .cap span{color:#707070}
   .stage{position:relative}
@@ -307,7 +307,8 @@
   .drop{flex:1;margin:16px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#FFFFFF;border:1px dashed #C6C6C1}
   .drop .h{font-size:20px;line-height:28px;color:#1B1B1B}
   .drop .p{margin-top:8px;font-size:13px;line-height:20px;color:#4C4C4C}
-  .drop .acts{display:flex;gap:12px;margin-top:24px}
+  .drop .acts{display:flex;flex-direction:column;gap:8px;margin-top:24px}
+  .drop .acts .btn{justify-content:center;width:160px}
   .drop .recent{margin-top:32px;width:360px;border-top:1px solid #DEDEDA}
   .drop .recent div{display:flex;justify-content:space-between;align-items:center;height:28px;border-bottom:1px solid #DEDEDA;font-size:13px;line-height:20px;color:#4C4C4C}
   .drop .recent b{font-weight:400;color:#1B1B1B}
@@ -323,7 +324,7 @@
   .skelbar{height:12px;background:#DFDFDB}
 
   /* calibration warning */
-  .warnbar{display:flex;align-items:center;gap:12px;height:44px;padding:0 16px;background:#F7EBC8;border-bottom:1px solid #E2CB92;font-size:13px;line-height:20px;color:#4C4C4C}
+  .warnbar{display:flex;align-items:center;gap:12px;height:32px;padding:0 16px;background:#F7EBC8;border-bottom:1px solid #E2CB92;font-size:13px;line-height:20px;color:#4C4C4C}
   .warnbar b{font-weight:400;color:#1B1B1B}
   .warnbar .act{font-size:13px;line-height:20px;color:#1B1B1B;border-bottom:1px solid #1B1B1B}
 
@@ -350,18 +351,18 @@
   .dlg{position:absolute;left:344px;top:154px;width:720px;height:560px;background:#FFFFFF;border:1px solid #C6C6C1;z-index:50;display:flex;flex-direction:column}
   .dlg-head{height:44px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid #DEDEDA;font-size:16px;line-height:24px;color:#1B1B1B}
   .dlg-body{flex:1;display:flex;min-height:0}
-  .dlg-nav{width:200px;border-right:1px solid #DEDEDA;padding:8px 0}
+  .dlg-nav{width:160px;border-right:1px solid #DEDEDA;padding:8px 0}
   .dlg-nav div{position:relative;height:28px;display:flex;align-items:center;padding:0 16px;font-size:13px;line-height:20px;color:#4C4C4C}
   .dlg-nav .on{background:#DFDFDB;color:#1B1B1B}
   .dlg-nav .on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:#B83A24}
   .dlg-main{flex:1;padding:16px}
   .dlg-foot{height:44px;display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:0 16px;border-top:1px solid #DEDEDA}
-  .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;height:56px;border-bottom:1px solid #DEDEDA}
+  .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;height:44px;border-bottom:1px solid #DEDEDA}
   .setrow .k{font-size:13px;line-height:20px;color:#1B1B1B}
   .setrow .d{margin-top:2px;font-size:11px;line-height:16px;color:#707070}
 
   /* export drawer 280 */
-  .drawer{position:absolute;left:0;right:0;bottom:0;height:280px;padding:12px 16px;background:#FFFFFF;border-top:1px solid #C6C6C1;z-index:20;display:flex;flex-direction:column;gap:12px}
+  .drawer{position:absolute;left:0;right:0;bottom:0;height:280px;padding:8px 16px 4px;background:#FFFFFF;border-top:1px solid #C6C6C1;z-index:20;display:flex;flex-direction:column;gap:8px}
   .drawer .dh{display:flex;align-items:center;gap:12px}
   .drawer .dh .t{font-size:16px;line-height:24px;color:#1B1B1B}
   .drawer .path{font-family:var(--mono);font-size:11px;line-height:16px;color:#4C4C4C}
@@ -371,7 +372,8 @@
   .preview{width:100%;border-collapse:collapse;font-size:13px;line-height:20px}
   .preview th{text-align:right;padding:4px 8px;border-bottom:1px solid #C6C6C1;font-size:11px;line-height:16px;font-weight:400;color:#707070}
   .preview td{text-align:right;padding:4px 8px;border-bottom:1px solid #DEDEDA;font-family:var(--mono);font-size:13px;line-height:20px;color:#1B1B1B}
-  .dfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:auto}</style>
+  .dfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:auto}
+  .drawer .setrow{height:28px;border-bottom:0}</style>
 </head>
 <body>
 <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -386,7 +388,7 @@
 </svg><section class="screen"><div class="cap"><b>01 · 空态</b><span>拖入即打开；没有图时不摆工具与档案，右下角只留版本。</span></div><div class="desktop"><div class="window"><header class="titlebar">
   <svg class="mark" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4v4.9a5 5 0 0 0 10 0V3.4"/><path d="M6 3.9v4.4M10 3.9v4.4"/></svg>
   <span class="brand">ImageLyre</span>
-  <span class="doc">— 无文档</span>
+  
   <span class="grow"></span>
   <span class="chip"><i></i>Agent 就绪</span>
   <span class="chip"><span class="k">Ctrl K</span>命令</span>
@@ -395,21 +397,21 @@
   <span class="chip">设置</span>
   <div class="wctl" aria-hidden="true"><span class="c-min"></span><span class="c-max"></span><span class="c-close"></span></div>
 </header><nav class="menubar"><span class="mi">File</span><span class="mi">Edit</span><span class="mi">Image</span><span class="mi">Analyze</span><span class="mi">Plugins</span><span class="mi">Help</span></nav><div class="body"><div class="canvas"><div class="drop">
-  <div class="h">把 TIFF 拖到这里</div>
+  <div class="h">把图放上去</div>
   <div class="p">16 位、带校准的 TIFF 会被直接识别；不支持的格式会说明原因。</div>
   <div class="acts"><span class="btn strong">打开文件…</span><span class="btn">打开示例</span><span class="btn">最近文件</span></div>
   <div class="recent">
-    <div><b>sample.tif</b><span>B-114 · 今天 09:34</span></div>
-    <div><b>kidney_02.tif</b><span>B-114 · 昨天 18:02</span></div>
-    <div><b>spine_03.tif</b><span>B-113 · 11-16</span></div>
+    <div><b>sample.tif</b><span>0.5 µm/px · 今天 09:34</span></div>
+    <div><b>kidney_02.tif</b><span>0.5 µm/px · 昨天 18:02</span></div>
+    <div><b>spine_03.tif</b><span>未校准 · 11-16</span></div>
   </div>
-  <div class="ver">ImageLyre 0.1 · 2026.11</div>
+  <div class="ver">ImageLyre 0.1.0 · build 2026.11.20</div>
 </div></div></div></div></div></section>
 <section class="screen"><div class="cap"><b>02 · 加载态</b><span>先给画布骨架、进度与取消；状态栏同步 64%。</span></div><div class="desktop"><div class="window"><header class="titlebar">
   <svg class="mark" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4v4.9a5 5 0 0 0 10 0V3.4"/><path d="M6 3.9v4.4M10 3.9v4.4"/></svg>
   <span class="brand">ImageLyre</span>
   <span class="doc">— sample.tif</span>
-  <span class="saved">已保存 <em>10:42</em> <span class="caret">▾</span></span>
+  <span class="saved">正在打开 <em>64%</em></span>
   <span class="grow"></span>
   <span class="chip"><i></i>Agent 就绪 · 只读</span>
   <span class="chip"><span class="k">Ctrl K</span>命令</span>
@@ -428,12 +430,12 @@
     <div class="loadbox">
       <div class="lt">正在打开 sample.tif</div>
       <div class="progress"><i></i></div>
-      <div class="lp">64% · 读取第 1/1 页</div>
+      <div class="lp">4096 × 4096 · 16 位 · 已解码 64%</div>
       <span class="btn">取消</span>
     </div>
   </div></div>
   <div class="readout">
-    <span class="cond"><span class="ci"><b>状态</b><em>正在打开 · 64%</em></span></span>
+    <span class="cond"><span class="ci"><b>状态</b><em>正在打开 sample.tif · 64%</em></span></span>
     <span class="cond"><span class="ci"><b>缩放</b><em>—</em></span><span class="ci"><b>标定</b><em>—</em></span></span>
   </div>
 </div></div><aside class="rail">
@@ -480,11 +482,11 @@
     </g>
     <circle class="grab" cx="728" cy="432" r="11"/>
   </svg>
-  <div class="roi-tag"><b>ROI 1</b><i>1240.5</i><em>µm²</em></div>
-  <div class="scale"><span class="lab">50 µm</span><span class="bar"></span></div>
+  <div class="roi-tag"><b>ROI 1</b><i>4962.0</i><em>px²</em></div>
+  
 </div></div><div class="readout">
   <span class="cond"><span class="ci"><b>X</b><em>512</em></span><span class="ci"><b>Y</b><em>384</em></span><span class="ci"><b>值</b><em>182</em></span></span>
-  <span class="cond"><span class="ci"><b>缩放</b><em>200%</em></span><span class="ci"><b>标定</b><em>0.5 µm/px</em></span></span>
+  <span class="cond"><span class="ci"><b>缩放</b><em>200%</em></span><span class="ci"><b>标定</b><em>—</em></span></span>
 </div><div class="batch">
   <div class="b-head"><span class="b-caret">⌄</span><div><div class="b-title">同批</div><div class="b-meta">B-114 · 12 张 · <b>6 已测</b></div></div></div>
   <div class="b-tabs">
@@ -505,7 +507,7 @@
     <dl class="ident">
       <div><dt>样本号</dt><dd class="mono id">S-04</dd></div>
       <div><dt>批次</dt><dd>B-114</dd></div>
-      <div><dt>校准</dt><dd class="mono">0.5 × 0.5 µm/px</dd></div>
+      <div><dt>校准</dt><dd>未设置 · 像素单位</dd></div>
     </dl>
     <details class="ident-more">
       <summary>展开全部 9 项<span class="caret">›</span></summary>
@@ -522,23 +524,23 @@
   <section class="sec">
     <div class="sec-head"><span>测量 / <b class="lat">Results</b></span><span>ROI 1 · 5 顶点</span></div>
     <dl class="meas">
-      <div><dt>Area</dt><dd>1240.5<i>µm²</i></dd></div>
+      <div><dt>Area</dt><dd>4962.0<i>px²</i></dd></div>
       <div><dt>Mean</dt><dd>182.4</dd></div>
       <div><dt>StdDev</dt><dd>21.7</dd></div>
       <div><dt>Min</dt><dd>96</dd></div>
       <div><dt>Max</dt><dd>233</dd></div>
-      <div><dt>Perimeter</dt><dd>148.2<i>µm</i></dd></div>
+      <div><dt>Perimeter</dt><dd>296.4<i>px</i></dd></div>
     </dl>
     <div class="disc"><span>台账 · 6 个 ROI</span><span class="caret">›</span></div>
   </section>
   <section class="sec">
     <div class="sec-head"><span>参数 / <b class="lat">Parameters</b></span><span>改动即重算</span></div>
-    <div class="p-row"><span class="p-lab">单位</span><span class="segs"><b class="act">µm²</b><i>px²</i></span><span class="p-lab">小数位</span><span class="segs"><b class="act">1</b><i>2</i><i>3</i></span></div>
-    <div class="p-row"><span class="p-lab">阈值</span><span class="p-val">12.0 <i>µm²</i></span><span class="p-lab">自动重算</span><span class="sw" aria-hidden="true"></span></div>
+    <div class="p-row"><span class="p-lab">单位</span><span class="segs"><i>µm²</i><b class="act">px²</b></span><span class="p-lab">小数位</span><span class="segs"><b class="act">1</b><i>2</i><i>3</i></span></div>
+    <div class="p-row"><span class="p-lab">阈值</span><span class="p-val">48.0 <i>px²</i></span><span class="p-lab">自动重算</span><span class="sw" aria-hidden="true"></span></div>
   </section>
   <section class="sec">
     <div class="sec-head"><span>溯源 / <b class="lat">Provenance</b></span><span>摘要</span></div>
-    <div class="prov-sum"><span><b>校准链</b>0.5000 µm/px · <b>哈希</b>9f3c1a72 · <b>插件</b>1.2.0</span><span class="caret">▾</span></div>
+    <div class="prov-sum"><span><b>校准链</b>无 · <b>哈希</b>9f3c1a72 · <b>插件</b>1.2.0</span><span class="caret">▾</span></div>
   </section>
   <div class="foot"><span class="btn">撤销<span class="k">Ctrl Z</span></span><span class="btn strong">导出 CSV…<span class="k">+ sidecar</span></span><span class="btn">历史版本</span></div>
 </aside></div></div></div></section>
@@ -700,7 +702,7 @@
   </div>
   <div class="ctx" style="margin-top:12px">
     <div class="row"><b>读</b><span>图像、ROI 顶点、校准、六项</span></div>
-    <div class="row"><b>写</b><span>备注与流程；不改像素</span></div>
+    <div class="row"><b>写</b><span>无；接受提案后才写备注</span></div>
   </div>
   <div class="prop"><div class="pt">把面积写进备注</div><div class="pd">ROI 1 · 1240.5 µm² · 10:42</div><span class="pa">应用</span></div>
   <div class="prop"><div class="pt">同批同阈值再测 6 张</div><div class="pd">阈值 12.0 µm² · 批次 B-114</div><span class="pa">应用</span></div>
@@ -809,6 +811,9 @@
       <div class="setrow"><div><div class="k">界面缩放</div><div class="d">字与控件同比缩放，图像不变</div></div><div class="segs"><b class="act">100%</b><i>125%</i><i>150%</i></div></div>
       <div class="setrow"><div><div class="k">档案密度</div><div class="d">紧凑把五段放进一屏，标准留更多留白</div></div><div class="segs"><b class="act">紧凑</b><i>标准</i></div></div>
       <div class="setrow"><div><div class="k">状态栏读数</div><div class="d">坐标、像素值、缩放、校准常驻画布下沿</div></div><span class="sw" aria-hidden="true"></span></div>
+      <div class="setrow"><div><div class="k">比例尺</div><div class="d">在图像角落按当前缩放折算长度</div></div><span class="sw" aria-hidden="true"></span></div>
+      <div class="setrow"><div><div class="k">坐标小数位</div><div class="d">状态栏坐标与像素值</div></div><div class="segs"><i>0</i><b class="act">1</b><i>2</i></div></div>
+      <div class="setrow"><div><div class="k">启动</div><div class="d">打开空态，或继续上次的档案</div></div><div class="segs"><b class="act">空态</b><i>上次</i></div></div>
     </div>
   </div>
   <div class="dlg-foot"><span class="btn">取消</span><span class="btn strong">应用</span></div>
@@ -866,7 +871,7 @@
 </div></div></div><aside class="rail">
   <div class="rtabs"><span class="rtab">档案</span><span class="rtab on">历史</span></div>
   <div class="sec" style="margin-top:0"><div class="sec-head"><span>版本 / <b class="lat">History</b></span><span>5 条</span></div></div>
-  <div class="hrow on"><span class="t">10:42</span><span class="m">移动顶点 4，重算 6 项</span><span class="a">LK</span></div>
+  <div class="hrow on"><span class="t">10:42</span><span class="m">移动顶点 4，重算 6 项</span><span class="a">当前</span><span class="a">LK</span></div>
   <div class="hrow on"><span class="t">10:38</span><span class="m">小数位 1，重算 6 项</span><span class="a">LK</span></div>
   <div class="hrow"><span class="t">10:31</span><span class="m">闭合多边形 ROI 1</span><span class="a">LK</span></div>
   <div class="hrow"><span class="t">10:12</span><span class="m">设置阈值 12.0 µm²</span><span class="a">LK</span></div>
@@ -925,7 +930,7 @@
   <div class="b-actions"><span class="b-count">8 / 12</span><span class="b-add">＋ 加入</span></div>
 </div><div class="drawer">
   <div class="dh"><span class="t">导出 CSV</span><span class="sp"></span><span class="x">×</span></div>
-  <div class="path">~/Documents/ImageLyre/B-114/S-04.csv</div>
+  <div class="path">~/Documents/ImageLyre/B-114/sample_results.csv</div>
   <div class="cols"><span class="lb">列</span><span class="c">ROI</span><span class="c">Area</span><span class="c">Mean</span><span class="c">StdDev</span><span class="c">Min</span><span class="c">Max</span><span class="c">Perimeter</span></div>
   <div class="setrow"><div><div class="k">sidecar</div><div class="d">随 CSV 写校准与溯源，不改图像</div></div><span class="sw" aria-hidden="true"></span></div>
   <table class="preview">
