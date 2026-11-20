@@ -23,7 +23,7 @@
 - `Type` 组固定五个子维，顺序固定：`Family`、`Size`、`LineHeight`、`Weight`、`LetterSpacing`。字号按值建键，四档各一个键：`Lyre.Type.Size.S11`=11、`S13`=13、`S16`=16、`S20`=20，只此四个，不出现 `S12`、`S15` 一类中间值；角色名只用在样式里，不建键。
 - 字重进资源：`Lyre.Type.Weight.Regular`=400、`Lyre.Type.Weight.SemiBold`=600，只有这两档，因为排印 §3 只定义这两档，且 `typography-avalonia.md` §4.1 已有对应键。
 - 行高与字距的键名同样按值建，与字号一一对应：`Lyre.Type.LineHeight.L11`=16、`L13`=20、`L16`=24、`L20`=28（四档与字号一一对应，没有第五个值）；字距三档 `Lyre.Type.LetterSpacing.Tight`=−0.20、`Normal`=0、`Caps`=+1.10，数值固定写在键上，不新增第四档。
-- 线宽键与设计侧 `size.hairline`、`ctrl.signal` 是映射关系而不是第二份值：键在这里定义一次，设计文档只提供来源名与用途。线宽归 `Size` 组，按设计键一一映射，只两个键：`Lyre.Size.Hairline`=1（对应 `size.hairline`）、`Lyre.Size.Signal`=2（对应 `ctrl.signal`）；不另建 `Lyre.Line.Width.*`，因为同一根线建两个键就是两份真源。`Line` 组只放线的颜色，不放粗细。`controls.md` §4 的图标描边 1.25 属矢量图形自带属性，由图标资源携带，不进线宽键，因此与"线宽只允许 1 与 2"不冲突。圆角固定 0，不建键；阴影不做，不建键。
+- 线宽键与设计侧 `size.hairline`、`ctrl.signal` 是映射关系而不是第二份值：键在这里定义一次，设计文档只提供来源名与用途。线宽归 `Size` 组，按设计键一一映射，只两个键：`Lyre.Size.Hairline`=1（对应 `size.hairline`）、`Lyre.Size.Signal`=2（对应 `ctrl.signal`）。后者是跨表映射：`ctrl.signal` 在 `controls.md` 里属控件尺寸表而不是间距表，此处按语义并入 `Size`，不适用"逐段同构"那条规则；不另建 `Lyre.Line.Width.*`，因为同一根线建两个键就是两份真源。`Line` 组只放线的颜色，不放粗细。`controls.md` §4 的图标描边 1.25 属矢量图形自带属性，由图标资源携带，不进线宽键，因此与"线宽只允许 1 与 2"不冲突。圆角固定 0，不建键；阴影不做，不建键。
 - 类型：颜色给 `Color` 不给 `Brush`，`Brush` 与 `Thickness` 由壳在使用处用键组合生成。这条是把"值只有一个来源"收窄为"设计定义的数值只有一个来源"，组合产物不算新值。
 - `warn` 不进组表：`color-tokens.md` 的 18 个键里没有 warn，而产品外观 §6.2 把警告归入信号色，因此两键暂挂 `Lyre.Signal.Warning.Background` 与 `Lyre.Signal.Warning.Line`，值标 `TODO(设计确认)`，要么设计补值，要么删。
 
