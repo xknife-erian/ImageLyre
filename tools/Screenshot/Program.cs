@@ -21,23 +21,14 @@ internal static class Program
         app.Resources.MergedDictionaries.Add(new Avalonia.Markup.Xaml.Styling.ResourceInclude(new Uri("avares://ImageLyre.Themes/Tokens.axaml")) { Source = new Uri("avares://ImageLyre.Themes/Tokens.axaml") });
         app.Styles.Add(new Avalonia.Markup.Xaml.Styling.StyleInclude(new Uri("avares://ImageLyre.Themes/Controls.axaml")) { Source = new Uri("avares://ImageLyre.Themes/Controls.axaml") });
 
-        var stack = new StackPanel { Spacing = 8, Margin = new Thickness(24) };
-        foreach (var sizeKey in new[] { "S20", "S16", "S13", "S11" })
-        {
-            var text = new TextBlock { Text = $"ImageLyre {sizeKey}" };
-            text.Bind(TextBlock.FontSizeProperty, new Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension($"Lyre.Type.Size.{sizeKey}"));
-            stack.Children.Add(text);
-        }
-
-        stack.Children.Add(new Button { Content = "打开文件…" });
-        stack.Children.Add(new Button { Content = "打开示例" });
+        var panel = ImageLyre.Feature.EmptyState.EmptyStateFeature.CreateEmptyStatePanel();
 
         var window = new Window
         {
-            Width = 480,
-            Height = 320,
+            Width = 720,
+            Height = 480,
             Background = Brushes.White,
-            Content = stack,
+            Content = panel,
         };
 
         window.Show();
@@ -52,7 +43,7 @@ internal static class Program
 
         var outputDirectory = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "docs", "assets", "headless");
         Directory.CreateDirectory(outputDirectory);
-        var path = Path.Combine(outputDirectory, "tokens-and-controls.png");
+        var path = Path.Combine(outputDirectory, "empty-state.png");
         frame.Save(path);
         Console.WriteLine($"SAVED {path} {frame.PixelSize.Width}x{frame.PixelSize.Height}");
         return 0;
