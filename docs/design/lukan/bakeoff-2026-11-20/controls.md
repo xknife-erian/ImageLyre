@@ -57,12 +57,13 @@
 
 - 悬停只换底，不换线、不换字重；禁用项没有悬停。
 - 选中与按下共用同一个底，区别只在有没有 2px 标；一个控件不能既放下沿又放左沿。
+- 复选框是唯一例外：它的「选中」用 2px `signal` 勾画在 16px 方框里，不放下沿（见 §7）；这是勾，不是第二条线。
 - 禁用时一定要把信号标去掉——禁用控件里没有「当前」。
 - 五态都不出现深色实底反白；暗色下选中底比面板亮一档。
 
 ## 3 按钮
 
-三档：主、次、静默。三档同高同字，差别只在底、线、字的层级；主按钮也不用 `signal`。
+三档：主、次、静默。三档同高同字，差别只在**线**与**字色**：主 = 实线 + T1，次 = 细线 + T2，静默 = 无线 + T2。主按钮也不用 `signal`，也不反白。
 
 **规格**
 
@@ -70,30 +71,35 @@
 | :--- | :--- | :--- | :--- |
 | 高 | 28 | 28 | 28 |
 | 左右内边 | 12 | 12 | 8 |
-| 字档 | 13 / 20 | 13 / 20 | 13 / 20 |
+| 字档 | 13 / 20；拉丁 600、中文 400 | 13 / 20；中文 400 | 13 / 20；中文 400 |
 | 底 | `surface.panel` | 透明（露出所在底） | 透明 |
-| 线 | `line.border` | `line.divider` | 无 |
+| 线 | 1px `line.border` | 1px `line.divider` | 无 |
 | 字色 | `text.t1` | `text.t2` | `text.t2` |
 | 图标 | 16，与字 gap 8 | 同左 | 同左 |
 | 数量 | 一屏一处，只给本屏主动作 | 常规动作 | 低频与面板内联动作 |
 
-**五态**（三档同表，底/线按上表替换）
+**五态**（三档同表；悬停与按下只换底，不换线、不换字色）
 
 | 态 | 底 | 线 | 字 |
 | :--- | :--- | :--- | :--- |
 | 默认 | 见上表 | 见上表 | 见上表 |
-| 悬停 | `surface.hover` | 不变 | 升一档：`text.t2` → `text.t1` |
-| 按下 | `state.selected.bg` | 不变 | `text.t1` |
-| 焦点 | 不变 | `line.focus` 外偏 1px | 不变 |
+| 悬停 | `surface.hover` | 不变（仍是本档的线） | 不变（仍是本档的字色） |
+| 按下 | `state.selected.bg` | 不变 | 不变 |
+| 焦点 | 不变 | 外加 `line.focus` 1px（外偏 1px），原线保留 | 不变 |
 | 禁用 | `state.disabled.bg` | `line.divider` | `text.disabled` |
+
+- 三档的分层只发生在默认态与焦点态；悬停、按下如果改线或改字色，三档会塌成一档，因此明令不动。
+- 禁用时三档同表：底 `state.disabled.bg`、线 `line.divider`、字 `text.disabled`；这是唯一允许三档同形的一态。
 
 **键盘**：Tab 进入，Enter 或 Space 触发；同一组按钮内 ←/→ 或 ↑/↓ 移动焦点；Esc 取消正在进行且可取消的动作；快捷键写在按钮右侧，用 11 mono，如 `Ctrl M`。
 
 **do / don't**
 
 - do：一个动作一个动词，中文 400、拉丁 600；宽度随字长，最短 72。
-- do：主按钮靠「实底 + 深字 + 实线」立起来，不靠颜色。
+- do：主按钮靠「实线 + T1 + 拉丁 600」立起来，不靠颜色、不靠加粗中文。
+- do：三档同屏时按「一主、一次、其余静默」排，不出现两个主按钮。
 - don't：不用 `signal` 铺底、不做反白、不做圆角、不加投影。
+- don't：不要把次按钮做成「主按钮的浅色版」——它们差的是线的层级（`line.border` vs `line.divider`），不是透明度。
 - don't：按钮里不换行、不截断、不放两个动词（「保存并导出」拆两个）。
 
 ## 4 图标按钮与工具格
@@ -164,7 +170,7 @@
 
 ## 6 分段控件
 
-横向单选，一屏内的视图切换（像素/µm、1 位/2 位、浅/深）。
+横向单选，一屏内的视图切换。测量单位只有两格：**µm² / px²**；同型控件还用于 1 位/2 位、浅/深。
 
 **规格**：外高 28；项左右 12；字 13 / 20；外框 1px `line.border`；项间 1px `line.divider`；底 `surface.panel`。
 
@@ -182,8 +188,9 @@
 
 **do / don't**
 
-- do：2–4 项；等宽或按字长，不拉伸到整行。
+- do：两格为主，最多三格；等宽或按字长，不拉伸到整行。
 - do：选中靠「底 + 下沿 2px」，不靠加粗、不靠反白。
+- don't：不做三格以上的单位切换（µm² / px² 只有两格）。
 - don't：不用分段做多选；多选改用复选。
 - don't：不把分段做成胶囊、不做圆角底。
 
@@ -193,7 +200,7 @@
 
 | 控件 | 尺寸 | 内边 / 间距 | 字档 |
 | :--- | :--- | :--- | :--- |
-| 复选框 | 方框 16 × 16，行高 28 | 框与标签 8；行左右 0 | 13 |
+| 复选框 | 方框 16 × 16，行高 28 | 框与标签 8；行左右 4（只为悬停底留边） | 13 |
 | 开关 | 轨道 40 × 24，手柄 16 | 手柄内缩 4；标签与轨道 8 | 13 |
 | 下拉触发器 | 高 28 | 左右 8；值 + 8 + 箭头 8 | 13 |
 | 下拉菜单 | 项高 28，菜单最小宽 = 触发器宽 | 项左右 12；上下 4；容器 1px 边 | 13；快捷键 11 mono |
@@ -203,7 +210,7 @@
 
 | 控件 | 默认 | 悬停 | 选中 / 开 | 焦点 | 禁用 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| 复选框 | 框 `surface.input` + `line.border` | 行底 `surface.hover` | 框底 `state.selected.bg`，勾 2px `text.t1` | 框外 `line.focus` 1px | 框 `line.divider`，勾 `text.disabled`，字 `text.disabled` |
+| 复选框 | 框 `surface.input` + `line.border`，空框 | 行底 `surface.hover` | 框 16 底 `state.selected.bg`，勾 2px `signal.active` | 框外 `line.focus` 1px | 框 `line.divider` + 字 `text.disabled`，无勾 |
 | 开关 | 轨道 `surface.input` + `line.border`，柄左 | 轨道 `surface.hover` | 轨道 `state.selected.bg`，柄右，柄 `surface.panel` | 外框 `line.focus` | 轨道 `state.disabled.bg`，柄 `line.divider` |
 | 下拉 | `surface.input` + `line.border` | `surface.hover` | 展开中：外框 `line.focus`，箭头翻转 | `line.focus` | `state.disabled.bg` + `text.disabled` |
 | 菜单项 | `surface.panel` | `surface.hover` | 当前项：`state.selected.bg` + 左沿 2px `signal.active` | 焦点在菜单容器上，当前项靠 2px 标 | `text.disabled`，无悬停 |
@@ -212,8 +219,11 @@
 
 **do / don't**
 
-- do：复选的勾用 `text.t1`，不用 `signal`；勾是「值」，不是「当前」。
+- do：复选选中的三件套是固定的：16px 方框、框底 `state.selected.bg`、2px `signal.active` 的勾；三者同时出现，缺一不算选中。
+- do：禁用时不画勾，框线换 `line.divider`、字换 `text.disabled`，仍能读出标签。
+- do：`signal` 在复选框里只用于那一道 2px 勾，不扩散到标签、行底或焦点环。
 - do：开关的开态靠手柄位置 + 一档底，不靠颜色。
+- don't：不用 1px 勾、不用 `text.t1` 勾、不用对勾字符（✓）——勾永远是 2px 线，随缩放不变粗。
 - don't：不用开关表示立即生效的危险动作；那用按钮。
 - don't：下拉菜单不加投影；用 1px 边与底分层。
 
@@ -257,7 +267,7 @@
 
 **滚动条**：轨道宽 8（`space.2`），底透明；滑块宽 8，`line.border`，最短 24；悬停 `text.t3`，拖动中 `text.t2`；无箭头按钮；区域聚焦时 PageUp/PageDown 翻页。
 
-**滑块**：轨道高 4（`space.1`），`line.divider`；已选段 4，`line.border`（中性，不用 signal）；手柄 16（`space.4`）方形，`surface.panel` 底 + 1px `line.border`；焦点时手柄外圈 `line.focus`；禁用时轨道 `state.disabled.bg`、手柄 `line.divider`。键盘 ←/→ ±1，Shift ±10，Home/End 到两端。
+**滑块**：轨道高 4（`space.1`），`line.divider`；已选段 4，`line.border`（中性，不用 signal）；手柄 16（`space.4`）方形，`surface.panel` 底 + 1px `line.border`；悬停时手柄描边 `text.t3`；拖动中手柄描边 `text.t2`、底 `state.selected.bg`（表示正在拖，不铺 signal）；焦点时手柄外圈 `line.focus`；禁用时轨道 `state.disabled.bg`、手柄 `line.divider`。键盘 ←/→ ±1，Shift ±10，Home/End 到两端。
 
 **步进**：每个按钮 24 宽 × 28 高；`surface.panel` + `line.border`；− 与 + 各一枚，紧贴数值框右侧，中间 1px `line.divider`；悬停 `surface.hover`，按下 `state.selected.bg`，焦点 `line.focus`，禁用 `text.disabled`；↑/↓ 与按钮同步，按住 400ms 后连续步进。
 
