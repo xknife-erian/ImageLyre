@@ -1,0 +1,19 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 唯一入口：外观模块挂载它，控件只引用 Lyre.* -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://ImageLyre.Themes/Tokens.Shared.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://ImageLyre.Themes/Tokens.Light.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://ImageLyre.Themes/Tokens.Dark.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

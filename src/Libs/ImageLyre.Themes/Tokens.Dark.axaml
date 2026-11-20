@@ -1,0 +1,22 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 暗 31：与亮色一一对应，只换色值 -->
+    <Color x:Key="Lyre.Surface.Window">#15171A</Color>
+    <Color x:Key="Lyre.Surface.Panel">#1C1F23</Color>
+    <Color x:Key="Lyre.Surface.Canvas">#0D0F11</Color>
+    <Color x:Key="Lyre.Surface.Input">#121417</Color>
+    <Color x:Key="Lyre.Surface.Hover">#292E34</Color>
+    <Color x:Key="Lyre.Line.Divider">#2A2E33</Color>
+    <Color x:Key="Lyre.Line.Border">#3C4249</Color>
+    <Color x:Key="Lyre.Line.Focus">#D89A4A</Color>
+    <Color x:Key="Lyre.Text.T1">#E9ECEF</Color>
+    <Color x:Key="Lyre.Text.T2">#B5BBC2</Color>
+    <Color x:Key="Lyre.Text.T3">#8C939B</Color>
+    <Color x:Key="Lyre.Text.Disabled">#7E858D</Color>
+    <Color x:Key="Lyre.Signal.Active">#D89A4A</Color>
+    <Color x:Key="Lyre.Signal.Running">#D89A4A</Color>
+    <Color x:Key="Lyre.State.Selected.Bg">#2E333A</Color>
+    <Color x:Key="Lyre.State.Disabled.Bg">#1A1D21</Color>
+    <Color x:Key="Lyre.Signal.Warning.Background">#332E28</Color>
+    <Color x:Key="Lyre.Signal.Warning.Line">#D89A4A</Color>
+</ResourceDictionary>
