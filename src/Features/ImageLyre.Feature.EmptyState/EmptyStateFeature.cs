@@ -50,13 +50,24 @@ public sealed class EmptyStateFeature : BasePicoFeatures
         // D2 的进度源是模拟的：分段上报，演示壳层遮罩；真实解码属业务插件，不在基座里做。
         sample.Click += async (_, _) => await SimulateOpenAsync(BaseContext);
 
-        return new StackPanel
+        // D3 缺校准：一根内联黄条，贴在内容上方；默认隐藏，用按钮演示开关。
+        var warning = BuildWarningBar();
+        var demoWarning = new Button
+        {
+            Content = "模拟缺校准",
+            HorizontalAlignment = HorizontalAlignment.Center,
+        };
+        demoWarning.Click += (_, _) => warning.IsVisible = !warning.IsVisible;
+
+        var stack = new StackPanel
         {
             Spacing = 8,
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Center,
-            Children = { title, hint, open, sample },
+            Children = { warning, title, hint, open, sample, demoWarning },
         };
+
+        return stack;
     }
 
     private const string SAMPLE_MESSAGE = "正在打开 sample.tif";
@@ -91,5 +102,28 @@ public sealed class EmptyStateFeature : BasePicoFeatures
             // 任何异常都要收起遮罩，否则界面会一直停在“正在打开”。
             busy.ReportFailed(id);
         }
+    }
+
+    private static Border BuildWarningBar()
+    {
+        var text = new TextBlock
+        {
+            Text = "这张图没有校准信息，测量结果不能标定到微米。请先设置比例尺。",
+            TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+        };
+        Bind(text, TextBlock.FontSizeProperty, "Lyre.Type.Size.S13");
+
+        var bar = new Border
+        {
+            IsVisible = false,
+            Padding = new Avalonia.Thickness(12, 8),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            Child = text,
+        };
+        Bind(bar, Border.BackgroundProperty, "Lyre.Signal.Warning.Background");
+        Bind(bar, Border.BorderBrushProperty, "Lyre.Signal.Warning.Line");
+        bar.BorderThickness = new Avalonia.Thickness(2, 0, 0, 0);
+
+        return bar;
     }
 }
