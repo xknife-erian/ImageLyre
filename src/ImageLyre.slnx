@@ -11,6 +11,7 @@
     <Project Path="Libs/ImageLyre.UI.Contracts/ImageLyre.UI.Contracts.csproj" />
   </Folder>
   <Folder Name="/Modules/">
+    <Project Path="Modules/ImageLyre.Module.Busy/ImageLyre.Module.Busy.csproj" />
     <Project Path="Modules/ImageLyre.Module.Commands/ImageLyre.Module.Commands.csproj" />
     <Project Path="Modules/ImageLyre.Module.Documents/ImageLyre.Module.Documents.csproj" />
     <Project Path="Modules/ImageLyre.Module.Files/ImageLyre.Module.Files.csproj" />
