@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440, initial-scale=1">
+<title>ImageLyre — Plate 01</title>
+<style>
+  :root{
+    --paper:#f4f1e8;
+    --paper-2:#ece8dc;
+    --ink:#1b1b16;
+    --ink-soft:#4d4b43;
+    --ink-mute:#837f73;
+    --rule:#cfcaba;
+    --rule-soft:#e2ddce;
+    --red:#bc3a22;
+    --desktop:#2b2a25;
+    --sans:"Helvetica Neue",Helvetica,"Segoe UI",Arial,sans-serif;
+    --mono:"Cascadia Mono",Consolas,"SF Mono",Menlo,"Roboto Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--desktop)}
+  body{display:flex;justify-content:center;align-items:flex-start}
+  .stage{
+    position:relative;width:1440px;height:900px;flex:none;
+    background:var(--desktop);overflow:hidden;
+    font-family:var(--sans);color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .window{
+    position:absolute;inset:24px;background:var(--paper);
+    border:1px solid #12120e;
+    box-shadow:0 24px 60px rgba(0,0,0,.32);
+  }
+
+  /* the page's running head — menus live here, printed on the paper */
+  .runninghead{
+    position:absolute;top:0;left:0;right:0;height:64px;
+    display:flex;align-items:center;
+    padding:0 24px 0 56px;
+  }
+  .brand{
+    font-size:10px;font-weight:600;letter-spacing:.22em;
+    text-transform:uppercase;white-space:nowrap;
+  }
+  .file{font-size:12.5px;color:var(--ink-soft);margin-left:14px;white-space:nowrap}
+  .menus{display:flex;align-items:center;gap:26px;margin-left:52px}
+  .menu{
+    font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-soft);white-space:nowrap;line-height:1;
+  }
+  .head-right{margin-left:auto;display:flex;align-items:center;gap:28px}
+  .theme{display:flex;align-items:center;gap:12px;white-space:nowrap}
+  .theme .k{font-size:6.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-mute)}
+  .theme .opt{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute)}
+  .theme .opt.on{color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:2px}
+  .actions{display:flex;align-items:baseline;gap:22px}
+  .action{
+    font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink);line-height:1;white-space:nowrap;
+  }
+  .action .al{border-bottom:1px solid var(--ink);padding-bottom:2px}
+  .action .kbd{font-family:var(--mono);font-size:6.5px;letter-spacing:.04em;color:var(--ink-mute);margin-left:5px;border:none}
+  .winbtns{display:flex;align-items:center;gap:26px;border-left:1px solid var(--rule);padding-left:24px}
+  .winbtn{display:flex;align-items:center;justify-content:center;width:10px;height:10px}
+  .winbtn svg{display:block;color:var(--ink-soft)}
+  .winbtn.close svg{color:var(--ink)}
+
+  /* the sheet */
+  .sheet{position:absolute;top:80px;left:56px;right:56px;bottom:34px}
+  .work{position:relative;width:1278px;height:660px}
+
+  .plate{
+    position:absolute;left:0;top:0;width:940px;height:660px;
+    margin:0;border:1px solid var(--ink);overflow:hidden;
+    background:#8d8b82;
+  }
+  .micro{position:absolute;inset:0;display:block;width:100%;height:100%;filter:contrast(1.12) brightness(1.02)}
+
+  .roi{position:absolute;inset:0;pointer-events:none;z-index:5}
+  .overlay{position:absolute;left:0;top:0;width:1278px;height:660px;z-index:5;pointer-events:none}
+
+  .scale{position:absolute;left:24px;bottom:24px}
+  .scale .sval{
+    font-family:var(--mono);font-size:9px;letter-spacing:.02em;
+    color:rgba(18,18,14,.88);margin-bottom:5px;
+  }
+  .scale .bar{position:relative;width:80px;height:1px;background:rgba(18,18,14,.82)}
+  .scale .bar::before,.scale .bar::after{
+    content:"";position:absolute;top:0;width:1px;height:6px;background:rgba(18,18,14,.82);
+  }
+  .scale .bar::before{left:0}
+  .scale .bar::after{right:0}
+  .scale .bar .tick{position:absolute;left:50%;top:0;width:1px;height:4px;background:rgba(18,18,14,.82)}
+  .scale .scap{
+    margin-top:4px;font-size:6px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(18,18,14,.62);
+  }
+
+  .crosshair{position:absolute;left:760px;top:520px;width:0;height:0;pointer-events:none}
+  .crosshair::before{content:"";position:absolute;left:-18px;top:0;width:36px;height:1px;background:rgba(18,18,14,.55)}
+  .crosshair::after{content:"";position:absolute;left:0;top:-18px;width:1px;height:36px;background:rgba(18,18,14,.55)}
+  .crosshair .dot{
+    position:absolute;left:-2px;top:-2px;width:4px;height:4px;
+    background:var(--paper);border:1px solid rgba(18,18,14,.8);
+  }
+  .crosshair .tag{
+    position:absolute;left:10px;top:10px;font-family:var(--mono);
+    font-size:7.5px;color:rgba(18,18,14,.82);white-space:nowrap;
+  }
+
+  /* the margin — a measurement ledger, not a panel */
+  .margin{position:absolute;left:980px;top:0;width:298px;height:660px}
+
+  .dochead{position:absolute;left:0;top:0;right:0}
+  .plate-no{font-size:6.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-mute)}
+  .fname{font-size:17px;font-weight:500;letter-spacing:.005em;margin-top:7px;line-height:1.1}
+  .imeta{
+    margin-top:14px;font-family:var(--mono);font-size:8px;line-height:1.95;
+    color:var(--ink-soft);letter-spacing:.01em;
+  }
+  .imeta span{display:block}
+  .imeta .strong{color:var(--ink)}
+
+  .metrics{position:absolute;left:0;top:196px;right:0}
+  .metrics-head{
+    height:16px;display:flex;align-items:flex-start;justify-content:space-between;
+    font-size:6.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);
+  }
+  .metrics-head .roi{letter-spacing:.14em}
+  .metrics-head{font-size:7px;letter-spacing:.2em}
+  .metrics-body{margin-top:8px;border-top:1px solid var(--ink)}
+  .metric{
+    height:40px;display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid var(--rule-soft);
+  }
+  .metric .key{font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+  .metric.area .key{color:var(--ink)}
+  .metric .num{
+    font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;
+    color:var(--ink);display:flex;align-items:baseline;justify-content:flex-end;
+  }
+  .metric.area .num{font-size:14.5px}
+  .metric .unit{font-family:var(--mono);font-size:6.5px;color:var(--ink-mute);display:inline-block;width:20px;text-align:left;margin-left:3px}
+
+  .params{position:absolute;left:0;top:492px;right:0}
+  .params-head{
+    height:16px;display:flex;align-items:flex-start;justify-content:space-between;
+    font-size:6.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);
+  }
+  .live{display:inline-flex;align-items:center;gap:5px;color:var(--red);letter-spacing:.16em}
+  .live i{display:block;width:4px;height:4px;background:var(--red)}
+  .param{
+    height:24px;display:flex;align-items:baseline;justify-content:space-between;
+  }
+  .param .k{font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+  .param .v{
+    font-family:var(--mono);font-size:10px;color:var(--ink);
+    border-bottom:1px solid #bbb5a4;padding-bottom:2px;min-width:92px;text-align:right;
+  }
+  .param .v.on{border-bottom-color:var(--red)}
+
+  .margin-foot{
+    position:absolute;left:0;bottom:0;right:0;
+    display:flex;justify-content:space-between;
+    font-size:6px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);
+  }
+
+  /* printed caption, not a status bar */
+  .caption{
+    width:1278px;margin-top:16px;border-top:1px solid var(--ink);
+    padding-top:9px;display:flex;align-items:flex-start;justify-content:space-between;
+  }
+  .cap-left .l1{font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+  .cap-left .l1 strong{color:var(--ink);font-weight:600}
+  .tools{display:flex;align-items:baseline;gap:16px;margin-top:10px}
+  .tools .k{font-size:6px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-mute);margin-right:2px}
+  .tools .t{font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute)}
+  .tools .t.on{color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:2px}
+  .cap-right{text-align:right}
+  .data{
+    font-family:var(--mono);font-size:8.5px;color:var(--ink);
+    display:flex;align-items:baseline;gap:18px;justify-content:flex-end;
+  }
+  .data .k{font-family:var(--sans);font-size:6px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);margin-right:5px}
+  .cap-note{
+    margin-top:9px;font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-mute);
+  }
+  .cap-note b{font-weight:400;color:var(--ink-soft)}
+
+  .grip{
+    position:absolute;right:8px;bottom:8px;width:9px;height:9px;opacity:.5;
+  }
+  .grip::before,.grip::after{content:"";position:absolute;background:var(--ink-mute)}
+  .grip::before{right:0;bottom:0;width:9px;height:1px;box-shadow:0 -3px 0 var(--ink-mute),0 -6px 0 var(--ink-mute)}
+  .grip::after{right:0;bottom:0;width:1px;height:9px;box-shadow:-3px 0 0 var(--ink-mute),-6px 0 0 var(--ink-mute)}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="window">
+
+    <header class="runninghead">
+      <span class="brand">ImageLyre</span>
+      <span class="file">sample.tif</span>
+      <nav class="menus">
+        <span class="menu">File</span>
+        <span class="menu">Edit</span>
+        <span class="menu">Image</span>
+        <span class="menu">Analyze</span>
+        <span class="menu">Plugins</span>
+        <span class="menu">Help</span>
+      </nav>
+      <div class="head-right">
+        <div class="theme">
+          <span class="k">Theme</span>
+          <span class="opt on">Light</span>
+          <span class="opt">Dark</span>
+        </div>
+        <div class="actions">
+          <span class="action"><span class="al">Undo</span><span class="kbd">Ctrl Z</span></span>
+          <span class="action"><span class="al">Export CSV</span></span>
+        </div>
+        <div class="winbtns">
+          <span class="winbtn" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><line x1="0.5" y1="5.5" x2="9.5" y2="5.5" stroke="currentColor"/></svg></span>
+          <span class="winbtn" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="0.5" y="0.5" width="9" height="9" stroke="currentColor"/></svg></span>
+          <span class="winbtn close" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0.5 0.5L9.5 9.5M9.5 0.5L0.5 9.5" stroke="currentColor"/></svg></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="sheet">
+      <div class="work">
+
+        <figure class="plate">
+          <svg class="micro" viewBox="0 0 940 660" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <radialGradient id="field" cx="42%" cy="34%" r="82%">
+                <stop offset="0" stop-color="#c8c6ba"/>
+                <stop offset="0.55" stop-color="#adaa9f"/>
+                <stop offset="1" stop-color="#7d7b72"/>
+              </radialGradient>
+              <radialGradient id="vig" cx="46%" cy="42%" r="74%">
+                <stop offset="0.45" stop-color="#171710" stop-opacity="0"/>
+                <stop offset="1" stop-color="#171710" stop-opacity="0.34"/>
+              </radialGradient>
+
+              <filter id="wob" x="-6%" y="-6%" width="112%" height="112%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="4" seed="17" result="n"/>
+                <feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+                <feGaussianBlur stdDeviation="0.4"/>
+              </filter>
+              <filter id="wob2" x="-6%" y="-6%" width="112%" height="112%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.012 0.017" numOctaves="3" seed="5" result="n"/>
+                <feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+                <feGaussianBlur stdDeviation="0.3"/>
+              </filter>
+              <filter id="wob3" x="-6%" y="-6%" width="112%" height="112%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02 0.026" numOctaves="2" seed="9" result="n"/>
+                <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+                <feGaussianBlur stdDeviation="0.25"/>
+              </filter>
+
+              <filter id="relief" x="0" y="0" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="5" seed="23" result="n"/>
+                <feDiffuseLighting in="n" surfaceScale="3.4" diffuseConstant="1.05" lighting-color="#f0eee3" result="lit">
+                  <feDistantLight azimuth="230" elevation="52"/>
+                </feDiffuseLighting>
+                <feBlend in="lit" in2="SourceGraphic" mode="multiply"/>
+              </filter>
+              <filter id="cloud" x="0" y="0" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.0025 0.0035" numOctaves="4" seed="3"/>
+                <feColorMatrix type="saturate" values="0"/>
+              </filter>
+              <filter id="soft14"><feGaussianBlur stdDeviation="14"/></filter>
+              <filter id="soft5"><feGaussianBlur stdDeviation="5"/></filter>
+              <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/>
+                <feColorMatrix type="saturate" values="0"/>
+              </filter>
+
+              <path id="b1" d="M5 46C3 27 15 9 36 5C57 1 79 10 87 27C95 44 86 61 66 67C46 73 23 69 12 59C7 54 6 50 5 46Z"/>
+              <path id="b2" d="M4 40C3 21 18 5 38 4C57 3 76 13 83 29C90 45 82 62 62 68C44 74 20 69 10 57C5 51 5 45 4 40Z"/>
+              <path id="b3" d="M11 35C13 14 31 2 51 6C71 10 87 25 84 43C81 61 63 72 43 68C23 64 9 53 11 35Z"/>
+              <path id="b4" d="M8 43C5 25 16 8 36 4C56 0 79 9 86 25C93 41 85 59 67 65C49 71 27 68 16 60C10 56 9 50 8 43Z"/>
+
+              <pattern id="cellsA" width="292" height="236" patternUnits="userSpaceOnUse" patternTransform="rotate(-4)">
+                <g fill="#b0aea3" opacity="0.16">
+                  <use href="#b1" transform="translate(6,10) scale(.55)"/>
+                  <use href="#b2" transform="translate(150,4) scale(.7) rotate(4)"/>
+                  <use href="#b3" transform="translate(86,100) scale(.85) rotate(-6)"/>
+                  <use href="#b4" transform="translate(214,94) scale(.5) rotate(8)"/>
+                  <use href="#b1" transform="translate(14,160) scale(.48) rotate(-10)"/>
+                  <use href="#b2" transform="translate(132,166) scale(.6) rotate(5)"/>
+                </g>
+                <g fill="none" stroke="#4e4d46" stroke-width="1" opacity="0.4">
+                  <use href="#b1" transform="translate(6,10) scale(.55)"/>
+                  <use href="#b2" transform="translate(150,4) scale(.7) rotate(4)"/>
+                  <use href="#b3" transform="translate(86,100) scale(.85) rotate(-6)"/>
+                  <use href="#b4" transform="translate(214,94) scale(.5) rotate(8)"/>
+                  <use href="#b1" transform="translate(14,160) scale(.48) rotate(-10)"/>
+                  <use href="#b2" transform="translate(132,166) scale(.6) rotate(5)"/>
+                </g>
+                <g fill="none" stroke="#e2e0d4" stroke-width="0.9" opacity="0.3" transform="translate(-1.6,-1.6)">
+                  <use href="#b1" transform="translate(6,10) scale(.55)"/>
+                  <use href="#b2" transform="translate(150,4) scale(.7) rotate(4)"/>
+                  <use href="#b3" transform="translate(86,100) scale(.85) rotate(-6)"/>
+                  <use href="#b4" transform="translate(214,94) scale(.5) rotate(8)"/>
+                  <use href="#b1" transform="translate(14,160) scale(.48) rotate(-10)"/>
+                  <use href="#b2" transform="translate(132,166) scale(.6) rotate(5)"/>
+                </g>
+                <g fill="#4b4a43" opacity="0.24">
+                  <ellipse cx="33" cy="29" rx="9" ry="5.5"/>
+                  <ellipse cx="185" cy="30" rx="12" ry="7"/>
+                  <ellipse cx="128" cy="132" rx="15" ry="9"/>
+                  <ellipse cx="244" cy="118" rx="7" ry="4"/>
+                  <ellipse cx="162" cy="189" rx="10" ry="6"/>
+                </g>
+                <g fill="#e0ded2" opacity="0.22">
+                  <ellipse cx="30" cy="26" rx="5" ry="3"/>
+                  <ellipse cx="181" cy="27" rx="6" ry="3.5"/>
+                  <ellipse cx="124" cy="129" rx="7" ry="4"/>
+                </g>
+              </pattern>
+
+              <pattern id="cellsB" width="468" height="392" patternUnits="userSpaceOnUse" patternTransform="rotate(7)">
+                <g fill="#a9a79c" opacity="0.1">
+                  <use href="#b3" transform="translate(18,18) scale(1.2) rotate(-4)"/>
+                  <use href="#b1" transform="translate(238,6) scale(1.45) rotate(6)"/>
+                  <use href="#b2" transform="translate(76,196) scale(1.05) rotate(-8)"/>
+                  <use href="#b4" transform="translate(282,212) scale(1.3) rotate(3)"/>
+                  <use href="#b1" transform="translate(160,300) scale(.7) rotate(-3)"/>
+                </g>
+                <g fill="none" stroke="#4b4a43" stroke-width="1.5" opacity="0.26">
+                  <use href="#b3" transform="translate(18,18) scale(1.2) rotate(-4)"/>
+                  <use href="#b1" transform="translate(238,6) scale(1.45) rotate(6)"/>
+                  <use href="#b2" transform="translate(76,196) scale(1.05) rotate(-8)"/>
+                  <use href="#b4" transform="translate(282,212) scale(1.3) rotate(3)"/>
+                  <use href="#b1" transform="translate(160,300) scale(.7) rotate(-3)"/>
+                </g>
+                <g fill="none" stroke="#dad8cc" stroke-width="1.1" opacity="0.25" transform="translate(-2.4,-2.4)">
+                  <use href="#b3" transform="translate(18,18) scale(1.2) rotate(-4)"/>
+                  <use href="#b1" transform="translate(238,6) scale(1.45) rotate(6)"/>
+                  <use href="#b2" transform="translate(76,196) scale(1.05) rotate(-8)"/>
+                  <use href="#b4" transform="translate(282,212) scale(1.3) rotate(3)"/>
+                  <use href="#b1" transform="translate(160,300) scale(.7) rotate(-3)"/>
+                </g>
+                <g fill="#4b4a43" opacity="0.14">
+                  <ellipse cx="78" cy="61" rx="21" ry="12"/>
+                  <ellipse cx="310" cy="58" rx="24" ry="14"/>
+                  <ellipse cx="128" cy="234" rx="17" ry="10"/>
+                </g>
+              </pattern>
+
+              <pattern id="fine" width="148" height="128" patternUnits="userSpaceOnUse" patternTransform="rotate(11)">
+                <g fill="#a5a398" opacity="0.14">
+                  <use href="#b2" transform="translate(4,4) scale(.28)"/>
+                  <use href="#b3" transform="translate(70,20) scale(.22)"/>
+                  <use href="#b1" transform="translate(30,66) scale(.3)"/>
+                  <use href="#b4" transform="translate(104,72) scale(.2)"/>
+                  <use href="#b2" transform="translate(72,100) scale(.26)"/>
+                </g>
+                <g fill="none" stroke="#4f4e47" stroke-width="0.8" opacity="0.32">
+                  <use href="#b2" transform="translate(4,4) scale(.28)"/>
+                  <use href="#b3" transform="translate(70,20) scale(.22)"/>
+                  <use href="#b1" transform="translate(30,66) scale(.3)"/>
+                  <use href="#b4" transform="translate(104,72) scale(.2)"/>
+                  <use href="#b2" transform="translate(72,100) scale(.26)"/>
+                </g>
+                <g fill="#474640" opacity="0.22">
+                  <ellipse cx="18" cy="19" rx="4" ry="2.5"/>
+                  <ellipse cx="80" cy="32" rx="3.2" ry="2"/>
+                  <ellipse cx="46" cy="80" rx="4.4" ry="2.8"/>
+                  <ellipse cx="118" cy="86" rx="2.8" ry="1.8"/>
+                  <ellipse cx="88" cy="114" rx="3.6" ry="2.2"/>
+                </g>
+              </pattern>
+            </defs>
+
+            <rect width="940" height="660" fill="url(#field)"/>
+            <rect width="940" height="660" filter="url(#cloud)" opacity="0.18" style="mix-blend-mode:multiply"/>
+            <rect width="940" height="660" fill="#b9b7ab" filter="url(#relief)" opacity="0.32"/>
+
+            <g filter="url(#soft14)" opacity="0.38">
+              <ellipse cx="240" cy="110" rx="170" ry="100" fill="#d0cec2"/>
+              <ellipse cx="780" cy="520" rx="210" ry="115" fill="#c7c5b9"/>
+              <ellipse cx="760" cy="50" rx="150" ry="85" fill="#cbc9bd"/>
+              <ellipse cx="600" cy="430" rx="170" ry="95" fill="#b9b7ab"/>
+            </g>
+
+            <rect x="-20" y="-20" width="980" height="700" fill="url(#cellsB)" filter="url(#wob)" opacity="0.7"/>
+            <rect x="-20" y="-20" width="980" height="700" fill="url(#cellsA)" filter="url(#wob2)" opacity="0.82"/>
+            <rect x="-20" y="-20" width="980" height="700" fill="url(#fine)" filter="url(#wob3)" opacity="0.62"/>
+
+            <g fill="#4a4943" opacity="0.4" filter="url(#soft5)">
+              <ellipse cx="410" cy="232" rx="10" ry="7"/>
+              <ellipse cx="880" cy="382" rx="12" ry="8"/>
+              <ellipse cx="1150" cy="180" rx="9" ry="6"/>
+              <ellipse cx="222" cy="330" rx="8" ry="5"/>
+              <ellipse cx="990" cy="92" rx="7" ry="5"/>
+            </g>
+
+            <g stroke="#5d5b54" stroke-width="0.7" opacity="0.3" fill="none">
+              <path d="M90 300C150 285 210 300 268 330"/>
+              <path d="M470 60C520 78 560 70 606 44"/>
+              <path d="M840 380C890 400 950 395 1000 370"/>
+              <path d="M1120 120C1160 140 1200 138 1240 118"/>
+              <path d="M300 470C350 455 400 462 440 480"/>
+            </g>
+
+            <g fill="#3f3e38" opacity="0.5">
+              <circle cx="760" cy="180" r="2.4"/>
+              <circle cx="850" cy="210" r="1.8"/>
+              <circle cx="360" cy="420" r="2"/>
+              <circle cx="620" cy="330" r="1.5"/>
+              <circle cx="930" cy="80" r="1.6"/>
+              <circle cx="214" cy="210" r="1.3"/>
+              <circle cx="900" cy="476" r="2.1"/>
+            </g>
+            <g fill="#e4e2d7" opacity="0.4">
+              <circle cx="870" cy="170" r="2"/>
+              <circle cx="548" cy="430" r="1.7"/>
+              <circle cx="860" cy="560" r="2.2"/>
+              <circle cx="250" cy="90" r="1.5"/>
+              <circle cx="700" cy="420" r="1.4"/>
+            </g>
+
+            <rect width="940" height="660" filter="url(#grain)" opacity="0.16" style="mix-blend-mode:multiply"/>
+            <rect width="940" height="660" fill="url(#vig)"/>
+            <rect x="0.5" y="0.5" width="939" height="659" fill="none" stroke="rgba(16,16,12,.35)"/>
+          </svg>
+          <div class="scale">
+            <div class="sval">20 µm</div>
+            <div class="bar"><span class="tick"></span></div>
+            <div class="scap">0.5 µm/px</div>
+          </div>
+          <div class="crosshair">
+            <span class="dot"></span>
+            <span class="tag">512, 384</span>
+          </div>
+        </figure>
+
+        <aside class="margin">
+          <div class="dochead">
+            <div class="plate-no">Plate 01</div>
+            <div class="fname">sample.tif</div>
+            <div class="imeta">
+              <span class="strong">16-BIT TIFF</span>
+              <span>2048 × 1536 PX</span>
+              <span>0.5 µm/px</span>
+            </div>
+          </div>
+
+          <section class="metrics">
+            <div class="metrics-head"><span>Results</span><span class="roi">ROI 01</span></div>
+            <div class="metrics-body">
+              <div class="metric area"><span class="key">Area</span><span class="num">1240.5<span class="unit">µm²</span></span></div>
+              <div class="metric"><span class="key">Mean</span><span class="num">182.4<span class="unit">&nbsp;</span></span></div>
+              <div class="metric"><span class="key">StdDev</span><span class="num">21.7<span class="unit">&nbsp;</span></span></div>
+              <div class="metric"><span class="key">Min</span><span class="num">96<span class="unit">&nbsp;</span></span></div>
+              <div class="metric"><span class="key">Max</span><span class="num">233<span class="unit">&nbsp;</span></span></div>
+              <div class="metric"><span class="key">Perimeter</span><span class="num">148.2<span class="unit">µm</span></span></div>
+            </div>
+          </section>
+
+          <section class="params">
+            <div class="params-head"><span>Parameters</span><span class="live"><i></i>Live</span></div>
+            <div class="param"><span class="k">Threshold</span><span class="v">96 – 233</span></div>
+            <div class="param"><span class="k">Decimals</span><span class="v on">1</span></div>
+            <div class="param"><span class="k">Unit</span><span class="v">µm²</span></div>
+          </section>
+
+          <div class="margin-foot"><span>Calibrated</span><span>6 objects · 1 selected</span></div>
+        </aside>
+
+        <svg class="overlay" viewBox="0 0 1278 660" aria-hidden="true">
+          <polygon points="300,170 520,130 700,240 590,420 330,380"
+                   fill="none" stroke="#f4f1e8" stroke-opacity="0.5" stroke-width="3.2"/>
+          <polygon points="300,170 520,130 700,240 590,420 330,380"
+                   fill="none" stroke="#bc3a22" stroke-width="1.25"/>
+          <line x1="706" y1="240" x2="974" y2="240" stroke="#bc3a22" stroke-width="1"/>
+          <rect x="972" y="238" width="4" height="4" fill="#bc3a22"/>
+          <g fill="#bc3a22" stroke="#f4f1e8" stroke-width="1">
+            <rect x="297" y="167" width="6" height="6"/>
+            <rect x="517" y="127" width="6" height="6"/>
+            <rect x="587" y="417" width="6" height="6"/>
+            <rect x="327" y="377" width="6" height="6"/>
+          </g>
+          <rect x="695" y="235" width="10" height="10" fill="#f4f1e8" stroke="#bc3a22" stroke-width="1.4"/>
+          <text x="700" y="228" fill="#bc3a22" font-family="Cascadia Mono, Consolas, monospace" font-size="6.5" letter-spacing="1" text-anchor="middle">P3</text>
+          <text x="520" y="118" fill="#bc3a22" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="7" letter-spacing="1.8">ROI 01</text>
+        </svg>
+
+      </div>
+
+      <footer class="caption">
+        <div class="cap-left">
+          <div class="l1"><strong>Plate 01</strong> — sample.tif</div>
+          <div class="tools">
+            <span class="k">Tools</span>
+            <span class="t">Select</span>
+            <span class="t">Rect</span>
+            <span class="t on">Polygon</span>
+            <span class="t">Hand</span>
+            <span class="t">Zoom</span>
+          </div>
+        </div>
+        <div class="cap-right">
+          <div class="data">
+            <span><span class="k">X</span>512</span>
+            <span><span class="k">Y</span>384</span>
+            <span><span class="k">Value</span>182</span>
+            <span><span class="k">Zoom</span>200%</span>
+            <span><span class="k">Scale</span>0.5 µm/px</span>
+          </div>
+          <div class="cap-note"><b>Polygon ROI 01 · 5 vertices</b> — drag a vertex to edit</div>
+        </div>
+      </footer>
+    </div>
+
+    <div class="grip"></div>
+  </div>
+</div>
+</body>
+</html>

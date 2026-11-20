@@ -6,9 +6,11 @@
 
 | 目录 | 内容 |
 | :--- | :--- |
-| `requirements/` | `product-requirements.md` / `.html`，产品需求文档 4.1，md 为源 |
+| `requirements/` | `product-requirements.md` / `.html`，产品需求文档 4.4，md 为源 |
+| `requirements/` | `product-appearance.md`，产品外观的第一直觉与反面清单 |
 | `requirements/` | `core-1.0-boundary.md`，Core 1.0 的 15 个产品结果与 P0 收口边界 |
 | `requirements/` | `measurement-baseline.md`，测量选项、列序、统计口径与 ImageJ 对照容差的唯一真源 |
+| `requirements/` | `interaction-requirements.md`，15 条主交互流与横切规则 |
 | `baseline/` | `startup-requirements.md`，启动需求与架构基线 1.4 |
 | `m1/` | `Core-1.0-acceptance-matrix.xlsx`、`M1-imagej-fixture.md`、`M1-interaction-spec.md`；旧 M1 台账在 `archive/` |
 | `cli/` | `cli-contract.md` 与 `schemas/lyre.*.schema.json`，CLI 与 Agent 的技术契约 |

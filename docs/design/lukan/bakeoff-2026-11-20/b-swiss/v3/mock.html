@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440, initial-scale=1">
+<title>ImageLyre — Viewfinder</title>
+<style>
+  :root{
+    --hud:#f2efe3;
+    --hud-soft:rgba(242,239,227,.62);
+    --hud-faint:rgba(242,239,227,.38);
+    --line:rgba(242,239,227,.22);
+    --red:#d2472e;
+    --mono:"Cascadia Mono",Consolas,"SF Mono",Menlo,"Roboto Mono",monospace;
+    --sans:"Helvetica Neue",Helvetica,"Segoe UI",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#1c1b17}
+  body{display:flex;justify-content:center;align-items:flex-start}
+  .stage{
+    position:relative;width:1440px;height:900px;flex:none;
+    background:#1c1b17;overflow:hidden;
+    font-family:var(--sans);color:var(--hud);
+    -webkit-font-smoothing:antialiased;
+  }
+  .window{
+    position:absolute;inset:24px;background:#070705;
+    box-shadow:inset 0 0 0 1px #6d685a,0 0 0 1px #000,0 28px 70px rgba(0,0,0,.62);
+    overflow:hidden;
+  }
+  .viewport{position:absolute;inset:0;overflow:hidden;background:#070705}
+
+  .image{position:absolute;inset:0}
+  .image .micro{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .image.base{filter:invert(1) sepia(.4) saturate(.6) contrast(1.02) brightness(.55) blur(2.6px)}
+  .image.sharp{
+    z-index:1;
+    filter:invert(1) sepia(.45) saturate(.8) contrast(1.1) brightness(1.55);
+    clip-path:polygon(360px 230px,650px 180px,800px 360px,660px 600px,380px 560px);
+  }
+  .optical{
+    position:absolute;inset:0;pointer-events:none;z-index:2;
+    background:
+      radial-gradient(58% 46% at 44% 40%, rgba(255,242,214,.12), rgba(0,0,0,0) 70%),
+      radial-gradient(135% 100% at 46% 42%, rgba(0,0,0,0) 36%, rgba(0,0,0,.7) 100%);
+  }
+
+  .hud{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
+
+  /* top edge identity */
+  .brandblock{position:absolute;left:24px;top:44px;z-index:4}
+  .brand{font-size:9px;font-weight:600;letter-spacing:.24em;text-transform:uppercase}
+  .file{font-size:12px;color:var(--hud);margin-left:10px;letter-spacing:.01em}
+  .meta{
+    margin-top:5px;font-family:var(--mono);font-size:7px;
+    letter-spacing:.055em;color:var(--hud-soft);white-space:nowrap;
+  }
+
+  .menus{position:absolute;left:430px;top:46px;display:flex;align-items:center;gap:22px;z-index:4}
+  .menu{
+    font-size:8px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--hud-soft);white-space:nowrap;line-height:1;
+  }
+
+  .headright{position:absolute;right:24px;top:44px;display:flex;align-items:center;gap:20px;z-index:4}
+  .theme{display:flex;align-items:center;gap:9px;white-space:nowrap}
+  .theme .k{font-size:6px;letter-spacing:.2em;text-transform:uppercase;color:var(--hud-faint)}
+  .theme .opt{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--hud-faint)}
+  .theme .opt.on{color:var(--hud);border-bottom:1px solid var(--hud);padding-bottom:2px}
+  .actions{display:flex;align-items:baseline;gap:16px}
+  .action{
+    font-size:8px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--hud);white-space:nowrap;line-height:1;
+  }
+  .action .al{border-bottom:1px solid rgba(242,239,227,.7);padding-bottom:2px}
+  .action .kbd{font-family:var(--mono);font-size:6px;letter-spacing:.03em;color:var(--hud-faint);margin-left:4px}
+  .winbtns{display:flex;align-items:center;gap:18px;border-left:1px solid var(--line);padding-left:18px}
+  .winbtn{display:flex;align-items:center;justify-content:center;width:10px;height:10px}
+  .winbtn svg{display:block;color:rgba(242,239,227,.72)}
+  .winbtn.close svg{color:rgba(242,239,227,.92)}
+
+  /* corner readouts */
+  .params{position:absolute;left:24px;top:84px;width:310px;z-index:4}
+  .params-head{
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:6px;letter-spacing:.2em;text-transform:uppercase;color:var(--hud-faint);
+  }
+  .live{display:inline-flex;align-items:center;gap:5px;color:var(--red);letter-spacing:.16em}
+  .live i{display:block;width:4px;height:4px;background:var(--red)}
+  .param{height:18px;display:flex;align-items:baseline;justify-content:space-between}
+  .param .k{font-size:6px;letter-spacing:.14em;text-transform:uppercase;color:var(--hud-soft)}
+  .param .v{
+    font-family:var(--mono);font-size:10px;color:var(--hud);
+    border-bottom:1px solid rgba(242,239,227,.2);padding-bottom:2px;
+    min-width:112px;text-align:right;
+  }
+  .param .v .adj{color:var(--hud-faint);font-family:var(--sans);font-size:8px;margin:0 3px}
+  .param .v.on{border-bottom-color:var(--red)}
+  .param .v.on .adj{color:var(--red)}
+
+  .coords{position:absolute;left:24px;bottom:53px;z-index:4}
+  .crow{display:flex;align-items:baseline;gap:16px;white-space:nowrap}
+  .crow + .crow{margin-top:6px}
+  .kv{display:flex;align-items:baseline;gap:5px}
+  .kv .k{font-size:5.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--hud-faint)}
+  .kv .v{font-family:var(--mono);font-size:10px;color:var(--hud)}
+  .kv .v.small{font-size:10px}
+
+  .metrics{position:absolute;right:24px;bottom:46px;width:320px;z-index:4}
+  .metrics-head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    border-top:1px solid var(--line);padding-top:7px;margin-bottom:5px;
+    font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--hud-soft);
+  }
+  .metrics-head .roi{color:var(--red);letter-spacing:.16em}
+  .mrow{display:grid;grid-template-columns:1fr 1fr;column-gap:20px}
+  .mcell{height:22px;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .mcell .mk{font-size:6.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--hud-faint);white-space:nowrap}
+  .mcell .mv{font-family:var(--mono);font-size:10.5px;color:var(--hud);white-space:nowrap}
+  .mcell .mv.area{font-size:11px}
+  .mcell .mu{font-family:var(--mono);font-size:5.5px;color:var(--hud-faint);margin-left:3px}
+
+  .roihint{
+    position:absolute;left:430px;bottom:58px;z-index:4;
+    font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--hud-faint);
+    white-space:nowrap;
+  }
+  .roihint b{font-weight:400;color:var(--hud-soft)}
+  .toolsline{position:absolute;left:430px;bottom:40px;z-index:4;display:flex;align-items:baseline;gap:16px}
+  .toolsline .k{font-size:6px;letter-spacing:.2em;text-transform:uppercase;color:var(--hud-faint)}
+  .toolsline .t{font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--hud-faint)}
+  .toolsline .t.on{color:var(--hud);border-bottom:1px solid var(--red);padding-bottom:2px}
+
+  .grip{position:absolute;right:6px;bottom:6px;width:9px;height:9px;opacity:.35;z-index:4}
+  .grip::before,.grip::after{content:"";position:absolute;background:var(--hud)}
+  .grip::before{right:0;bottom:0;width:9px;height:1px;box-shadow:0 -3px 0 var(--hud),0 -6px 0 var(--hud)}
+  .grip::after{right:0;bottom:0;width:1px;height:9px;box-shadow:-3px 0 0 var(--hud),-6px 0 0 var(--hud)}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="window">
+    <div class="viewport">
+
+      <div class="image base"><svg class="micro" viewBox="0 0 1392 852" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <radialGradient id="field" cx="42%" cy="34%" r="82%">
+                <stop offset="0" stop-color="#c8c6ba"/>
+                <stop offset="0.55" stop-color="#adaa9f"/>
+                <stop offset="1" stop-color="#7d7b72"/>
+              </radialGradient>
+              <radialGradient id="vig" cx="46%" cy="42%" r="74%">
+                <stop offset="0.45" stop-color="#171710" stop-opacity="0"/>
+                <stop offset="1" stop-color="#171710" stop-opacity="0.34"/>
+              </radialGradient>
+
+              <filter id="wob" x="-6%" y="-6%" width="112%" height="112%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="4" seed="17" result="n"/>
+                <feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+                <feGaussianBlur stdDeviation="0.4"/>
+              </filter>
+              <filter id="wob2" x="-6%" y="-6%" width="112%" height="112%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.012 0.017" numOctaves="3" seed="5" result="n"/>
+                <feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+                <feGaussianBlur stdDeviation="0.3"/>
+              </filter>
+              <filter id="wob3" x="-6%" y="-6%" width="112%" height="112%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02 0.026" numOctaves="2" seed="9" result="n"/>
+                <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+                <feGaussianBlur stdDeviation="0.25"/>
+              </filter>
+
+              <filter id="relief" x="0" y="0" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="5" seed="23" result="n"/>
+                <feDiffuseLighting in="n" surfaceScale="3.4" diffuseConstant="1.05" lighting-color="#f0eee3" result="lit">
+                  <feDistantLight azimuth="230" elevation="52"/>
+                </feDiffuseLighting>
+                <feBlend in="lit" in2="SourceGraphic" mode="multiply"/>
+              </filter>
+              <filter id="cloud" x="0" y="0" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.0025 0.0035" numOctaves="4" seed="3"/>
+                <feColorMatrix type="saturate" values="0"/>
+              </filter>
+              <filter id="soft14"><feGaussianBlur stdDeviation="14"/></filter>
+              <filter id="soft5"><feGaussianBlur stdDeviation="5"/></filter>
+              <filter id="grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/>
+                <feColorMatrix type="saturate" values="0"/>
+              </filter>
+
+              <path id="b1" d="M5 46C3 27 15 9 36 5C57 1 79 10 87 27C95 44 86 61 66 67C46 73 23 69 12 59C7 54 6 50 5 46Z"/>
+              <path id="b2" d="M4 40C3 21 18 5 38 4C57 3 76 13 83 29C90 45 82 62 62 68C44 74 20 69 10 57C5 51 5 45 4 40Z"/>
+              <path id="b3" d="M11 35C13 14 31 2 51 6C71 10 87 25 84 43C81 61 63 72 43 68C23 64 9 53 11 35Z"/>
+              <path id="b4" d="M8 43C5 25 16 8 36 4C56 0 79 9 86 25C93 41 85 59 67 65C49 71 27 68 16 60C10 56 9 50 8 43Z"/>
+
+              <pattern id="cellsA" width="292" height="236" patternUnits="userSpaceOnUse" patternTransform="rotate(-4)">
+                <g fill="#b0aea3" opacity="0.16">
+                  <use href="#b1" transform="translate(6,10) scale(.55)"/>
+                  <use href="#b2" transform="translate(150,4) scale(.7) rotate(4)"/>
+                  <use href="#b3" transform="translate(86,100) scale(.85) rotate(-6)"/>
+                  <use href="#b4" transform="translate(214,94) scale(.5) rotate(8)"/>
+                  <use href="#b1" transform="translate(14,160) scale(.48) rotate(-10)"/>
+                  <use href="#b2" transform="translate(132,166) scale(.6) rotate(5)"/>
+                </g>
+                <g fill="none" stroke="#4e4d46" stroke-width="1" opacity="0.4">
+                  <use href="#b1" transform="translate(6,10) scale(.55)"/>
+                  <use href="#b2" transform="translate(150,4) scale(.7) rotate(4)"/>
+                  <use href="#b3" transform="translate(86,100) scale(.85) rotate(-6)"/>
+                  <use href="#b4" transform="translate(214,94) scale(.5) rotate(8)"/>
+                  <use href="#b1" transform="translate(14,160) scale(.48) rotate(-10)"/>
+                  <use href="#b2" transform="translate(132,166) scale(.6) rotate(5)"/>
+                </g>
+                <g fill="none" stroke="#e2e0d4" stroke-width="0.9" opacity="0.3" transform="translate(-1.6,-1.6)">
+                  <use href="#b1" transform="translate(6,10) scale(.55)"/>
+                  <use href="#b2" transform="translate(150,4) scale(.7) rotate(4)"/>
+                  <use href="#b3" transform="translate(86,100) scale(.85) rotate(-6)"/>
+                  <use href="#b4" transform="translate(214,94) scale(.5) rotate(8)"/>
+                  <use href="#b1" transform="translate(14,160) scale(.48) rotate(-10)"/>
+                  <use href="#b2" transform="translate(132,166) scale(.6) rotate(5)"/>
+                </g>
+                <g fill="#4b4a43" opacity="0.24">
+                  <ellipse cx="33" cy="29" rx="9" ry="5.5"/>
+                  <ellipse cx="185" cy="30" rx="12" ry="7"/>
+                  <ellipse cx="128" cy="132" rx="15" ry="9"/>
+                  <ellipse cx="244" cy="118" rx="7" ry="4"/>
+                  <ellipse cx="162" cy="189" rx="10" ry="6"/>
+                </g>
+                <g fill="#e0ded2" opacity="0.22">
+                  <ellipse cx="30" cy="26" rx="5" ry="3"/>
+                  <ellipse cx="181" cy="27" rx="6" ry="3.5"/>
+                  <ellipse cx="124" cy="129" rx="7" ry="4"/>
+                </g>
+              </pattern>
+
+              <pattern id="cellsB" width="468" height="392" patternUnits="userSpaceOnUse" patternTransform="rotate(7)">
+                <g fill="#a9a79c" opacity="0.1">
+                  <use href="#b3" transform="translate(18,18) scale(1.2) rotate(-4)"/>
+                  <use href="#b1" transform="translate(238,6) scale(1.45) rotate(6)"/>
+                  <use href="#b2" transform="translate(76,196) scale(1.05) rotate(-8)"/>
+                  <use href="#b4" transform="translate(282,212) scale(1.3) rotate(3)"/>
+                  <use href="#b1" transform="translate(160,300) scale(.7) rotate(-3)"/>
+                </g>
+                <g fill="none" stroke="#4b4a43" stroke-width="1.5" opacity="0.26">
+                  <use href="#b3" transform="translate(18,18) scale(1.2) rotate(-4)"/>
+                  <use href="#b1" transform="translate(238,6) scale(1.45) rotate(6)"/>
+                  <use href="#b2" transform="translate(76,196) scale(1.05) rotate(-8)"/>
+                  <use href="#b4" transform="translate(282,212) scale(1.3) rotate(3)"/>
+                  <use href="#b1" transform="translate(160,300) scale(.7) rotate(-3)"/>
+                </g>
+                <g fill="none" stroke="#dad8cc" stroke-width="1.1" opacity="0.25" transform="translate(-2.4,-2.4)">
+                  <use href="#b3" transform="translate(18,18) scale(1.2) rotate(-4)"/>
+                  <use href="#b1" transform="translate(238,6) scale(1.45) rotate(6)"/>
+                  <use href="#b2" transform="translate(76,196) scale(1.05) rotate(-8)"/>
+                  <use href="#b4" transform="translate(282,212) scale(1.3) rotate(3)"/>
+                  <use href="#b1" transform="translate(160,300) scale(.7) rotate(-3)"/>
+                </g>
+                <g fill="#4b4a43" opacity="0.14">
+                  <ellipse cx="78" cy="61" rx="21" ry="12"/>
+                  <ellipse cx="310" cy="58" rx="24" ry="14"/>
+                  <ellipse cx="128" cy="234" rx="17" ry="10"/>
+                </g>
+              </pattern>
+
+              <pattern id="fine" width="148" height="128" patternUnits="userSpaceOnUse" patternTransform="rotate(11)">
+                <g fill="#a5a398" opacity="0.14">
+                  <use href="#b2" transform="translate(4,4) scale(.28)"/>
+                  <use href="#b3" transform="translate(70,20) scale(.22)"/>
+                  <use href="#b1" transform="translate(30,66) scale(.3)"/>
+                  <use href="#b4" transform="translate(104,72) scale(.2)"/>
+                  <use href="#b2" transform="translate(72,100) scale(.26)"/>
+                </g>
+                <g fill="none" stroke="#4f4e47" stroke-width="0.8" opacity="0.32">
+                  <use href="#b2" transform="translate(4,4) scale(.28)"/>
+                  <use href="#b3" transform="translate(70,20) scale(.22)"/>
+                  <use href="#b1" transform="translate(30,66) scale(.3)"/>
+                  <use href="#b4" transform="translate(104,72) scale(.2)"/>
+                  <use href="#b2" transform="translate(72,100) scale(.26)"/>
+                </g>
+                <g fill="#474640" opacity="0.22">
+                  <ellipse cx="18" cy="19" rx="4" ry="2.5"/>
+                  <ellipse cx="80" cy="32" rx="3.2" ry="2"/>
+                  <ellipse cx="46" cy="80" rx="4.4" ry="2.8"/>
+                  <ellipse cx="118" cy="86" rx="2.8" ry="1.8"/>
+                  <ellipse cx="88" cy="114" rx="3.6" ry="2.2"/>
+                </g>
+              </pattern>
+            </defs>
+
+            <rect width="1392" height="852" fill="#f4f1e8"/>
+            
+            <rect width="1392" height="852" fill="#b9b7ab" filter="url(#relief)" opacity="0.1"/>
+
+            <g filter="url(#soft14)" opacity="0.2">
+              <ellipse cx="240" cy="110" rx="170" ry="100" fill="#d0cec2"/>
+              <ellipse cx="780" cy="520" rx="210" ry="115" fill="#c7c5b9"/>
+              <ellipse cx="760" cy="50" rx="150" ry="85" fill="#cbc9bd"/>
+              <ellipse cx="600" cy="430" rx="170" ry="95" fill="#b9b7ab"/>
+            </g>
+
+            <rect x="-20" y="-20" width="1432" height="892" fill="url(#cellsB)" filter="url(#wob)" opacity="0.7"/>
+            <rect x="-20" y="-20" width="1432" height="892" fill="url(#cellsA)" filter="url(#wob2)" opacity="0.82"/>
+            <rect x="-20" y="-20" width="1432" height="892" fill="url(#fine)" filter="url(#wob3)" opacity="0.62"/>
+
+            <g fill="#4a4943" opacity="0.4" filter="url(#soft5)">
+              <ellipse cx="410" cy="232" rx="10" ry="7"/>
+              <ellipse cx="880" cy="382" rx="12" ry="8"/>
+              <ellipse cx="1150" cy="180" rx="9" ry="6"/>
+              <ellipse cx="222" cy="330" rx="8" ry="5"/>
+              <ellipse cx="990" cy="92" rx="7" ry="5"/>
+            </g>
+
+            <g stroke="#5d5b54" stroke-width="0.7" opacity="0.3" fill="none">
+              <path d="M90 300C150 285 210 300 268 330"/>
+              <path d="M470 60C520 78 560 70 606 44"/>
+              <path d="M840 380C890 400 950 395 1000 370"/>
+              <path d="M1120 120C1160 140 1200 138 1240 118"/>
+              <path d="M300 470C350 455 400 462 440 480"/>
+            </g>
+
+            <g fill="#3f3e38" opacity="0.5">
+              <circle cx="760" cy="180" r="2.4"/>
+              <circle cx="850" cy="210" r="1.8"/>
+              <circle cx="360" cy="420" r="2"/>
+              <circle cx="620" cy="330" r="1.5"/>
+              <circle cx="930" cy="80" r="1.6"/>
+              <circle cx="214" cy="210" r="1.3"/>
+              <circle cx="900" cy="476" r="2.1"/>
+            </g>
+            <g fill="#e4e2d7" opacity="0.4">
+              <circle cx="870" cy="170" r="2"/>
+              <circle cx="548" cy="430" r="1.7"/>
+              <circle cx="860" cy="560" r="2.2"/>
+              <circle cx="250" cy="90" r="1.5"/>
+              <circle cx="700" cy="420" r="1.4"/>
+            </g>
+
+          </svg></div>
+      <div class="image sharp"><svg class="micro" viewBox="0 0 1392 852" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <radialGradient id="s_field" cx="42%" cy="34%" r="82%">
+                <stop offset="0" stop-color="#c8c6ba"/>
+                <stop offset="0.55" stop-color="#adaa9f"/>
+                <stop offset="1" stop-color="#7d7b72"/>
+              </radialGradient>
+              <radialGradient id="s_vig" cx="46%" cy="42%" r="74%">
+                <stop offset="0.45" stop-color="#171710" stop-opacity="0"/>
+                <stop offset="1" stop-color="#171710" stop-opacity="0.34"/>
+              </radialGradient>
+
+              <filter id="s_wob" x="-6%" y="-6%" width="112%" height="112%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="4" seed="17" result="n"/>
+                <feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+                <feGaussianBlur stdDeviation="0.4"/>
+              </filter>
+              <filter id="s_wob2" x="-6%" y="-6%" width="112%" height="112%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.012 0.017" numOctaves="3" seed="5" result="n"/>
+                <feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+                <feGaussianBlur stdDeviation="0.3"/>
+              </filter>
+              <filter id="s_wob3" x="-6%" y="-6%" width="112%" height="112%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02 0.026" numOctaves="2" seed="9" result="n"/>
+                <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+                <feGaussianBlur stdDeviation="0.25"/>
+              </filter>
+
+              <filter id="s_relief" x="0" y="0" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="5" seed="23" result="n"/>
+                <feDiffuseLighting in="n" surfaceScale="3.4" diffuseConstant="1.05" lighting-color="#f0eee3" result="lit">
+                  <feDistantLight azimuth="230" elevation="52"/>
+                </feDiffuseLighting>
+                <feBlend in="lit" in2="SourceGraphic" mode="multiply"/>
+              </filter>
+              <filter id="s_cloud" x="0" y="0" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.0025 0.0035" numOctaves="4" seed="3"/>
+                <feColorMatrix type="saturate" values="0"/>
+              </filter>
+              <filter id="s_soft14"><feGaussianBlur stdDeviation="14"/></filter>
+              <filter id="s_soft5"><feGaussianBlur stdDeviation="5"/></filter>
+              <filter id="s_grain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/>
+                <feColorMatrix type="saturate" values="0"/>
+              </filter>
+
+              <path id="s_b1" d="M5 46C3 27 15 9 36 5C57 1 79 10 87 27C95 44 86 61 66 67C46 73 23 69 12 59C7 54 6 50 5 46Z"/>
+              <path id="s_b2" d="M4 40C3 21 18 5 38 4C57 3 76 13 83 29C90 45 82 62 62 68C44 74 20 69 10 57C5 51 5 45 4 40Z"/>
+              <path id="s_b3" d="M11 35C13 14 31 2 51 6C71 10 87 25 84 43C81 61 63 72 43 68C23 64 9 53 11 35Z"/>
+              <path id="s_b4" d="M8 43C5 25 16 8 36 4C56 0 79 9 86 25C93 41 85 59 67 65C49 71 27 68 16 60C10 56 9 50 8 43Z"/>
+
+              <pattern id="s_cellsA" width="292" height="236" patternUnits="userSpaceOnUse" patternTransform="rotate(-4)">
+                <g fill="#b0aea3" opacity="0.16">
+                  <use href="#s_b1" transform="translate(6,10) scale(.55)"/>
+                  <use href="#s_b2" transform="translate(150,4) scale(.7) rotate(4)"/>
+                  <use href="#s_b3" transform="translate(86,100) scale(.85) rotate(-6)"/>
+                  <use href="#s_b4" transform="translate(214,94) scale(.5) rotate(8)"/>
+                  <use href="#s_b1" transform="translate(14,160) scale(.48) rotate(-10)"/>
+                  <use href="#s_b2" transform="translate(132,166) scale(.6) rotate(5)"/>
+                </g>
+                <g fill="none" stroke="#4e4d46" stroke-width="1" opacity="0.4">
+                  <use href="#s_b1" transform="translate(6,10) scale(.55)"/>
+                  <use href="#s_b2" transform="translate(150,4) scale(.7) rotate(4)"/>
+                  <use href="#s_b3" transform="translate(86,100) scale(.85) rotate(-6)"/>
+                  <use href="#s_b4" transform="translate(214,94) scale(.5) rotate(8)"/>
+                  <use href="#s_b1" transform="translate(14,160) scale(.48) rotate(-10)"/>
+                  <use href="#s_b2" transform="translate(132,166) scale(.6) rotate(5)"/>
+                </g>
+                <g fill="none" stroke="#e2e0d4" stroke-width="0.9" opacity="0.3" transform="translate(-1.6,-1.6)">
+                  <use href="#s_b1" transform="translate(6,10) scale(.55)"/>
+                  <use href="#s_b2" transform="translate(150,4) scale(.7) rotate(4)"/>
+                  <use href="#s_b3" transform="translate(86,100) scale(.85) rotate(-6)"/>
+                  <use href="#s_b4" transform="translate(214,94) scale(.5) rotate(8)"/>
+                  <use href="#s_b1" transform="translate(14,160) scale(.48) rotate(-10)"/>
+                  <use href="#s_b2" transform="translate(132,166) scale(.6) rotate(5)"/>
+                </g>
+                <g fill="#4b4a43" opacity="0.24">
+                  <ellipse cx="33" cy="29" rx="9" ry="5.5"/>
+                  <ellipse cx="185" cy="30" rx="12" ry="7"/>
+                  <ellipse cx="128" cy="132" rx="15" ry="9"/>
+                  <ellipse cx="244" cy="118" rx="7" ry="4"/>
+                  <ellipse cx="162" cy="189" rx="10" ry="6"/>
+                </g>
+                <g fill="#e0ded2" opacity="0.22">
+                  <ellipse cx="30" cy="26" rx="5" ry="3"/>
+                  <ellipse cx="181" cy="27" rx="6" ry="3.5"/>
+                  <ellipse cx="124" cy="129" rx="7" ry="4"/>
+                </g>
+              </pattern>
+
+              <pattern id="s_cellsB" width="468" height="392" patternUnits="userSpaceOnUse" patternTransform="rotate(7)">
+                <g fill="#a9a79c" opacity="0.1">
+                  <use href="#s_b3" transform="translate(18,18) scale(1.2) rotate(-4)"/>
+                  <use href="#s_b1" transform="translate(238,6) scale(1.45) rotate(6)"/>
+                  <use href="#s_b2" transform="translate(76,196) scale(1.05) rotate(-8)"/>
+                  <use href="#s_b4" transform="translate(282,212) scale(1.3) rotate(3)"/>
+                  <use href="#s_b1" transform="translate(160,300) scale(.7) rotate(-3)"/>
+                </g>
+                <g fill="none" stroke="#4b4a43" stroke-width="1.5" opacity="0.26">
+                  <use href="#s_b3" transform="translate(18,18) scale(1.2) rotate(-4)"/>
+                  <use href="#s_b1" transform="translate(238,6) scale(1.45) rotate(6)"/>
+                  <use href="#s_b2" transform="translate(76,196) scale(1.05) rotate(-8)"/>
+                  <use href="#s_b4" transform="translate(282,212) scale(1.3) rotate(3)"/>
+                  <use href="#s_b1" transform="translate(160,300) scale(.7) rotate(-3)"/>
+                </g>
+                <g fill="none" stroke="#dad8cc" stroke-width="1.1" opacity="0.25" transform="translate(-2.4,-2.4)">
+                  <use href="#s_b3" transform="translate(18,18) scale(1.2) rotate(-4)"/>
+                  <use href="#s_b1" transform="translate(238,6) scale(1.45) rotate(6)"/>
+                  <use href="#s_b2" transform="translate(76,196) scale(1.05) rotate(-8)"/>
+                  <use href="#s_b4" transform="translate(282,212) scale(1.3) rotate(3)"/>
+                  <use href="#s_b1" transform="translate(160,300) scale(.7) rotate(-3)"/>
+                </g>
+                <g fill="#4b4a43" opacity="0.14">
+                  <ellipse cx="78" cy="61" rx="21" ry="12"/>
+                  <ellipse cx="310" cy="58" rx="24" ry="14"/>
+                  <ellipse cx="128" cy="234" rx="17" ry="10"/>
+                </g>
+              </pattern>
+
+              <pattern id="s_fine" width="148" height="128" patternUnits="userSpaceOnUse" patternTransform="rotate(11)">
+                <g fill="#a5a398" opacity="0.14">
+                  <use href="#s_b2" transform="translate(4,4) scale(.28)"/>
+                  <use href="#s_b3" transform="translate(70,20) scale(.22)"/>
+                  <use href="#s_b1" transform="translate(30,66) scale(.3)"/>
+                  <use href="#s_b4" transform="translate(104,72) scale(.2)"/>
+                  <use href="#s_b2" transform="translate(72,100) scale(.26)"/>
+                </g>
+                <g fill="none" stroke="#4f4e47" stroke-width="0.8" opacity="0.32">
+                  <use href="#s_b2" transform="translate(4,4) scale(.28)"/>
+                  <use href="#s_b3" transform="translate(70,20) scale(.22)"/>
+                  <use href="#s_b1" transform="translate(30,66) scale(.3)"/>
+                  <use href="#s_b4" transform="translate(104,72) scale(.2)"/>
+                  <use href="#s_b2" transform="translate(72,100) scale(.26)"/>
+                </g>
+                <g fill="#474640" opacity="0.22">
+                  <ellipse cx="18" cy="19" rx="4" ry="2.5"/>
+                  <ellipse cx="80" cy="32" rx="3.2" ry="2"/>
+                  <ellipse cx="46" cy="80" rx="4.4" ry="2.8"/>
+                  <ellipse cx="118" cy="86" rx="2.8" ry="1.8"/>
+                  <ellipse cx="88" cy="114" rx="3.6" ry="2.2"/>
+                </g>
+              </pattern>
+            </defs>
+
+            <rect width="1392" height="852" fill="#f4f1e8"/>
+            
+            <rect width="1392" height="852" fill="#b9b7ab" filter="url(#s_relief)" opacity="0.1"/>
+
+            <g filter="url(#s_soft14)" opacity="0.2">
+              <ellipse cx="240" cy="110" rx="170" ry="100" fill="#d0cec2"/>
+              <ellipse cx="780" cy="520" rx="210" ry="115" fill="#c7c5b9"/>
+              <ellipse cx="760" cy="50" rx="150" ry="85" fill="#cbc9bd"/>
+              <ellipse cx="600" cy="430" rx="170" ry="95" fill="#b9b7ab"/>
+            </g>
+
+            <rect x="-20" y="-20" width="1432" height="892" fill="url(#s_cellsB)" filter="url(#s_wob)" opacity="0.7"/>
+            <rect x="-20" y="-20" width="1432" height="892" fill="url(#s_cellsA)" filter="url(#s_wob2)" opacity="0.82"/>
+            <rect x="-20" y="-20" width="1432" height="892" fill="url(#s_fine)" filter="url(#s_wob3)" opacity="0.62"/>
+
+            <g fill="#4a4943" opacity="0.4" filter="url(#s_soft5)">
+              <ellipse cx="410" cy="232" rx="10" ry="7"/>
+              <ellipse cx="880" cy="382" rx="12" ry="8"/>
+              <ellipse cx="1150" cy="180" rx="9" ry="6"/>
+              <ellipse cx="222" cy="330" rx="8" ry="5"/>
+              <ellipse cx="990" cy="92" rx="7" ry="5"/>
+            </g>
+
+            <g stroke="#5d5b54" stroke-width="0.7" opacity="0.3" fill="none">
+              <path d="M90 300C150 285 210 300 268 330"/>
+              <path d="M470 60C520 78 560 70 606 44"/>
+              <path d="M840 380C890 400 950 395 1000 370"/>
+              <path d="M1120 120C1160 140 1200 138 1240 118"/>
+              <path d="M300 470C350 455 400 462 440 480"/>
+            </g>
+
+            <g fill="#3f3e38" opacity="0.5">
+              <circle cx="760" cy="180" r="2.4"/>
+              <circle cx="850" cy="210" r="1.8"/>
+              <circle cx="360" cy="420" r="2"/>
+              <circle cx="620" cy="330" r="1.5"/>
+              <circle cx="930" cy="80" r="1.6"/>
+              <circle cx="214" cy="210" r="1.3"/>
+              <circle cx="900" cy="476" r="2.1"/>
+            </g>
+            <g fill="#e4e2d7" opacity="0.4">
+              <circle cx="870" cy="170" r="2"/>
+              <circle cx="548" cy="430" r="1.7"/>
+              <circle cx="860" cy="560" r="2.2"/>
+              <circle cx="250" cy="90" r="1.5"/>
+              <circle cx="700" cy="420" r="1.4"/>
+            </g>
+
+          </svg></div>
+      <div class="optical"></div>
+
+      <svg class="hud" viewBox="0 0 1392 852" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <pattern id="tickX" width="20" height="12" patternUnits="userSpaceOnUse">
+            <line x1="0.5" y1="0" x2="0.5" y2="4" stroke="rgba(242,239,227,.44)" stroke-width="1"/>
+          </pattern>
+          <pattern id="tickXmajor" width="80" height="12" patternUnits="userSpaceOnUse">
+            <line x1="0.5" y1="0" x2="0.5" y2="8" stroke="rgba(242,239,227,.68)" stroke-width="1"/>
+          </pattern>
+          <pattern id="tickY" width="12" height="20" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0.5" x2="4" y2="0.5" stroke="rgba(242,239,227,.44)" stroke-width="1"/>
+          </pattern>
+          <pattern id="tickYmajor" width="12" height="80" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0.5" x2="8" y2="0.5" stroke="rgba(242,239,227,.68)" stroke-width="1"/>
+          </pattern>
+          <mask id="focusHole" maskUnits="userSpaceOnUse" x="0" y="0" width="1392" height="852">
+            <rect width="1392" height="852" fill="#ffffff"/>
+            <polygon points="360,230 650,180 800,360 660,600 380,560" fill="#000000"/>
+          </mask>
+        </defs>
+
+        <rect x="12.5" y="12.5" width="1367" height="827" fill="none" stroke="rgba(242,239,227,.28)"/>
+        <rect x="12" y="12" width="1368" height="12" fill="url(#tickX)"/>
+        <rect x="12" y="12" width="1368" height="12" fill="url(#tickXmajor)"/>
+        <rect x="12" y="828" width="1368" height="12" fill="url(#tickX)"/>
+        <rect x="12" y="828" width="1368" height="12" fill="url(#tickXmajor)"/>
+        <rect x="12" y="12" width="12" height="828" fill="url(#tickY)"/>
+        <rect x="12" y="12" width="12" height="828" fill="url(#tickYmajor)"/>
+        <rect x="1368" y="12" width="12" height="828" fill="url(#tickY)"/>
+        <rect x="1368" y="12" width="12" height="828" fill="url(#tickYmajor)"/>
+
+        <g font-family="Cascadia Mono, Consolas, monospace" font-size="6.5" fill="rgba(242,239,227,.62)">
+          <text x="16" y="34">0 µm</text>
+          <text x="176" y="34">40</text>
+          <text x="336" y="34">80</text>
+          <text x="496" y="34">120</text>
+          <text x="656" y="34">160</text>
+          <text x="816" y="34">200</text>
+          <text x="976" y="34">240</text>
+          <text x="1136" y="34">280</text>
+        </g>
+
+        <g fill="none" stroke="rgba(242,239,227,.72)" stroke-width="1.2">
+          <path d="M340 186V160H366"/>
+          <path d="M794 160H820V186"/>
+          <path d="M340 594V620H366"/>
+          <path d="M794 620H820V594"/>
+        </g>
+
+        <text x="340" y="150" fill="#d2472e" font-family="Helvetica, Arial, sans-serif" font-size="7.5" letter-spacing="1.4">ROI 01</text>
+        <text x="820" y="150" fill="rgba(242,239,227,.65)" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="6" letter-spacing="1">5 PT</text>
+
+        <polygon points="360,230 650,180 800,360 660,600 380,560"
+                 fill="none" stroke="#d2472e" stroke-width="1.2"/>
+
+        <g fill="#d2472e" stroke="#f2efe3" stroke-width="1">
+          <rect x="358" y="228" width="4" height="4"/>
+          <rect x="648" y="178" width="4" height="4"/>
+          <rect x="658" y="598" width="4" height="4"/>
+          <rect x="378" y="558" width="4" height="4"/>
+        </g>
+        <rect x="795" y="355" width="10" height="10" fill="#f2efe3" stroke="#d2472e" stroke-width="1.4"/>
+        <text x="810" y="351" fill="#d2472e" font-family="Cascadia Mono, Consolas, monospace" font-size="6.5">P3</text>
+
+        <g transform="translate(980,300)">
+          <line x1="-14" y1="0" x2="14" y2="0" stroke="rgba(242,239,227,.65)" stroke-width="1"/>
+          <line x1="0" y1="-14" x2="0" y2="14" stroke="rgba(242,239,227,.65)" stroke-width="1"/>
+          <rect x="-1.5" y="-1.5" width="3" height="3" fill="#f2efe3"/>
+          <text x="10" y="12" fill="rgba(242,239,227,.8)" font-family="Cascadia Mono, Consolas, monospace" font-size="7.5">512, 384</text>
+        </g>
+      </svg>
+
+      <div class="brandblock">
+        <span class="brand">ImageLyre</span><span class="file">sample.tif</span>
+        <div class="meta">16-BIT TIFF · 2048 × 1536 PX · 0.5 µm/px</div>
+      </div>
+
+      <nav class="menus">
+        <span class="menu">File</span>
+        <span class="menu">Edit</span>
+        <span class="menu">Image</span>
+        <span class="menu">Analyze</span>
+        <span class="menu">Plugins</span>
+        <span class="menu">Help</span>
+      </nav>
+
+      <div class="headright">
+        <div class="theme">
+          <span class="k">Theme</span>
+          <span class="opt on">Dark</span>
+          <span class="opt">Light</span>
+        </div>
+        <div class="actions">
+          <span class="action"><span class="al">Undo</span><span class="kbd">Ctrl Z</span></span>
+          <span class="action"><span class="al">Export CSV</span></span>
+        </div>
+        <div class="winbtns">
+          <span class="winbtn" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><line x1="0.5" y1="5.5" x2="9.5" y2="5.5" stroke="currentColor"/></svg></span>
+          <span class="winbtn" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="0.5" y="0.5" width="9" height="9" stroke="currentColor"/></svg></span>
+          <span class="winbtn close" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0.5 0.5L9.5 9.5M9.5 0.5L0.5 9.5" stroke="currentColor"/></svg></span>
+        </div>
+      </div>
+
+      <div class="params">
+        <div class="params-head"><span>Parameters</span><span class="live"><i></i>Live</span></div>
+        <div class="param"><span class="k">Threshold</span><span class="v"><span class="adj">‹</span>96–233<span class="adj">›</span></span></div>
+        <div class="param"><span class="k">Decimals</span><span class="v on"><span class="adj">‹</span>1<span class="adj">›</span></span></div>
+        <div class="param"><span class="k">Unit</span><span class="v"><span class="adj">‹</span>µm²<span class="adj">›</span></span></div>
+      </div>
+
+      <div class="coords">
+        <div class="crow">
+          <span class="kv"><span class="k">X</span><span class="v">512</span></span>
+          <span class="kv"><span class="k">Y</span><span class="v">384</span></span>
+          <span class="kv"><span class="k">Value</span><span class="v">182</span></span>
+        </div>
+        <div class="crow">
+          <span class="kv"><span class="k">Zoom</span><span class="v small">200%</span></span>
+          <span class="kv"><span class="k">Scale</span><span class="v small">0.5 µm/px</span></span>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metrics-head"><span>Results</span><span class="roi">ROI 01</span></div>
+        <div class="mrow">
+          <div class="mcell"><span class="mk">Area</span><span class="mv area">1240.5<span class="mu">µm²</span></span></div>
+          <div class="mcell"><span class="mk">Mean</span><span class="mv">182.4</span></div>
+        </div>
+        <div class="mrow">
+          <div class="mcell"><span class="mk">StdDev</span><span class="mv">21.7</span></div>
+          <div class="mcell"><span class="mk">Min</span><span class="mv">96</span></div>
+        </div>
+        <div class="mrow">
+          <div class="mcell"><span class="mk">Max</span><span class="mv">233</span></div>
+          <div class="mcell"><span class="mk">Perimeter</span><span class="mv">148.2<span class="mu">µm</span></span></div>
+        </div>
+      </div>
+
+      <div class="roihint"><b>ROI 01 · 5 vertices</b> — drag a vertex to edit</div>
+      <div class="toolsline">
+        <span class="k">Tools</span>
+        <span class="t">Select</span>
+        <span class="t">Rect</span>
+        <span class="t on">Polygon</span>
+        <span class="t">Hand</span>
+        <span class="t">Zoom</span>
+      </div>
+
+      <div class="grip"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
