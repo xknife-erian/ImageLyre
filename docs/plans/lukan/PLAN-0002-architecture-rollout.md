@@ -156,3 +156,15 @@ D2 加载态的边界：只做壳层状态（画布骨架、进度文本、取�
 | :--- | :--- |
 | 0.1 | 首次成文：五批、依赖图、关键路径、六条总验收、五条风险、三条未决。 |
 | 0.2 | 按三位独立评审重排：A1 转入前置、B2 并入 B1、A5 移出关键路径、A2 降为单项断言、A4 明确走 AtomUI 令牌 API 且覆盖清单改为六个控件、C4 收窄为 M1 最小撤销并推迟会话与关停、D 批只做四态、E1 改为每态一张；总验收第 1 与第 5 条按新口径重写。证据见 `docs/analyses/lukan/2026-11-20_arch-review-loop.md`。 |
+
+## 10 交接（2026-11-20 末）
+
+已完成：A1 到 A4（A4 为控件样式层试点）、B1、B2、C1 到 C5、D1、ADR-0010。未完成：A5、D2、D3、D4、E1 到 E3。
+
+D2 的落地配方（下一位按此做，不必重新摸索）：
+1. 先读 src/Libs/ImageLyre.UI.Contracts/Busy/ 下的 IBusyManager、BusyRecord、BusyIndicator、BusyEventArgs、BusyIndicatorType，确认 ReportProgress/ReportCompleted/ReportFailed 与五个流的签名。
+2. 新建 src/Modules/ImageLyre.Module.Busy，实现 IBusyManager：以 Guid 为键记活跃记录，五个流用 Subject，Dispose 时链式释放；套用 C3 与 C5 已验证的模式（含 override Dispose 与 ase.Dispose()）。
+3. 在 WorkbenchShell 里加一层遮罩：订阅 BusyStarted / BusyCompleted / BusyFailed，显示进度文本与取消按钮；进度源用可控模拟器（Task.Delay），不接任何解码。
+4. 加四条测试：开始后可查、进度更新、完成清空、失败清空；闸门仍是构建 0 警告 0 错误与全部测试通过。
+
+D3 与 D4 的前置都已在 §9 写明；E 批等 D 批四态齐了再建 Headless 基线，避免反复重拍。
