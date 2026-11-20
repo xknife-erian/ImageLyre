@@ -126,7 +126,7 @@ A5 不在关键路径上：它要等首个可运行界面才有实测对象，�
 | A1 ADR-0009 | 完成，0.3 定稿 | `41e73f8` |
 | A2 键表与断言 | 完成：18 色 ×2（warning 待设计确认）、四档字号与行高、三档字距、两档字重、两条家族栈、六级间距、两级线宽；五项断言含防空跑与重复键检测，已做红绿验证 | `1994271` |
 | A3 亮暗字典 | 完成：Tokens.Light、Tokens.Dark、Tokens.Shared、Tokens.axaml；App 合并并引用一个键 | `1994271` |
-| A4 AtomUI 覆盖 | 未开始（体量最不可控，按计划压后） | — |
+| A4 AtomUI 覆盖 | 侦察完成，未实现。已确认 `atomui.core/6.2.15` 存在 `DesignTokens`、`ThemeTokenResourceProvider`、`WithToken`、`WithInitialTheme`、`WithDefaultFontFamily`（二进制字符串匹配）；但该包不带 XML 文档，反射需要先加载 Avalonia 12.1.6 的三个程序集，PowerShell 直接反射失败。下一步改为在 `App` 内建一个编译期探针（直接引用类型），拿到确切签名后再写覆盖。 | — |
 | A5 缩放与线宽补偿 | 未开始（等可运行界面实测） | — |
 | B1 槽位注册表 | 完成：ISlotManager + ISlotRegistry + ISlotChangeSource；按所有者摘除、待解析冲刷、形态与容量校验、收口诊断；实测启动 5 插件 | `ea6a8ab` |
 | B2 三处归位 | 完成 | `5bb16fa` |
