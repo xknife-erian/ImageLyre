@@ -22,6 +22,8 @@
 | 18 | F 陈默 | V3 IT 科技 | 命令台 | `f-craftsman/v3/mock.html` |
 | 19 | A 沈岚 | 合体（A3 为底） | 标本档案（暗） | `a-instrument/v4/mock.html` |
 | 20 | E 阿米娜 | 合体（E3 为底） | 标本档案（纸） | `e-science/v4/mock.html` |
+| 21 | E 阿米娜 | 统一骨架（亮） | 标本档案 · 亮 | `e-science/v5/mock.html` |
+| 22 | A 沈岚 | 统一骨架（暗） | 标本档案 · 暗 | `a-instrument/v5/mock.html` |
 
 ## 用法
 

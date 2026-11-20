@@ -1,0 +1,119 @@
+ImageLyre — sample.tif
+IL
+ImageLyre
+—
+sample.tif
+16-BIT TIFF
+0.5 µm/px
+THEME
+dark
+light
+SL-2026-0412
+F03
+TOOLS
+V
+R
+P
+H
+Z
+20 µm
+SPECIMEN FILE
+B-17 · 鼠脑 40 µm
+✓ LK 11-19
+file
+format
+TIFF · 16-bit · 1024²
+scale
+stain
+DAPI + GFAP
+acq
+2026-11-18 14:22 · 40×
+review
+LK · 2026-11-19
+slice
+04 · F03 · z=1
+qc
+focus 0.92 · sat 0.4%
+RESULTS · ROI 03
+6 v · #3
+area
+1240.5
+4962.0
+0.001240
+µm²
+px²
+mm²
+mean
+182.4
+stddev
+21.7
+min
+96
+max
+233
+perimeter
+148.2
+296.4
+0.1482
+µm
+px
+mm
+P polygon · drag vertex · dbl-click edge to add
+PARAMETERS
+in place
+UNITS
+1 px² = 0.2500 µm²
+1 px² = 2.500e-7 mm²
+›
+analyze.measure --roi 03 --units µm²
+analyze.measure --roi 03 --units px²
+analyze.measure --roi 03 --units mm²
+PROVENANCE
+cal · hash · plugin · trace
+▸
+cal
+0.5 µm/px = 10 µm / 20 px
+optic
+40× · 10 µm graticule
+hash
+9f2a7c41…c41d ✓
+plugin
+measure@1.4.2 · net off · fs ro
+recipe
+analyze.measure/v2 · seed 0
+imagej
+Analyze › Measure
+10:42:05
+measure 6 fields · 12 ms
+10:42:07
+units=µm² · area 1240.5
+units=px² · area 4962.0
+units=mm² · area 0.001240
+↶ undo
+Ctrl+Z
+⇥ export CSV
+Ctrl+E
+BATCH B-17
+鼠脑 · 40 µm · 12 specimens
+6
+measured · 6 pending
+SAMPLES
+✓
+SL-2026-0413
+SL-2026-0414
+H&E
+○
+SL-2026-0415
+DAPI
++8
+more
+ready
+pos
+(512, 384)
+I
+182
+200%
+batch
+B-17 · 6/12
+Ctrl+K
+commands

@@ -1,0 +1,107 @@
+ImageLyre — sample.tif
+ImageLyre
+— sample.tif
+标本档案 B-114
+File
+Edit
+Image
+Analyze
+Plugins
+Help
+Ctrl K
+命令
+浅色
+深色
+ROI 1
+1240.5 µm²
+50 µm
+X
+512
+Y
+384
+值
+182
+缩放
+200%
+标定
+0.5 µm/px
+⌄
+批次 B-114
+12 张 ·
+6 已测
+S-01
+S-02
+S-03
+S-04
+S-05
+S-06
+S-07
+S-08
+8 / 12
+＋ 加入
+标本档案
+Specimen record
+已测量 6 项
+sample.tif
+16 位 TIFF · 4096 × 4096 · 0.5 µm/px
+位深
+16 位 · 单通道 TIFF
+校准
+0.5 × 0.5 µm/px · TIFF 标签
+来源
+批次 B-114 · 肝组织切片
+染色
+H&E · 苏木精-伊红
+采集
+2026-11-18 09:34 · 40× / 1.0 NA
+测量
+Results
+ROI 1 · 多边形 · 5 顶点
+Area
+1240.5
+µm²
+Mean
+182.4
+StdDev
+21.7
+Min
+96
+Max
+233
+Perimeter
+148.2
+µm
+Measure 1.2.0 生成 · 面积/周长 µm²、µm；灰度 a.u. · 出处见溯源
+台账 · 6 个 ROI · 最近 10:42
+›
+参数
+改动即重算
+小数位
+1
+2
+3
+单位
+px²
+阈值
+12.0
+自动重算
+溯源
+Provenance
+已展开 ▾
+TIFF 标签
+→
+0.5000 µm/px
+µm² = px² × 0.2500
+输入哈希
+sha256 9f3c1a72…b41e
+单位推导
+1 px = 0.5 µm；1 px² = 0.25 µm²
+插件 · 沙箱
+Measure 1.2.0 · 只读输入
+trace
+EV-2941 · 10:42:18 · 6 项
+档案 2026-11-18 · v3 · 复核 LK 10:42
+撤销
+Ctrl Z
+导出 CSV…
+复制
