@@ -4,6 +4,7 @@ using Avalonia.Layout;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Cangming.PicoPlugins;
 using Cangming.PicoPlugins.Core.Features;
+using Cangming.PicoPlugins.Core.Modules;
 using ImageLyre.UI.Contracts.Busy;
 using ImageLyre.UI.Contracts.Workbench;
 using System.Threading.Tasks;
@@ -23,6 +24,14 @@ namespace ImageLyre.Feature.EmptyState;
     description: "打开图像前的引导页")]
 public sealed class EmptyStateFeature : BasePicoFeatures
 {
+    /// <inheritdoc />
+    protected override void DeclareDependencies(IModuleDeclarationBuilder modules)
+    {
+        // 按 Mercury 的写法先声明再取用：两个都是可选依赖，缺了界面照样能起来。
+        modules.Optional<IBusyManager>();
+        modules.Optional<IWorkbenchShell>();
+    }
+
     /// <inheritdoc />
     public override void RegisterAttachments(IAttachmentRegistry registry)
     {
