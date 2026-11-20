@@ -38,6 +38,8 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
 
     private readonly ISlotManager _slots;
     private readonly ContentControl _contentHost;
+    private readonly TextBlock _busyText = new();
+    private readonly Border _busyOverlay = new();
     private readonly AtomUIMenu _menu = new();
 
     internal WorkbenchShell(ISlotManager slots)
@@ -82,6 +84,11 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
 
         RenderContent();
 
+        _busyText.HorizontalAlignment = HorizontalAlignment.Center;
+        _busyOverlay.Background = Avalonia.Media.Brushes.Transparent;
+        _busyOverlay.Child = _busyText;
+        _busyOverlay.IsVisible = false;
+
         var layout = new DockPanel();
         DockPanel.SetDock(_menu, Dock.Top);
         DockPanel.SetDock(statusBar, Dock.Bottom);
@@ -89,7 +96,7 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
         layout.Children.Add(statusBar);
         layout.Children.Add(_contentHost);
 
-        Content = layout;
+        Content = new Grid { Children = { layout, _busyOverlay } };
 
         RebuildMenu();
         slots.SlotContentChanged += (_, args) =>
@@ -107,6 +114,11 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
         if (string.Equals(e.SlotName, WorkbenchSlots.Content, StringComparison.Ordinal))
         {
             RenderContent();
+
+        _busyText.HorizontalAlignment = HorizontalAlignment.Center;
+        _busyOverlay.Background = Avalonia.Media.Brushes.Transparent;
+        _busyOverlay.Child = _busyText;
+        _busyOverlay.IsVisible = false;
         }
     }
 
@@ -174,4 +186,14 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
 
     [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "菜单重建完成：{Categories} 个分类，{Items} 个顶层项")]
     private static partial void LogMenuRebuilt(ILogger logger, int categories, int items);
+
+    /// <inheritdoc />
+    public void ShowBusy(string message, uint progress)
+    {
+        _busyText.Text = progress is 0 or uint.MaxValue ? message : $"{message} · {progress}%";
+        _busyOverlay.IsVisible = true;
+    }
+
+    /// <inheritdoc />
+    public void HideBusy() => _busyOverlay.IsVisible = false;
 }

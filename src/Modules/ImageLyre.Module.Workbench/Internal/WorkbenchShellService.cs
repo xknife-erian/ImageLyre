@@ -51,4 +51,10 @@ internal sealed class WorkbenchShellService : IWorkbenchShell
             _shell.Title = title;
         }
     }
+
+    /// <inheritdoc />
+    public void ShowBusy(string message, uint progress) => (_shell as WorkbenchShell)?.ShowBusy(message, progress);
+
+    /// <inheritdoc />
+    public void HideBusy() => (_shell as WorkbenchShell)?.HideBusy();
 }

@@ -13,4 +13,12 @@ public interface IWorkbenchShell
     /// <summary>设置窗口标题。</summary>
     /// <param name="title">新标题；窗口尚未创建时先暂存，创建后一并应用。</param>
     void SetTitle(string title);
+
+    /// <summary>显示忙状态遮罩。</summary>
+    /// <param name="message">进度文本。</param>
+    /// <param name="progress">0 到 100 的进度值。</param>
+    void ShowBusy(string message, uint progress);
+
+    /// <summary>隐藏忙状态遮罩。</summary>
+    void HideBusy();
 }
