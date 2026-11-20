@@ -4,7 +4,9 @@ using Avalonia.Layout;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Cangming.PicoPlugins;
 using Cangming.PicoPlugins.Core.Features;
+using ImageLyre.UI.Contracts.Busy;
 using ImageLyre.UI.Contracts.Workbench;
+using System.Threading.Tasks;
 using LyreContentAttachment = ImageLyre.UI.Contracts.Attachments.ContentAttachment;
 
 namespace ImageLyre.Feature.EmptyState;
@@ -29,7 +31,7 @@ public sealed class EmptyStateFeature : BasePicoFeatures
             new LyreContentAttachment { Create = BuildEmptyState, Order = 0 });
     }
 
-    private static StackPanel BuildEmptyState()
+    private StackPanel BuildEmptyState()
     {
         var title = new TextBlock { Text = "把图放上去" };
         Bind(title, TextBlock.FontSizeProperty, "Lyre.Type.Size.S20");
@@ -45,6 +47,9 @@ public sealed class EmptyStateFeature : BasePicoFeatures
         var open = new Button { Content = "打开文件…", HorizontalAlignment = HorizontalAlignment.Center };
         var sample = new Button { Content = "打开示例", HorizontalAlignment = HorizontalAlignment.Center };
 
+        // D2 的进度源是模拟的：分段上报，演示壳层遮罩；真实解码属业务插件，不在基座里做。
+        sample.Click += async (_, _) => await SimulateOpenAsync(BaseContext);
+
         return new StackPanel
         {
             Spacing = 8,
@@ -54,6 +59,37 @@ public sealed class EmptyStateFeature : BasePicoFeatures
         };
     }
 
+    private const string SAMPLE_MESSAGE = "正在打开 sample.tif";
+
     private static void Bind(AvaloniaObject target, AvaloniaProperty property, string key) =>
         target.Bind(property, new DynamicResourceExtension(key));
+
+    private static async Task SimulateOpenAsync(BaseFeatureContext context)
+    {
+        Lazy<IBusyManager>? lazy = context.UseOptional<IBusyManager>();
+        if (lazy is null)
+        {
+            return;
+        }
+
+        IBusyManager busy = lazy.Value;
+
+        var indicator = new BusyIndicator { Type = BusyIndicatorType.Progress, Message = SAMPLE_MESSAGE };
+        var id = busy.StartBusy(indicator);
+        try
+        {
+            for (uint percent = 10; percent <= 100; percent += 10)
+            {
+                await Task.Delay(120).ConfigureAwait(true);
+                busy.ReportProgress(id, new BusyRecord(id, percent, SAMPLE_MESSAGE));
+            }
+
+            busy.ReportCompleted(id);
+        }
+        finally
+        {
+            // 任何异常都要收起遮罩，否则界面会一直停在“正在打开”。
+            busy.ReportFailed(id);
+        }
+    }
 }
