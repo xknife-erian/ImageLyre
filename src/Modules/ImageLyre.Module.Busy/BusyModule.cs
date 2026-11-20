@@ -34,13 +34,11 @@ public sealed class BusyModule : BasePicoModule<IBusyManager>, IBusyManager, IDi
     private readonly Subject<BusyEventArgs<Guid>> _completed = new();
     private readonly Subject<BusyEventArgs<Guid>> _failed = new();
     private readonly Subject<BusyEventArgs<Guid>> _timedOut = new();
-    private readonly Lazy<IBusyManager> _self;
     private bool _disposed;
 
     /// <summary>创建忙状态模块。</summary>
     public BusyModule()
     {
-        _self = new Lazy<IBusyManager>(() => this);
     }
 
     /// <inheritdoc />
@@ -59,7 +57,7 @@ public sealed class BusyModule : BasePicoModule<IBusyManager>, IBusyManager, IDi
     public IObservable<BusyEventArgs<Guid>> BusyTimedOut => _timedOut.AsObservable();
 
     /// <inheritdoc />
-    public override Lazy<IBusyManager> Build(params object[] args) => _self;
+    protected override IBusyManager Module => this;
 
     /// <inheritdoc />
     public Guid StartBusy(BusyIndicator busyIndicator, int millisecondsTimeout = -1)

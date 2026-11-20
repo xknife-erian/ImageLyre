@@ -33,19 +33,17 @@ public sealed class CommandsModule : BasePicoModule<ICommandRegistry>, ICommandR
 {
     private readonly Dictionary<string, CommandDescriptor> _commands = new(StringComparer.Ordinal);
     private readonly Subject<Unit> _changed = new();
-    private readonly Lazy<ICommandRegistry> _self;
 
     /// <summary>创建命令模块。</summary>
     public CommandsModule()
     {
-        _self = new Lazy<ICommandRegistry>(() => this);
     }
 
     /// <inheritdoc />
     public IObservable<Unit> AvailableCommandsChanged => _changed.AsObservable();
 
     /// <inheritdoc />
-    public override Lazy<ICommandRegistry> Build(params object[] args) => _self;
+    protected override ICommandRegistry Module => this;
 
     /// <inheritdoc />
     public IDisposable RegisterCommand(CommandDescriptor descriptor)
