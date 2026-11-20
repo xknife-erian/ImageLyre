@@ -1,0 +1,114 @@
+# DESIGN-0005：槽位规划
+
+| 版本 | 日期 | 状态 | 作者 | 说明 |
+| :--- | :--- | :--- | :--- | :--- |
+| 0.1 | 2026-11-20 | 草案 | lukan | 定槽位的分层、命名、嵌套规则与本仓第一批清单；不写任何业务区域 |
+
+> 本文是设计文档。它回答"界面由哪些位置组成、每个位置谁能占、位置之间怎么嵌套"，不回答"某个功能长什么样"。功能由 Feature 提供，架构只负责把位置规划清楚，让功能一级一级挂下去。
+
+## 1 为什么槽位是架构的事
+
+功能可以无限细化，位置不能。一个功能如果只能整体挂上去，界面就会被切成固定几块；一旦允许功能在自己的位置里再开出子位置，插件化才真正成立：外层功能负责一块区域，内层功能往里填内容，内外彼此不知道对方存在。
+
+因此架构的核心产出不是功能，而是**一张位置表**：谁拥有哪块位置、这块位置允许挂什么形态、子位置由谁开、父位置消失时子位置怎么收。
+
+## 2 三层结构
+
+```mermaid
+flowchart TD
+    W["壳槽位 Workbench.*（壳贡献）"] --> P["面板槽位 Panel.*（面板功能贡献）"]
+    P --> F["功能区槽位 Feature.*（具体功能贡献）"]
+    F --> L["叶子附件（Focal / Content / StatusBar）"]
+```
+
+| 层 | 谁贡献 | 例子 | 停用时的效果 |
+| :--- | :--- | :--- | :--- |
+| 壳 | 工作台 | `Workbench.Menu`、`Workbench.Content`、`Workbench.StatusBar.Left` | 整个应用起不来 |
+| 面板 | 拥有该面板的功能 | `Panel.Right`、`Panel.Right.Dossier`、`Panel.Right.Agent` | 面板连同其子槽位一起消失 |
+| 功能 | 具体功能 | `Feature.Agent.Input`、`Feature.History.Toolbar` | 只影响该功能自身 |
+
+三层不是硬编码的深度限制，而是**约定**：任何功能都可以在自己的位置里再开子位置，深度不限。约定存在的理由是排障——三个层级名称前缀就能判断"这个位置是谁开的、停谁会让它消失"。
+
+## 3 命名
+
+沿用 Mercury 的三段式：`<区域>[.<用途>][.<方位>]`，逐段点上推。
+
+| 形状 | 例子 | 说明 |
+| :--- | :--- | :--- |
+| 壳区域 | `Workbench.Menu` | 固定三段以内 |
+| 带方位 | `Workbench.StatusBar.Left` | 方位只允许 Top/Bottom/Left/Right |
+| 面板 | `Panel.Right` | 面板名用单数名词 |
+| 功能子位 | `Feature.Agent.Input` | 前缀 `Feature.<功能名>`，后面自定 |
+
+槽位名是**唯一真源**，集中在一张常量表里（本仓为 `WorkbenchSlots` 与后续的面板常量类），不散落在功能代码中。重命名只改常量表，靠编译期报错找出全部引用。
+
+## 4 形态与容量
+
+每个槽位声明两件事：允许挂什么形态（`SlotKind`）、能挂几个（`SlotCapacity`）。
+
+| 形态 | 允许的附件 | 典型位置 |
+| :--- | :--- | :--- |
+| `Menu` | 菜单分类附件 | `Workbench.Menu` |
+| `StatusBar` | 状态栏附件 | `Workbench.StatusBar.*` |
+| `Content` | 内容附件（控件工厂） | `Workbench.Content`、`Panel.Right.Agent` |
+| `Document` | 文档页附件 | `Workbench.Documents` |
+| `ToolArea` | 工具窗格附件 | `Panel.Right.Dossier` |
+
+容量只有两档：`Multiple` 与 `Exclusive`。单值槽用于"一屏只能有一个"的位置（当前文档、当前 Agent 面板）；多值槽用于列表式位置。单值槽收到第二个附件时拒绝并记 `CapacityExceeded`，不静默覆盖。
+
+## 5 第一批清单
+
+只列壳提供的与已确定要用的，业务区域（图像、ROI、测量）一律不在此列。
+
+| 槽位 | 形态 | 容量 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `Workbench.Menu` | Menu | Multiple | 顶层菜单，按标题合并 |
+| `Workbench.DocumentTabs` | Content | Multiple | 文档标签条 |
+| `Workbench.Content` | Content | Exclusive | 主内容区，一屏一块 |
+| `Workbench.StatusBar.Left` | StatusBar | Multiple | 状态栏左侧 |
+| `Workbench.StatusBar.Right` | StatusBar | Multiple | 状态栏右侧 |
+| `Workbench.StatusBar.Rightmost` | StatusBar | Multiple | 状态栏最右，版本号一类 |
+| `Panel.Right` | Content | Exclusive | 右栏容器 |
+| `Panel.Right.Dossier` | Content | Exclusive | 右栏的标本档案分区 |
+| `Panel.Right.Agent` | Content | Exclusive | 右栏的 Agent 分区 |
+
+右栏两个子位由右栏容器在构建时贡献：谁开容器谁开子位。这样"档案与 Agent 互相切换"就不需要容器认识两者的类型，只需要各自往对应子位附着。
+
+## 6 嵌套的三条硬规则
+
+1. **开位置的人负责收**：容器功能在 `OnStartAsync` 里贡献子槽位，在 `Detach` 时把子位置里的附件一并摘除。父位置消失时子位置不能残留，否则会出现"父面板没了但子附件还在诊断里"的幽灵条目。
+2. **子位置不继承父位置的所有者**：子位置里附着的附件归附着者自己所有，父级停用只摘除父级自己的附件，不替子级清理。要清理子级，由子级的拥有者响应自己的停用。
+3. **附着到未开的位置不报错**：进入待解析桶，等父级贡献时冲刷；收口时仍未解析的进 `UnresolvedSlot` 诊断。这条宽容是必须的，因为加载顺序不保证父先于子。
+
+## 7 判定
+
+| 判据 | 怎么验 |
+| :--- | :--- |
+| 所有槽位名来自常量表 | 静态扫描：源码里出现字符串字面量的槽位名即失败 |
+| 形态与附件匹配 | 附着时校验，不符进 `KindMismatch` |
+| 单值槽不超员 | 附着时校验，超出进 `CapacityExceeded` |
+| 父停用后无残留 | 端到端：停用面板功能，检查其子位置的附件数与诊断同时归零 |
+| 预留位置不算空槽 | 声明 `IsReserved` 的槽位不进 `EmptySlot` 诊断 |
+
+## 8 不做什么
+
+不预设业务槽位；不做权限门禁（附件没有权限字段）；不做跨进程槽位；不做槽位的运行期增删 API 对外开放——增删只由拥有者在启动与停止两个时点执行。
+
+## 9 边界情况
+
+| 情况 | 处置 |
+| :--- | :--- |
+| 两个功能想开同名子位置 | 后贡献者抛异常，名字必须在功能内唯一（前缀已保证） |
+| 父位置停用时子位置里还有附件 | 保留附件并记 `AttachedAfterClose`，同时父级诊断报告列出残留 |
+| 功能想换自己的子位置结构 | 停用再启用，不允许在运行中改槽位声明 |
+| 子位置深度超过三层 | 允许，但名称必须保持三段式前缀可读，否则排障困难 |
+
+## 10 与其它文档的关系
+
+`docs/design/lukan/DESIGN-0003-libs-layering.md` 定义槽位契约放在 `UI.Contracts`、实现在工作台；本文定义这些槽位本身怎么规划。`docs/analyses/lukan/2026-11-20_mercury-guides-digest.md` 记录了 Mercury 槽位指南的读后结论，本文的命名与形态口径与之一致。
+
+## 11 变更记录
+
+| 版本 | 变更 |
+| :--- | :--- |
+| 0.1 | 首次成文：三层结构、命名、形态与容量、第一批九个槽位、嵌套三条硬规则、五条判定、五条边界情况。 |
