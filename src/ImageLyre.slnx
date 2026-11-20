@@ -12,6 +12,7 @@
   </Folder>
   <Folder Name="/Modules/">
     <Project Path="Modules/ImageLyre.Module.Commands/ImageLyre.Module.Commands.csproj" />
+    <Project Path="Modules/ImageLyre.Module.Notifications/ImageLyre.Module.Notifications.csproj" />
     <Project Path="Modules/ImageLyre.Module.PluginCenter/ImageLyre.Module.PluginCenter.csproj" />
     <Project Path="Modules/ImageLyre.Module.Preferences/ImageLyre.Module.Preferences.csproj" />
     <Project Path="Modules/ImageLyre.Module.Workbench/ImageLyre.Module.Workbench.csproj" />

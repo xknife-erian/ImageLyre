@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\src\Modules\ImageLyre.Module.Workbench\ImageLyre.Module.Workbench.csproj" />
     <ProjectReference Include="..\..\src\Modules\ImageLyre.Module.Commands\ImageLyre.Module.Commands.csproj" />
     <ProjectReference Include="..\..\src\Modules\ImageLyre.Module.Preferences\ImageLyre.Module.Preferences.csproj" />
+    <ProjectReference Include="..\..\src\Modules\ImageLyre.Module.Notifications\ImageLyre.Module.Notifications.csproj" />
   </ItemGroup>
 
   <ItemGroup>
