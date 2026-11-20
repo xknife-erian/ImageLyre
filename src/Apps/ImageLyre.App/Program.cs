@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Cangming.Logs;
@@ -11,6 +12,7 @@ using ImageLyre.App.Startup;
 using ImageLyre.Bootstrap;
 using ImageLyre.Bootstrap.Services;
 using ImageLyre.Module.Workbench.Slots;
+using ImageLyre.UI.Contracts.Busy;
 using ImageLyre.UI.Contracts.Workbench;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
