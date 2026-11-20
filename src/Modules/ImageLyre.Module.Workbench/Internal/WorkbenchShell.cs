@@ -15,6 +15,7 @@ using ImageLyre.Module.Workbench.Internal.Menu;
 using ImageLyre.UI.Contracts.Workbench;
 using Microsoft.Extensions.Logging;
 
+using LyreContentAttachment = ImageLyre.UI.Contracts.Attachments.ContentAttachment;
 using ImageLyre.UI.Contracts.Slots;
 
 namespace ImageLyre.Module.Workbench.Internal;
@@ -36,6 +37,7 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
     private static readonly ILogger s_logger = LogHub.For<WorkbenchShell>();
 
     private readonly ISlotManager _slots;
+    private readonly ContentControl _contentHost;
     private readonly AtomUIMenu _menu = new();
 
     internal WorkbenchShell(ISlotManager slots)
@@ -70,19 +72,22 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
             Child = statusPanel,
         };
 
-        var content = new SlotPanel
+        // 内容区不走沧溟的 SlotPanel：它只认沧溟的附件形状。这里订阅槽位变化，
+        // 取本仓 ContentAttachment 的控件工厂直接设给内容宿主，D 批的各态才看得见。
+        _contentHost = new ContentControl();
+        if (slots is ISlotChangeSource changeSource)
         {
-            SlotManager = slots,
-            SlotName = WorkbenchSlots.Content,
-            Orientation = Orientation.Vertical,
-        };
+            changeSource.Changed += OnSlotChanged;
+        }
+
+        RenderContent();
 
         var layout = new DockPanel();
         DockPanel.SetDock(_menu, Dock.Top);
         DockPanel.SetDock(statusBar, Dock.Bottom);
         layout.Children.Add(_menu);
         layout.Children.Add(statusBar);
-        layout.Children.Add(content);
+        layout.Children.Add(_contentHost);
 
         Content = layout;
 
@@ -97,6 +102,30 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
     }
 
     /// <summary>按投影结果重建菜单树。</summary>
+    private void OnSlotChanged(object? sender, SlotChange e)
+    {
+        if (string.Equals(e.SlotName, WorkbenchSlots.Content, StringComparison.Ordinal))
+        {
+            RenderContent();
+        }
+    }
+
+    private void RenderContent()
+    {
+        if (_slots is not ISlotRegistry registry)
+        {
+            return;
+        }
+
+        var attachment = (registry as ISlotChangeSource)?.GetAttachments(WorkbenchSlots.Content)
+            .Select(entry => entry.Attachment)
+            .OfType<LyreContentAttachment>()
+            .FirstOrDefault();
+
+        _contentHost.Content = attachment?.Create();
+        _contentHost.IsVisible = _contentHost.Content is not null;
+    }
+
     private void RebuildMenu()
     {
         var categories = new MenuProjection(_slots).Build();
