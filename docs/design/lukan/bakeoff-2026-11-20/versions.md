@@ -30,7 +30,8 @@
 | 26 | E 阿米娜 | 间距落地（亮） | 标本档案 · 亮（间距） | `e-science/v7/mock.html` |
 | 27 | E 阿米娜 | 身份折叠 + 间距（亮） | 标本档案 · 亮 | `e-science/v8/mock.html` |
 | 29 | E 阿米娜 | 中性底 + 选中改标（亮） | 标本档案 · 亮 | `e-science/v9/mock.html` |
-| 30 | E 阿米娜 | 信号标随轴（亮） | 标本档案 · 亮（当前） | `e-science/v10/mock.html` |
+| 30 | E 阿米娜 | 信号标随轴（亮） | 标本档案 · 亮 | `e-science/v10/mock.html` |
+| 31 | E 阿米娜 | 暗色收口 | 标本档案 · 暗（当前） | `e-science/v11/mock.html` |
 
 ## 用法
 
