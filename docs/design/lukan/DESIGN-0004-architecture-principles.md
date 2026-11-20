@@ -99,7 +99,7 @@ S1 是地基，S2 与 S3 建在它上面，S4 决定结构，S5 管取舍。
 
 `docs/spec/requirements/product-appearance.md` 与 `docs/design/lukan/bakeoff-2026-11-20/` 下的六份基线文档定义"值"；本文定义"值怎么落、落成什么样算对"。`docs/design/lukan/DESIGN-0003-libs-layering.md` 定义"代码放在哪个工程"；本文定义"放在里面的东西要满足什么"。两者不重叠：一个管位置，一个管约束。
 
-`docs/adr/lukan/ADR-0008-self-built-base.md` 冻结的"基座自建"在本文中体现为 S5 与 S6——不为能力过剩的抽象付费，也不为不可判定的约定背书。
+`docs/adr/lukan/ADR-0008-self-built-base.md` 冻结的"基座自建"在本文中体现为 S5 与写作纪律（原 S6）——不为能力过剩的抽象付费，也不为不可判定的约定背书。
 
 ## 8 变更记录
 
