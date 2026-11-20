@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ImageLyre 外观竞标 · 十二版</title>
+<style>
+  :root{
+    --bg:#E7EAE6; --paper:#FBFBF9; --ink:#0C0F10; --muted:#68736E; --line:#D3D9D3;
+    --accent:#2F5BFF;
+    --sans:"Segoe UI Variable","Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+    --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 var(--sans)}
+  header{padding:40px 40px 24px;border-bottom:1px solid var(--line)}
+  .kicker{font:11px/1 var(--mono);letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+  h1{margin:10px 0 6px;font-size:30px;font-weight:600;letter-spacing:-.01em}
+  .lede{margin:0;color:var(--muted);max-width:920px}
+  main{padding:24px 40px 60px}
+  .row{display:grid;grid-template-columns:150px 1fr 1fr 1fr;gap:20px;padding:22px 0;border-bottom:1px solid var(--line);align-items:start}
+  .who h2{margin:0 0 4px;font-size:17px}
+  .who p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.6}
+  .cell{background:var(--paper);border:1px solid var(--line)}
+  .cell img{width:100%;display:block;border-bottom:1px solid var(--line)}
+  .cap{padding:10px 12px 12px}
+  .tag{font:10.5px/1 var(--mono);letter-spacing:.14em;color:var(--muted)}
+  .cap b{display:block;margin:6px 0 3px;font-size:14.5px}
+  .cap span{font-size:12.5px;color:var(--muted)}
+  .cap a{font:11.5px/1.6 var(--mono);color:var(--accent);text-decoration:none;display:inline-block;margin-top:6px}
+  .note{margin-top:18px;font-size:13px;color:var(--muted);max-width:900px}
+  @media (max-width:1100px){.row{grid-template-columns:1fr 1fr}.who{grid-column:1/-1}}
+  @media (max-width:680px){.row{grid-template-columns:1fr}header,main{padding-left:20px;padding-right:20px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">ImageLyre · design bake-off · 12 versions · 2026-11-20</div>
+  <h1>六个人，三轮，十二版</h1>
+  <p class="lede">第一轮同题同骨架；第二轮只给任务不给位置；第三轮换道：IT 科技（A3、F3）、Photoshop 式图像处理（C3、D3）、取景器与标本册（B3、E3）。同一个人在三轮里的变化，比十二张图并排更能说明问题。</p>
+</header>
+<main>
+  <div class="row">
+    <div class="who"><h2>A · 沈岚</h2><p>工业设计 / 医疗仪器<br>信条：仪器不该喊</p></div>
+    <div class="cell"><img src="a-instrument/preview.png" alt="A1"><div class="cap"><div class="tag">V1 · 自由布局</div><b>观片灯</b><span>暗房观片灯，读数像刻度盘。</span><a href="a-instrument/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="a-instrument/v2/preview.png" alt="A2"><div class="cap"><div class="tag">V2 · 去限定</div><b>转塔</b><span>工具转塔，读数拴在选区旁。</span><a href="a-instrument/v2/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="a-instrument/v3/preview.png" alt="A3"><div class="cap"><div class="tag">V3 · IT 科技</div><b>台账</b><span>每个数字都带出处：输入哈希、校准链、沙箱、trace。</span><a href="a-instrument/v3/mock.html">窗口稿</a></div></div>
+  </div>
+
+  <div class="row">
+    <div class="who"><h2>B · Jonas</h2><p>瑞士平面 / 编辑排版<br>信条：网格比装饰有力</p></div>
+    <div class="cell"><img src="b-swiss/preview.png" alt="B1"><div class="cap"><div class="tag">V1 · 自由布局</div><b>记录页</b><span>压在观片灯上的记录纸。</span><a href="b-swiss/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="b-swiss/v2/preview.png" alt="B2"><div class="cap"><div class="tag">V2 · 去限定</div><b>引线</b><span>顶点 P3 到 AREA 的一条朱红引线。</span><a href="b-swiss/v2/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="b-swiss/v3/preview.png" alt="B3"><div class="cap"><div class="tag">V3 · 取景器</div><b>取景器</b><span>整窗即取景器，四边刻度接管界面。</span><a href="b-swiss/v3/mock.html">窗口稿</a></div></div>
+  </div>
+
+  <div class="row">
+    <div class="who"><h2>C · 林一</h2><p>专业工具软件<br>信条：美来自效率</p></div>
+    <div class="cell"><img src="c-tool/preview.png" alt="C1"><div class="cap"><div class="tag">V1 · 自由布局</div><b>游标</b><span>搁在台面上的卡尺。</span><a href="c-tool/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="c-tool/v2/preview.png" alt="C2"><div class="cap"><div class="tag">V2 · 去限定</div><b>尺侧</b><span>画布吃满，尺子在脚下，读数钉在形上。</span><a href="c-tool/v2/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="c-tool/v3/preview.png" alt="C3"><div class="cap"><div class="tag">V3 · Photoshop</div><b>读数台</b><span>借 Photoshop 的台面，做一台测量仪器。</span><a href="c-tool/v3/mock.html">窗口稿</a></div></div>
+  </div>
+
+  <div class="row">
+    <div class="who"><h2>D · 老 K</h2><p>游戏与影视 UI<br>信条：光只属于样本</p></div>
+    <div class="cell"><img src="d-darkroom/preview.png" alt="D1"><div class="cap"><div class="tag">V1 · 自由布局</div><b>暗房</b><span>关掉顶灯，只留一盏观片灯。</span><a href="d-darkroom/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="d-darkroom/v2/preview.png" alt="D2"><div class="cap"><div class="tag">V2 · 去限定</div><b>挂签</b><span>读数像一张系着线的标本签。</span><a href="d-darkroom/v2/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="d-darkroom/v3/preview.png" alt="D3"><div class="cap"><div class="tag">V3 · Photoshop</div><b>修图暗房</b><span>直方图管阈值，胶片条管同一批样本。</span><a href="d-darkroom/v3/mock.html">窗口稿</a></div></div>
+  </div>
+
+  <div class="row">
+    <div class="who"><h2>E · 阿米娜</h2><p>科学可视化 / 期刊制图<br>信条：能进论文</p></div>
+    <div class="cell"><img src="e-science/preview.png" alt="E1"><div class="cap"><div class="tag">V1 · 自由布局</div><b>图版</b><span>显微截图按期刊图版排。</span><a href="e-science/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="e-science/v2/preview.png" alt="E2"><div class="cap"><div class="tag">V2 · 去限定</div><b>图版与表 1</b><span>图注与表 1 第 1 行被同一条线钉住。</span><a href="e-science/v2/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="e-science/v3/preview.png" alt="E3"><div class="cap"><div class="tag">V3 · 标本册</div><b>标本册</b><span>图、档案卡与索引同屏。</span><a href="e-science/v3/mock.html">窗口稿</a></div></div>
+  </div>
+
+  <div class="row">
+    <div class="who"><h2>F · 陈默</h2><p>独立开发者 / 开源工具<br>信条：好工具不表演</p></div>
+    <div class="cell"><img src="f-craftsman/preview.png" alt="F1"><div class="cap"><div class="tag">V1 · 自由布局</div><b>卡尺</b><span>用惯的卡尺，每一格都在读数。</span><a href="f-craftsman/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="f-craftsman/v2/preview.png" alt="F2"><div class="cap"><div class="tag">V2 · 去限定</div><b>命令条</b><span>菜单缩成脚下一行命令条。</span><a href="f-craftsman/v2/mock.html">窗口稿</a></div></div>
+    <div class="cell"><img src="f-craftsman/v3/preview.png" alt="F3"><div class="cap"><div class="tag">V3 · IT 科技</div><b>命令台</b><span>六个数不是面板，是命令的输出。</span><a href="f-craftsman/v3/mock.html">窗口稿</a></div></div>
+  </div>
+
+  <p class="note">挑的时候先选「人」——你要的是仪器的可信、编辑的克制、工具的密度、暗房的光、出版的严谨，还是工匠的朴素；再选「轮」——自由布局、去掉限定，还是换道后的成熟语言。</p>
+</main>
+</body>
+</html>
