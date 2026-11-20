@@ -128,4 +128,4 @@
 
 统一骨架后，现行稿为 **21（亮）与 22（暗）**：结构、字段、入口完全一致，只有颜色、明度与材质不同；19 与 20 保留为来路。两版当前的结构差异按 `docs/spec/reviews/PM-REVIEW-2026-11-20-v20-v19-audit.md` 的 P0 清单先修，再进入交互深化。
 
-窗口档在 `docs/design/lukan/bakeoff-2026-11-20/`，编号见 `versions.md`：19、20、21、22。
+窗口档在 `docs/design/lukan/bakeoff-2026-11-20/`，编号见 `versions.md`：19、20、21、22。字号、字重、行高、数字与中英混排的基线见同目录 `typography.md`，两版必须逐项一致。
