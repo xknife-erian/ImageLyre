@@ -41,20 +41,34 @@ public sealed class SlotRegistry : ISlotManager, ISlotRegistry, ISlotChangeSourc
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(slotName);
 
-        ContributeSlot(new SlotDescriptor(slotName, SlotKind.Content, SlotCapacity.Multiple, displayName));
+        ContributeSlot(new SlotDescriptor(slotName, SlotKind.Content, SlotCapacity.Multiple, displayName), isImplicit: true);
     }
 
     /// <inheritdoc />
-    public void ContributeSlot(SlotDescriptor descriptor)
+    public void ContributeSlot(SlotDescriptor descriptor) => ContributeSlot(descriptor, isImplicit: false);
+
+    private void ContributeSlot(SlotDescriptor descriptor, bool isImplicit)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
-        if (_slots.ContainsKey(descriptor.Name))
+        if (_slots.TryGetValue(descriptor.Name, out var existing))
         {
-            throw new InvalidOperationException($"槽位 {descriptor.Name} 已被贡献，不能重复声明。");
+            // 渲染控件按名字隐式声明过的槽位，允许拥有者随后用带形态的描述符升级；其余重复声明幂等。
+            if (existing.IsImplicit && !isImplicit)
+            {
+                _slots[descriptor.Name] = new SlotState(descriptor) { Entries = existing.Entries };
+                return;
+            }
+
+            if (!existing.Descriptor.Equals(descriptor))
+            {
+                throw new InvalidOperationException($"槽位 {descriptor.Name} 已被贡献且声明的形态或容量不同。");
+            }
+
+            return;
         }
 
-        _slots[descriptor.Name] = new SlotState(descriptor);
+        _slots[descriptor.Name] = new SlotState(descriptor) { IsImplicit = isImplicit };
         FlushPending(descriptor.Name);
     }
 
@@ -301,9 +315,11 @@ public sealed class SlotRegistry : ISlotManager, ISlotRegistry, ISlotChangeSourc
 
     private sealed class SlotState(SlotDescriptor descriptor)
     {
-        internal SlotDescriptor Descriptor { get; } = descriptor;
+        internal SlotDescriptor Descriptor { get; set; } = descriptor;
 
-        internal List<SlotAttachmentEntry> Entries { get; } = [];
+        internal bool IsImplicit { get; init; }
+
+        internal List<SlotAttachmentEntry> Entries { get; set; } = [];
     }
 
     private sealed record PendingAttachment(IFeatureAttachment Attachment, string OwnerType, string OwnerInstance);

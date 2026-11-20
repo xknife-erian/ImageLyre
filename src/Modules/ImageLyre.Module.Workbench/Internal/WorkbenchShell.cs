@@ -15,6 +15,8 @@ using ImageLyre.Module.Workbench.Internal.Menu;
 using ImageLyre.UI.Contracts.Workbench;
 using Microsoft.Extensions.Logging;
 
+using ImageLyre.UI.Contracts.Slots;
+
 namespace ImageLyre.Module.Workbench.Internal;
 
 /// <summary>主窗口：菜单、内容与状态栏三个区域，具体内容由 Feature 通过区域附着。</summary>
@@ -40,6 +42,14 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
     {
         ArgumentNullException.ThrowIfNull(slots);
         _slots = slots;
+
+        // 壳是区域的拥有者：先声明三个区域与形态，功能才能按形态附着；未声明的附着会进诊断而不是静默消失。
+        if (slots is ISlotRegistry registry)
+        {
+            registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.Menu, SlotKind.Menu, SlotCapacity.Multiple, "主菜单"));
+            registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.StatusBar, SlotKind.StatusBar, SlotCapacity.Multiple, "状态栏"));
+            registry.ContributeSlot(new SlotDescriptor(WorkbenchSlots.Content, SlotKind.Content, SlotCapacity.Multiple, "主内容区"));
+        }
 
         Title = "ImageLyre";
         Width = 1280;
