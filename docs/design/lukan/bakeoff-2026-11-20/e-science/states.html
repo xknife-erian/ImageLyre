@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>ImageLyre · 主界面状态</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    /* space tokens — spacing.md §2 */
+    --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
+    /* size tokens — spacing.md §3 */
+    --h-title:44px; --h-menu:32px; --w-rail:44px; --w-panel:400px; --h-batch:78px; --h-status:28px;
+    --h-panelhead:32px; --h-sechead:24px; --h-field:28px; --h-button:28px; --h-tool:36px;
+    --h-thumb:60px; --w-thumb:56px; --d-thumb:40px; --w-label:64px; --h-tablerow:28px; --h-tablehead:24px; --h-menuitem:28px;
+    /* type tokens — typography.md 2.0 */
+    --fs-20:20px; --lh-20:28px; --fs-16:16px; --lh-16:24px; --fs-13:13px; --lh-13:20px; --fs-11:11px; --lh-11:16px;
+    /* surfaces + text */
+    --desk:#87878A; --paper:#F2F2F0; --furniture:#FFFFFF; --card:#FFFFFF;
+    --ink:#1B1B1B; --ink-2:#4C4C4C; --ink-3:#707070;
+    --hair:#DEDEDA; --hair-2:#DEDEDA; --rule:#C6C6C1; --signal:#B83A24;
+    --sans:"Segoe UI","Noto Sans SC","Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+    --mono:"Cascadia Mono",Consolas,"SFMono-Regular",ui-monospace,monospace;
+  }
+  html,body{height:100%}
+  body{background:var(--desk);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow:auto}
+  .defs{position:absolute;width:0;height:0;overflow:hidden}
+
+  .desktop{position:relative;width:1440px;height:900px;background:var(--desk)}
+  .window{position:absolute;inset:16px;display:flex;flex-direction:column;background:var(--paper);border:1px solid #6A6A66;overflow:hidden}
+
+  /* ---------- title bar: 44 ---------- */
+  .titlebar{height:var(--h-title);display:flex;align-items:center;gap:var(--sp-3);padding:0 0 0 var(--sp-4);background:var(--paper);border-top:1px solid #FFFFFF;border-bottom:1px solid var(--hair)}
+  .mark{flex:0 0 auto;color:var(--ink);fill:none;stroke:currentColor;stroke-width:1.2;stroke-linecap:round}
+  .brand{font-size:var(--fs-13);line-height:var(--lh-13);font-weight:600}
+  .doc{font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink-2)}
+  .saved{display:flex;align-items:center;gap:var(--sp-2);height:20px;padding:0 var(--sp-2);border:1px solid var(--hair);background:#FFFFFF;font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-2)}
+  .saved em{font-style:normal;font-family:var(--mono);font-size:var(--fs-11)}
+  .saved .caret{color:var(--ink-3)}
+  .grow{flex:1 1 auto}
+  .chip{display:flex;align-items:center;gap:var(--sp-2);height:20px;padding:0 var(--sp-2);border:1px solid var(--hair);background:#FFFFFF;font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-2)}
+  .chip i{width:var(--sp-1);height:var(--sp-1);background:var(--ink)}
+  .chip .k{font-family:var(--mono);font-size:var(--fs-11);color:var(--ink-3)}
+  .seg{display:flex;height:20px;border:1px solid var(--hair);background:#FFFFFF;font-size:var(--fs-11);line-height:var(--lh-11)}
+  .seg span{display:flex;align-items:center;padding:0 var(--sp-2);color:var(--ink-3)}
+  .seg .on{background:#DFDFDB;color:var(--ink)}
+  .seg .off{border-left:1px solid var(--hair)}
+  .wctl{display:flex;height:var(--h-title);margin-left:var(--sp-3);border-left:1px solid var(--hair)}
+  .wctl span{position:relative;width:var(--h-title);height:calc(var(--h-title) - 1px)}
+  .wctl span::before,.wctl span::after{content:"";position:absolute;background:var(--ink-2)}
+  .c-min::before{left:calc(var(--sp-4) + var(--sp-1));top:calc(var(--h-title) / 2);width:var(--sp-3);height:1px}
+  .c-max::before{left:calc(var(--sp-4) + var(--sp-1));top:calc(var(--sp-4) + 1px);width:var(--sp-3);height:var(--sp-2);background:none;border:1px solid var(--ink-2)}
+  .c-close::before{left:calc(var(--sp-4) + var(--sp-1));top:calc(var(--h-title) / 2);width:var(--sp-3);height:1px;transform:rotate(45deg)}
+  .c-close::after{left:calc(var(--sp-4) + var(--sp-1));top:calc(var(--h-title) / 2);width:var(--sp-3);height:1px;transform:rotate(-45deg)}
+
+  /* ---------- menu bar: 32 ---------- */
+  .menubar{height:var(--h-menu);display:flex;align-items:center;gap:var(--sp-1);padding:0 var(--sp-2);background:var(--paper);border-bottom:1px solid var(--hair);font-size:var(--fs-13);line-height:var(--lh-13)}
+  .mi{position:relative;display:flex;align-items:center;height:var(--h-menuitem);padding:0 var(--sp-3);color:var(--ink)}
+  .mi.open{background:#DFDFDB;border:1px solid var(--rule)}
+  .mi.open .pop{display:block}
+  .pop{display:none;position:absolute;left:-1px;top:calc(var(--h-button) + var(--sp-1));width:216px;padding:var(--sp-1) 0;background:var(--card);border:1px solid var(--rule);z-index:40}
+  .pop div{display:flex;justify-content:space-between;align-items:center;height:var(--h-button);padding:0 var(--sp-3);border-left:1px solid transparent;font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink)}
+  .pop div.sel{background:#DFDFDB;border-left-color:var(--signal)}
+  .pop .k{font-family:var(--mono);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .pop hr{border:0;border-top:1px solid var(--hair);margin:var(--sp-1) 0}
+
+  .body{flex:1 1 auto;min-height:0;display:flex}
+  .canvas{flex:1 1 auto;min-width:0;display:flex}
+
+  /* ---------- tool rail: 44 ---------- */
+  .tools{width:var(--w-rail);display:flex;flex-direction:column;align-items:center;gap:var(--sp-1);padding:var(--sp-1);background:var(--paper);border-right:1px solid var(--hair)}
+  .tool{position:relative;width:var(--h-tool);height:var(--h-tool);display:grid;place-items:center;border:1px solid transparent}
+  .tool svg{width:18px;height:18px;display:block;fill:none;stroke:var(--ink-2);stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+  .tool svg.ptr{fill:var(--ink-2);stroke-width:1}
+  .tool .key{position:absolute;right:0;bottom:0;font-family:var(--mono);font-size:var(--fs-11);line-height:1;color:var(--ink-3);letter-spacing:0}
+  .tool.on{background:#DFDFDB;border-color:var(--rule)}
+  .tool.on svg{stroke:var(--ink)}
+  .tool.on .key{color:var(--ink-2)}
+
+  /* ---------- stage ---------- */
+  .stage{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;background:#E8E8E6}
+  .viewport{flex:1 1 auto;min-height:0;display:flex;padding:var(--sp-2)}
+  .plate{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;border:1px solid var(--rule);background-color:#B4B4B0;background-image:radial-gradient(ellipse 84px 62px at 76% 20%, rgba(250,248,241,.55) 0 34%, rgba(58,54,46,.16) 48% 54%, rgba(58,54,46,0) 66%),
+      radial-gradient(ellipse 40px 30px at 22% 66%, rgba(249,247,240,.42) 0 34%, rgba(58,54,46,.13) 48% 54%, rgba(58,54,46,0) 66%),
+      radial-gradient(ellipse 28px 22px at 55% 44%, rgba(249,247,240,.36) 0 32%, rgba(58,54,46,.12) 48% 54%, rgba(58,54,46,0) 66%),
+      radial-gradient(ellipse 3px 2px at 63% 71%, rgba(255,253,246,.5), rgba(255,253,246,0) 70%),
+      radial-gradient(ellipse 3px 2px at 33% 35%, rgba(255,253,246,.45), rgba(255,253,246,0) 70%),
+      radial-gradient(ellipse 2px 2px at 71% 52%, rgba(28,26,21,.32), rgba(28,26,21,0) 70%),
+      radial-gradient(ellipse 9px 6px at 7% 79%, rgba(32,30,25,.47) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 11px 7px at 10% 84%, rgba(32,30,25,.51) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 13% 80%, rgba(32,30,25,.47) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 15% 88%, rgba(32,30,25,.49) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 8px 6px at 12% 92%, rgba(32,30,25,.43) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 11px 7px at 18% 86%, rgba(32,30,25,.51) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 20% 92%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 8px 6px at 8% 94%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 22% 80%, rgba(32,30,25,.43) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 84% 12%, rgba(32,30,25,.47) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 88% 16%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 91% 12%, rgba(32,30,25,.49) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 8px 6px at 86% 21%, rgba(32,30,25,.43) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 90% 25%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 94% 20%, rgba(32,30,25,.47) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 26% 22%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 11px 7px at 32% 31%, rgba(32,30,25,.47) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 8px 6px at 37% 19%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 43% 27%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 48% 15%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 11px 7px at 54% 25%, rgba(32,30,25,.47) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 8px 6px at 59% 34%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 64% 21%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 69% 29%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 73% 39%, rgba(32,30,25,.47) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 8px 6px at 79% 31%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 84% 41%, rgba(32,30,25,.43) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 89% 35%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 93% 47%, rgba(32,30,25,.43) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 8px 6px at 97% 29%, rgba(32,30,25,.37) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 19% 41%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 23% 53%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 8px 6px at 29% 45%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 35% 57%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 40% 49%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 11px 7px at 46% 59%, rgba(32,30,25,.47) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 8px 6px at 52% 63%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 58% 51%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 63% 67%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 68% 59%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 74% 71%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 80% 63%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 86% 73%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 92% 65%, rgba(32,30,25,.45) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 97% 75%, rgba(32,30,25,.39) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 31% 67%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 38% 73%, rgba(32,30,25,.43) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 44% 81%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 50% 89%, rgba(32,30,25,.43) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 56% 81%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 62% 91%, rgba(32,30,25,.43) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 69% 85%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 10px 7px at 75% 93%, rgba(32,30,25,.43) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 82% 87%, rgba(32,30,25,.41) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 9px 6px at 26% 89%, rgba(32,30,25,.39) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 8px 6px at 34% 95%, rgba(32,30,25,.37) 0 42%, rgba(32,30,25,0) 100%),
+      radial-gradient(ellipse 280px 200px at 14% 40%, rgba(64,60,50,.10), rgba(64,60,50,0) 70%),
+      radial-gradient(ellipse 220px 250px at 34% 64%, rgba(64,60,50,.09), rgba(64,60,50,0) 70%),
+      radial-gradient(ellipse 260px 180px at 52% 40%, rgba(64,60,50,.09), rgba(64,60,50,0) 70%),
+      radial-gradient(ellipse 200px 230px at 70% 72%, rgba(64,60,50,.08), rgba(64,60,50,0) 70%),
+      radial-gradient(ellipse 250px 170px at 88% 34%, rgba(64,60,50,.09), rgba(64,60,50,0) 70%),
+      radial-gradient(ellipse 180px 160px at 6% 84%, rgba(64,60,50,.08), rgba(64,60,50,0) 70%),
+      radial-gradient(ellipse 300px 140px at 96% 88%, rgba(64,60,50,.07), rgba(64,60,50,0) 70%),
+      radial-gradient(ellipse 200px 130px at 42% 10%, rgba(64,60,50,.07), rgba(64,60,50,0) 70%),
+      radial-gradient(ellipse 190px 140px at 97% 12%, rgba(250,248,240,.15), rgba(250,248,240,0) 70%),
+      radial-gradient(ellipse 160px 100px at 30% 12%, rgba(250,248,240,.12), rgba(250,248,240,0) 70%),
+      radial-gradient(ellipse 380px 50px at 58% 52%, rgba(255,255,255,.05), rgba(255,255,255,0) 72%),
+      radial-gradient(120% 120% at 40% 32%, #d4d0c5 0%, #beb9ad 42%, #8f8b81 100%);}
+  .plate::before,.plate::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:multiply}
+  .plate::before{filter:url(#mottle);opacity:.19}
+  .plate::after{filter:url(#grain);opacity:.16}
+
+  .roi{position:absolute;inset:0;z-index:3;width:100%;height:100%;pointer-events:none}
+  .roi .fill{fill:none}
+  .roi .halo{fill:none;stroke:rgba(255,255,255,.6);stroke-width:3.4;vector-effect:non-scaling-stroke}
+  .roi .edge{fill:none;stroke:var(--signal);stroke-width:1.5;vector-effect:non-scaling-stroke}
+  .roi rect{fill:var(--paper);stroke:var(--signal);stroke-width:1.2;vector-effect:non-scaling-stroke}
+  .roi rect.act{fill:var(--signal)}
+  .roi .grab{fill:none;stroke:var(--signal);stroke-width:1;stroke-dasharray:2 2;opacity:.8;vector-effect:non-scaling-stroke}
+
+  .roi-tag{position:absolute;left:700px;top:246px;z-index:4;display:flex;align-items:baseline;gap:var(--sp-2);padding:var(--sp-1) var(--sp-2);white-space:nowrap;background:rgba(255,255,255,.97);border:1px solid #B0B0AC;font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink)}
+  .roi-tag b{font-size:var(--fs-11);line-height:var(--lh-11);font-weight:600;color:var(--signal)}
+  .roi-tag i{font-style:normal;font-family:var(--mono);font-size:var(--fs-20);line-height:var(--lh-20);letter-spacing:-.2px}
+  .roi-tag em{font-style:normal;font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink-2)}
+
+  .scale{position:absolute;left:var(--sp-5);bottom:var(--sp-5);z-index:4}
+  .scale .lab{display:block;font-size:var(--fs-11);line-height:var(--lh-11);color:#1B1B1B;margin-bottom:var(--sp-1)}
+  .scale .bar{position:relative;display:block;width:200px;height:var(--sp-1);background:#1B1B1B}
+  .scale .bar::before,.scale .bar::after{content:"";position:absolute;top:calc(0px - var(--sp-1));width:1px;height:var(--sp-2);background:#1B1B1B}
+  .scale .bar::before{left:0}
+  .scale .bar::after{right:0}
+
+  /* ---------- readout: 28 ---------- */
+  .readout{height:var(--h-status);display:flex;align-items:center;justify-content:space-between;padding:0 var(--sp-4);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-2)}
+  .cond{display:flex;align-items:baseline;gap:var(--sp-5)}
+  .ci{display:flex;align-items:baseline;gap:var(--sp-2)}
+  .ci b{font-size:var(--fs-11);line-height:var(--lh-11);font-weight:400;color:var(--ink-3)}
+  .ci em{font-style:normal;font-family:var(--mono);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink)}
+
+  /* ---------- batch: 78 ---------- */
+  .batch{height:var(--h-batch);display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-2) var(--sp-4);background:var(--furniture);border-top:1px solid var(--hair)}
+  .b-head{flex:0 0 auto;display:flex;align-items:center;gap:var(--sp-3)}
+  .b-caret{width:var(--h-sechead);height:var(--h-sechead);display:grid;place-items:center;background:#FFFFFF;border:1px solid var(--hair);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-2)}
+  .b-title{font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink)}
+  .b-meta{font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3);margin-top:var(--sp-1)}
+  .b-meta b{font-weight:400;color:var(--ink-2)}
+  .b-tabs{flex:1 1 auto;display:flex;align-items:center;gap:var(--sp-3);min-width:0}
+  .b-tab{flex:0 0 var(--w-thumb);width:var(--w-thumb);height:var(--h-thumb);display:flex;flex-direction:column;align-items:center;background:#FFFFFF}
+  .b-tab.on{background:#DFDFDB}
+  .b-thumb{width:var(--d-thumb);height:var(--d-thumb);background-color:#B4B4B0}
+  .b-id{height:var(--lh-11);display:flex;align-items:center;gap:var(--sp-1);margin-top:var(--sp-1);font-family:var(--mono);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .b-tab.on .b-id{color:var(--ink)}
+  
+  .b-thumb.a{background-image:radial-gradient(circle 10px at 30% 40%, rgba(50,48,42,.38), rgba(50,48,42,0) 70%),radial-gradient(circle 7px at 72% 62%, rgba(50,48,42,.42), rgba(50,48,42,0) 70%),radial-gradient(120% 120% at 40% 30%, #d9d5ca, #9d998e)}
+  .b-thumb.b{background-image:radial-gradient(circle 12px at 62% 34%, rgba(50,48,42,.34), rgba(50,48,42,0) 70%),radial-gradient(circle 6px at 34% 66%, rgba(50,48,42,.44), rgba(50,48,42,0) 70%),radial-gradient(110% 130% at 60% 40%, #dcd8cd, #a5a196)}
+  .b-thumb.c{background-image:radial-gradient(circle 9px at 24% 60%, rgba(50,48,42,.44), rgba(50,48,42,0) 70%),radial-gradient(circle 9px at 66% 30%, rgba(50,48,42,.34), rgba(50,48,42,0) 70%),radial-gradient(130% 110% at 30% 60%, #d5d1c6, #97938a)}
+  .b-thumb.d{background-image:radial-gradient(circle 11px at 70% 60%, rgba(50,48,42,.38), rgba(50,48,42,0) 70%),radial-gradient(circle 7px at 36% 36%, rgba(50,48,42,.40), rgba(50,48,42,0) 70%),radial-gradient(120% 120% at 55% 55%, #d8d4c9, #9b978c)}
+  .b-thumb.e{background-image:radial-gradient(circle 8px at 40% 44%, rgba(50,48,42,.46), rgba(50,48,42,0) 70%),radial-gradient(circle 9px at 78% 70%, rgba(50,48,42,.34), rgba(50,48,42,0) 70%),radial-gradient(110% 130% at 45% 40%, #d6d2c7, #a09c91)}
+  .b-thumb.f{background-image:radial-gradient(circle 10px at 56% 40%, rgba(50,48,42,.36), rgba(50,48,42,0) 70%),radial-gradient(circle 6px at 26% 70%, rgba(50,48,42,.44), rgba(50,48,42,0) 70%),radial-gradient(130% 120% at 50% 30%, #d9d5ca, #99958a)}
+  .b-thumb.g{background-image:radial-gradient(circle 9px at 34% 30%, rgba(50,48,42,.40), rgba(50,48,42,0) 70%),radial-gradient(circle 9px at 70% 64%, rgba(50,48,42,.36), rgba(50,48,42,0) 70%),radial-gradient(120% 110% at 40% 50%, #d4d0c5, #a19d92)}
+  .b-thumb.h{background-image:radial-gradient(circle 11px at 64% 30%, rgba(50,48,42,.38), rgba(50,48,42,0) 70%),radial-gradient(circle 7px at 30% 62%, rgba(50,48,42,.42), rgba(50,48,42,0) 70%),radial-gradient(110% 130% at 60% 60%, #dad6cb, #9c988d)}
+  .b-actions{flex:0 0 auto;display:flex;align-items:center;gap:var(--sp-2)}
+  .b-count{font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .b-add{display:flex;align-items:center;height:var(--h-button);padding:0 var(--sp-3);border:1px solid var(--hair);background:#FFFFFF;font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink-2)}
+
+  /* ---------- archive rail: 400, one column ---------- */
+  .rail{flex:0 0 var(--w-panel);width:var(--w-panel);display:flex;flex-direction:column;background:var(--furniture);border-left:1px solid var(--hair);padding:var(--sp-3)}
+  .rail-head{height:var(--h-panelhead);display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3)}
+  .kicker{font-size:var(--fs-16);line-height:var(--lh-16);font-weight:400;color:var(--ink)}
+  .kicker span{font-size:var(--fs-16);line-height:var(--lh-16);font-weight:600;color:var(--ink-3);margin-left:var(--sp-2)}
+  .state{display:flex;align-items:center;gap:var(--sp-2);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .state i{width:var(--sp-1);height:var(--sp-1);background:var(--ink-3)}
+
+  .sec{margin-top:var(--sp-3)}
+  .sec-head{height:var(--h-sechead);display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);border-bottom:1px solid var(--rule);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-2)}
+  .sec-head > span:first-child{font-weight:400}
+  .sec-head .lat{font-weight:600}
+  .sec-head > span:last-child{color:var(--ink-3)}
+
+  .ident div{display:grid;grid-template-columns:var(--w-label) 1fr;gap:var(--sp-2);align-items:baseline;height:var(--h-field)}
+  .ident dt{font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .ident dd{font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink)}
+  .ident dd.mono{font-family:var(--mono);font-size:var(--fs-13)}
+  .ident dd.id{font-weight:600}
+
+  .meas div{display:flex;justify-content:space-between;align-items:baseline;height:var(--h-tablerow);border-bottom:1px solid var(--hair-2)}
+  .meas dt{font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .meas dd{font-family:var(--mono);font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink)}
+  .meas dd i{font-style:normal;font-family:var(--sans);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3);margin-left:var(--sp-1)}
+  .disc{height:var(--h-tablehead);display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--hair);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+
+  .p-row{display:flex;align-items:center;gap:var(--sp-2);height:var(--h-field);font-size:var(--fs-13);line-height:var(--lh-13)}
+  .p-lab{font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .segs{display:flex;height:var(--h-button);border:1px solid var(--hair);background:#FFFFFF}
+  .segs > *{display:flex;align-items:center;font-style:normal;padding:0 var(--sp-2);font-size:var(--fs-13);line-height:var(--lh-13);font-family:var(--mono);color:var(--ink-3)}
+  .segs > * + *{border-left:1px solid var(--hair)}
+  .segs .act{background:#DFDFDB;color:var(--ink);font-weight:600}
+  .p-val{font-family:var(--mono);font-size:var(--fs-13);line-height:var(--lh-13);border-bottom:1px solid var(--rule)}
+  .p-val i{font-style:normal;font-family:var(--sans);font-size:var(--fs-11);color:var(--ink-3)}
+  .sw{position:relative;width:20px;height:var(--sp-3);border:1px solid var(--ink-3)}
+  .sw::after{content:"";position:absolute;top:1px;right:1px;width:var(--sp-1);height:var(--sp-1);background:var(--ink)}
+
+  .prov-sum{height:var(--h-field);display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-2)}
+  .prov-sum b{font-weight:400;color:var(--ink-3);margin-right:var(--sp-1)}
+  .prov-sum .caret{color:var(--ink-2)}
+
+  .foot{margin-top:auto;display:flex;gap:var(--sp-2);align-items:center}
+  .btn{display:flex;align-items:center;gap:var(--sp-1);height:var(--h-button);padding:0 var(--sp-3);background:#FFFFFF;border:1px solid var(--hair);font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink)}
+  .btn .k{font-family:var(--mono);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .btn.strong{border-color:var(--ink)}
+
+  /* ---------- hidden command palette ---------- */
+  .palette{display:none;position:absolute;left:76px;top:196px;width:452px;background:var(--card);border:1px solid #8f8a7d;z-index:30}
+  .pal-head{display:flex;align-items:center;gap:var(--sp-2);height:var(--h-menu);padding:0 var(--sp-3);border-bottom:1px solid var(--hair);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .pal-head b{font-size:var(--fs-16);line-height:var(--lh-16);font-weight:400;color:var(--ink)}
+  .pal-head .grow{flex:1}
+  .pal-search{display:flex;align-items:center;height:var(--h-button);padding:0 var(--sp-3);border-bottom:1px solid var(--hair);font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink-3)}
+  .pal-item{display:flex;justify-content:space-between;align-items:center;height:var(--h-button);padding:0 var(--sp-3);border-left:1px solid transparent;font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink-2)}
+  .pal-item.on{background:#DFDFDB;border-left-color:var(--signal);color:var(--ink)}
+  .pal-item .k{font-family:var(--mono);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .pal-agent{padding:var(--sp-2) var(--sp-3);border-top:1px solid var(--hair);background:#F7F7F5}
+  .pa-head{display:flex;align-items:center;gap:var(--sp-2);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-2)}
+  .pa-head i{width:var(--sp-1);height:var(--sp-1);background:var(--ink)}
+  .pa-row{display:grid;grid-template-columns:var(--sp-6) 1fr;gap:var(--sp-2);margin-top:var(--sp-2);font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink-2)}
+  .pa-row b{font-weight:400;color:var(--ink-3);font-size:var(--fs-11);line-height:var(--lh-11)}
+  .pa-action{display:inline-flex;align-items:center;height:var(--h-button);margin-top:var(--sp-2);padding:0 var(--sp-3);border:1px solid var(--hair);background:#FFFFFF;font-size:var(--fs-13);line-height:var(--lh-13);color:var(--ink)}
+  .pal-foot{display:flex;justify-content:space-between;padding:var(--sp-2) var(--sp-3);border-top:1px solid var(--hair);font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3)}
+  .ident-more summary{height:var(--h-field);display:flex;align-items:center;justify-content:space-between;font-size:var(--fs-11);line-height:var(--lh-11);color:var(--ink-3);cursor:pointer;list-style:none}
+  .ident-more summary::-webkit-details-marker{display:none}
+  .ident-more summary .caret{color:var(--ink-2);transform:none}
+  .ident-more[open] summary .caret{transform:rotate(90deg)}
+  /* selection: neutral light fill + 2px signal mark, no inverted fill */
+  .seg span{position:relative}
+  .segs > *{position:relative}
+  .seg .on::before,.segs .act::before,.tool.on::before{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--signal)}
+  .b-tab.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--signal)}
+  .b-tab{position:relative}
+  .meas div.on{position:relative;background:#DFDFDB}
+  .meas div.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--signal)}
+  /* ================= states sheet ================= */
+  html{background:#E8E8E6}
+  body{background:#E8E8E6}
+  .screen{width:1440px;margin:0 auto 32px}
+  .cap{height:40px;display:flex;align-items:baseline;gap:12px;padding:0 16px;font-size:11px;line-height:16px;color:#707070}
+  .cap b{font-weight:600;color:#1B1B1B}
+  .cap span{color:#707070}
+  .stage{position:relative}
+  .sp{flex:1}
+  .x{width:24px;height:24px;display:grid;place-items:center;color:#4C4C4C}
+
+  /* tabs 28 */
+  .tabs{height:28px;display:flex;align-items:stretch;padding:0 16px;background:#F2F2F0;border-bottom:1px solid #DEDEDA}
+  .tab{position:relative;display:flex;align-items:center;gap:8px;height:28px;padding:0 12px;font-size:13px;line-height:20px;color:#4C4C4C;border-right:1px solid #DEDEDA}
+  .tab.on{background:#FFFFFF;color:#1B1B1B}
+  .tab.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#B83A24}
+  .tab .dot{width:4px;height:4px;background:#4C4C4C}
+  .tab .ro{font-size:11px;line-height:16px;color:#707070}
+
+  /* empty */
+  .drop{flex:1;margin:16px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#FFFFFF;border:1px dashed #C6C6C1}
+  .drop .h{font-size:20px;line-height:28px;color:#1B1B1B}
+  .drop .p{margin-top:8px;font-size:13px;line-height:20px;color:#4C4C4C}
+  .drop .acts{display:flex;gap:12px;margin-top:24px}
+  .drop .recent{margin-top:32px;width:360px;border-top:1px solid #DEDEDA}
+  .drop .recent div{display:flex;justify-content:space-between;align-items:center;height:28px;border-bottom:1px solid #DEDEDA;font-size:13px;line-height:20px;color:#4C4C4C}
+  .drop .recent b{font-weight:400;color:#1B1B1B}
+  .ver{position:absolute;right:16px;bottom:12px;font-size:11px;line-height:16px;color:#707070}
+
+  /* loading */
+  .plate.skel{background:#DFDFDB;background-image:none;display:flex;align-items:center;justify-content:center}
+  .loadbox{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .loadbox .lt{font-size:13px;line-height:20px;color:#4C4C4C}
+  .progress{position:relative;width:240px;height:2px;background:#DEDEDA}
+  .progress i{position:absolute;left:0;top:0;bottom:0;width:64%;background:#B83A24}
+  .loadbox .lp{font-family:var(--mono);font-size:11px;line-height:16px;color:#4C4C4C}
+  .skelbar{height:12px;background:#DFDFDB}
+
+  /* calibration warning */
+  .warnbar{display:flex;align-items:center;gap:12px;height:44px;padding:0 16px;background:#F7EBC8;border-bottom:1px solid #E2CB92;font-size:13px;line-height:20px;color:#4C4C4C}
+  .warnbar b{font-weight:400;color:#1B1B1B}
+  .warnbar .act{font-size:13px;line-height:20px;color:#1B1B1B;border-bottom:1px solid #1B1B1B}
+
+  /* rail tabs + agent + history */
+  .rtabs{display:flex;height:28px;border:1px solid #C6C6C1;margin-bottom:16px}
+  .rtab{flex:1;display:flex;align-items:center;justify-content:center;font-size:13px;line-height:20px;color:#707070}
+  .rtab.on{position:relative;background:#DFDFDB;color:#1B1B1B}
+  .rtab.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#B83A24}
+  .ctx{border:1px solid #DEDEDA;padding:12px 16px}
+  .ctx .row{display:flex;justify-content:space-between;align-items:baseline;height:28px;font-size:13px;line-height:20px;color:#1B1B1B}
+  .ctx .row b{font-size:11px;line-height:16px;font-weight:400;color:#707070}
+  .prop{border:1px solid #DEDEDA;padding:8px 12px;margin-top:12px}
+  .prop .pt{font-size:13px;line-height:20px;color:#1B1B1B}
+  .prop .pd{margin-top:4px;font-size:11px;line-height:16px;color:#707070}
+  .prop .pa{display:inline-block;margin-top:8px;font-size:11px;line-height:16px;color:#4C4C4C;border-bottom:1px solid #DEDEDA}
+  .hrow{position:relative;display:flex;align-items:center;gap:12px;height:44px;padding:0 8px;border-bottom:1px solid #DEDEDA}
+  .hrow.on{background:#DFDFDB}
+  .hrow.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:#B83A24}
+  .hrow .t{width:48px;font-family:var(--mono);font-size:11px;line-height:16px;color:#707070}
+  .hrow .m{flex:1;font-size:13px;line-height:20px;color:#1B1B1B}
+  .hrow .a{font-size:11px;line-height:16px;color:#707070}
+
+  /* settings dialog 720x560 */
+  .dlg{position:absolute;left:344px;top:154px;width:720px;height:560px;background:#FFFFFF;border:1px solid #C6C6C1;z-index:50;display:flex;flex-direction:column}
+  .dlg-head{height:44px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid #DEDEDA;font-size:16px;line-height:24px;color:#1B1B1B}
+  .dlg-body{flex:1;display:flex;min-height:0}
+  .dlg-nav{width:200px;border-right:1px solid #DEDEDA;padding:8px 0}
+  .dlg-nav div{position:relative;height:28px;display:flex;align-items:center;padding:0 16px;font-size:13px;line-height:20px;color:#4C4C4C}
+  .dlg-nav .on{background:#DFDFDB;color:#1B1B1B}
+  .dlg-nav .on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:#B83A24}
+  .dlg-main{flex:1;padding:16px}
+  .dlg-foot{height:44px;display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:0 16px;border-top:1px solid #DEDEDA}
+  .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;height:56px;border-bottom:1px solid #DEDEDA}
+  .setrow .k{font-size:13px;line-height:20px;color:#1B1B1B}
+  .setrow .d{margin-top:2px;font-size:11px;line-height:16px;color:#707070}
+
+  /* export drawer 280 */
+  .drawer{position:absolute;left:0;right:0;bottom:0;height:280px;padding:12px 16px;background:#FFFFFF;border-top:1px solid #C6C6C1;z-index:20;display:flex;flex-direction:column;gap:12px}
+  .drawer .dh{display:flex;align-items:center;gap:12px}
+  .drawer .dh .t{font-size:16px;line-height:24px;color:#1B1B1B}
+  .drawer .path{font-family:var(--mono);font-size:11px;line-height:16px;color:#4C4C4C}
+  .cols{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:11px;line-height:16px;color:#4C4C4C}
+  .cols .lb{color:#707070}
+  .cols .c{display:inline-flex;align-items:center;height:24px;padding:0 8px;border:1px solid #DEDEDA;font-family:var(--mono);font-size:11px;line-height:16px}
+  .preview{width:100%;border-collapse:collapse;font-size:13px;line-height:20px}
+  .preview th{text-align:right;padding:4px 8px;border-bottom:1px solid #C6C6C1;font-size:11px;line-height:16px;font-weight:400;color:#707070}
+  .preview td{text-align:right;padding:4px 8px;border-bottom:1px solid #DEDEDA;font-family:var(--mono);font-size:13px;line-height:20px;color:#1B1B1B}
+  .dfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:auto}</style>
+</head>
+<body>
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <filter id="grain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+  <filter id="mottle" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="4" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+</svg><section class="screen"><div class="cap"><b>01 · 空态</b><span>拖入即打开；没有图时不摆工具与档案，右下角只留版本。</span></div><div class="desktop"><div class="window"><header class="titlebar">
+  <svg class="mark" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4v4.9a5 5 0 0 0 10 0V3.4"/><path d="M6 3.9v4.4M10 3.9v4.4"/></svg>
+  <span class="brand">ImageLyre</span>
+  <span class="doc">— 无文档</span>
+  <span class="grow"></span>
+  <span class="chip"><i></i>Agent 就绪</span>
+  <span class="chip"><span class="k">Ctrl K</span>命令</span>
+  <div class="seg"><span class="on">中</span><span class="off">EN</span></div>
+  <div class="seg"><span class="on">浅</span><span class="off">深</span></div>
+  <span class="chip">设置</span>
+  <div class="wctl" aria-hidden="true"><span class="c-min"></span><span class="c-max"></span><span class="c-close"></span></div>
+</header><nav class="menubar"><span class="mi">File</span><span class="mi">Edit</span><span class="mi">Image</span><span class="mi">Analyze</span><span class="mi">Plugins</span><span class="mi">Help</span></nav><div class="body"><div class="canvas"><div class="drop">
+  <div class="h">把 TIFF 拖到这里</div>
+  <div class="p">16 位、带校准的 TIFF 会被直接识别；不支持的格式会说明原因。</div>
+  <div class="acts"><span class="btn strong">打开文件…</span><span class="btn">打开示例</span><span class="btn">最近文件</span></div>
+  <div class="recent">
+    <div><b>sample.tif</b><span>B-114 · 今天 09:34</span></div>
+    <div><b>kidney_02.tif</b><span>B-114 · 昨天 18:02</span></div>
+    <div><b>spine_03.tif</b><span>B-113 · 11-16</span></div>
+  </div>
+  <div class="ver">ImageLyre 0.1 · 2026.11</div>
+</div></div></div></div></div></section>
+<section class="screen"><div class="cap"><b>02 · 加载态</b><span>先给画布骨架、进度与取消；状态栏同步 64%。</span></div><div class="desktop"><div class="window"><header class="titlebar">
+  <svg class="mark" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4v4.9a5 5 0 0 0 10 0V3.4"/><path d="M6 3.9v4.4M10 3.9v4.4"/></svg>
+  <span class="brand">ImageLyre</span>
+  <span class="doc">— sample.tif</span>
+  <span class="saved">已保存 <em>10:42</em> <span class="caret">▾</span></span>
+  <span class="grow"></span>
+  <span class="chip"><i></i>Agent 就绪 · 只读</span>
+  <span class="chip"><span class="k">Ctrl K</span>命令</span>
+  <div class="seg"><span class="on">中</span><span class="off">EN</span></div>
+  <div class="seg"><span class="on">浅</span><span class="off">深</span></div>
+  <span class="chip">设置</span>
+  <div class="wctl" aria-hidden="true"><span class="c-min"></span><span class="c-max"></span><span class="c-close"></span></div>
+</header><nav class="menubar"><span class="mi">File</span><span class="mi">Edit</span><span class="mi">Image</span><span class="mi">Analyze</span><span class="mi">Plugins</span><span class="mi">Help</span></nav><div class="body"><div class="canvas"><aside class="tools" aria-label="工具">
+  <span class="tool" title="指针 V"><svg class="ptr" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.2 2.8 4.2 13 7.1 10.6 8.9 14.4 10.6 13.6 8.8 9.9 12.6 9.5Z"/></svg><span class="key">V</span></span>
+  <span class="tool" title="矩形 R"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="3" y="4.5" width="12" height="9"/></svg><span class="key">R</span></span>
+  <span class="tool on" title="多边形 P"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.8 15 6.6 13 14.2 5 14.2 3 6.6Z"/></svg><span class="key">P</span></span>
+  <span class="tool" title="手 H"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.2 9.4V3.6a1 1 0 0 1 2 0v4.2"/><path d="M9.2 7.6V2.9a1 1 0 0 1 2 0v4.9"/><path d="M11.2 8.2V4.4a1 1 0 0 1 2 0v6.1c0 2.7-2 4.7-4.6 4.7-2.5 0-4.4-1.9-4.4-4.4V7.3a1 1 0 0 1 2 0v2"/></svg><span class="key">H</span></span>
+  <span class="tool" title="缩放 Z"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.6" cy="7.6" r="4.4"/><path d="M10.9 10.9 15 15"/><path d="M5.7 7.6h3.8M7.6 5.7v3.8"/></svg><span class="key">Z</span></span>
+</aside><div class="stage">
+  <div class="viewport"><div class="plate skel">
+    <div class="loadbox">
+      <div class="lt">正在打开 sample.tif</div>
+      <div class="progress"><i></i></div>
+      <div class="lp">64% · 读取第 1/1 页</div>
+      <span class="btn">取消</span>
+    </div>
+  </div></div>
+  <div class="readout">
+    <span class="cond"><span class="ci"><b>状态</b><em>正在打开 · 64%</em></span></span>
+    <span class="cond"><span class="ci"><b>缩放</b><em>—</em></span><span class="ci"><b>标定</b><em>—</em></span></span>
+  </div>
+</div></div><aside class="rail">
+  <div class="rail-head"><span class="kicker">标本档案<span>Specimen record</span></span></div>
+  <div class="skelbar" style="margin-top:16px;width:60%"></div>
+  <div class="skelbar" style="margin-top:12px;width:90%"></div>
+  <div class="skelbar" style="margin-top:12px;width:84%"></div>
+  <div class="skelbar" style="margin-top:24px;width:40%"></div>
+  <div class="skelbar" style="margin-top:12px;width:100%"></div>
+  <div class="skelbar" style="margin-top:12px;width:100%"></div>
+  <div class="skelbar" style="margin-top:12px;width:96%"></div>
+  <div class="skelbar" style="margin-top:12px;width:100%"></div>
+  <div class="skelbar" style="margin-top:12px;width:88%"></div>
+</aside></div></div></div></section>
+<section class="screen"><div class="cap"><b>03 · 缺校准</b><span>不弹窗：画布上一条内联黄条说明后果，并给出设置比例尺。</span></div><div class="desktop"><div class="window"><header class="titlebar">
+  <svg class="mark" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4v4.9a5 5 0 0 0 10 0V3.4"/><path d="M6 3.9v4.4M10 3.9v4.4"/></svg>
+  <span class="brand">ImageLyre</span>
+  <span class="doc">— sample.tif</span>
+  <span class="saved">已保存 <em>10:42</em> <span class="caret">▾</span></span>
+  <span class="grow"></span>
+  <span class="chip"><i></i>Agent 就绪 · 只读</span>
+  <span class="chip"><span class="k">Ctrl K</span>命令</span>
+  <div class="seg"><span class="on">中</span><span class="off">EN</span></div>
+  <div class="seg"><span class="on">浅</span><span class="off">深</span></div>
+  <span class="chip">设置</span>
+  <div class="wctl" aria-hidden="true"><span class="c-min"></span><span class="c-max"></span><span class="c-close"></span></div>
+</header><nav class="menubar"><span class="mi">File</span><span class="mi">Edit</span><span class="mi">Image</span><span class="mi">Analyze</span><span class="mi">Plugins</span><span class="mi">Help</span></nav><div class="body"><div class="canvas"><aside class="tools" aria-label="工具">
+  <span class="tool" title="指针 V"><svg class="ptr" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.2 2.8 4.2 13 7.1 10.6 8.9 14.4 10.6 13.6 8.8 9.9 12.6 9.5Z"/></svg><span class="key">V</span></span>
+  <span class="tool" title="矩形 R"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="3" y="4.5" width="12" height="9"/></svg><span class="key">R</span></span>
+  <span class="tool on" title="多边形 P"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.8 15 6.6 13 14.2 5 14.2 3 6.6Z"/></svg><span class="key">P</span></span>
+  <span class="tool" title="手 H"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.2 9.4V3.6a1 1 0 0 1 2 0v4.2"/><path d="M9.2 7.6V2.9a1 1 0 0 1 2 0v4.9"/><path d="M11.2 8.2V4.4a1 1 0 0 1 2 0v6.1c0 2.7-2 4.7-4.6 4.7-2.5 0-4.4-1.9-4.4-4.4V7.3a1 1 0 0 1 2 0v2"/></svg><span class="key">H</span></span>
+  <span class="tool" title="缩放 Z"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.6" cy="7.6" r="4.4"/><path d="M10.9 10.9 15 15"/><path d="M5.7 7.6h3.8M7.6 5.7v3.8"/></svg><span class="key">Z</span></span>
+</aside><div class="stage"><div class="warnbar"><b>未找到校准，测量将用像素单位。</b><span class="sp"></span><span class="act">设置比例尺</span><span class="x">×</span></div><div class="viewport"><div class="plate">
+  <svg class="roi" viewBox="0 0 946 668" preserveAspectRatio="none" aria-hidden="true">
+    <polygon class="fill" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="halo" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="edge" points="603,303 711,286 765,348 728,432 612,434"/>
+    <g>
+      <rect x="599" y="299" width="8" height="8"/>
+      <rect x="707" y="282" width="8" height="8"/>
+      <rect x="761" y="344" width="8" height="8"/>
+      <rect class="act" x="724" y="428" width="8" height="8"/>
+      <rect x="608" y="430" width="8" height="8"/>
+    </g>
+    <circle class="grab" cx="728" cy="432" r="11"/>
+  </svg>
+  <div class="roi-tag"><b>ROI 1</b><i>1240.5</i><em>µm²</em></div>
+  <div class="scale"><span class="lab">50 µm</span><span class="bar"></span></div>
+</div></div><div class="readout">
+  <span class="cond"><span class="ci"><b>X</b><em>512</em></span><span class="ci"><b>Y</b><em>384</em></span><span class="ci"><b>值</b><em>182</em></span></span>
+  <span class="cond"><span class="ci"><b>缩放</b><em>200%</em></span><span class="ci"><b>标定</b><em>0.5 µm/px</em></span></span>
+</div><div class="batch">
+  <div class="b-head"><span class="b-caret">⌄</span><div><div class="b-title">同批</div><div class="b-meta">B-114 · 12 张 · <b>6 已测</b></div></div></div>
+  <div class="b-tabs">
+    <div class="b-tab"><div class="b-thumb a"></div><div class="b-id">S-01</div></div>
+    <div class="b-tab"><div class="b-thumb b"></div><div class="b-id">S-02</div></div>
+    <div class="b-tab"><div class="b-thumb c"></div><div class="b-id">S-03</div></div>
+    <div class="b-tab on"><div class="b-thumb d"></div><div class="b-id">S-04</div></div>
+    <div class="b-tab"><div class="b-thumb e"></div><div class="b-id">S-05</div></div>
+    <div class="b-tab"><div class="b-thumb f"></div><div class="b-id">S-06</div></div>
+    <div class="b-tab"><div class="b-thumb g"></div><div class="b-id">S-07</div></div>
+    <div class="b-tab"><div class="b-thumb h"></div><div class="b-id">S-08</div></div>
+  </div>
+  <div class="b-actions"><span class="b-count">8 / 12</span><span class="b-add">＋ 加入</span></div>
+</div></div></div><aside class="rail">
+  <div class="rail-head"><span class="kicker">标本档案<span>Specimen record</span></span><span class="state"><i></i>已测量 6 项</span></div>
+  <section class="sec">
+    <div class="sec-head"><span>身份 / <b class="lat">Identity</b></span></div>
+    <dl class="ident">
+      <div><dt>样本号</dt><dd class="mono id">S-04</dd></div>
+      <div><dt>批次</dt><dd>B-114</dd></div>
+      <div><dt>校准</dt><dd class="mono">0.5 × 0.5 µm/px</dd></div>
+    </dl>
+    <details class="ident-more">
+      <summary>展开全部 9 项<span class="caret">›</span></summary>
+      <dl class="ident">
+        <div><dt>来源</dt><dd>肝组织切片</dd></div>
+        <div><dt>染色</dt><dd>H&amp;E · 苏木精-伊红</dd></div>
+        <div><dt>采集</dt><dd>2026-11-18 09:34 · 40×/1.0 NA</dd></div>
+        <div><dt>复核</dt><dd>LK · 10:42</dd></div>
+        <div><dt>文件</dt><dd class="mono">sample.tif</dd></div>
+        <div><dt>位深</dt><dd>16 位 · 单通道 TIFF</dd></div>
+      </dl>
+    </details>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>测量 / <b class="lat">Results</b></span><span>ROI 1 · 5 顶点</span></div>
+    <dl class="meas">
+      <div><dt>Area</dt><dd>1240.5<i>µm²</i></dd></div>
+      <div><dt>Mean</dt><dd>182.4</dd></div>
+      <div><dt>StdDev</dt><dd>21.7</dd></div>
+      <div><dt>Min</dt><dd>96</dd></div>
+      <div><dt>Max</dt><dd>233</dd></div>
+      <div><dt>Perimeter</dt><dd>148.2<i>µm</i></dd></div>
+    </dl>
+    <div class="disc"><span>台账 · 6 个 ROI</span><span class="caret">›</span></div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>参数 / <b class="lat">Parameters</b></span><span>改动即重算</span></div>
+    <div class="p-row"><span class="p-lab">单位</span><span class="segs"><b class="act">µm²</b><i>px²</i></span><span class="p-lab">小数位</span><span class="segs"><b class="act">1</b><i>2</i><i>3</i></span></div>
+    <div class="p-row"><span class="p-lab">阈值</span><span class="p-val">12.0 <i>µm²</i></span><span class="p-lab">自动重算</span><span class="sw" aria-hidden="true"></span></div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>溯源 / <b class="lat">Provenance</b></span><span>摘要</span></div>
+    <div class="prov-sum"><span><b>校准链</b>0.5000 µm/px · <b>哈希</b>9f3c1a72 · <b>插件</b>1.2.0</span><span class="caret">▾</span></div>
+  </section>
+  <div class="foot"><span class="btn">撤销<span class="k">Ctrl Z</span></span><span class="btn strong">导出 CSV…<span class="k">+ sidecar</span></span><span class="btn">历史版本</span></div>
+</aside></div></div></div></section>
+<section class="screen"><div class="cap"><b>04 · 多文档</b><span>标签条 28；当前、脏、只读各有标记，右栏五段不变。</span></div><div class="desktop"><div class="window"><header class="titlebar">
+  <svg class="mark" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4v4.9a5 5 0 0 0 10 0V3.4"/><path d="M6 3.9v4.4M10 3.9v4.4"/></svg>
+  <span class="brand">ImageLyre</span>
+  <span class="doc">— sample.tif</span>
+  <span class="saved">已保存 <em>10:42</em> <span class="caret">▾</span></span>
+  <span class="grow"></span>
+  <span class="chip"><i></i>Agent 就绪 · 只读</span>
+  <span class="chip"><span class="k">Ctrl K</span>命令</span>
+  <div class="seg"><span class="on">中</span><span class="off">EN</span></div>
+  <div class="seg"><span class="on">浅</span><span class="off">深</span></div>
+  <span class="chip">设置</span>
+  <div class="wctl" aria-hidden="true"><span class="c-min"></span><span class="c-max"></span><span class="c-close"></span></div>
+</header><nav class="menubar"><span class="mi">File</span><span class="mi">Edit</span><span class="mi">Image</span><span class="mi">Analyze</span><span class="mi">Plugins</span><span class="mi">Help</span></nav><div class="tabs">
+  <span class="tab on">sample.tif</span>
+  <span class="tab">kidney_02.tif<span class="dot"></span></span>
+  <span class="tab">spine_03.tif<span class="ro">只读</span></span>
+</div><div class="body"><div class="canvas"><aside class="tools" aria-label="工具">
+  <span class="tool" title="指针 V"><svg class="ptr" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.2 2.8 4.2 13 7.1 10.6 8.9 14.4 10.6 13.6 8.8 9.9 12.6 9.5Z"/></svg><span class="key">V</span></span>
+  <span class="tool" title="矩形 R"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="3" y="4.5" width="12" height="9"/></svg><span class="key">R</span></span>
+  <span class="tool on" title="多边形 P"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.8 15 6.6 13 14.2 5 14.2 3 6.6Z"/></svg><span class="key">P</span></span>
+  <span class="tool" title="手 H"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.2 9.4V3.6a1 1 0 0 1 2 0v4.2"/><path d="M9.2 7.6V2.9a1 1 0 0 1 2 0v4.9"/><path d="M11.2 8.2V4.4a1 1 0 0 1 2 0v6.1c0 2.7-2 4.7-4.6 4.7-2.5 0-4.4-1.9-4.4-4.4V7.3a1 1 0 0 1 2 0v2"/></svg><span class="key">H</span></span>
+  <span class="tool" title="缩放 Z"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.6" cy="7.6" r="4.4"/><path d="M10.9 10.9 15 15"/><path d="M5.7 7.6h3.8M7.6 5.7v3.8"/></svg><span class="key">Z</span></span>
+</aside><div class="stage"><div class="viewport"><div class="plate">
+  <svg class="roi" viewBox="0 0 946 668" preserveAspectRatio="none" aria-hidden="true">
+    <polygon class="fill" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="halo" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="edge" points="603,303 711,286 765,348 728,432 612,434"/>
+    <g>
+      <rect x="599" y="299" width="8" height="8"/>
+      <rect x="707" y="282" width="8" height="8"/>
+      <rect x="761" y="344" width="8" height="8"/>
+      <rect class="act" x="724" y="428" width="8" height="8"/>
+      <rect x="608" y="430" width="8" height="8"/>
+    </g>
+    <circle class="grab" cx="728" cy="432" r="11"/>
+  </svg>
+  <div class="roi-tag"><b>ROI 1</b><i>1240.5</i><em>µm²</em></div>
+  <div class="scale"><span class="lab">50 µm</span><span class="bar"></span></div>
+</div></div><div class="readout">
+  <span class="cond"><span class="ci"><b>X</b><em>512</em></span><span class="ci"><b>Y</b><em>384</em></span><span class="ci"><b>值</b><em>182</em></span></span>
+  <span class="cond"><span class="ci"><b>缩放</b><em>200%</em></span><span class="ci"><b>标定</b><em>0.5 µm/px</em></span></span>
+</div><div class="batch">
+  <div class="b-head"><span class="b-caret">⌄</span><div><div class="b-title">同批</div><div class="b-meta">B-114 · 12 张 · <b>6 已测</b></div></div></div>
+  <div class="b-tabs">
+    <div class="b-tab"><div class="b-thumb a"></div><div class="b-id">S-01</div></div>
+    <div class="b-tab"><div class="b-thumb b"></div><div class="b-id">S-02</div></div>
+    <div class="b-tab"><div class="b-thumb c"></div><div class="b-id">S-03</div></div>
+    <div class="b-tab on"><div class="b-thumb d"></div><div class="b-id">S-04</div></div>
+    <div class="b-tab"><div class="b-thumb e"></div><div class="b-id">S-05</div></div>
+    <div class="b-tab"><div class="b-thumb f"></div><div class="b-id">S-06</div></div>
+    <div class="b-tab"><div class="b-thumb g"></div><div class="b-id">S-07</div></div>
+    <div class="b-tab"><div class="b-thumb h"></div><div class="b-id">S-08</div></div>
+  </div>
+  <div class="b-actions"><span class="b-count">8 / 12</span><span class="b-add">＋ 加入</span></div>
+</div></div></div><aside class="rail">
+  <div class="rail-head"><span class="kicker">标本档案<span>Specimen record</span></span><span class="state"><i></i>已测量 6 项</span></div>
+  <section class="sec">
+    <div class="sec-head"><span>身份 / <b class="lat">Identity</b></span></div>
+    <dl class="ident">
+      <div><dt>样本号</dt><dd class="mono id">S-04</dd></div>
+      <div><dt>批次</dt><dd>B-114</dd></div>
+      <div><dt>校准</dt><dd class="mono">0.5 × 0.5 µm/px</dd></div>
+    </dl>
+    <details class="ident-more">
+      <summary>展开全部 9 项<span class="caret">›</span></summary>
+      <dl class="ident">
+        <div><dt>来源</dt><dd>肝组织切片</dd></div>
+        <div><dt>染色</dt><dd>H&amp;E · 苏木精-伊红</dd></div>
+        <div><dt>采集</dt><dd>2026-11-18 09:34 · 40×/1.0 NA</dd></div>
+        <div><dt>复核</dt><dd>LK · 10:42</dd></div>
+        <div><dt>文件</dt><dd class="mono">sample.tif</dd></div>
+        <div><dt>位深</dt><dd>16 位 · 单通道 TIFF</dd></div>
+      </dl>
+    </details>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>测量 / <b class="lat">Results</b></span><span>ROI 1 · 5 顶点</span></div>
+    <dl class="meas">
+      <div><dt>Area</dt><dd>1240.5<i>µm²</i></dd></div>
+      <div><dt>Mean</dt><dd>182.4</dd></div>
+      <div><dt>StdDev</dt><dd>21.7</dd></div>
+      <div><dt>Min</dt><dd>96</dd></div>
+      <div><dt>Max</dt><dd>233</dd></div>
+      <div><dt>Perimeter</dt><dd>148.2<i>µm</i></dd></div>
+    </dl>
+    <div class="disc"><span>台账 · 6 个 ROI</span><span class="caret">›</span></div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>参数 / <b class="lat">Parameters</b></span><span>改动即重算</span></div>
+    <div class="p-row"><span class="p-lab">单位</span><span class="segs"><b class="act">µm²</b><i>px²</i></span><span class="p-lab">小数位</span><span class="segs"><b class="act">1</b><i>2</i><i>3</i></span></div>
+    <div class="p-row"><span class="p-lab">阈值</span><span class="p-val">12.0 <i>µm²</i></span><span class="p-lab">自动重算</span><span class="sw" aria-hidden="true"></span></div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>溯源 / <b class="lat">Provenance</b></span><span>摘要</span></div>
+    <div class="prov-sum"><span><b>校准链</b>0.5000 µm/px · <b>哈希</b>9f3c1a72 · <b>插件</b>1.2.0</span><span class="caret">▾</span></div>
+  </section>
+  <div class="foot"><span class="btn">撤销<span class="k">Ctrl Z</span></span><span class="btn strong">导出 CSV…<span class="k">+ sidecar</span></span><span class="btn">历史版本</span></div>
+</aside></div></div></div></section>
+<section class="screen"><div class="cap"><b>05 · Agent 抽屉</b><span>右栏在档案与 Agent 间切换；只读、只提案，可把分析转成流程。</span></div><div class="desktop"><div class="window"><header class="titlebar">
+  <svg class="mark" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4v4.9a5 5 0 0 0 10 0V3.4"/><path d="M6 3.9v4.4M10 3.9v4.4"/></svg>
+  <span class="brand">ImageLyre</span>
+  <span class="doc">— sample.tif</span>
+  <span class="saved">已保存 <em>10:42</em> <span class="caret">▾</span></span>
+  <span class="grow"></span>
+  <span class="chip"><i></i>Agent 就绪 · 只读</span>
+  <span class="chip"><span class="k">Ctrl K</span>命令</span>
+  <div class="seg"><span class="on">中</span><span class="off">EN</span></div>
+  <div class="seg"><span class="on">浅</span><span class="off">深</span></div>
+  <span class="chip">设置</span>
+  <div class="wctl" aria-hidden="true"><span class="c-min"></span><span class="c-max"></span><span class="c-close"></span></div>
+</header><nav class="menubar"><span class="mi">File</span><span class="mi">Edit</span><span class="mi">Image</span><span class="mi">Analyze</span><span class="mi">Plugins</span><span class="mi">Help</span></nav><div class="body"><div class="canvas"><aside class="tools" aria-label="工具">
+  <span class="tool" title="指针 V"><svg class="ptr" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.2 2.8 4.2 13 7.1 10.6 8.9 14.4 10.6 13.6 8.8 9.9 12.6 9.5Z"/></svg><span class="key">V</span></span>
+  <span class="tool" title="矩形 R"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="3" y="4.5" width="12" height="9"/></svg><span class="key">R</span></span>
+  <span class="tool on" title="多边形 P"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.8 15 6.6 13 14.2 5 14.2 3 6.6Z"/></svg><span class="key">P</span></span>
+  <span class="tool" title="手 H"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.2 9.4V3.6a1 1 0 0 1 2 0v4.2"/><path d="M9.2 7.6V2.9a1 1 0 0 1 2 0v4.9"/><path d="M11.2 8.2V4.4a1 1 0 0 1 2 0v6.1c0 2.7-2 4.7-4.6 4.7-2.5 0-4.4-1.9-4.4-4.4V7.3a1 1 0 0 1 2 0v2"/></svg><span class="key">H</span></span>
+  <span class="tool" title="缩放 Z"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.6" cy="7.6" r="4.4"/><path d="M10.9 10.9 15 15"/><path d="M5.7 7.6h3.8M7.6 5.7v3.8"/></svg><span class="key">Z</span></span>
+</aside><div class="stage"><div class="viewport"><div class="plate">
+  <svg class="roi" viewBox="0 0 946 668" preserveAspectRatio="none" aria-hidden="true">
+    <polygon class="fill" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="halo" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="edge" points="603,303 711,286 765,348 728,432 612,434"/>
+    <g>
+      <rect x="599" y="299" width="8" height="8"/>
+      <rect x="707" y="282" width="8" height="8"/>
+      <rect x="761" y="344" width="8" height="8"/>
+      <rect class="act" x="724" y="428" width="8" height="8"/>
+      <rect x="608" y="430" width="8" height="8"/>
+    </g>
+    <circle class="grab" cx="728" cy="432" r="11"/>
+  </svg>
+  <div class="roi-tag"><b>ROI 1</b><i>1240.5</i><em>µm²</em></div>
+  <div class="scale"><span class="lab">50 µm</span><span class="bar"></span></div>
+</div></div><div class="readout">
+  <span class="cond"><span class="ci"><b>X</b><em>512</em></span><span class="ci"><b>Y</b><em>384</em></span><span class="ci"><b>值</b><em>182</em></span></span>
+  <span class="cond"><span class="ci"><b>缩放</b><em>200%</em></span><span class="ci"><b>标定</b><em>0.5 µm/px</em></span></span>
+</div><div class="batch">
+  <div class="b-head"><span class="b-caret">⌄</span><div><div class="b-title">同批</div><div class="b-meta">B-114 · 12 张 · <b>6 已测</b></div></div></div>
+  <div class="b-tabs">
+    <div class="b-tab"><div class="b-thumb a"></div><div class="b-id">S-01</div></div>
+    <div class="b-tab"><div class="b-thumb b"></div><div class="b-id">S-02</div></div>
+    <div class="b-tab"><div class="b-thumb c"></div><div class="b-id">S-03</div></div>
+    <div class="b-tab on"><div class="b-thumb d"></div><div class="b-id">S-04</div></div>
+    <div class="b-tab"><div class="b-thumb e"></div><div class="b-id">S-05</div></div>
+    <div class="b-tab"><div class="b-thumb f"></div><div class="b-id">S-06</div></div>
+    <div class="b-tab"><div class="b-thumb g"></div><div class="b-id">S-07</div></div>
+    <div class="b-tab"><div class="b-thumb h"></div><div class="b-id">S-08</div></div>
+  </div>
+  <div class="b-actions"><span class="b-count">8 / 12</span><span class="b-add">＋ 加入</span></div>
+</div></div></div><aside class="rail">
+  <div class="rtabs"><span class="rtab">档案</span><span class="rtab on">Agent</span></div>
+  <div class="ctx">
+    <div class="row"><b>文件</b><span>sample.tif</span></div>
+    <div class="row"><b>ROI</b><span>1 · 多边形 · 5 顶点</span></div>
+    <div class="row"><b>校准</b><span>0.5 µm/px</span></div>
+    <div class="row"><b>六项</b><span>1240.5 · 182.4 · 21.7 · 96 · 233 · 148.2</span></div>
+  </div>
+  <div class="ctx" style="margin-top:12px">
+    <div class="row"><b>读</b><span>图像、ROI 顶点、校准、六项</span></div>
+    <div class="row"><b>写</b><span>备注与流程；不改像素</span></div>
+  </div>
+  <div class="prop"><div class="pt">把面积写进备注</div><div class="pd">ROI 1 · 1240.5 µm² · 10:42</div><span class="pa">应用</span></div>
+  <div class="prop"><div class="pt">同批同阈值再测 6 张</div><div class="pd">阈值 12.0 µm² · 批次 B-114</div><span class="pa">应用</span></div>
+  <div class="foot"><span class="btn strong">把这次分析变成流程…</span></div>
+</aside></div></div></div></section>
+<section class="screen"><div class="cap"><b>06 · 设置</b><span>720×560 居中；左侧五分区，右侧只放当前分区。</span></div><div class="desktop"><div class="window"><header class="titlebar">
+  <svg class="mark" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4v4.9a5 5 0 0 0 10 0V3.4"/><path d="M6 3.9v4.4M10 3.9v4.4"/></svg>
+  <span class="brand">ImageLyre</span>
+  <span class="doc">— sample.tif</span>
+  <span class="saved">已保存 <em>10:42</em> <span class="caret">▾</span></span>
+  <span class="grow"></span>
+  <span class="chip"><i></i>Agent 就绪 · 只读</span>
+  <span class="chip"><span class="k">Ctrl K</span>命令</span>
+  <div class="seg"><span class="on">中</span><span class="off">EN</span></div>
+  <div class="seg"><span class="on">浅</span><span class="off">深</span></div>
+  <span class="chip">设置</span>
+  <div class="wctl" aria-hidden="true"><span class="c-min"></span><span class="c-max"></span><span class="c-close"></span></div>
+</header><nav class="menubar"><span class="mi">File</span><span class="mi">Edit</span><span class="mi">Image</span><span class="mi">Analyze</span><span class="mi">Plugins</span><span class="mi">Help</span></nav><div class="body"><div class="canvas"><aside class="tools" aria-label="工具">
+  <span class="tool" title="指针 V"><svg class="ptr" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.2 2.8 4.2 13 7.1 10.6 8.9 14.4 10.6 13.6 8.8 9.9 12.6 9.5Z"/></svg><span class="key">V</span></span>
+  <span class="tool" title="矩形 R"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="3" y="4.5" width="12" height="9"/></svg><span class="key">R</span></span>
+  <span class="tool on" title="多边形 P"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.8 15 6.6 13 14.2 5 14.2 3 6.6Z"/></svg><span class="key">P</span></span>
+  <span class="tool" title="手 H"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.2 9.4V3.6a1 1 0 0 1 2 0v4.2"/><path d="M9.2 7.6V2.9a1 1 0 0 1 2 0v4.9"/><path d="M11.2 8.2V4.4a1 1 0 0 1 2 0v6.1c0 2.7-2 4.7-4.6 4.7-2.5 0-4.4-1.9-4.4-4.4V7.3a1 1 0 0 1 2 0v2"/></svg><span class="key">H</span></span>
+  <span class="tool" title="缩放 Z"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.6" cy="7.6" r="4.4"/><path d="M10.9 10.9 15 15"/><path d="M5.7 7.6h3.8M7.6 5.7v3.8"/></svg><span class="key">Z</span></span>
+</aside><div class="stage"><div class="viewport"><div class="plate">
+  <svg class="roi" viewBox="0 0 946 668" preserveAspectRatio="none" aria-hidden="true">
+    <polygon class="fill" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="halo" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="edge" points="603,303 711,286 765,348 728,432 612,434"/>
+    <g>
+      <rect x="599" y="299" width="8" height="8"/>
+      <rect x="707" y="282" width="8" height="8"/>
+      <rect x="761" y="344" width="8" height="8"/>
+      <rect class="act" x="724" y="428" width="8" height="8"/>
+      <rect x="608" y="430" width="8" height="8"/>
+    </g>
+    <circle class="grab" cx="728" cy="432" r="11"/>
+  </svg>
+  <div class="roi-tag"><b>ROI 1</b><i>1240.5</i><em>µm²</em></div>
+  <div class="scale"><span class="lab">50 µm</span><span class="bar"></span></div>
+</div></div><div class="readout">
+  <span class="cond"><span class="ci"><b>X</b><em>512</em></span><span class="ci"><b>Y</b><em>384</em></span><span class="ci"><b>值</b><em>182</em></span></span>
+  <span class="cond"><span class="ci"><b>缩放</b><em>200%</em></span><span class="ci"><b>标定</b><em>0.5 µm/px</em></span></span>
+</div><div class="batch">
+  <div class="b-head"><span class="b-caret">⌄</span><div><div class="b-title">同批</div><div class="b-meta">B-114 · 12 张 · <b>6 已测</b></div></div></div>
+  <div class="b-tabs">
+    <div class="b-tab"><div class="b-thumb a"></div><div class="b-id">S-01</div></div>
+    <div class="b-tab"><div class="b-thumb b"></div><div class="b-id">S-02</div></div>
+    <div class="b-tab"><div class="b-thumb c"></div><div class="b-id">S-03</div></div>
+    <div class="b-tab on"><div class="b-thumb d"></div><div class="b-id">S-04</div></div>
+    <div class="b-tab"><div class="b-thumb e"></div><div class="b-id">S-05</div></div>
+    <div class="b-tab"><div class="b-thumb f"></div><div class="b-id">S-06</div></div>
+    <div class="b-tab"><div class="b-thumb g"></div><div class="b-id">S-07</div></div>
+    <div class="b-tab"><div class="b-thumb h"></div><div class="b-id">S-08</div></div>
+  </div>
+  <div class="b-actions"><span class="b-count">8 / 12</span><span class="b-add">＋ 加入</span></div>
+</div></div></div><aside class="rail">
+  <div class="rail-head"><span class="kicker">标本档案<span>Specimen record</span></span><span class="state"><i></i>已测量 6 项</span></div>
+  <section class="sec">
+    <div class="sec-head"><span>身份 / <b class="lat">Identity</b></span></div>
+    <dl class="ident">
+      <div><dt>样本号</dt><dd class="mono id">S-04</dd></div>
+      <div><dt>批次</dt><dd>B-114</dd></div>
+      <div><dt>校准</dt><dd class="mono">0.5 × 0.5 µm/px</dd></div>
+    </dl>
+    <details class="ident-more">
+      <summary>展开全部 9 项<span class="caret">›</span></summary>
+      <dl class="ident">
+        <div><dt>来源</dt><dd>肝组织切片</dd></div>
+        <div><dt>染色</dt><dd>H&amp;E · 苏木精-伊红</dd></div>
+        <div><dt>采集</dt><dd>2026-11-18 09:34 · 40×/1.0 NA</dd></div>
+        <div><dt>复核</dt><dd>LK · 10:42</dd></div>
+        <div><dt>文件</dt><dd class="mono">sample.tif</dd></div>
+        <div><dt>位深</dt><dd>16 位 · 单通道 TIFF</dd></div>
+      </dl>
+    </details>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>测量 / <b class="lat">Results</b></span><span>ROI 1 · 5 顶点</span></div>
+    <dl class="meas">
+      <div><dt>Area</dt><dd>1240.5<i>µm²</i></dd></div>
+      <div><dt>Mean</dt><dd>182.4</dd></div>
+      <div><dt>StdDev</dt><dd>21.7</dd></div>
+      <div><dt>Min</dt><dd>96</dd></div>
+      <div><dt>Max</dt><dd>233</dd></div>
+      <div><dt>Perimeter</dt><dd>148.2<i>µm</i></dd></div>
+    </dl>
+    <div class="disc"><span>台账 · 6 个 ROI</span><span class="caret">›</span></div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>参数 / <b class="lat">Parameters</b></span><span>改动即重算</span></div>
+    <div class="p-row"><span class="p-lab">单位</span><span class="segs"><b class="act">µm²</b><i>px²</i></span><span class="p-lab">小数位</span><span class="segs"><b class="act">1</b><i>2</i><i>3</i></span></div>
+    <div class="p-row"><span class="p-lab">阈值</span><span class="p-val">12.0 <i>µm²</i></span><span class="p-lab">自动重算</span><span class="sw" aria-hidden="true"></span></div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>溯源 / <b class="lat">Provenance</b></span><span>摘要</span></div>
+    <div class="prov-sum"><span><b>校准链</b>0.5000 µm/px · <b>哈希</b>9f3c1a72 · <b>插件</b>1.2.0</span><span class="caret">▾</span></div>
+  </section>
+  <div class="foot"><span class="btn">撤销<span class="k">Ctrl Z</span></span><span class="btn strong">导出 CSV…<span class="k">+ sidecar</span></span><span class="btn">历史版本</span></div>
+</aside></div><div class="dlg" role="dialog" aria-label="设置">
+  <div class="dlg-head"><span>设置</span><span class="sp"></span><span class="x">×</span></div>
+  <div class="dlg-body">
+    <div class="dlg-nav"><div class="on">外观</div><div>分析</div><div>文件</div><div>插件</div><div>关于</div></div>
+    <div class="dlg-main">
+      <div class="setrow"><div><div class="k">主题</div><div class="d">跟随系统，或固定浅色 / 深色</div></div><div class="seg"><span class="on">浅</span><span class="off">深</span></div></div>
+      <div class="setrow"><div><div class="k">语言</div><div class="d">界面语言，重启后保持</div></div><div class="seg"><span class="on">中</span><span class="off">EN</span></div></div>
+      <div class="setrow"><div><div class="k">界面缩放</div><div class="d">字与控件同比缩放，图像不变</div></div><div class="segs"><b class="act">100%</b><i>125%</i><i>150%</i></div></div>
+      <div class="setrow"><div><div class="k">档案密度</div><div class="d">紧凑把五段放进一屏，标准留更多留白</div></div><div class="segs"><b class="act">紧凑</b><i>标准</i></div></div>
+      <div class="setrow"><div><div class="k">状态栏读数</div><div class="d">坐标、像素值、缩放、校准常驻画布下沿</div></div><span class="sw" aria-hidden="true"></span></div>
+    </div>
+  </div>
+  <div class="dlg-foot"><span class="btn">取消</span><span class="btn strong">应用</span></div>
+</div></div></div></section>
+<section class="screen"><div class="cap"><b>07 · 历史</b><span>版本五条；选两条对比，回退与前进在栏底。</span></div><div class="desktop"><div class="window"><header class="titlebar">
+  <svg class="mark" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4v4.9a5 5 0 0 0 10 0V3.4"/><path d="M6 3.9v4.4M10 3.9v4.4"/></svg>
+  <span class="brand">ImageLyre</span>
+  <span class="doc">— sample.tif</span>
+  <span class="saved">已保存 <em>10:42</em> <span class="caret">▾</span></span>
+  <span class="grow"></span>
+  <span class="chip"><i></i>Agent 就绪 · 只读</span>
+  <span class="chip"><span class="k">Ctrl K</span>命令</span>
+  <div class="seg"><span class="on">中</span><span class="off">EN</span></div>
+  <div class="seg"><span class="on">浅</span><span class="off">深</span></div>
+  <span class="chip">设置</span>
+  <div class="wctl" aria-hidden="true"><span class="c-min"></span><span class="c-max"></span><span class="c-close"></span></div>
+</header><nav class="menubar"><span class="mi">File</span><span class="mi">Edit</span><span class="mi">Image</span><span class="mi">Analyze</span><span class="mi">Plugins</span><span class="mi">Help</span></nav><div class="body"><div class="canvas"><aside class="tools" aria-label="工具">
+  <span class="tool" title="指针 V"><svg class="ptr" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.2 2.8 4.2 13 7.1 10.6 8.9 14.4 10.6 13.6 8.8 9.9 12.6 9.5Z"/></svg><span class="key">V</span></span>
+  <span class="tool" title="矩形 R"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="3" y="4.5" width="12" height="9"/></svg><span class="key">R</span></span>
+  <span class="tool on" title="多边形 P"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.8 15 6.6 13 14.2 5 14.2 3 6.6Z"/></svg><span class="key">P</span></span>
+  <span class="tool" title="手 H"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.2 9.4V3.6a1 1 0 0 1 2 0v4.2"/><path d="M9.2 7.6V2.9a1 1 0 0 1 2 0v4.9"/><path d="M11.2 8.2V4.4a1 1 0 0 1 2 0v6.1c0 2.7-2 4.7-4.6 4.7-2.5 0-4.4-1.9-4.4-4.4V7.3a1 1 0 0 1 2 0v2"/></svg><span class="key">H</span></span>
+  <span class="tool" title="缩放 Z"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.6" cy="7.6" r="4.4"/><path d="M10.9 10.9 15 15"/><path d="M5.7 7.6h3.8M7.6 5.7v3.8"/></svg><span class="key">Z</span></span>
+</aside><div class="stage"><div class="viewport"><div class="plate">
+  <svg class="roi" viewBox="0 0 946 668" preserveAspectRatio="none" aria-hidden="true">
+    <polygon class="fill" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="halo" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="edge" points="603,303 711,286 765,348 728,432 612,434"/>
+    <g>
+      <rect x="599" y="299" width="8" height="8"/>
+      <rect x="707" y="282" width="8" height="8"/>
+      <rect x="761" y="344" width="8" height="8"/>
+      <rect class="act" x="724" y="428" width="8" height="8"/>
+      <rect x="608" y="430" width="8" height="8"/>
+    </g>
+    <circle class="grab" cx="728" cy="432" r="11"/>
+  </svg>
+  <div class="roi-tag"><b>ROI 1</b><i>1240.5</i><em>µm²</em></div>
+  <div class="scale"><span class="lab">50 µm</span><span class="bar"></span></div>
+</div></div><div class="readout">
+  <span class="cond"><span class="ci"><b>X</b><em>512</em></span><span class="ci"><b>Y</b><em>384</em></span><span class="ci"><b>值</b><em>182</em></span></span>
+  <span class="cond"><span class="ci"><b>缩放</b><em>200%</em></span><span class="ci"><b>标定</b><em>0.5 µm/px</em></span></span>
+</div><div class="batch">
+  <div class="b-head"><span class="b-caret">⌄</span><div><div class="b-title">同批</div><div class="b-meta">B-114 · 12 张 · <b>6 已测</b></div></div></div>
+  <div class="b-tabs">
+    <div class="b-tab"><div class="b-thumb a"></div><div class="b-id">S-01</div></div>
+    <div class="b-tab"><div class="b-thumb b"></div><div class="b-id">S-02</div></div>
+    <div class="b-tab"><div class="b-thumb c"></div><div class="b-id">S-03</div></div>
+    <div class="b-tab on"><div class="b-thumb d"></div><div class="b-id">S-04</div></div>
+    <div class="b-tab"><div class="b-thumb e"></div><div class="b-id">S-05</div></div>
+    <div class="b-tab"><div class="b-thumb f"></div><div class="b-id">S-06</div></div>
+    <div class="b-tab"><div class="b-thumb g"></div><div class="b-id">S-07</div></div>
+    <div class="b-tab"><div class="b-thumb h"></div><div class="b-id">S-08</div></div>
+  </div>
+  <div class="b-actions"><span class="b-count">8 / 12</span><span class="b-add">＋ 加入</span></div>
+</div></div></div><aside class="rail">
+  <div class="rtabs"><span class="rtab">档案</span><span class="rtab on">历史</span></div>
+  <div class="sec" style="margin-top:0"><div class="sec-head"><span>版本 / <b class="lat">History</b></span><span>5 条</span></div></div>
+  <div class="hrow on"><span class="t">10:42</span><span class="m">移动顶点 4，重算 6 项</span><span class="a">LK</span></div>
+  <div class="hrow on"><span class="t">10:38</span><span class="m">小数位 1，重算 6 项</span><span class="a">LK</span></div>
+  <div class="hrow"><span class="t">10:31</span><span class="m">闭合多边形 ROI 1</span><span class="a">LK</span></div>
+  <div class="hrow"><span class="t">10:12</span><span class="m">设置阈值 12.0 µm²</span><span class="a">LK</span></div>
+  <div class="hrow"><span class="t">09:34</span><span class="m">打开 sample.tif</span><span class="a">系统</span></div>
+  <div class="foot"><span class="btn">回退</span><span class="btn">前进</span><span class="btn strong">对比 2 版</span></div>
+</aside></div></div></div></section>
+<section class="screen"><div class="cap"><b>08 · 导出</b><span>画布底部 280 抽屉；固定列、sidecar 开关与三行预览。</span></div><div class="desktop"><div class="window"><header class="titlebar">
+  <svg class="mark" width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4v4.9a5 5 0 0 0 10 0V3.4"/><path d="M6 3.9v4.4M10 3.9v4.4"/></svg>
+  <span class="brand">ImageLyre</span>
+  <span class="doc">— sample.tif</span>
+  <span class="saved">已保存 <em>10:42</em> <span class="caret">▾</span></span>
+  <span class="grow"></span>
+  <span class="chip"><i></i>Agent 就绪 · 只读</span>
+  <span class="chip"><span class="k">Ctrl K</span>命令</span>
+  <div class="seg"><span class="on">中</span><span class="off">EN</span></div>
+  <div class="seg"><span class="on">浅</span><span class="off">深</span></div>
+  <span class="chip">设置</span>
+  <div class="wctl" aria-hidden="true"><span class="c-min"></span><span class="c-max"></span><span class="c-close"></span></div>
+</header><nav class="menubar"><span class="mi">File</span><span class="mi">Edit</span><span class="mi">Image</span><span class="mi">Analyze</span><span class="mi">Plugins</span><span class="mi">Help</span></nav><div class="body"><div class="canvas"><aside class="tools" aria-label="工具">
+  <span class="tool" title="指针 V"><svg class="ptr" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.2 2.8 4.2 13 7.1 10.6 8.9 14.4 10.6 13.6 8.8 9.9 12.6 9.5Z"/></svg><span class="key">V</span></span>
+  <span class="tool" title="矩形 R"><svg viewBox="0 0 18 18" aria-hidden="true"><rect x="3" y="4.5" width="12" height="9"/></svg><span class="key">R</span></span>
+  <span class="tool on" title="多边形 P"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.8 15 6.6 13 14.2 5 14.2 3 6.6Z"/></svg><span class="key">P</span></span>
+  <span class="tool" title="手 H"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.2 9.4V3.6a1 1 0 0 1 2 0v4.2"/><path d="M9.2 7.6V2.9a1 1 0 0 1 2 0v4.9"/><path d="M11.2 8.2V4.4a1 1 0 0 1 2 0v6.1c0 2.7-2 4.7-4.6 4.7-2.5 0-4.4-1.9-4.4-4.4V7.3a1 1 0 0 1 2 0v2"/></svg><span class="key">H</span></span>
+  <span class="tool" title="缩放 Z"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.6" cy="7.6" r="4.4"/><path d="M10.9 10.9 15 15"/><path d="M5.7 7.6h3.8M7.6 5.7v3.8"/></svg><span class="key">Z</span></span>
+</aside><div class="stage"><div class="viewport"><div class="plate">
+  <svg class="roi" viewBox="0 0 946 668" preserveAspectRatio="none" aria-hidden="true">
+    <polygon class="fill" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="halo" points="603,303 711,286 765,348 728,432 612,434"/>
+    <polygon class="edge" points="603,303 711,286 765,348 728,432 612,434"/>
+    <g>
+      <rect x="599" y="299" width="8" height="8"/>
+      <rect x="707" y="282" width="8" height="8"/>
+      <rect x="761" y="344" width="8" height="8"/>
+      <rect class="act" x="724" y="428" width="8" height="8"/>
+      <rect x="608" y="430" width="8" height="8"/>
+    </g>
+    <circle class="grab" cx="728" cy="432" r="11"/>
+  </svg>
+  <div class="roi-tag"><b>ROI 1</b><i>1240.5</i><em>µm²</em></div>
+  <div class="scale"><span class="lab">50 µm</span><span class="bar"></span></div>
+</div></div><div class="readout">
+  <span class="cond"><span class="ci"><b>X</b><em>512</em></span><span class="ci"><b>Y</b><em>384</em></span><span class="ci"><b>值</b><em>182</em></span></span>
+  <span class="cond"><span class="ci"><b>缩放</b><em>200%</em></span><span class="ci"><b>标定</b><em>0.5 µm/px</em></span></span>
+</div><div class="batch">
+  <div class="b-head"><span class="b-caret">⌄</span><div><div class="b-title">同批</div><div class="b-meta">B-114 · 12 张 · <b>6 已测</b></div></div></div>
+  <div class="b-tabs">
+    <div class="b-tab"><div class="b-thumb a"></div><div class="b-id">S-01</div></div>
+    <div class="b-tab"><div class="b-thumb b"></div><div class="b-id">S-02</div></div>
+    <div class="b-tab"><div class="b-thumb c"></div><div class="b-id">S-03</div></div>
+    <div class="b-tab on"><div class="b-thumb d"></div><div class="b-id">S-04</div></div>
+    <div class="b-tab"><div class="b-thumb e"></div><div class="b-id">S-05</div></div>
+    <div class="b-tab"><div class="b-thumb f"></div><div class="b-id">S-06</div></div>
+    <div class="b-tab"><div class="b-thumb g"></div><div class="b-id">S-07</div></div>
+    <div class="b-tab"><div class="b-thumb h"></div><div class="b-id">S-08</div></div>
+  </div>
+  <div class="b-actions"><span class="b-count">8 / 12</span><span class="b-add">＋ 加入</span></div>
+</div><div class="drawer">
+  <div class="dh"><span class="t">导出 CSV</span><span class="sp"></span><span class="x">×</span></div>
+  <div class="path">~/Documents/ImageLyre/B-114/S-04.csv</div>
+  <div class="cols"><span class="lb">列</span><span class="c">ROI</span><span class="c">Area</span><span class="c">Mean</span><span class="c">StdDev</span><span class="c">Min</span><span class="c">Max</span><span class="c">Perimeter</span></div>
+  <div class="setrow"><div><div class="k">sidecar</div><div class="d">随 CSV 写校准与溯源，不改图像</div></div><span class="sw" aria-hidden="true"></span></div>
+  <table class="preview">
+    <thead><tr><th>ROI</th><th>Area</th><th>Mean</th><th>Perimeter</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>1240.5</td><td>182.4</td><td>148.2</td></tr>
+      <tr><td>2</td><td>986.0</td><td>176.1</td><td>131.6</td></tr>
+      <tr><td>3</td><td>2312.5</td><td>191.8</td><td>197.4</td></tr>
+    </tbody>
+  </table>
+  <div class="dfoot"><span class="btn">取消</span><span class="btn strong">导出</span></div>
+</div></div></div><aside class="rail">
+  <div class="rail-head"><span class="kicker">标本档案<span>Specimen record</span></span><span class="state"><i></i>已测量 6 项</span></div>
+  <section class="sec">
+    <div class="sec-head"><span>身份 / <b class="lat">Identity</b></span></div>
+    <dl class="ident">
+      <div><dt>样本号</dt><dd class="mono id">S-04</dd></div>
+      <div><dt>批次</dt><dd>B-114</dd></div>
+      <div><dt>校准</dt><dd class="mono">0.5 × 0.5 µm/px</dd></div>
+    </dl>
+    <details class="ident-more">
+      <summary>展开全部 9 项<span class="caret">›</span></summary>
+      <dl class="ident">
+        <div><dt>来源</dt><dd>肝组织切片</dd></div>
+        <div><dt>染色</dt><dd>H&amp;E · 苏木精-伊红</dd></div>
+        <div><dt>采集</dt><dd>2026-11-18 09:34 · 40×/1.0 NA</dd></div>
+        <div><dt>复核</dt><dd>LK · 10:42</dd></div>
+        <div><dt>文件</dt><dd class="mono">sample.tif</dd></div>
+        <div><dt>位深</dt><dd>16 位 · 单通道 TIFF</dd></div>
+      </dl>
+    </details>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>测量 / <b class="lat">Results</b></span><span>ROI 1 · 5 顶点</span></div>
+    <dl class="meas">
+      <div><dt>Area</dt><dd>1240.5<i>µm²</i></dd></div>
+      <div><dt>Mean</dt><dd>182.4</dd></div>
+      <div><dt>StdDev</dt><dd>21.7</dd></div>
+      <div><dt>Min</dt><dd>96</dd></div>
+      <div><dt>Max</dt><dd>233</dd></div>
+      <div><dt>Perimeter</dt><dd>148.2<i>µm</i></dd></div>
+    </dl>
+    <div class="disc"><span>台账 · 6 个 ROI</span><span class="caret">›</span></div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>参数 / <b class="lat">Parameters</b></span><span>改动即重算</span></div>
+    <div class="p-row"><span class="p-lab">单位</span><span class="segs"><b class="act">µm²</b><i>px²</i></span><span class="p-lab">小数位</span><span class="segs"><b class="act">1</b><i>2</i><i>3</i></span></div>
+    <div class="p-row"><span class="p-lab">阈值</span><span class="p-val">12.0 <i>µm²</i></span><span class="p-lab">自动重算</span><span class="sw" aria-hidden="true"></span></div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><span>溯源 / <b class="lat">Provenance</b></span><span>摘要</span></div>
+    <div class="prov-sum"><span><b>校准链</b>0.5000 µm/px · <b>哈希</b>9f3c1a72 · <b>插件</b>1.2.0</span><span class="caret">▾</span></div>
+  </section>
+  <div class="foot"><span class="btn">撤销<span class="k">Ctrl Z</span></span><span class="btn strong">导出 CSV…<span class="k">+ sidecar</span></span><span class="btn">历史版本</span></div>
+</aside></div></div></div></section>
+</body>
+</html>
