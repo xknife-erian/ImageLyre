@@ -3,7 +3,8 @@
 | 版本 | 日期 | 状态 | 作者 | 说明 |
 | :--- | :--- | :--- | :--- | :--- |
 | 1.0 | 2026-11-20 | 历史 | 林一 | 首版：暖纸底、暖灰文字、四组状态 |
-| 1.1 | 2026-11-20 | 现行 | 林一 | 业主反馈：表面去黄改中性、选中不再反白；线、文字转冷灰；signal 不变；对比度全部重算 |
+| 1.1 | 2026-11-20 | 历史 | 林一 | 业主反馈：表面去黄改中性、选中不再反白；线、文字转冷灰；signal 不变；对比度全部重算 |
+| 1.2 | 2026-11-20 | 现行 | lukan | 信号标随轴：横向控件放下沿，纵向列表放左沿；ROI 仍沿形描边；signal 仍不做填充 |
 
 ## 0 三条前提
 
@@ -98,7 +99,7 @@
 | 状态 | 亮 | 暗 | 规约 |
 | :--- | :--- | :--- | :--- |
 | 悬停 hover | 底 `surface.hover`；线、字不变 | 底 `surface.hover`；线、字不变 | 只换底，不换字重 |
-| 选中 selected | 底 `state.selected.bg` + 2px `signal.active` 标；字仍 `text.t1` | 底 `state.selected.bg` + 2px `signal.active` 标；字仍 `text.t1` | 中性底 + 标，不反白 |
+| 选中 selected | 底 `state.selected.bg` + 2px `signal.active` 标；字仍 `text.t1` | 底 `state.selected.bg` + 2px `signal.active` 标；字仍 `text.t1` | 中性底 + 标，不反白；**线随轴**：横向控件放下沿，纵向列表放左沿 |
 | 焦点 focus | 线 `line.focus`，1px，外偏 1px | 线 `line.focus`，1px，外偏 1px | 只换线，不换底 |
 | 禁用 disabled | 底 `state.disabled.bg`；线 `line.divider`；字 `text.disabled` | 底 `state.disabled.bg`；线 `line.divider`；字 `text.disabled` | 可读，不承载唯一信息 |
 
