@@ -21,6 +21,7 @@
   </Folder>
   <Folder Name="/Features/">
     <Project Path="Features/ImageLyre.Feature.About/ImageLyre.Feature.About.csproj" />
+    <Project Path="Features/ImageLyre.Feature.EmptyState/ImageLyre.Feature.EmptyState.csproj" />
     <Project Path="Features/ImageLyre.Feature.PluginCenter/ImageLyre.Feature.PluginCenter.csproj" />
     <Project Path="Features/ImageLyre.Feature.Version/ImageLyre.Feature.Version.csproj" />
   </Folder>

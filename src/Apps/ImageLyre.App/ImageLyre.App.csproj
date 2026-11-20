@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\Modules\ImageLyre.Module.PluginCenter\ImageLyre.Module.PluginCenter.csproj" />
     <ProjectReference Include="..\..\Modules\ImageLyre.Module.Workbench\ImageLyre.Module.Workbench.csproj" />
     <ProjectReference Include="..\..\Features\ImageLyre.Feature.About\ImageLyre.Feature.About.csproj" />
+    <ProjectReference Include="..\..\Features\ImageLyre.Feature.EmptyState\ImageLyre.Feature.EmptyState.csproj" />
     <ProjectReference Include="..\..\Features\ImageLyre.Feature.PluginCenter\ImageLyre.Feature.PluginCenter.csproj" />
     <ProjectReference Include="..\..\Features\ImageLyre.Feature.Version\ImageLyre.Feature.Version.csproj" />
   </ItemGroup>
