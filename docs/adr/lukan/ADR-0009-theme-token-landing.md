@@ -2,60 +2,77 @@
 
 | 版本 | 日期 | 状态 | 作者 | 说明 |
 | :--- | :--- | :--- | :--- | :--- |
-| 0.1 | 2026-11-20 | 定稿 | lukan | 设计侧交出四档字号、六级间距、18 语义色与五态语法后，定下这些值如何进 Avalonia：键怎么命名、覆盖放在哪一层、缩放怎么算 |
+| 0.1 | 2026-11-20 | 已撤销 | lukan | 首版：`Lyre.*` 键空间、全局覆盖、缩放重算令牌 |
+| 0.2 | 2026-11-20 | 定稿 | lukan | 按三位独立评审的勘误重写：键组与段数闭合、覆盖改走 AtomUI 令牌 API、缩放改为物理换算并补线宽补偿 |
+
+> 0.2 的修订依据：三位独立评审（基线冲突、可执行性、代价）在 2026-11-20 指出 0.1 有六处事实错误与三处自相矛盾，逐条证据见 `docs/analyses/lukan/2026-11-20_arch-review-loop.md`。0.1 的三条决策方向保留，实现机制与键形全部重写。
 
 ## 1 背景
 
-设计侧已经把表现层定成可执行的值：亮 30 与暗 31 两套同构主题、18 个语义色、四档字号（11/13/16/20）、六级间距（4/8/12/16/24/32）、五态五通道，并且明确要求"组件里不出现裸数值，找不到名字就是错"。而仓库里 `src/Libs/ImageLyre.Themes` 至今只有一个空工程，一个令牌都没有；这意味着从现在起写的每一行界面都在造裸数值，改一次色要全仓搜。
+设计侧已经把表现层定成可执行的值：亮 30 与暗 31 两套同构主题、18 个语义色（`surface` 5、`line` 3、`text` 4、`signal` 2、`state` 2、`canvas` 2）、四档字号（11/13/16/20）、六级间距（4/8/12/16/24/32）、五态五通道，并要求"组件里不出现裸数值"。而 `src/Libs/ImageLyre.Themes` 至今只有工程文件，一个令牌都没有。
 
-同时有三处技术约束必须先定，否则令牌层无法动工：Avalonia 的资源键是字符串，谁来保证设计与实现引用的是同一个名字；AtomUI 自带一套语义键与十个字号位，覆盖放在哪一层决定漏改的量级；应用内缩放有 100% 到 200% 四档，用整树变换还是重算值，决定文字会不会发虚、发丝线会不会变粗。
+三件事必须先定，否则令牌层无法开工：Avalonia 的资源键是字符串，谁来保证设计与实现引用同一个名字；AtomUI 自带令牌体系，覆盖放在哪一层；应用内缩放从 100% 到 200% 四档，按什么机制换算。
 
 ## 2 决策
 
-1. **键空间统一 `Lyre.*`，全部放在 `ImageLyre.Themes`，形状为三段式。**
-   - 键形如 `Lyre.<组>.<名>`，组沿用设计文档的命名空间：`Surface`、`Line`、`Text`、`Signal`、`Warn`、`Space`、`Type`。设计里写 `surface.panel`，代码里就是 `Lyre.Surface.Panel`，大小写与分段一一对应，不做二次命名。
-   - 颜色只给 `Color`，不给 `Brush`。画笔由壳在使用处现场生成，否则同一个颜色会在资源里存成多份实例，改一处不生效；`Thickness` 同理，由壳用间距键组合。
-   - 字号给 `double`、字重给 `FontWeight`、间距给 `double`，单位一律是 DIP，与设计文档口径一致。字号键的具体角色名以 `typography.md` 为准，本 ADR 只定形状与四档数值，不另造一套词汇。
-   - 字体家族给两条键：`Lyre.Type.Family.UI` 与 `Lyre.Type.Family.Mono`，值是一条家族栈而不是单一族名；缺字回退由 `FontManagerOptions.FontFallbacks` 补，字重不进资源。
+### 2.1 键空间：`Lyre.<组>.<名…>`，组为闭集
 
-2. **覆盖层只有一套：`Themes` 全局覆盖 AtomUI 的令牌，不逐控件钉。**
-   - 亮暗两套字典用 Avalonia 的 `ThemeDictionaries` 承载，键名完全相同；控件只引用 `Lyre.*`，切换主题时框架按主题变体自动换值，控件树不重建。这是"结构先于皮肤"的实现方式。
-   - AtomUI 的十个字号位在资源层一次性映射到四档，控件模板不出现独立字号。违反的兜底是一条扫描测试：编译产物里出现 `FontSize` 且值不在四档之内即失败。
-   - AtomUI 内部若写死字号、不走令牌，那些点登记清单后逐个改模板；清单本身放在 `docs/design/lukan/DESIGN-0004-architecture-principles.md` 的待办里，不散落在提交信息中。
+- 第一段固定 `Lyre`，第二段是组，取值只有九个：`Surface`、`Line`、`Text`、`Signal`、`State`、`Canvas`、`Space`、`Size`、`Type`。前七个对应 `color-tokens.md` §1 的六个前缀（`surface`、`line`、`text`、`signal`、`state`、`canvas`）加线宽，`Space` 与 `Size` 对应 `spacing.md`，`Type` 对应排印。
+- 组之后保留设计键的点分结构，逐段转成 PascalCase，段数不固定但必须与设计键一一对应。设计写 `state.selected.bg`，代码就是 `Lyre.State.Selected.Bg`；设计写 `size.statusbar.height`，代码就是 `Lyre.Size.Statusbar.Height`。不做二次命名，不合并同义键。
+- `Type` 组固定五个子维，顺序固定：`Family`、`Size`、`LineHeight`、`Weight`、`LetterSpacing`。字号按值建键（`Lyre.Type.Size.S11` 至 `S20`），角色名只用在样式里，不建键；行高与字距是绝对值，各自建键。
+- 字重进资源：`Lyre.Type.Weight.Regular`=400、`Lyre.Type.Weight.SemiBold`=600，只有这两档，因为排印 §3 只定义这两档，且 `typography-avalonia.md` §4.1 已有对应键。
+- 线宽只允许两个值：`Lyre.Line.Width.Hairline`=1、`Lyre.Line.Width.Signal`=2，其余尺寸不许出现。圆角固定 0，不建键；阴影不做，不建键。
+- 类型：颜色给 `Color` 不给 `Brush`，`Brush` 与 `Thickness` 由壳在使用处用键组合生成。这条是把"值只有一个来源"收窄为"设计定义的数值只有一个来源"，组合产物不算新值。
+- `warn` 不进组表：`color-tokens.md` 的 18 个键里没有 warn，而产品外观 §6.2 把警告归入信号色，因此两键暂挂 `Lyre.Signal.Warning.Background` 与 `Lyre.Signal.Warning.Line`，值标 `TODO(设计确认)`，要么设计补值，要么删。
 
-3. **应用内缩放重算令牌，不用整树变换。**
-   - 缩放值作为输入，主题层产出按比例换算后的字典，字号取四档乘缩放、间距取六级乘缩放、高度由间距推出；1px 发丝线保持 1 物理像素不参与换算，因为设计口径明确它是唯一不随缩放重算的尺寸。
-   - 不使用 `RenderTransform` 或 `LayoutTransform`：整树变换把文字按位图缩放，200% 下发虚，而且会把发丝线放大成 2px。
-   - 代价是切缩放要重建字典并重排一次，实测目标是不影响操作节奏；若实测闪动明显，按 §5 的失效条件处理。
+### 2.2 覆盖层：走 AtomUI 6.2.15 自带的令牌 API
+
+- 覆盖是**代码级**而不是资源级：AtomUI.Core 6.2.15 已提供 `DesignTokens`、`ThemeTokenResourceProvider`、`WithToken`、`WithInitialTheme`、`WithDefaultFontFamily`（包内实测确认）。A4 用这套 API 把十个字号位映射到四档，逐控件令牌（Menu、Button、ComboBox、WindowTitleBar 等）按 PLAN A4 的清单处理，不靠改本仓资源键去影响 AtomUI 控件。
+- 亮暗两套字典各一本：`Themes/Light.axaml` 与 `Themes/Dark.axaml`，键名完全相同，以 `ThemeDictionaries` 的 `Light`/`Dark` 两个变体键挂进同一父字典。
+- `Application.RequestedThemeVariant` 是唯一开关，由外观模块写入；跟随系统写 `ThemeVariant.Default`。控件只引用 `Lyre.*`，切主题时框架按变体换值，控件树不重建。
+- `IThemeManager` 现有契约（`RegisterTheme(name, uri)` 加 `ApplyTheme(name)`）是"按 URI 换整本字典"，与上面这套共存会造成两种机制。本次只登记冲突，不在本 ADR 改契约：改 `IThemeManager` 的提案另开 ADR-0010，在那之前外观模块只用 `RequestedThemeVariant`，不复用 URI 切换。
+- 字号白名单的扫描对象是**源码**里的 `FontSize` 字面量，不是编译产物；通过条件是字面量 ∈ {11, 13, 16, 20}。缩放后的值只在运行期由换算产生，不参与静态扫描。
+- 字体家族与回退只在一个落点设置：`src/Apps/ImageLyre.App/Program.cs` 的 `BuildAvaloniaApp` 里，紧接 `UseCangmingAtomUI()` 之后一次性配置 `FontManagerOptions` 的 `DefaultFamilyName`、`FontFamilyMappings` 与 `FontFallbacks`（CJK 码段用 `UnicodeRange` 声明），同时用 AtomUI 的 `WithDefaultFontFamily` 保证控件跟随。两条家族栈写成 `Lyre.Type.Family.Ui` 与 `Lyre.Type.Family.Mono` 资源键，值是家族栈字符串；三平台族名以 `typography-avalonia.md` §3.2 与 §3.3 为准，其中 macOS 与 Linux 的族名标注为待实测。
+- 既有裸值同批迁移：`src/Modules/ImageLyre.Module.Workbench/Internal/WorkbenchShell.cs` 里的 `1280×800`、`Brushes.LightGray`、`Thickness(8, 3)` 属 A2 与 A3 的迁移清单，迁完才允许把字面量扫描接入。
+
+### 2.3 缩放：物理换算，不重算令牌
+
+- 以 `spacing.md` §6 为准：有固定值的 `space.*`、`size.*`、字号与行高都是不缩放的 DIP 基准值，应用内缩放只做物理换算（DIP × 缩放），不是重新定 token。因此不重建字典、不重算键值，字典里永远只有基准值。
+- 施加方式是在根级统一缩放，不用逐控件换算。缩放的输入只有应用内档位一个来源（由外观模块读设置），系统 DPI 由 `TopLevel.RenderScaling` 单独提供，两者相乘得到最终物理倍率。
+- 线宽补偿：1px 发丝线与 2px 信号轨都必须保持物理像素，因此它们的厚度按 `1 / (RenderScaling × 应用缩放)` 反向换算后交给渲染层，令牌本身仍是 1 与 2。0.1 里"只有 1px 不随缩放重算"的说法是错的：`color-tokens.md` §6.3 与 `controls.md` §1 都要求 2px 信号轨缩放后仍为 2 物理像素，两者都要补偿。
+- 删除 0.1 中"整树变换会把文字按位图缩放、200% 下发虚"的断言：Avalonia 12.1.6 的 `LayoutTransformControl` 有独立的测量与排列，与 `RenderTransform` 不是同一种机制，这条论据不成立。文字在放大后是否清晰属实测项，见 §5。
 
 ## 3 后果
 
-- 设计与实现从此引用同一套名字，`Lyre.*` 成为双方之间唯一的字符串契约，改色改字号是改值而不是改代码。
-- 因为覆盖集中在资源层，AtomUI 升级时受影响的点收敛到映射文件一处，而不是散在几十个模板里。
-- Themes 因此不能放逻辑：缩放换算放在外观模块，主题包只承载资源与常量，否则主题无法整包替换。
-- 亮暗同构从"靠人盯"变成可判定：两套字典的键集合必须完全一致，差异非空即失败。
-- 首屏需要加载两份字典，启动成本略微增加；这是换取可切换主题的必要代价。
+- 设计与实现引用同一套名字，改色改字号是改值不是改代码；键与设计文档的映射是机械的，可以逐条比对。
+- 覆盖集中到 AtomUI 的令牌 API 与一份逐控件清单，升级时受影响的点是一处代码而不是几十个模板。
+- 令牌保持基准值不缩放，字典只有两份且切换不重建控件树；代价是线宽要做反向补偿，补偿系数写在外观模块一处。
+- `Themes` 因此不能放逻辑：缩放补偿、主题开关、跟随系统都在外观模块，主题包只承载资源与常量，否则无法整包替换。
+- 字重、行高、字距进资源后，样式里不再写字号数值；四档字号成为可扫描的白名单。
 
 ## 4 备选方案
 
 | 方案 | 结论 |
 | :--- | :--- |
-| 沿用 AtomUI 自带语义键，不设 `Lyre.*` | 否：设计与实现各说一套，改值要翻控件模板 |
-| 每个控件单独钉字号与颜色 | 否：覆盖点随控件数增长，漏一处就多一档字号 |
-| 用 `RenderTransform` 做应用内缩放 | 否：文字发虚，发丝线被放大，与设计口径冲突 |
-| 亮暗两套界面各写一棵树 | 否：同构靠人盯，注定漂移 |
+| 沿用 AtomUI 自带键，不设 `Lyre.*` | 否：设计与实现各说一套，改值要翻模板 |
+| 每个控件单独钉字号与颜色 | 否：覆盖点随控件数增长，漏一处多一档 |
+| 只用资源键覆盖 AtomUI 控件 | 否：AtomUI 的令牌是代码级注入，只改资源键不影响其控件 |
+| 缩放重算令牌（0.1 的方案） | 否：与 `spacing.md` §6 的"不重算"正面冲突，且每次切档要重建字典 |
 | 令牌放 `UI.Contracts` | 否：契约不放具体值，主题包才能整包替换 |
 
 ## 5 失效条件
 
-1. 若 AtomUI 提供正式的全局令牌覆盖 API（而不是要求改模板），§2 第 2 条的映射层可以删，但"值只有一个来源"不退让。
-2. 若实测证明重算令牌的闪动不可接受，改为"文字区重算、画布区变换"的混合方案；这属于换机制，必须另开 ADR 并回写本文，不允许在实现里静默切换。
-3. 若出现第二个界面宿主（Web 或移动端），本 ADR 的键空间仍然成立，但家族栈与主题变体的实现要重写，回 `docs/design/lukan/DESIGN-0003-libs-layering.md` §4 的同类条款。
+1. 若实测发现线宽反向补偿在 150% 与 200% 下出现亚像素抖动或明显模糊，改为"按缩放重算线宽令牌"的局部方案；这属于换机制，另开 ADR 并回写本文。
+2. 若文字在 200% 下清晰度不可接受，评估是否改为重算字号并放弃"不重算"口径；同样要另开 ADR，并同批改 `spacing.md` §6。
+3. 若 AtomUI 升版移除或改名 `DesignTokens` 一类 API，覆盖层按新 API 重写，键空间不变。
+4. 若出现第二个界面宿主，键空间仍成立，但家族栈与主题变体实现要重写，回 `docs/design/lukan/DESIGN-0003-libs-layering.md` §4。
 
 ## 6 与其它文档的关系
 
-`docs/design/lukan/DESIGN-0004-architecture-principles.md` 的 S1、S2 与 S6 是本 ADR 的上位约束：S1 要"值只有一个来源"，S2 要"结构先于皮肤"，S6 要"可判定"。本文把这三点落成具体的键形、覆盖层与判定脚本。
+`docs/design/lukan/DESIGN-0004-architecture-principles.md` 的 S1 与 S2 是上位约束：S1 要求设计定义的数值只有一个来源，S2 要求结构先于皮肤；本文把两者落成键形、两个 `ThemeVariant` 与不重建控件树。
 
-`docs/design/lukan/DESIGN-0003-libs-layering.md` §2.6 规定 `Themes` 只放资源与常量、切换逻辑归外观模块，本文第 3 条的后果一节与之对齐，不重复论证。
+`docs/design/lukan/DESIGN-0003-libs-layering.md` §2.6 规定 `Themes` 只放资源与常量，本文 §3 与之对齐。
 
-`docs/plans/lukan/PLAN-0002-architecture-rollout.md` 的 A1 是本文的落地位；本文定稿即解锁 A2 的键表与判定脚本。
+`docs/plans/lukan/PLAN-0002-architecture-rollout.md` 的 A2、A3、A4、A5 是本文的落地位；A2 的键表必须按 §2.1 的组闭集与段规则生成，A4 按 §2.2 的 AtomUI API 执行。
+
+`docs/design/lukan/bakeoff-2026-11-20/typography-avalonia.md` §4.1 的 `Lyre.Typography.*` 键形与本文不符，且该文件自述仍是八档旧映射；以本文为准，A2 时同批把该文件改为四档与新键形。
