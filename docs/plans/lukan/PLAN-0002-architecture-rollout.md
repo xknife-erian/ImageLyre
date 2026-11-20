@@ -175,7 +175,9 @@ E1 Headless 基线：**尝试过，未走通，本轮已回退**。两次尝试�
 一是 Avalonia.Headless.XUnit 12.1.6 依赖 xunit v3，与本仓钉的 xunit 2.9.3 冲突，测试发现器直接报"没有可用测试"；
 二是改用 Avalonia.Headless 手写初始化后测试能被发现，但 SetupWithoutStarting 之后对窗口取帧仍在运行期抛异常。
 结论：E1 需要引 xunit v3 或改用截图脚本，两者都超出当前预算，按 fail-fast 回退（UI 测试工程与包版本项已删，构建与测试恢复全绿）。
-E1 重新启动的条件：决定是否把测试基建升到 xunit v3，或改用独立截图脚本而非测试内渲染。
+第三次尝试成功，走的是独立截图工具而非测试内渲染：	ools/Screenshot 用 UseSkia() 加 AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }，Show() 之后 Dispatcher.UIThread.RunJobs() 再 CaptureRenderedFrame()，已产出 480x240 的 PNG。
+关键点记下来：只 UseHeadless 时帧为 null，必须同时开 Skia 且关掉 headless drawing；缺任何一半都拿不到位图。
+E1 剩余的一步是让这个工具渲染真实界面：它目前只渲染一个纯净窗口，要出四态基线，得让它宿主本仓的 App 或至少加载 Themes 的字典与控件样式。
 
 E2 真机清单（每次发版前逐条打勾）：
 1. 125% 与 150% 系统缩放下，中文是否完整落字、有无截断。
