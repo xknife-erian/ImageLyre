@@ -28,6 +28,7 @@
 | 24 | A 沈岚 | 排印 2.0（暗） | 标本档案 · 暗 2.0 | `a-instrument/v6/mock.html` |
 | 25 | A 沈岚 | 间距落地（暗，待收口） | 标本档案 · 暗（间距） | `a-instrument/v7/mock.html` |
 | 26 | E 阿米娜 | 间距落地（亮） | 标本档案 · 亮（间距） | `e-science/v7/mock.html` |
+| 27 | E 阿米娜 | 身份折叠 + 间距（亮） | 标本档案 · 亮（当前） | `e-science/v8/mock.html` |
 
 ## 用法
 
