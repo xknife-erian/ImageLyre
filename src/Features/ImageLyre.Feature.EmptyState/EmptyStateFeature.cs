@@ -25,7 +25,6 @@ namespace ImageLyre.Feature.EmptyState;
     description: "打开图像前的引导页")]
 public sealed class EmptyStateFeature : BasePicoFeatures
 {
-    private readonly string _ownerInstance = Guid.NewGuid().ToString("N");
 
     /// <inheritdoc />
     protected override void DeclareDependencies(IModuleDeclarationBuilder modules)
@@ -39,7 +38,7 @@ public sealed class EmptyStateFeature : BasePicoFeatures
     public override void RegisterAttachments(IAttachmentRegistry registry)
     {
         // 附着前建立所有者作用域：附件的 OwnerId 归本功能，停用时按实例摘除。
-        using var owner = (registry as ISlotRegistry)?.BeginOwner(GetType().Name, _ownerInstance);
+        using var owner = (registry as ISlotRegistry)?.BeginOwner(GetType().Name);
 
         registry.AttachToSlot(
             WorkbenchSlots.Content,

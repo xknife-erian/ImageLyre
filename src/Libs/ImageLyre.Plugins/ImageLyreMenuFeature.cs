@@ -23,7 +23,6 @@ namespace ImageLyre.Plugins;
 /// </remarks>
 public abstract class ImageLyreMenuFeature : BasePicoFeatures
 {
-    private readonly string _ownerInstance = Guid.NewGuid().ToString("N");
 
     private IReadOnlyDictionary<string, ICommand>? _commands;
 
@@ -45,7 +44,7 @@ public abstract class ImageLyreMenuFeature : BasePicoFeatures
         foreach (var category in PlugindescMenuSource.Read(GetType().Assembly, Commands))
         {
         // 附着前建立所有者作用域：附件的 OwnerId 归本功能，停用时按实例摘除。
-        using var owner = (registry as ISlotRegistry)?.BeginOwner(GetType().Name, _ownerInstance);
+        using var owner = (registry as ISlotRegistry)?.BeginOwner(GetType().Name);
 
             registry.AttachToSlot(MenuSlotName, category);
         }
