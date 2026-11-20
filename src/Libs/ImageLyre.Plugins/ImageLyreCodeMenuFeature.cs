@@ -1,5 +1,6 @@
 using System;
 using Cangming.PicoPlugins.Core.Features;
+using ImageLyre.UI.Contracts.Slots;
 using ImageLyre.UI.Contracts.Workbench;
 
 namespace ImageLyre.Plugins;
@@ -17,6 +18,8 @@ namespace ImageLyre.Plugins;
 /// </remarks>
 public abstract class ImageLyreCodeMenuFeature : BasePicoFeatures
 {
+    private readonly string _ownerInstance = Guid.NewGuid().ToString("N");
+
     /// <summary>菜单槽位名；默认是工作台的主菜单槽。</summary>
     protected virtual string MenuSlotName => WorkbenchSlots.Menu;
 
@@ -39,6 +42,9 @@ public abstract class ImageLyreCodeMenuFeature : BasePicoFeatures
         {
             throw new ArgumentException("菜单至少需要一个菜单项。", nameof(items));
         }
+
+        // 附着前建立所有者作用域：附件的 OwnerId 归本功能，停用时按实例摘除。
+        using var owner = (registry as ISlotRegistry)?.BeginOwner(GetType().Name, _ownerInstance);
 
         registry.AttachToSlot(
             MenuSlotName,

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using Cangming.PicoPlugins.Core.Features;
+using ImageLyre.UI.Contracts.Slots;
 using ImageLyre.UI.Contracts.Workbench;
 
 namespace ImageLyre.Plugins;
@@ -22,6 +23,8 @@ namespace ImageLyre.Plugins;
 /// </remarks>
 public abstract class ImageLyreMenuFeature : BasePicoFeatures
 {
+    private readonly string _ownerInstance = Guid.NewGuid().ToString("N");
+
     private IReadOnlyDictionary<string, ICommand>? _commands;
 
     /// <summary>菜单槽位名；默认是工作台的主菜单槽。</summary>
@@ -41,6 +44,9 @@ public abstract class ImageLyreMenuFeature : BasePicoFeatures
 
         foreach (var category in PlugindescMenuSource.Read(GetType().Assembly, Commands))
         {
+        // 附着前建立所有者作用域：附件的 OwnerId 归本功能，停用时按实例摘除。
+        using var owner = (registry as ISlotRegistry)?.BeginOwner(GetType().Name, _ownerInstance);
+
             registry.AttachToSlot(MenuSlotName, category);
         }
     }

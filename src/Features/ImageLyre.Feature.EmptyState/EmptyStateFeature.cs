@@ -6,6 +6,7 @@ using Cangming.PicoPlugins;
 using Cangming.PicoPlugins.Core.Features;
 using Cangming.PicoPlugins.Core.Modules;
 using ImageLyre.UI.Contracts.Busy;
+using ImageLyre.UI.Contracts.Slots;
 using ImageLyre.UI.Contracts.Workbench;
 using System.Threading.Tasks;
 using LyreContentAttachment = ImageLyre.UI.Contracts.Attachments.ContentAttachment;
@@ -24,6 +25,8 @@ namespace ImageLyre.Feature.EmptyState;
     description: "打开图像前的引导页")]
 public sealed class EmptyStateFeature : BasePicoFeatures
 {
+    private readonly string _ownerInstance = Guid.NewGuid().ToString("N");
+
     /// <inheritdoc />
     protected override void DeclareDependencies(IModuleDeclarationBuilder modules)
     {
@@ -35,6 +38,9 @@ public sealed class EmptyStateFeature : BasePicoFeatures
     /// <inheritdoc />
     public override void RegisterAttachments(IAttachmentRegistry registry)
     {
+        // 附着前建立所有者作用域：附件的 OwnerId 归本功能，停用时按实例摘除。
+        using var owner = (registry as ISlotRegistry)?.BeginOwner(GetType().Name, _ownerInstance);
+
         registry.AttachToSlot(
             WorkbenchSlots.Content,
             new LyreContentAttachment { Create = BuildEmptyState, Order = 0 });
