@@ -87,3 +87,13 @@ SlotIssue 四字段与指南一致。
 本仓现状：菜单附件上是静态的 IsEnabled 与 IsVisible，没有条件、没有状态键服务、没有 UIState 那一层（迁移时按不做权限与不做状态匹配器的判断删掉了）。
 
 结论：**不纳入 A 到 E**。理由是它依赖 IUIStateService 这套状态键生产机制，属于新能力而不是本计划的补齐项；若将来要做，前置是先有状态键服务，再谈条件注册。记入待办。
+
+## 9 14-日志栈 读后记录（2026-11-20 部分）
+
+读了 §3 获取方式。四条约束各有代价：private 防子类顺手用父类字段导致类别错位、static 避免每实例一份、readonly 堵住运行期替换、每类一份避免继承污染。字段名统一 s_logger，类型写 ILogger，类别由 For<T> 的类型参数决定。
+
+**对照本仓**：用法基本合规。Program、BootstrapHostBuilder、PluginStartupPolicy、WorkbenchShell 都是 private static readonly ILogger s_logger，取法分别是 For(typeof(X)) 与 For<T>()，与指南§3.2 的两档入口一致；结构化日志用 [LoggerMessage] 分部方法，符合 §5 的方向。
+
+**一处待统一**：同一仓里 For<T>() 与 For(Type) 混用，指南说新代码首选 For<T>()，For(Type) 只给静态类或没法写泛型实参的场合。我们两个静态类用 For(Type) 是对的，其余能改的可改。
+
+**未读**：§7 禁止事项与 §4 级别规范，下一轮补。
