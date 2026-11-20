@@ -249,7 +249,7 @@
 
 - do：设置与表单用复选框；菜单用勾；行内参数用两段式分段。
 - do：勾永远是 2px 线，不用对勾字符（✓），不用 1px 勾，不染 `text.t1`。
-- don't：不做开关、不做轨道 + 旋钮、不做滑块开关；二元选择不需要它。
+- don't：不做滑块开关；二元参数不需要它，三种形式已经够用。
 - don't：不让复选框与分段长得像：一个是方框，一个是文字格。
 
 ## 8 表头与表行
@@ -300,9 +300,9 @@
 
 **工具提示**：11 / 16，`text.t1`；底 `surface.panel`；1px `line.border`；内边 4 / 8；最大宽 320，超出折行；无投影；悬停 400ms 后出现，焦点触发同效，Esc 关闭；不得承载唯一信息。
 
-**滚动条**：轨道宽 8（`space.2`），底透明；滑块宽 8，`line.border`，最短 24；悬停 `text.t3`，拖动中 `text.t2`；无箭头按钮；区域聚焦时 PageUp/PageDown 翻页。
+**滚动条**：槽宽 8（`space.2`），底透明；滑块宽 8，`line.border`，最短 24；悬停 `text.t3`，拖动中 `text.t2`；无箭头按钮；区域聚焦时 PageUp/PageDown 翻页。
 
-**滑块**：轨道高 4（`space.1`），`line.divider`；已选段 4，`line.border`（中性，不用 signal）；手柄 16（`space.4`）方形，`surface.panel` 底 + 1px `line.border`；悬停时手柄描边 `text.t3`；拖动中手柄描边 `text.t2`、底 `state.selected.bg`；焦点时滑块底边 1px `line.focus`；禁用时轨道 `state.disabled.bg`、手柄 `line.divider`。键盘 ←/→ ±1，Shift ±10，Home/End 到两端。
+**滑块**：滑轨高 4（`space.1`），`line.divider`；已选段 4，`line.border`（中性，不用 signal）；手柄 16（`space.4`）方形，`surface.panel` 底 + 1px `line.border`；悬停时手柄描边 `text.t3`；拖动中手柄描边 `text.t2`、底 `state.selected.bg`；焦点时滑块底边 1px `line.focus`；禁用时滑轨 `state.disabled.bg`、手柄 `line.divider`。键盘 ←/→ ±1，Shift ±10，Home/End 到两端。
 
 **步进**：每个按钮 24 宽 × 28 高；`surface.panel` + `line.border`；− 与 + 各一枚，紧贴数值框右侧，中间 1px `line.divider`；悬停 `surface.hover`，按下 `state.selected.bg`，焦点按钮底边 1px `line.focus`，禁用 `text.disabled`；↑/↓ 与按钮同步，按住 400ms 后连续步进。
 
