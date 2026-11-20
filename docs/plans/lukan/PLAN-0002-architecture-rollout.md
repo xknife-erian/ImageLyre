@@ -119,6 +119,28 @@ A5 不在关键路径上：它要等首个可运行界面才有实测对象，�
 4. `warn.bg` 与 `warn.line` 的设计值未给，暂挂 `Lyre.Signal.Warning.*` 并标 `TODO(设计确认)`。
 5. 设计文档内部有两处数据冲突需设计侧勘误：`size.statusbar.height` 在 `spacing.md` §3.1 为 32、§5 为 28；`typography-avalonia.md` 仍是八档旧键形。
 
+## 9 进度（2026-11-20 夜）
+
+| 步骤 | 状态 | 提交 |
+| :--- | :--- | :--- |
+| A1 ADR-0009 | 完成，0.3 定稿 | `41e73f8` |
+| A2 键表与断言 | 完成：18 色 ×2（含 warning 待确认）、四档字号与行高、三档字距、两档字重、两条家族栈、六级间距、两级线宽；五项断言（非空、键集合相等、无重复、前缀统一、引用存在且非空转），已做红绿验证 | `1994271` |
+| A3 亮暗字典 | 完成：Tokens.Light、Tokens.Dark、Tokens.Shared、Tokens.axaml；App 合并并以 DynamicResource 引用一个键 | `1994271` |
+| A4 AtomUI 覆盖 | 未开始 | — |
+| A5 缩放与线宽补偿 | 未开始（等可运行界面实测） | — |
+| B1 槽位注册表 | 完成：实现 ISlotManager + ISlotRegistry + ISlotChangeSource，支持按所有者摘除、待解析冲刷、形态与容量校验、收口诊断；实测启动 5 插件、菜单 2 分类、状态栏 1 项；四条行为测试 | `ea6a8ab` |
+| B2 三处归位 | 完成：`IPluginCenter` 入 `Hosting`，`IWorkbenchShell`、`WorkbenchSlots`、`MenuAttachments` 入 `Workbench`，14 处 using 同步 | `5bb16fa` |
+| C1 命令模块 | 完成：`When` 字符串删除，可用性只由谓词决定；`Module.Commands` 提供注册、幂等注销、令牌撤销与变化流；三条测试 | `3202e2f` |
+| C2 偏好与习惯 | 未开始 | — |
+| C3 通知与输出 | 未开始 | — |
+| C4 最小撤销 | 未开始 | — |
+| C5 文件 | 未开始 | — |
+| D1 至 D4 四态 | 未开始 | — |
+| E1 至 E3 | 未开始 | — |
+
+下一轮从 C2 开始：偏好与习惯模块（存值 + 窗口几何、最近文件、面板可见性三项），随后 C3、C4、C5，最后 D 与 E。
+
+
 ## 8 变更记录
 
 | 版本 | 变更 |
