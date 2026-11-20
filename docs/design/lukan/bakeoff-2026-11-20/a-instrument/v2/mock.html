@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>ImageLyre — sample.tif</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  html{background:#3d3a35}
+  body{
+    margin:0;overflow:auto;display:grid;place-items:center;
+    background:#3d3a35;color:#211f1b;cursor:default;user-select:none;
+    font-family:"Segoe UI","Segoe UI Variable Text","Microsoft YaHei UI","PingFang SC","Noto Sans CJK SC",system-ui,sans-serif;
+    font-size:12px;line-height:1.35;-webkit-font-smoothing:antialiased;
+  }
+  .in{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .mono{font-family:"Cascadia Mono","Consolas","SF Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+  :root{
+    --desk-a:#b7b2a8;--desk-b:#88837a;
+    --chrome:#e9e6df;--chrome-hi:#f3f0ea;
+    --mat:#d3cfc6;
+    --paper:#ece8df;--paper-hi:#e3ded4;--paper-head:#e7e2d8;
+    --recess:#dcd8d0;
+    --line:#ccc7bd;--line-2:#b0aa9f;
+    --ink:#211f1b;--ink-2:#575349;--ink-3:#857f73;
+    --sig:#a4510f;--sig-lit:#e08b3f;--sig-soft:rgba(164,81,15,.10);
+    --img-edge:#78736a;--knurl:#b6b0a5;
+    --hud:#f1ece0;--key-hi:rgba(255,255,255,.6);
+  }
+  body:has(#t-dark:checked){
+    --desk-a:#1f1e1b;--desk-b:#0c0b0a;
+    --chrome:#232220;--chrome-hi:#2b2925;
+    --mat:#171614;
+    --paper:#262320;--paper-hi:#2f2c27;--paper-head:#2c2925;
+    --recess:#191816;
+    --line:#38352f;--line-2:#4b4740;
+    --ink:#eae5d9;--ink-2:#a8a297;--ink-3:#777166;
+    --sig:#d0803a;--sig-lit:#ed9c50;--sig-soft:rgba(208,128,58,.14);
+    --img-edge:#3d3932;--knurl:#3c3832;
+    --hud:#f2ede1;--key-hi:rgba(255,255,255,.07);
+  }
+  body,.win,.bezel,.bench,.viewport,.slip,.row,.slip-head,.slip-path,.slip-foot,
+  .seg,.seg label,.fkey,.turret,.det,.rk,.wbtn,.hub{
+    transition:background-color .18s ease,color .18s ease,border-color .18s ease;
+  }
+
+  /* ===== stage + window ===== */
+  .stage{
+    position:relative;width:1440px;height:900px;overflow:hidden;
+    background:radial-gradient(120% 85% at 50% -10%,var(--desk-a),var(--desk-b) 72%);
+  }
+  .win{
+    position:absolute;top:18px;left:16px;right:16px;bottom:16px;
+    display:flex;flex-direction:column;overflow:hidden;
+    background:var(--chrome);border:1px solid var(--img-edge);
+    box-shadow:0 0 0 1px rgba(0,0,0,.32),inset 0 0 0 1px rgba(255,255,255,.26);
+  }
+  body:has(#t-dark:checked) .win{box-shadow:0 0 0 1px rgba(0,0,0,.8),inset 0 0 0 1px rgba(255,255,255,.05)}
+
+  /* ===== window bezel: identity only ===== */
+  .bezel{
+    position:relative;flex:0 0 36px;display:flex;align-items:center;
+    padding-left:14px;background:var(--chrome);border-bottom:1px solid var(--line-2);
+    box-shadow:inset 0 1px 0 var(--key-hi);
+  }
+  .brand{display:flex;align-items:center;gap:9px;min-width:0}
+  .mark{
+    width:18px;height:18px;flex:0 0 18px;display:grid;place-items:center;
+    border:1px solid var(--line-2);color:var(--ink);background:var(--chrome-hi);
+  }
+  .mark svg{width:11px;height:11px;display:block}
+  .title{font-size:12.5px;color:var(--ink-2);letter-spacing:.01em;white-space:nowrap}
+  .title b{font-weight:600;color:var(--ink)}
+  .title .dash{color:var(--ink-3);margin:0 1px}
+  .vsep{width:1px;height:13px;background:var(--line-2);margin:0 13px;flex:0 0 1px}
+  .meta{
+    font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:9.5px;letter-spacing:.06em;color:var(--ink-3);white-space:nowrap;
+  }
+  .meta + .meta{margin-left:12px}
+  .meta b{font-weight:400;color:var(--ink-2)}
+
+  .bezel-right{position:absolute;right:0;top:0;bottom:0;display:flex;align-items:center}
+  .tl{font-size:8.5px;letter-spacing:.16em;color:var(--ink-3);margin-right:7px}
+  .rocker{display:flex;height:22px;margin-right:12px;border:1px solid var(--line-2);background:var(--chrome-hi)}
+  .rk{width:27px;display:grid;place-items:center;color:var(--ink-3);cursor:pointer}
+  .rk + .rk{border-left:1px solid var(--line-2)}
+  .rk svg{width:12px;height:12px;display:block}
+  .rk:hover{color:var(--ink)}
+  .rk.on{color:var(--ink);background:var(--paper-head);box-shadow:inset 0 -2px 0 var(--sig)}
+  body:has(#t-dark:checked) .rk.light.on{color:var(--ink-3);background:transparent;box-shadow:none}
+  body:has(#t-dark:checked) .rk.dark.on{color:var(--ink);background:var(--paper-head);box-shadow:inset 0 -2px 0 var(--sig)}
+
+  .wctrl{display:flex;height:100%;border-left:1px solid var(--line)}
+  .wbtn{width:43px;height:100%;padding:0;border:0;display:grid;place-items:center;background:transparent;color:var(--ink-2);cursor:default}
+  .wbtn + .wbtn{border-left:1px solid var(--line)}
+  .wbtn svg{width:10px;height:10px;display:block}
+  .wbtn:hover{background:rgba(0,0,0,.05);color:var(--ink)}
+  .wbtn.close:hover{background:var(--ink);color:var(--chrome)}
+
+  /* ===== the bench: one image, hardware on the glass ===== */
+  .bench{flex:1;min-height:0;padding:10px;background:var(--mat)}
+  .viewport{position:relative;width:100%;height:100%;overflow:hidden;background:#080909;border:1px solid var(--img-edge)}
+
+  /* injected micrograph */
+  /* micrograph: CSS only */
+  .mg{
+    position:absolute;inset:-40px;background-color:#141718;
+    filter:url(#organic) saturate(.3) blur(.25px) brightness(1.03);transform:scale(1.18);
+    background-image:
+      /* vignette */
+      radial-gradient(ellipse 90% 96% at 50% 46%,rgba(0,0,0,0) 58%,rgba(0,0,0,.55) 100%),
+      /* uneven illumination */
+      radial-gradient(ellipse 46% 62% at 62% 40%,rgba(216,226,221,.10),rgba(216,226,221,0) 72%),
+      radial-gradient(ellipse 38% 52% at 22% 64%,rgba(198,210,204,.06),rgba(198,210,204,0) 72%),
+      /* intercellular gaps */
+      radial-gradient(ellipse 130px 86px at 29% 52%,rgba(0,0,0,.34),rgba(0,0,0,0) 70%),
+      radial-gradient(ellipse 104px 72px at 79% 57%,rgba(0,0,0,.28),rgba(0,0,0,0) 70%),
+      radial-gradient(ellipse 140px 90px at 7% 78%,rgba(0,0,0,.28),rgba(0,0,0,0) 70%),
+      /* debris */
+      radial-gradient(circle 1.4px at 11% 26%,rgba(255,255,255,.75),rgba(255,255,255,0) 80%),
+      radial-gradient(circle 1.2px at 35% 10%,rgba(255,255,255,.6),rgba(255,255,255,0) 80%),
+      radial-gradient(circle 1.5px at 59% 28%,rgba(255,255,255,.65),rgba(255,255,255,0) 80%),
+      radial-gradient(circle 1.2px at 81% 24%,rgba(255,255,255,.55),rgba(255,255,255,0) 80%),
+      radial-gradient(circle 1.3px at 28% 55%,rgba(255,255,255,.5),rgba(255,255,255,0) 80%),
+      radial-gradient(circle 1.4px at 74% 84%,rgba(255,255,255,.55),rgba(255,255,255,0) 80%),
+      radial-gradient(circle 1.2px at 95% 78%,rgba(255,255,255,.5),rgba(255,255,255,0) 80%),
+      radial-gradient(circle 1.3px at 44% 96%,rgba(255,255,255,.5),rgba(255,255,255,0) 80%),
+      radial-gradient(circle 1.2px at 18% 73%,rgba(255,255,255,.45),rgba(255,255,255,0) 80%),
+      /* chromatin */
+      radial-gradient(circle 2.4px at 7.5% 16.6%,rgba(10,12,12,.55),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.2px at 23.2% 13.9%,rgba(10,12,12,.5),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.4px at 39.1% 21.7%,rgba(10,12,12,.5),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.2px at 56.6% 15.8%,rgba(10,12,12,.5),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.6px at 15.1% 40.7%,rgba(10,12,12,.5),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.8px at 49.2% 44.5%,rgba(10,12,12,.55),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.4px at 67.2% 38.7%,rgba(10,12,12,.5),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.2px at 85.4% 43.8%,rgba(10,12,12,.45),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.2px at 21.2% 61.8%,rgba(10,12,12,.45),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.2px at 38.2% 67.5%,rgba(10,12,12,.45),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.4px at 56.5% 63.7%,rgba(10,12,12,.5),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.2px at 73.2% 68.6%,rgba(10,12,12,.45),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.2px at 48.6% 83.8%,rgba(10,12,12,.45),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.6px at 62% 51.6%,rgba(10,12,12,.55),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.2px at 59.3% 58.8%,rgba(10,12,12,.5),rgba(10,12,12,0) 72%),
+      radial-gradient(circle 2.2px at 12.6% 86.6%,rgba(10,12,12,.45),rgba(10,12,12,0) 72%),
+      /* nuclei */
+      radial-gradient(ellipse 18px 15px at 7.7% 16.5%,rgba(248,252,249,.94) 0 38%,rgba(238,247,241,.44) 64%,rgba(238,247,241,0) 84%),
+      radial-gradient(ellipse 20px 16px at 23.4% 13.7%,rgba(244,250,246,.86) 0 38%,rgba(236,245,239,.38) 64%,rgba(236,245,239,0) 84%),
+      radial-gradient(ellipse 17px 14px at 39.3% 21.5%,rgba(248,252,249,.94) 0 38%,rgba(238,247,241,.46) 64%,rgba(238,247,241,0) 84%),
+      radial-gradient(ellipse 22px 18px at 56.4% 15.6%,rgba(246,251,247,.90) 0 38%,rgba(238,246,240,.40) 64%,rgba(238,246,240,0) 84%),
+      radial-gradient(ellipse 19px 15px at 73.3% 19.4%,rgba(244,250,246,.84) 0 38%,rgba(236,245,239,.36) 64%,rgba(236,245,239,0) 84%),
+      radial-gradient(ellipse 21px 17px at 90.4% 14.7%,rgba(246,251,247,.90) 0 38%,rgba(238,246,240,.40) 64%,rgba(238,246,240,0) 84%),
+      radial-gradient(ellipse 24px 19px at 15.3% 40.5%,rgba(249,253,250,.96) 0 38%,rgba(240,248,242,.46) 64%,rgba(240,248,242,0) 84%),
+      radial-gradient(ellipse 18px 14px at 32.4% 36.6%,rgba(242,248,244,.80) 0 38%,rgba(234,243,237,.34) 64%,rgba(234,243,237,0) 84%),
+      radial-gradient(ellipse 26px 21px at 49.4% 44.3%,rgba(250,253,251,.98) 0 38%,rgba(242,250,244,.50) 64%,rgba(242,250,244,0) 84%),
+      radial-gradient(ellipse 20px 16px at 67.4% 38.5%,rgba(248,252,249,.94) 0 38%,rgba(239,248,242,.44) 64%,rgba(239,248,242,0) 84%),
+      radial-gradient(ellipse 22px 17px at 85.2% 43.6%,rgba(246,251,247,.88) 0 38%,rgba(238,246,240,.38) 64%,rgba(238,246,240,0) 84%),
+      radial-gradient(ellipse 17px 14px at 5.4% 64.4%,rgba(242,248,244,.78) 0 38%,rgba(234,243,237,.32) 64%,rgba(234,243,237,0) 84%),
+      radial-gradient(ellipse 21px 17px at 21.4% 61.6%,rgba(247,252,248,.92) 0 38%,rgba(239,248,242,.42) 64%,rgba(239,248,242,0) 84%),
+      radial-gradient(ellipse 19px 15px at 38.4% 67.3%,rgba(244,250,246,.86) 0 38%,rgba(236,245,239,.36) 64%,rgba(236,245,239,0) 84%),
+      radial-gradient(ellipse 23px 18px at 56.3% 63.5%,rgba(249,253,250,.96) 0 38%,rgba(241,249,243,.46) 64%,rgba(241,249,243,0) 84%),
+      radial-gradient(ellipse 18px 15px at 73.4% 68.4%,rgba(242,248,244,.80) 0 38%,rgba(234,243,237,.34) 64%,rgba(234,243,237,0) 84%),
+      radial-gradient(ellipse 20px 16px at 92.2% 63.6%,rgba(246,251,247,.88) 0 38%,rgba(238,246,240,.38) 64%,rgba(238,246,240,0) 84%),
+      radial-gradient(ellipse 17px 14px at 12.4% 86.4%,rgba(242,248,244,.78) 0 38%,rgba(234,243,237,.32) 64%,rgba(234,243,237,0) 84%),
+      radial-gradient(ellipse 19px 15px at 30.5% 90.4%,rgba(244,250,246,.84) 0 38%,rgba(236,245,239,.36) 64%,rgba(236,245,239,0) 84%),
+      radial-gradient(ellipse 22px 17px at 48.4% 83.6%,rgba(248,252,249,.92) 0 38%,rgba(239,248,242,.42) 64%,rgba(239,248,242,0) 84%),
+      radial-gradient(ellipse 18px 14px at 66.4% 90.3%,rgba(242,248,244,.80) 0 38%,rgba(234,243,237,.34) 64%,rgba(234,243,237,0) 84%),
+      radial-gradient(ellipse 21px 16px at 84.4% 85.5%,rgba(246,251,247,.88) 0 38%,rgba(238,246,240,.38) 64%,rgba(238,246,240,0) 84%),
+      radial-gradient(ellipse 27px 22px at 62.2% 51.4%,rgba(251,254,252,1) 0 36%,rgba(243,251,246,.52) 62%,rgba(243,251,246,0) 84%),
+      radial-gradient(ellipse 20px 16px at 59.5% 58.6%,rgba(248,252,249,.94) 0 38%,rgba(240,248,242,.44) 64%,rgba(240,248,242,0) 84%),
+      radial-gradient(ellipse 17px 13px at 64.8% 44%,rgba(242,248,244,.78) 0 38%,rgba(234,243,237,.32) 64%,rgba(234,243,237,0) 84%),
+      /* cell bodies: filled with a bright membrane ring */
+      radial-gradient(ellipse 120px 96px at 7% 16%,rgba(202,215,208,.09) 0 53%,rgba(228,241,233,.12) 56%,rgba(196,210,203,.10) 59.5%,rgba(196,210,203,0) 65%),
+      radial-gradient(ellipse 136px 102px at 23% 13%,rgba(204,217,210,.11) 0 53%,rgba(224,238,230,.12) 56%,rgba(196,210,203,.10) 59.5%,rgba(196,210,203,0) 65%),
+      radial-gradient(ellipse 126px 96px at 39% 21%,rgba(198,212,205,.08) 0 53%,rgba(226,240,232,.12) 56%,rgba(192,206,199,.08) 59.5%,rgba(192,206,199,0) 65%),
+      radial-gradient(ellipse 146px 106px at 56% 15%,rgba(206,219,212,.10) 0 53%,rgba(230,243,235,.12) 56%,rgba(198,212,205,.10) 59.5%,rgba(198,212,205,0) 65%),
+      radial-gradient(ellipse 132px 98px at 73% 19%,rgba(200,214,207,.09) 0 53%,rgba(226,240,232,.12) 56%,rgba(194,208,201,.09) 59.5%,rgba(194,208,201,0) 65%),
+      radial-gradient(ellipse 138px 102px at 90% 14%,rgba(206,219,212,.11) 0 53%,rgba(230,243,235,.12) 56%,rgba(198,212,205,.10) 59.5%,rgba(198,212,205,0) 65%),
+      radial-gradient(ellipse 150px 110px at 15% 40%,rgba(202,216,209,.10) 0 53%,rgba(230,243,235,.12) 56%,rgba(196,210,203,.10) 59.5%,rgba(196,210,203,0) 65%),
+      radial-gradient(ellipse 128px 96px at 32% 36%,rgba(198,212,205,.08) 0 53%,rgba(222,236,228,.12) 56%,rgba(192,206,199,.08) 59.5%,rgba(192,206,199,0) 65%),
+      radial-gradient(ellipse 156px 116px at 49% 44%,rgba(206,220,213,.12) 0 53%,rgba(232,245,237,.12) 56%,rgba(200,214,207,.11) 59.5%,rgba(200,214,207,0) 65%),
+      radial-gradient(ellipse 140px 104px at 67% 38%,rgba(204,218,211,.10) 0 53%,rgba(228,242,234,.12) 56%,rgba(198,212,205,.10) 59.5%,rgba(198,212,205,0) 65%),
+      radial-gradient(ellipse 148px 108px at 85% 43%,rgba(200,214,207,.09) 0 53%,rgba(226,240,232,.12) 56%,rgba(194,208,201,.09) 59.5%,rgba(194,208,201,0) 65%),
+      radial-gradient(ellipse 136px 116px at 5% 64%,rgba(196,210,203,.08) 0 53%,rgba(222,236,228,.12) 56%,rgba(190,204,197,.08) 59.5%,rgba(190,204,197,0) 65%),
+      radial-gradient(ellipse 144px 108px at 21% 61%,rgba(202,216,209,.10) 0 53%,rgba(228,242,234,.12) 56%,rgba(196,210,203,.10) 59.5%,rgba(196,210,203,0) 65%),
+      radial-gradient(ellipse 150px 110px at 38% 67%,rgba(200,214,207,.09) 0 53%,rgba(226,240,232,.12) 56%,rgba(194,208,201,.09) 59.5%,rgba(194,208,201,0) 65%),
+      radial-gradient(ellipse 154px 112px at 56% 63%,rgba(206,220,213,.11) 0 53%,rgba(232,245,237,.12) 56%,rgba(200,214,207,.10) 59.5%,rgba(200,214,207,0) 65%),
+      radial-gradient(ellipse 142px 106px at 73% 68%,rgba(198,212,205,.08) 0 53%,rgba(222,236,228,.12) 56%,rgba(192,206,199,.08) 59.5%,rgba(192,206,199,0) 65%),
+      radial-gradient(ellipse 146px 108px at 92% 63%,rgba(202,216,209,.10) 0 53%,rgba(228,242,234,.12) 56%,rgba(196,210,203,.10) 59.5%,rgba(196,210,203,0) 65%),
+      radial-gradient(ellipse 138px 102px at 12% 86%,rgba(198,212,205,.09) 0 53%,rgba(224,238,230,.12) 56%,rgba(192,206,199,.09) 59.5%,rgba(192,206,199,0) 65%),
+      radial-gradient(ellipse 132px 98px at 30% 90%,rgba(196,210,203,.08) 0 53%,rgba(222,236,228,.12) 56%,rgba(190,204,197,.08) 59.5%,rgba(190,204,197,0) 65%),
+      radial-gradient(ellipse 146px 106px at 48% 83%,rgba(204,218,211,.11) 0 53%,rgba(230,243,235,.12) 56%,rgba(198,212,205,.10) 59.5%,rgba(198,212,205,0) 65%),
+      radial-gradient(ellipse 140px 100px at 66% 90%,rgba(200,214,207,.09) 0 53%,rgba(226,240,232,.12) 56%,rgba(194,208,201,.09) 59.5%,rgba(194,208,201,0) 65%),
+      radial-gradient(ellipse 148px 110px at 84% 85%,rgba(202,216,209,.10) 0 53%,rgba(228,242,234,.12) 56%,rgba(196,210,203,.10) 59.5%,rgba(196,210,203,0) 65%),
+      radial-gradient(ellipse 122px 90px at 62% 52%,rgba(206,220,213,.12) 0 53%,rgba(232,245,237,.12) 56%,rgba(200,214,207,.11) 59.5%,rgba(200,214,207,0) 65%),
+      radial-gradient(ellipse 112px 84px at 60% 59%,rgba(202,216,209,.09) 0 53%,rgba(226,240,232,.12) 56%,rgba(196,210,203,.09) 59.5%,rgba(196,210,203,0) 65%),
+      radial-gradient(ellipse 250px 200px at 33% 57%,rgba(198,212,206,.045) 0 58%,rgba(198,212,206,0) 72%),
+      radial-gradient(ellipse 74px 60px at 12% 48%,rgba(198,212,206,.07) 0 50%,rgba(220,235,228,.12) 54%,rgba(198,212,206,0) 64%),
+      radial-gradient(ellipse 66px 54px at 66% 24%,rgba(198,212,206,.06) 0 50%,rgba(220,235,228,.10) 54%,rgba(198,212,206,0) 64%),
+      radial-gradient(ellipse 70px 58px at 44% 73%,rgba(198,212,206,.06) 0 50%,rgba(220,235,228,.10) 54%,rgba(198,212,206,0) 64%),
+      radial-gradient(ellipse 62px 52px at 88% 33%,rgba(198,212,206,.06) 0 50%,rgba(220,235,228,.10) 54%,rgba(198,212,206,0) 64%),
+      /* base */      radial-gradient(ellipse 100% 104% at 50% 46%,#2b3233 0%,#1c2122 46%,#101414 100%);
+  }
+
+
+  .grain{position:absolute;inset:0;width:100%;height:100%;opacity:.32;mix-blend-mode:overlay;pointer-events:none;z-index:1}
+  .fx{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+  body:has(#t-dark:checked) .mg{filter:url(#organic) saturate(.3) blur(.25px) brightness(1.06) contrast(1.02);transform:scale(1.18)}
+
+  /* ROI */
+  .roi{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+  .roi .shape{fill:rgba(224,139,63,.085);stroke:var(--sig-lit);stroke-width:1.25}
+  .roi .halo{fill:none;stroke:rgba(224,139,63,.16);stroke-width:4}
+  .roi .handle{fill:#0d0e0d;stroke:var(--sig-lit);stroke-width:1}
+  .roi .sel{fill:var(--sig-lit);stroke:#241a0f;stroke-width:1}
+  .roi .guide{fill:none;stroke:rgba(224,139,63,.45);stroke-width:1;stroke-dasharray:2 3}
+
+  /* leader from selected vertex to the slip */
+  .leader{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
+  .leader path{fill:none;stroke:rgba(224,139,63,.55);stroke-width:1;vector-effect:non-scaling-stroke}
+
+  /* ===== tool turret ===== */
+  .turret{
+    position:absolute;left:26px;top:26px;width:126px;height:126px;z-index:6;
+    border-radius:50%;background:var(--chrome-hi);border:1px solid var(--line-2);
+    box-shadow:inset 0 1px 0 var(--key-hi),inset 0 -1px 0 rgba(0,0,0,.12);
+  }
+  .turret::before{
+    content:"";position:absolute;inset:1px;border-radius:50%;
+    background:repeating-conic-gradient(from 0deg,var(--knurl) 0 1deg,transparent 1deg 5.5deg);
+    -webkit-mask:radial-gradient(circle,transparent 0 53px,#000 53.5px 57px,transparent 57.5px);
+    mask:radial-gradient(circle,transparent 0 53px,#000 53.5px 57px,transparent 57.5px);
+  }
+  .turret::after{
+    content:"";position:absolute;left:62px;top:3px;width:2px;height:7px;background:var(--sig);
+  }
+  .det{
+    position:absolute;width:30px;height:30px;padding:0;border-radius:50%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:1px solid transparent;background:transparent;
+    color:var(--ink-2);cursor:default;z-index:2;
+  }
+  .det svg{width:13px;height:13px;display:block}
+  .det .dk{font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;font-size:7px;line-height:1;color:var(--ink-2);letter-spacing:.02em}
+  .det.on .dk{color:var(--sig)}
+  .det:hover{color:var(--ink);border-color:var(--line-2);background:var(--paper-hi)}
+  .det.on{color:var(--sig);border-color:var(--sig);background:var(--paper);box-shadow:0 0 0 2px rgba(224,139,63,.16)}
+  .d-pointer{left:84px;top:36px}
+  .d-rect{left:70px;top:79px}
+  .d-poly{left:48px;top:10px}
+  .d-hand{left:26px;top:79px}
+  .d-zoom{left:12px;top:36px}
+  .hub{
+    position:absolute;left:43px;top:43px;width:40px;height:40px;border-radius:50%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    border:1px solid var(--line-2);background:var(--paper);z-index:3;
+  }
+  .hub b{
+    font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:13px;font-weight:500;color:var(--sig);line-height:1;
+  }
+  .hub span{font-size:7px;color:var(--ink-3);letter-spacing:.02em;line-height:1;margin-top:2px}
+  .tool-label{
+    position:absolute;left:26px;top:160px;z-index:6;
+    font-size:9px;letter-spacing:.16em;color:rgba(241,236,224,.68);
+  }
+
+  /* ===== measurement slip ===== */
+  .slip{
+    position:absolute;right:22px;top:214px;width:272px;z-index:7;
+    background:var(--paper);border:1px solid var(--line-2);border-left:2px solid var(--sig);
+    color:var(--ink);
+  }
+  .slip::before{content:"";position:absolute;left:16px;top:-6px;width:36px;height:8px;background:var(--chrome-hi);border:1px solid var(--line-2);z-index:1}
+  .slip::after{content:"";position:absolute;left:24px;top:-2px;width:20px;height:1px;background:var(--line-2)}
+  .slip-head{
+    display:flex;align-items:center;height:28px;padding:0 10px;
+    background:transparent;border-bottom:1px solid var(--line);
+  }
+  .slip-title{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2)}
+  .slip-roi{
+    margin-left:9px;font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:10px;color:var(--ink-3);letter-spacing:.03em;
+  }
+  .slip-roi b{font-weight:500;color:var(--ink)}
+  .slip-roi .caret{font-size:7px;margin-left:3px;color:var(--ink-3)}
+  .slip-head .right{
+    margin-left:auto;font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:8.5px;color:var(--ink-3);letter-spacing:.04em;
+  }
+  .slip-path{
+    display:flex;align-items:center;justify-content:space-between;height:19px;padding:0 10px;
+    border-bottom:1px solid var(--line);
+    font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:8.5px;color:var(--ink-3);letter-spacing:.03em;
+  }
+  .slip-path .cal{letter-spacing:.02em}
+
+  .row{display:flex;align-items:baseline;height:28px;padding:0 10px;border-bottom:1px solid var(--line)}
+  .row .k{
+    width:76px;flex:0 0 76px;font-size:9px;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--ink-3);align-self:center;
+  }
+  .row .val{
+    margin-left:auto;text-align:right;font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:17.5px;color:var(--ink);letter-spacing:.01em;line-height:26px;
+  }
+  .row .val .v{display:none}
+  .row .val .v.um{display:inline}
+  .row .val .v.fixed{display:inline}
+  .row .un{
+    width:32px;flex:0 0 32px;text-align:right;
+    font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:8.5px;color:var(--ink-3);letter-spacing:.02em;
+  }
+  .row .un span{display:none}
+  .row .un span.um{display:inline}
+
+  body:has(#u-px:checked) .row .val .v.um,
+  body:has(#u-mm:checked) .row .val .v.um,
+  body:has(#u-px:checked) .row .un span.um,
+  body:has(#u-mm:checked) .row .un span.um{display:none}
+  body:has(#u-px:checked) .row .val .v.px,
+  body:has(#u-px:checked) .row .un span.px{display:inline}
+  body:has(#u-mm:checked) .row .val .v.mm,
+  body:has(#u-mm:checked) .row .un span.mm{display:inline}
+
+  .units{display:flex;align-items:center;height:32px;padding:0 10px;border-bottom:1px dashed var(--line-2)}
+  .units .k{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+  .seg{margin-left:auto;display:flex;height:20px;border:1px solid var(--line-2);background:var(--recess)}
+  .seg label{
+    width:44px;display:grid;place-items:center;
+    font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:9.5px;color:var(--ink-3);cursor:pointer;
+  }
+  .seg label + label{border-left:1px solid var(--line-2)}
+  .seg label:hover{color:var(--ink)}
+  .seg label.u-um{color:var(--ink);background:var(--paper);box-shadow:inset 0 -2px 0 var(--sig)}
+  body:has(#u-px:checked) .seg label.u-um,
+  body:has(#u-mm:checked) .seg label.u-um{color:var(--ink-3);background:transparent;box-shadow:none}
+  body:has(#u-px:checked) .seg label.u-px,
+  body:has(#u-mm:checked) .seg label.u-mm{color:var(--ink);background:var(--paper);box-shadow:inset 0 -2px 0 var(--sig)}
+
+  .slip-foot{display:flex;height:29px}
+  .fkey{
+    flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+    border:0;background:transparent;font-family:inherit;font-size:10.5px;color:var(--ink-2);
+    cursor:default;padding:0;
+  }
+  .fkey + .fkey{border-left:1px solid var(--line)}
+  .fkey svg{width:12px;height:12px;display:block;color:var(--ink-2)}
+  .fkey .kb{
+    font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:8.5px;color:var(--ink-3);letter-spacing:.02em;
+  }
+  .fkey:hover{background:var(--paper-hi);color:var(--ink)}
+  .fkey:hover svg{color:var(--ink)}
+
+  /* ===== in-image data line ===== */
+  .scrim{
+    position:absolute;left:0;right:0;bottom:0;height:124px;z-index:4;pointer-events:none;
+    background:linear-gradient(to top,rgba(4,5,5,.66),rgba(4,5,5,.18) 52%,rgba(4,5,5,0));
+  }
+  .hud{
+    position:absolute;left:22px;bottom:18px;z-index:5;display:flex;align-items:center;
+    font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:10.5px;color:var(--hud);letter-spacing:.01em;white-space:nowrap;
+  }
+  .hud .it{display:flex;align-items:baseline;gap:5px}
+  .hud .l{font-family:"Segoe UI","Microsoft YaHei UI",sans-serif;font-size:8.5px;letter-spacing:.08em;color:rgba(241,236,224,.5)}
+  .hud .sep{width:1px;height:11px;background:rgba(241,236,224,.22);margin:0 11px;flex:0 0 1px}
+  .hud .roi-id{color:rgba(241,236,224,.72);letter-spacing:.06em}
+  .hud .cmd{color:rgba(241,236,224,.55);letter-spacing:.04em}
+
+  .scalebar{position:absolute;right:22px;bottom:17px;z-index:5;display:flex;flex-direction:column;gap:5px;color:var(--hud)}
+  .sb-line{width:80px;height:7px;border-left:1px solid currentColor;border-right:1px solid currentColor;border-bottom:1px solid currentColor;opacity:.9}
+  .sb-label{
+    font-family:"Cascadia Mono","Consolas",ui-monospace,monospace;
+    font-size:9.5px;letter-spacing:.04em;opacity:.82;text-align:left;
+  }
+
+  /* small image-corner overlay for image identity is intentionally absent */
+</style>
+</head>
+<body>
+<input class="in" type="radio" name="t" id="t-light" checked>
+<input class="in" type="radio" name="t" id="t-dark">
+<input class="in" type="radio" name="u" id="u-um" checked>
+<input class="in" type="radio" name="u" id="u-px">
+<input class="in" type="radio" name="u" id="u-mm">
+
+<main class="stage">
+  <div class="win">
+
+    <header class="bezel">
+      <div class="brand">
+        <span class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <circle cx="12" cy="12" r="6.4"/>
+            <path d="M12 1.6v4.4M12 18v4.4M1.6 12h4.4M18 12h4.4"/>
+            <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>
+          </svg>
+        </span>
+        <span class="title"><b>ImageLyre</b><span class="dash"> — </span>sample.tif</span>
+        <span class="vsep"></span>
+        <span class="meta"><b>16-bit TIFF</b></span>
+        <span class="meta">0.5 µm/px</span>
+      </div>
+
+      <div class="bezel-right">
+        <span class="tl">主题</span>
+        <div class="rocker" role="group" aria-label="主题">
+          <label class="rk light on" for="t-light" title="浅色">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+              <circle cx="12" cy="12" r="3.4"/>
+              <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>
+            </svg>
+          </label>
+          <label class="rk dark" for="t-dark" title="深色">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+              <path d="M20.4 14.6A8.5 8.5 0 0 1 9.4 3.6a8.5 8.5 0 1 0 11 11z"/>
+            </svg>
+          </label>
+        </div>
+        <div class="wctrl">
+          <button class="wbtn" type="button" aria-label="最小化">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1"><path d="M1 5.5h8"/></svg>
+          </button>
+          <button class="wbtn" type="button" aria-label="最大化">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1"><rect x="1.5" y="1.5" width="7" height="7"/></svg>
+          </button>
+          <button class="wbtn close" type="button" aria-label="关闭">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="bench">
+      <div class="viewport">
+
+        <svg class="fx" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <filter id="organic" x="-15%" y="-15%" width="130%" height="130%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.009 0.016" numOctaves="3" seed="9" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </svg>
+
+        <div class="mg"></div>
+
+        <svg class="grain" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <filter id="grain-fine">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/>
+            <feColorMatrix type="saturate" values="0"/>
+          </filter>
+          <filter id="grain-coarse">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" stitchTiles="stitch"/>
+            <feColorMatrix type="saturate" values="0"/>
+          </filter>
+          <rect width="100%" height="100%" filter="url(#grain-fine)" opacity=".7"/>
+          <rect width="100%" height="100%" filter="url(#grain-coarse)" opacity=".55"/>
+        </svg>
+
+        <svg class="roi" viewBox="0 0 1386 808" preserveAspectRatio="none" aria-hidden="true">
+          <polygon class="halo" points="790,330 895,295 975,375 950,475 845,510 765,430"/>
+          <polygon class="shape" points="790,330 895,295 975,375 950,475 845,510 765,430" vector-effect="non-scaling-stroke"/>
+          <g class="handle" vector-effect="non-scaling-stroke">
+            <rect x="786" y="326" width="7" height="7"/>
+            <rect x="891" y="291" width="7" height="7"/>
+            <rect x="946" y="471" width="7" height="7"/>
+            <rect x="841" y="506" width="7" height="7"/>
+            <rect x="761" y="426" width="7" height="7"/>
+          </g>
+          <rect class="sel" x="971" y="371" width="9" height="9" vector-effect="non-scaling-stroke"/>
+          <path class="guide" d="M975 375 L975 375" />
+        </svg>
+
+        <svg class="leader" viewBox="0 0 1386 808" preserveAspectRatio="none" aria-hidden="true"><path d="M975 375 L1092 236"/></svg>
+
+        <div class="turret">
+          <button class="det d-poly on" type="button" title="多边形 (P)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="miter">
+              <path d="M12 3.6 20 9.4l-2.8 9.3H7L4 9.4z"/>
+              <g fill="currentColor" stroke="none">
+                <rect x="11" y="2.6" width="2" height="2"/>
+                <rect x="19" y="8.4" width="2" height="2"/>
+                <rect x="16.2" y="17.7" width="2" height="2"/>
+                <rect x="6" y="17.7" width="2" height="2"/>
+                <rect x="3" y="8.4" width="2" height="2"/>
+              </g>
+            </svg><span class="dk">P</span></button>
+          <button class="det d-pointer" type="button" title="指针 (V)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="miter">
+              <path d="M6 2.8v15.4l4.2-4.2 2.6 5.6 2.6-1.2-2.6-5.5h5.6z"/>
+            </svg><span class="dk">V</span></button>
+          <button class="det d-rect" type="button" title="矩形 (R)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+              <rect x="3.6" y="5" width="16.8" height="14"/>
+            </svg><span class="dk">R</span></button>
+          <button class="det d-hand" type="button" title="手 (H)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square">
+              <path d="M18 11V6a2 2 0 0 0-4 0v1"/>
+              <path d="M14 7V4a2 2 0 0 0-4 0v7"/>
+              <path d="M10 11V6a2 2 0 0 0-4 0v8"/>
+              <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-1.4c-2.6 0-4.2-.9-5.6-2.4l-3.3-3.4a2 2 0 0 1 2.8-2.8L7 15"/>
+            </svg><span class="dk">H</span></button>
+          <button class="det d-zoom" type="button" title="缩放 (Z)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+              <circle cx="10.8" cy="10.8" r="7.2"/>
+              <path d="M16.2 16.2 21 21M10.8 7.6v6.4M7.6 10.8h6.4"/>
+            </svg><span class="dk">Z</span></button>
+          <div class="hub"><b>P</b><span>多边形</span></div>
+        </div>
+        <div class="tool-label">工具 · 5 档</div>
+
+        <div class="slip">
+          <div class="slip-head">
+            <span class="slip-title">Results</span>
+            <span class="slip-roi">ROI <b>03</b><span class="caret">▾</span></span>
+            <span class="right">6 项</span>
+          </div>
+          <div class="slip-path">
+            <span>ANALYZE › MEASURE</span>
+            <span class="cal">0.5 µm/px</span>
+          </div>
+
+          <div class="row">
+            <span class="k">Area</span>
+            <span class="val">
+              <span class="v um">1240.5</span>
+              <span class="v px">4962.0</span>
+              <span class="v mm">0.001240</span>
+            </span>
+            <span class="un"><span class="um">µm²</span><span class="px">px²</span><span class="mm">mm²</span></span>
+          </div>
+          <div class="row">
+            <span class="k">Mean</span>
+            <span class="val"><span class="v fixed">182.4</span></span>
+            <span class="un"></span>
+          </div>
+          <div class="row">
+            <span class="k">StdDev</span>
+            <span class="val"><span class="v fixed">21.7</span></span>
+            <span class="un"></span>
+          </div>
+          <div class="row">
+            <span class="k">Min</span>
+            <span class="val"><span class="v fixed">96</span></span>
+            <span class="un"></span>
+          </div>
+          <div class="row">
+            <span class="k">Max</span>
+            <span class="val"><span class="v fixed">233</span></span>
+            <span class="un"></span>
+          </div>
+          <div class="row">
+            <span class="k">Perimeter</span>
+            <span class="val">
+              <span class="v um">148.2</span>
+              <span class="v px">296.4</span>
+              <span class="v mm">0.1482</span>
+            </span>
+            <span class="un"><span class="um">µm</span><span class="px">px</span><span class="mm">mm</span></span>
+          </div>
+
+          <div class="units">
+            <span class="k">单位</span>
+            <div class="seg">
+              <label class="u-um" for="u-um">µm²</label>
+              <label class="u-px" for="u-px">px²</label>
+              <label class="u-mm" for="u-mm">mm²</label>
+            </div>
+          </div>
+
+          <div class="slip-foot">
+            <button class="fkey" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+                <path d="M9 7H5v12h9v-4"/><path d="M13 4h7v7"/><path d="M20 4l-8 8"/>
+              </svg>
+              撤销 <span class="kb">Ctrl Z</span>
+            </button>
+            <button class="fkey" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square">
+                <path d="M4 14v6h16v-6"/><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/>
+              </svg>
+              导出 CSV <span class="kb">Ctrl+E</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="scrim"></div>
+
+        <div class="hud">
+          <span class="it roi-id">ROI 03 · 多边形</span>
+          <span class="sep"></span>
+          <span class="it"><span class="l">坐标</span>(512, 384)</span>
+          <span class="sep"></span>
+          <span class="it"><span class="l">像素值</span>182</span>
+          <span class="sep"></span>
+          <span class="it"><span class="l">缩放</span>200%</span>
+          <span class="sep"></span>
+          <span class="it"><span class="l">校准</span>0.5 µm/px</span>
+          <span class="sep"></span>
+          <span class="cmd">Ctrl K 命令</span>
+        </div>
+
+        <div class="scalebar">
+          <span class="sb-label">20 µm</span>
+          <span class="sb-line"></span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+</body>
+</html>

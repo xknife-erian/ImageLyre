@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440, initial-scale=1">
+<title>ImageLyre — Type Specimen 2.0 / 21·22</title>
+<style>
+  :root{
+    --sans:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,"Microsoft YaHei UI","PingFang SC","Noto Sans CJK SC","Source Han Sans SC",sans-serif;
+    --mono:"Cascadia Mono","Cascadia Code",Consolas,"SF Mono",Menlo,"Roboto Mono","DejaVu Sans Mono","Liberation Mono",ui-monospace,monospace;
+    --s20:20px; --lh20:28px;
+    --s16:16px; --lh16:24px;
+    --s13:13px; --lh13:20px;
+    --s11:11px; --lh11:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#DAD4C6}
+  body{font-family:var(--sans);color:#1B1B16;font-synthesis:none;-webkit-font-smoothing:antialiased}
+  .page{width:1440px;margin:0 auto;padding:32px 32px 40px}
+
+  .s20{font-size:var(--s20);line-height:var(--lh20);letter-spacing:-.01em}
+  .s16{font-size:var(--s16);line-height:var(--lh16);letter-spacing:-.005em}
+  .s13{font-size:var(--s13);line-height:var(--lh13);letter-spacing:0}
+  .s11{font-size:var(--s11);line-height:var(--lh11);letter-spacing:0}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"lnum" 1;letter-spacing:0}
+  .w400{font-weight:400}
+  .w600{font-weight:600}
+  .zh{font-weight:400;letter-spacing:0;text-transform:none}
+  .en{text-transform:uppercase;letter-spacing:.10em}
+  .t1{color:var(--ink)}
+  .t2{color:var(--t2)}
+  .t3{color:var(--t3)}
+  .sig{color:var(--sig)}
+  .num{text-align:right;white-space:nowrap}
+  .unit{font-family:var(--sans);font-size:var(--s11);line-height:var(--lh11);color:var(--t2);margin-left:3px}
+
+  .head{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;padding-bottom:16px;border-bottom:1px solid #B8B1A2}
+  .kicker{font-size:var(--s11);line-height:var(--lh11);font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:#4A4840}
+  .h1{font-size:var(--s16);line-height:var(--lh16);letter-spacing:-.005em;margin-top:8px}
+  .h1 .v2{font-family:var(--mono);font-size:var(--s11);line-height:var(--lh11);color:#4A4840;margin-left:8px;letter-spacing:0}
+  .sub{font-size:var(--s13);line-height:var(--lh13);color:#4A4840;margin-top:6px}
+  .headmeta{text-align:right}
+  .headmeta .row{font-size:var(--s11);line-height:var(--lh11);color:#4A4840;letter-spacing:.02em}
+  .headmeta .row + .row{margin-top:4px}
+  .headmeta .strong{font-size:var(--s11);line-height:var(--lh11);color:#1B1B16;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+
+  .boards{display:grid;grid-template-columns:672px 672px;gap:32px;margin-top:24px;align-items:start}
+  .board{background:var(--bg);color:var(--ink);border:1px solid var(--hair);padding:0 24px 18px}
+  .board.light{--bg:#F4F1E8;--ink:#1B1B16;--t2:#4A4840;--t3:#6B675C;--hair:#CFCABA;--sig:#B83A24;--chip:#FAF7EE}
+  .board.dark{--bg:#151512;--ink:#ECEAE3;--t2:#B8B5AC;--t3:#8C8A81;--hair:#3A3832;--sig:#D89A4A;--chip:#1E1D1A}
+  .bhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:16px 0 12px;border-bottom:1px solid var(--hair)}
+  .bno{font-size:var(--s11);line-height:var(--lh11);font-weight:600;text-transform:uppercase;letter-spacing:.10em;color:var(--ink)}
+  .bdesc{font-size:var(--s11);line-height:var(--lh11);color:var(--t3);text-align:right}
+
+  .section{padding-top:16px;border-bottom:1px solid var(--hair)}
+  .section:last-of-type{border-bottom:none}
+  .sechead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:8px}
+  .secleft{display:flex;align-items:baseline;gap:10px}
+  .secno{font-family:var(--mono);font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+  .sectitle{font-size:var(--s11);line-height:var(--lh11);font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--t2)}
+  .sectitle .zh{font-weight:400;letter-spacing:0;text-transform:none}
+  .secnote{font-size:var(--s11);line-height:var(--lh11);color:var(--t3);text-align:right}
+
+  .scale{border-top:1px solid var(--hair)}
+  .srow{display:grid;grid-template-columns:44px 1fr 132px;gap:12px;align-items:center;min-height:46px;padding:6px 0;border-bottom:1px solid var(--hair)}
+  .srow:last-child{border-bottom:none}
+  .ssize{font-family:var(--mono);font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+  .ssample{min-width:0;color:var(--ink)}
+  .srole{font-size:var(--s11);line-height:var(--lh11);color:var(--t3);text-align:right}
+  .srole .en{display:block;margin-top:2px;color:var(--t3)}
+
+  .rolewin{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:2px 0 10px}
+  .menuline{display:flex;gap:14px;font-size:var(--s13);line-height:var(--lh13);color:var(--ink);padding-bottom:10px;border-bottom:1px solid var(--hair)}
+  .panelbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:10px 0 8px;border-bottom:1px solid var(--hair)}
+  .ptitle{font-size:var(--s16);line-height:var(--lh16);font-weight:400;color:var(--ink)}
+  .ptitle .en{font-size:var(--s11);line-height:var(--lh11);font-weight:600;color:var(--t3);margin-left:6px}
+  .panelbar .state{font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+
+  .seg{padding:8px 0;border-bottom:1px solid var(--hair)}
+  .seg:last-child{border-bottom:none}
+  .seghead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}
+  .segtitle{font-size:var(--s11);line-height:var(--lh11);font-weight:400;letter-spacing:0;text-transform:none;color:var(--t2)}
+  .segtitle .en{font-weight:600;letter-spacing:.10em;text-transform:uppercase}
+  .segtitle .zh{font-weight:400}
+  .segmeta{font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+
+  .idhero{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .idlabel{font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+  .idvalue{font-family:var(--mono);font-size:var(--s13);line-height:var(--lh13);color:var(--ink)}
+  .idnote{font-size:var(--s13);line-height:var(--lh13);color:var(--t2)}
+
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;margin-top:4px}
+  .field{display:flex;align-items:baseline;gap:8px;min-width:0}
+  .field .k{font-size:var(--s11);line-height:var(--lh11);color:var(--t3);flex:none}
+  .field .v{font-size:var(--s13);line-height:var(--lh13);color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .field .v.mono{font-family:var(--mono);font-size:var(--s13);line-height:var(--lh13)}
+
+  .readL{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .readL .k{font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+  .readL .v{font-family:var(--mono);font-size:var(--s20);line-height:var(--lh20);color:var(--ink)}
+  .readL .u{font-size:var(--s11);line-height:var(--lh11);color:var(--t2)}
+
+  .paramrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .paramrow .k{font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+  .paramrow .v{font-family:var(--mono);font-size:var(--s13);line-height:var(--lh13);color:var(--ink)}
+  .paramrow .sep{color:var(--t3);margin:0 2px}
+
+  .provline{font-family:var(--mono);font-size:var(--s11);line-height:var(--lh11);color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .provline .k{font-family:var(--sans);font-size:var(--s11);line-height:var(--lh11);color:var(--t3);margin-right:6px}
+
+  .actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:baseline;gap:6px;padding:3px 8px;border:1px solid var(--hair);background:var(--chip);font-size:var(--s13);line-height:var(--lh13);font-weight:400;color:var(--ink)}
+  .btn .k{font-family:var(--mono);font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+
+  .status{margin-top:8px;padding:8px 0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;font-size:var(--s11);line-height:var(--lh11);color:var(--t2)}
+  .status .k{font-size:var(--s11);line-height:var(--lh11);color:var(--t3);margin-right:3px}
+  .status .v{font-family:var(--mono);font-size:var(--s11);line-height:var(--lh11);color:var(--t2)}
+  .status .role{font-size:var(--s11);line-height:var(--lh11);color:var(--t3);letter-spacing:0;text-transform:none;margin-right:4px}
+  .status .u{font-family:var(--sans);font-size:var(--s11);line-height:var(--lh11);color:var(--t3);margin-left:3px}
+
+  .extras{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+  .tip{border:1px solid var(--hair);background:var(--chip);padding:8px 10px;font-size:var(--s13);line-height:var(--lh13);color:var(--ink)}
+  .tip .k{display:block;font-size:var(--s11);line-height:var(--lh11);color:var(--t3);letter-spacing:.10em;text-transform:uppercase;margin-bottom:3px}
+  .palette{border:1px solid var(--hair);background:var(--chip)}
+  .palhead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:6px 10px;border-bottom:1px solid var(--hair)}
+  .palhead .t{font-size:var(--s16);line-height:var(--lh16);font-weight:400}
+  .palhead .k{font-family:var(--mono);font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+  .palitem{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 10px;font-size:var(--s13);line-height:var(--lh13)}
+  .palitem .k{font-family:var(--mono);font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+
+  .metrics{display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--hair)}
+  .metric{padding:8px 0;border-bottom:1px solid var(--hair);min-width:0}
+  .mhead{font-size:var(--s11);line-height:var(--lh11);font-weight:600;color:var(--t3);text-align:right;padding-right:28px;white-space:nowrap}
+  .mline{display:flex;align-items:baseline;justify-content:flex-end;margin-top:4px}
+  .mnum{font-family:var(--mono);font-size:var(--s13);line-height:var(--lh13);color:var(--ink);text-align:right;white-space:nowrap}
+  .munit{width:28px;flex:none;font-size:var(--s11);line-height:var(--lh11);color:var(--t2);text-align:left;padding-left:3px;white-space:nowrap}
+  .mnote{font-size:var(--s11);line-height:var(--lh11);color:var(--t3);margin-top:6px}
+  .numdemo{margin-top:8px;display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:baseline;border-top:1px solid var(--hair);padding-top:6px}
+  .numdemo .k{font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+  .numdemo .v{font-family:var(--mono);font-size:var(--s13);line-height:var(--lh13);color:var(--ink);white-space:nowrap}
+  .numdemo .csv{font-family:var(--mono);font-size:var(--s11);line-height:var(--lh11);color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .mix{border-top:1px solid var(--hair)}
+  .mixrow{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--hair)}
+  .mixrow:last-child{border-bottom:none}
+  .mixrow .k{font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+  .mixrow .v{font-size:var(--s13);line-height:var(--lh13);color:var(--ink)}
+  .mixrow .v .en{font-size:var(--s11);line-height:var(--lh11);font-weight:600}
+  .mixrow .v .mono{font-size:var(--s13);line-height:var(--lh13)}
+
+  .contrast{border-top:1px solid var(--hair)}
+  .crow{display:grid;grid-template-columns:14px 74px 1fr 48px;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--hair)}
+  .crow:last-child{border-bottom:none}
+  .sw{width:12px;height:12px;background:var(--c)}
+  .crow .lab{font-size:var(--s11);line-height:var(--lh11);color:var(--t3)}
+  .crow .demo{font-size:var(--s13);line-height:var(--lh13);color:var(--c)}
+  .crow .ratio{font-family:var(--mono);font-size:var(--s11);line-height:var(--lh11);color:var(--t3);text-align:right}
+
+  .bfoot{margin-top:12px;border-top:1px solid var(--hair);padding-top:8px;font-size:var(--s11);line-height:var(--lh11);color:var(--t3);letter-spacing:.06em;text-transform:uppercase}
+
+  .foot{margin-top:24px;border-top:1px solid #B8B1A2;padding-top:14px;display:flex;justify-content:space-between;gap:32px}
+  .foot .fl{font-size:var(--s11);line-height:var(--lh11);font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:#4A4840}
+  .foot .list{font-size:var(--s11);line-height:var(--lh11);color:#4A4840;margin-top:6px;max-width:920px}
+  .foot .fr{font-size:var(--s11);line-height:var(--lh11);color:#4A4840;text-align:right;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="head">
+    <div>
+      <div class="kicker">Typography baseline 2.0 / 21—22</div>
+      <div class="h1"><span class="w600">ImageLyre</span> <span class="zh">排印基线</span><span class="v2">2.0</span></div>
+      <div class="sub">四档、4px 基线、11px 下限；21/22 同字，只换颜色与材质。</div>
+    </div>
+    <div class="headmeta">
+      <div class="strong">Type specimen / 2026-11-20</div>
+      <div class="row">21 LIGHT · 22 DARK</div>
+      <div class="row">UI Segoe UI / SF / PingFang · Mono Cascadia / Consolas</div>
+    </div>
+  </header>
+
+  <main class="boards">
+
+    <section class="board light">
+      <div class="bhead">
+        <span class="bno">21 / Light</span>
+        <span class="bdesc">纸白 · 朱红 · 4px 基线</span>
+      </div>
+
+      <div class="section">
+        <div class="sechead">
+          <div class="secleft"><span class="secno">01</span><span class="sectitle">Scale <span class="zh">字号阶</span></span></div>
+          <span class="secnote">四档，11–20px</span>
+        </div>
+        <div class="scale">
+          <div class="srow">
+            <span class="ssize">20/28</span>
+            <span class="ssample mono s20">1240.5<span class="unit">µm²</span></span>
+            <span class="srole">主读数<span class="en">Primary read</span></span>
+          </div>
+          <div class="srow">
+            <span class="ssize">16/24</span>
+            <span class="ssample s16"><span class="zh">标本档案</span> <span class="s11 t3 en w600">Specimen record</span></span>
+            <span class="srole">面板标题<span class="en">Panel title</span></span>
+          </div>
+          <div class="srow">
+            <span class="ssize">13/20</span>
+            <span class="ssample s13">拖动顶点以修改 ROI，结果即时重算。<br><span class="mono">1240.5 182.4 21.7</span></span>
+            <span class="srole">正文与六项读数<span class="en">Body + results</span></span>
+          </div>
+          <div class="srow">
+            <span class="ssize">11/16</span>
+            <span class="ssample s11"><span class="t3">标签</span> · <span class="mono">µm²</span> · <span class="t3">状态</span> <span class="mono">X 512</span> · <span class="w600">Area</span></span>
+            <span class="srole">标签 / 单位 / 状态 / 表头<span class="en">Label · unit · status · header</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sechead">
+          <div class="secleft"><span class="secno">02</span><span class="sectitle">Roles <span class="zh">语义角色</span></span></div>
+          <span class="secnote">同字号，同字重，只换色</span>
+        </div>
+
+        <div class="rolewin">
+          <span class="s16 w600">ImageLyre</span><span class="s16 t2 w400">— sample.tif</span>
+          <span class="s11 t3">已保存 <span class="mono t2">10:42</span></span>
+        </div>
+        <div class="menuline">
+          <span>File</span><span>Edit</span><span>Image</span><span>Analyze</span><span>Plugins</span><span>Help</span>
+        </div>
+
+        <div class="panelbar">
+          <div class="ptitle"><span class="zh">标本档案</span> <span class="en">Specimen record</span></div>
+          <div class="state">已测量 <span class="mono">6</span> 项</div>
+        </div>
+
+        <div class="seg">
+          <div class="seghead">
+            <div class="segtitle"><span class="zh">身份</span> / <span class="en">Identity</span></div>
+            <div class="segmeta">ROI 01 · 5 个顶点</div>
+          </div>
+          <div class="idhero"><span class="idlabel">样本号</span><span class="idvalue">S-094</span><span class="idnote">肝组织切片 · H&amp;E</span></div>
+          <div class="fields">
+            <div class="field"><span class="k">批次</span><span class="v">B-114</span></div>
+            <div class="field"><span class="k">来源</span><span class="v">肝组织切片</span></div>
+            <div class="field"><span class="k">染色</span><span class="v">H&amp;E · 苏木精-伊红</span></div>
+            
+            <div class="field"><span class="k">采集</span><span class="v mono">2026-11-18 09:34</span></div>
+            <div class="field"><span class="k">文件</span><span class="v">sample.tif</span></div>
+            <div class="field"><span class="k">位深 / 校准</span><span class="v mono">16-bit · 0.5 µm/px</span></div>
+          </div>
+        </div>
+
+        <div class="seg">
+          <div class="seghead">
+            <div class="segtitle"><span class="zh">测量</span> / <span class="en">Results</span></div>
+            <div class="segmeta">6 项 · 小数位 1</div>
+          </div>
+          <div class="readL"><span class="k">Area</span><span class="v">1240.5</span><span class="u">µm²</span><span class="s11 t3">— 当前 ROI 主读数</span></div>
+        </div>
+
+        <div class="seg">
+          <div class="seghead">
+            <div class="segtitle"><span class="zh">参数</span> / <span class="en">Parameters</span></div>
+            <div class="segmeta">就地修改</div>
+          </div>
+          <div class="paramrow">
+            <span class="k">小数位</span><span class="v">1</span><span class="sep">·</span>
+            <span class="k">单位</span><span class="v">µm²</span><span class="sep">·</span>
+            <span class="k">阈值</span><span class="v">96–233</span>
+          </div>
+        </div>
+
+        <div class="seg">
+          <div class="seghead">
+            <div class="segtitle"><span class="zh">溯源</span> / <span class="en">Provenance</span></div>
+            <div class="segmeta">默认一行</div>
+          </div>
+          <div class="provline"><span class="k">校准链</span>0.5000 µm/px · 哈希 9f8c1a72 · 插件 1.2.0</div>
+        </div>
+
+        <div class="seg">
+          <div class="seghead">
+            <div class="segtitle"><span class="zh">操作</span> / <span class="en">Actions</span></div>
+            <div class="segmeta">同等权重</div>
+          </div>
+          <div class="actions">
+            <span class="btn">撤销 <span class="k">Ctrl Z</span></span>
+            <span class="btn">导出 CSV <span class="k">Ctrl E</span></span>
+            <span class="btn">历史版本 <span class="k">3</span></span>
+          </div>
+        </div>
+
+        <div class="status">
+          <span class="role">状态栏</span>
+          <span><span class="k">X</span><span class="v">512</span></span>
+          <span><span class="k">Y</span><span class="v">384</span></span>
+          <span><span class="k">Pixel</span><span class="v">182</span></span>
+          <span><span class="k">Zoom</span><span class="v">200%</span></span>
+          <span><span class="k">Scale</span><span class="v">0.5<span class="u">µm/px</span></span></span>
+        </div>
+
+        <div class="extras">
+          <div class="tip"><span class="k">Tooltip</span>拖动顶点以修改 ROI</div>
+          <div class="palette">
+            <div class="palhead"><span class="t"><span class="zh">命令面板</span></span><span class="k">Ctrl K</span></div>
+            <div class="palitem"><span>导出 CSV</span><span class="k">Ctrl E</span></div>
+            <div class="palitem"><span>回到 100%</span><span class="k">Ctrl 0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sechead">
+          <div class="secleft"><span class="secno">03</span><span class="sectitle">Numbers <span class="zh">数字</span></span></div>
+          <span class="secnote">右对齐 · 等宽 · 单位同 11 降灰</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="mhead">Area</div><div class="mline"><span class="mnum">1240.5</span><span class="munit">µm²</span></div></div>
+          <div class="metric"><div class="mhead">Mean</div><div class="mline"><span class="mnum">182.4</span><span class="munit"></span></div></div>
+          <div class="metric"><div class="mhead">StdDev</div><div class="mline"><span class="mnum">21.7</span><span class="munit"></span></div></div>
+          <div class="metric"><div class="mhead">Min</div><div class="mline"><span class="mnum">96</span><span class="munit"></span></div></div>
+          <div class="metric"><div class="mhead">Max</div><div class="mline"><span class="mnum">233</span><span class="munit"></span></div></div>
+          <div class="metric"><div class="mhead">Perimeter</div><div class="mline"><span class="mnum">148.2</span><span class="munit">µm</span></div></div>
+        </div>
+        <div class="mnote">小数位固定：Area 1 · Mean 1 · StdDev 1 · Min 0 · Max 0 · Perimeter 1</div>
+        <div class="numdemo"><span class="k">GROUPING</span><span class="v">12&#8239;480.5 <span class="unit">µm²</span></span></div>
+        <div class="numdemo"><span class="k">CSV</span><span class="csv">1240.5,182.4,21.7,96,233,148.2</span></div>
+      </div>
+
+      <div class="section">
+        <div class="sechead">
+          <div class="secleft"><span class="secno">04</span><span class="sectitle">Mixed <span class="zh">混排</span></span></div>
+          <span class="secnote">中文不拉字距</span>
+        </div>
+        <div class="mix">
+          <div class="mixrow"><span class="k">中 ↔ 英</span><span class="v">测量 / <span class="en">Results</span></span></div>
+          <div class="mixrow"><span class="k">数 ↔ 量词</span><span class="v">6 个 ROI，3 张切片</span></div>
+          <div class="mixrow"><span class="k">数 ↔ 单位</span><span class="v">1240.5&nbsp;µm² · 0.5&nbsp;µm/px</span></div>
+          <div class="mixrow"><span class="k">句内中英</span><span class="v">导出的 CSV 与界面小数位一致。</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sechead">
+          <div class="secleft"><span class="secno">05</span><span class="sectitle">Contrast <span class="zh">对比</span></span></div>
+          <span class="secnote">正文 ≥ 4.5:1</span>
+        </div>
+        <div class="contrast">
+          <div class="crow" style="--c:#1B1B16"><span class="sw"></span><span class="lab">T1 主文</span><span class="demo">ImageLyre 测量</span><span class="ratio">15.3:1</span></div>
+          <div class="crow" style="--c:#4A4840"><span class="sw"></span><span class="lab">T2 次文</span><span class="demo">样本号 S-094</span><span class="ratio">8.1:1</span></div>
+          <div class="crow" style="--c:#6B675C"><span class="sw"></span><span class="lab">T3 弱化</span><span class="demo">µm² · 已保存</span><span class="ratio">5.0:1</span></div>
+          <div class="crow" style="--c:#B83A24"><span class="sw"></span><span class="lab">Signal</span><span class="demo">当前 ROI</span><span class="ratio">5.1:1</span></div>
+        </div>
+      </div>
+
+      <div class="bfoot">4 steps · 4px baseline · 11px floor · no 700</div>
+    </section>
+
+    <section class="board dark">
+      <div class="bhead">
+        <span class="bno">22 / Dark</span>
+        <span class="bdesc">深色 · 琥珀 · 4px 基线</span>
+      </div>
+
+      <div class="section">
+        <div class="sechead">
+          <div class="secleft"><span class="secno">01</span><span class="sectitle">Scale <span class="zh">字号阶</span></span></div>
+          <span class="secnote">四档，11–20px</span>
+        </div>
+        <div class="scale">
+          <div class="srow">
+            <span class="ssize">20/28</span>
+            <span class="ssample mono s20">1240.5<span class="unit">µm²</span></span>
+            <span class="srole">主读数<span class="en">Primary read</span></span>
+          </div>
+          <div class="srow">
+            <span class="ssize">16/24</span>
+            <span class="ssample s16"><span class="zh">标本档案</span> <span class="s11 t3 en w600">Specimen record</span></span>
+            <span class="srole">面板标题<span class="en">Panel title</span></span>
+          </div>
+          <div class="srow">
+            <span class="ssize">13/20</span>
+            <span class="ssample s13">拖动顶点以修改 ROI，结果即时重算。<br><span class="mono">1240.5 182.4 21.7</span></span>
+            <span class="srole">正文与六项读数<span class="en">Body + results</span></span>
+          </div>
+          <div class="srow">
+            <span class="ssize">11/16</span>
+            <span class="ssample s11"><span class="t3">标签</span> · <span class="mono">µm²</span> · <span class="t3">状态</span> <span class="mono">X 512</span> · <span class="w600">Area</span></span>
+            <span class="srole">标签 / 单位 / 状态 / 表头<span class="en">Label · unit · status · header</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sechead">
+          <div class="secleft"><span class="secno">02</span><span class="sectitle">Roles <span class="zh">语义角色</span></span></div>
+          <span class="secnote">同字号，同字重，只换色</span>
+        </div>
+
+        <div class="rolewin">
+          <span class="s16 w600">ImageLyre</span><span class="s16 t2 w400">— sample.tif</span>
+          <span class="s11 t3">已保存 <span class="mono t2">10:42</span></span>
+        </div>
+        <div class="menuline">
+          <span>File</span><span>Edit</span><span>Image</span><span>Analyze</span><span>Plugins</span><span>Help</span>
+        </div>
+
+        <div class="panelbar">
+          <div class="ptitle"><span class="zh">标本档案</span> <span class="en">Specimen record</span></div>
+          <div class="state">已测量 <span class="mono">6</span> 项</div>
+        </div>
+
+        <div class="seg">
+          <div class="seghead">
+            <div class="segtitle"><span class="zh">身份</span> / <span class="en">Identity</span></div>
+            <div class="segmeta">ROI 01 · 5 个顶点</div>
+          </div>
+          <div class="idhero"><span class="idlabel">样本号</span><span class="idvalue">S-094</span><span class="idnote">肝组织切片 · H&amp;E</span></div>
+          <div class="fields">
+            <div class="field"><span class="k">批次</span><span class="v">B-114</span></div>
+            <div class="field"><span class="k">来源</span><span class="v">肝组织切片</span></div>
+            <div class="field"><span class="k">染色</span><span class="v">H&amp;E · 苏木精-伊红</span></div>
+            
+            <div class="field"><span class="k">采集</span><span class="v mono">2026-11-18 09:34</span></div>
+            <div class="field"><span class="k">文件</span><span class="v">sample.tif</span></div>
+            <div class="field"><span class="k">位深 / 校准</span><span class="v mono">16-bit · 0.5 µm/px</span></div>
+          </div>
+        </div>
+
+        <div class="seg">
+          <div class="seghead">
+            <div class="segtitle"><span class="zh">测量</span> / <span class="en">Results</span></div>
+            <div class="segmeta">6 项 · 小数位 1</div>
+          </div>
+          <div class="readL"><span class="k">Area</span><span class="v">1240.5</span><span class="u">µm²</span><span class="s11 t3">— 当前 ROI 主读数</span></div>
+        </div>
+
+        <div class="seg">
+          <div class="seghead">
+            <div class="segtitle"><span class="zh">参数</span> / <span class="en">Parameters</span></div>
+            <div class="segmeta">就地修改</div>
+          </div>
+          <div class="paramrow">
+            <span class="k">小数位</span><span class="v">1</span><span class="sep">·</span>
+            <span class="k">单位</span><span class="v">µm²</span><span class="sep">·</span>
+            <span class="k">阈值</span><span class="v">96–233</span>
+          </div>
+        </div>
+
+        <div class="seg">
+          <div class="seghead">
+            <div class="segtitle"><span class="zh">溯源</span> / <span class="en">Provenance</span></div>
+            <div class="segmeta">默认一行</div>
+          </div>
+          <div class="provline"><span class="k">校准链</span>0.5000 µm/px · 哈希 9f8c1a72 · 插件 1.2.0</div>
+        </div>
+
+        <div class="seg">
+          <div class="seghead">
+            <div class="segtitle"><span class="zh">操作</span> / <span class="en">Actions</span></div>
+            <div class="segmeta">同等权重</div>
+          </div>
+          <div class="actions">
+            <span class="btn">撤销 <span class="k">Ctrl Z</span></span>
+            <span class="btn">导出 CSV <span class="k">Ctrl E</span></span>
+            <span class="btn">历史版本 <span class="k">3</span></span>
+          </div>
+        </div>
+
+        <div class="status">
+          <span class="role">状态栏</span>
+          <span><span class="k">X</span><span class="v">512</span></span>
+          <span><span class="k">Y</span><span class="v">384</span></span>
+          <span><span class="k">Pixel</span><span class="v">182</span></span>
+          <span><span class="k">Zoom</span><span class="v">200%</span></span>
+          <span><span class="k">Scale</span><span class="v">0.5<span class="u">µm/px</span></span></span>
+        </div>
+
+        <div class="extras">
+          <div class="tip"><span class="k">Tooltip</span>拖动顶点以修改 ROI</div>
+          <div class="palette">
+            <div class="palhead"><span class="t"><span class="zh">命令面板</span></span><span class="k">Ctrl K</span></div>
+            <div class="palitem"><span>导出 CSV</span><span class="k">Ctrl E</span></div>
+            <div class="palitem"><span>回到 100%</span><span class="k">Ctrl 0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sechead">
+          <div class="secleft"><span class="secno">03</span><span class="sectitle">Numbers <span class="zh">数字</span></span></div>
+          <span class="secnote">右对齐 · 等宽 · 单位同 11 降灰</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="mhead">Area</div><div class="mline"><span class="mnum">1240.5</span><span class="munit">µm²</span></div></div>
+          <div class="metric"><div class="mhead">Mean</div><div class="mline"><span class="mnum">182.4</span><span class="munit"></span></div></div>
+          <div class="metric"><div class="mhead">StdDev</div><div class="mline"><span class="mnum">21.7</span><span class="munit"></span></div></div>
+          <div class="metric"><div class="mhead">Min</div><div class="mline"><span class="mnum">96</span><span class="munit"></span></div></div>
+          <div class="metric"><div class="mhead">Max</div><div class="mline"><span class="mnum">233</span><span class="munit"></span></div></div>
+          <div class="metric"><div class="mhead">Perimeter</div><div class="mline"><span class="mnum">148.2</span><span class="munit">µm</span></div></div>
+        </div>
+        <div class="mnote">小数位固定：Area 1 · Mean 1 · StdDev 1 · Min 0 · Max 0 · Perimeter 1</div>
+        <div class="numdemo"><span class="k">GROUPING</span><span class="v">12&#8239;480.5 <span class="unit">µm²</span></span></div>
+        <div class="numdemo"><span class="k">CSV</span><span class="csv">1240.5,182.4,21.7,96,233,148.2</span></div>
+      </div>
+
+      <div class="section">
+        <div class="sechead">
+          <div class="secleft"><span class="secno">04</span><span class="sectitle">Mixed <span class="zh">混排</span></span></div>
+          <span class="secnote">中文不拉字距</span>
+        </div>
+        <div class="mix">
+          <div class="mixrow"><span class="k">中 ↔ 英</span><span class="v">测量 / <span class="en">Results</span></span></div>
+          <div class="mixrow"><span class="k">数 ↔ 量词</span><span class="v">6 个 ROI，3 张切片</span></div>
+          <div class="mixrow"><span class="k">数 ↔ 单位</span><span class="v">1240.5&nbsp;µm² · 0.5&nbsp;µm/px</span></div>
+          <div class="mixrow"><span class="k">句内中英</span><span class="v">导出的 CSV 与界面小数位一致。</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sechead">
+          <div class="secleft"><span class="secno">05</span><span class="sectitle">Contrast <span class="zh">对比</span></span></div>
+          <span class="secnote">正文 ≥ 4.5:1</span>
+        </div>
+        <div class="contrast">
+          <div class="crow" style="--c:#ECEAE3"><span class="sw"></span><span class="lab">T1 主文</span><span class="demo">ImageLyre 测量</span><span class="ratio">15.2:1</span></div>
+          <div class="crow" style="--c:#B8B5AC"><span class="sw"></span><span class="lab">T2 次文</span><span class="demo">样本号 S-094</span><span class="ratio">8.9:1</span></div>
+          <div class="crow" style="--c:#8C8A81"><span class="sw"></span><span class="lab">T3 弱化</span><span class="demo">µm² · 已保存</span><span class="ratio">5.3:1</span></div>
+          <div class="crow" style="--c:#D89A4A"><span class="sw"></span><span class="lab">Signal</span><span class="demo">当前 ROI</span><span class="ratio">7.5:1</span></div>
+        </div>
+      </div>
+
+      <div class="bfoot">4 steps · 4px baseline · 11px floor · no 700</div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <div>
+      <div class="fl">Not allowed <span class="zh">/ 禁止</span></div>
+      <div class="list">700 · 斜体 oblique · 描边字 · 阴影字 · 小于 11px · 全大写中文 · 中文加字距或两端对齐 · 颜色代替层级 · 全角数字 · 截断数字与单位</div>
+    </div>
+    <div class="fr">21/22 同字号、同字重、同行高；<br>只换颜色与材质。四档 / 4px 基线 / 11px 下限。</div>
+  </footer>
+
+</div>
+</body>
+</html>
