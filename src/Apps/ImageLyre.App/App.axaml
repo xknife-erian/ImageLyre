@@ -10,6 +10,7 @@
     </ResourceDictionary>
   </Application.Resources>
   <Application.Styles>
+    <StyleInclude Source="avares://ImageLyre.Themes/Controls.axaml" />
     <Style Selector="Window">
       <Setter Property="Background" Value="{DynamicResource Lyre.Surface.Window}" />
     </Style>

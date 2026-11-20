@@ -126,7 +126,7 @@ A5 不在关键路径上：它要等首个可运行界面才有实测对象，�
 | A1 ADR-0009 | 完成，0.3 定稿 | `41e73f8` |
 | A2 键表与断言 | 完成：18 色 ×2（warning 待设计确认）、四档字号与行高、三档字距、两档字重、两条家族栈、六级间距、两级线宽；五项断言含防空跑与重复键检测，已做红绿验证 | `1994271` |
 | A3 亮暗字典 | 完成：Tokens.Light、Tokens.Dark、Tokens.Shared、Tokens.axaml；App 合并并引用一个键 | `1994271` |
-| A4 AtomUI 覆盖 | 侦察完成，实现待做。两轮 `MetadataLoadContext` 探针取到完整调用链：① `IThemeManager.SemanticParts`（`SemanticPartRegistry`）用 `TryGetControl(Type, out ControlSemanticDescriptor)` 按控件类型取语义描述；② `SemanticPartRegistry.Controls` 给出全部 `ControlSemanticDescriptor`；③ `ControlTokenDescriptor` 用 `CreateBuilder()` 产出 `AbstractControlDesignToken`，其 `OwnTokens` 是 `TokenDescriptor` 列表；④ `TokenDescriptor.SetValue(AbstractDesignToken, object)` 与 `GetValue` 是读写入口，`Parse`/`Format` 负责字符串往返；⑤ 主题切换走 `IThemeManager.ApplyThemeAsync(new ThemeRequest(themeId, ThemeConfig, reason))`，`ThemeConfig` 在 `AtomUI.Theme.Configuration`。下一步按这条链写"按钮六态试点"：取按钮的 token 集合，把字号类令牌设成四档之一，再用 `ApplyThemeAsync` 生效并截图比对。若两轮内做不出可验证的试点，按风险表减范围：只覆盖字号与字体两项，放弃控件模板层面的六态重绘，并把结论写回 ADR。 | — |
+| A4 AtomUI 覆盖 | 试点完成（机制按止损条款调整）：控件字号与家族改由 Themes/Controls.axaml 的 Avalonia 样式绑定 Lyre.Type.* 令牌，覆盖按钮、输入、组合框、复选框、菜单项与文本六类；ControlStyleTests 断言样式里不出现字号字面量且只引用四档令牌。原计划的 AtomUI Schema 路线（SemanticPartRegistry + TokenDescriptor.SetValue）保留为后续深化项，因为按试点预算两轮内做不出可验证结果，按风险表减范围并记账。 | 见下一次提交 |
 | A5 缩放与线宽补偿 | 未开始（等可运行界面实测） | — |
 | B1 槽位注册表 | 完成：ISlotManager + ISlotRegistry + ISlotChangeSource；按所有者摘除、待解析冲刷、形态与容量校验、收口诊断；实测启动 5 插件 | `ea6a8ab` |
 | B2 三处归位 | 完成 | `5bb16fa` |
