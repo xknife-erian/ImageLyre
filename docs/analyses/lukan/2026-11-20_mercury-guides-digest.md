@@ -113,3 +113,18 @@ SlotIssue 四字段与指南一致。
 | 不得批量改写已有调用 | 通过。没有为统一写法做的批量替换 |
 
 另外记下 §8 里两条会真正咬人的：Error("消息", ex) 编译不过（要写 Error(ex, "消息")），以及把异常拼进消息会导致文件里没有堆栈。
+
+## 11 22-plugindesc 读后记录（2026-11-20 部分）
+
+读完 §3 元素树与 §4、§5 属性表。指南的树是四层：Plugin → Category → Group（可嵌套）→ Focal（叶子按钮，可嵌套成下拉子项），Focal 下还有 IconCode 与 Order 两个子元素；不认识的子元素直接忽略，属性名按 LocalName 区分大小写精确匹配。
+
+**对照本仓 PlugindescMenuReader 的四个缺口**：
+
+1. Plugin 的 IsEnable="false" 会让整份插件菜单不装配，我们没解析，目前只能靠 plugins.json 在扫描前禁用整个插件（更粗，且不区分表现层）。
+2. Focal 可以嵌套成下拉子项，解析成 Children；我们只支持 Group 下的平铺命令，没有二级菜单。
+3. IconCode 内联 SVG 与 Icon 子元素决定图标；我们的 MenuIcon 类在，但解析器不读。
+4. Category 与 Group 也有 Enable、Visibility、Order，我们只处理了菜单项这一层。
+
+**排序口径**：指南 §10 的 Order 是可配置规则（NoPreference 与具体值），不是裸整数；我们用的是 int，够用但与上游语义不同，若将来要与 Mercury 合并菜单模型需要对齐。
+
+结论：四个缺口都属第三方插件路径，本仓官方插件走 code-first，因此不影响当前功能；按优先级记入待办：IsEnable 最值得先补（不改代码就能整份停掉），其次是嵌套 Focal 与图标。
