@@ -3,9 +3,9 @@
 | 版本 | 日期 | 状态 | 作者 | 说明 |
 | :--- | :--- | :--- | :--- | :--- |
 | 1.0 | 2026-11-19 | 研发契约 | lukan | 从 PRD 2.9 §5.17 拆出；命令、参数、Schema、退出码与实现约束在此维护，产品口径见 `../requirements/product-requirements.md` §5.17 |
-| 1.1 | 2026-11-19 | 研发契约 | lukan | 产品口径改挂 PRD 4.1 的 CORE-14；测量选项、列序与对照容差改挂 `../requirements/measurement-baseline.md`；章节编号由 5.17.x 改为 1.x，内容不变 |
+| 1.1 | 2026-11-19 | 研发契约 | lukan | 产品口径改挂 PRD 4.2 的 CORE-14；测量选项、列序与对照容差改挂 `../requirements/measurement-baseline.md`；章节编号由 5.17.x 改为 1.x，内容不变 |
 
-> 本文是研发契约，不是产品需求。产品经理只定义“要什么、为什么、怎样算好”；命令形状、JSON Schema、退出码、宿主拓扑与实现约束由研发在此维护。本文的产品落点是 PRD 4.1 的 CORE-14，测量口径与对照容差以 `../requirements/measurement-baseline.md` 为准，两者冲突时以交付物为准并回写本文。
+> 本文是研发契约，不是产品需求。产品经理只定义“要什么、为什么、怎样算好”；命令形状、JSON Schema、退出码、宿主拓扑与实现约束由研发在此维护。本文的产品落点是 PRD 4.2 的 CORE-14，测量口径与对照容差以 `../requirements/measurement-baseline.md` 为准，两者冲突时以交付物为准并回写本文。
 
 ## 1 CLI 工作模式
 
@@ -149,7 +149,7 @@ CLI 与桌面的对照：同一构建、同一 `--threads`、同一选项集下�
 | CLI-006 | 与桌面一致：同一构建、同一线程数、同一选项集下，JSON 按 B 类容差、CSV 逐字节、sidecar 稳定字段一致；含非默认校准用例 | P0 |
 | CLI-007 | 安全与路径：默认不联网、输入只读、`--out-dir` 落在固定可写根、相对路径需 `--cwd`、覆盖需 `--overwrite`、无隐式配置 | P0 |
 | CLI-008 | Agent 能力发现：`capabilities` 走信封且 `data` 按 `lyre.agent/v1` 校验，含输入/输出 Schema、副作用、权限、前置、产出、错误、示例、验证元数据；支持分页与 detail | P0 |
-| CLI-009 | 全能力 CLI（P1/M3）：以 PRD 4.1 §7.1 首个更新的算子范围为口径，覆盖阈值、滤波、栈投影、通道拆分等；v1 只承诺分析闭环（info/measure/export/calibrate/roi/batch） | P1 |
+| CLI-009 | 全能力 CLI（P1/M3）：以 PRD 4.2 §7.1 首个更新的算子范围为口径，覆盖阈值、滤波、栈投影、通道拆分等；v1 只承诺分析闭环（info/measure/export/calibrate/roi/batch） | P1 |
 | CLI-010 | 计划、事件与审计（v1.1/P1）：`lyre.plan/v1`、`lyre.event/v1`、`lyre.audit/v1` 的 CLI 开关与回放；v1 不提供 | P1 |
 | CLI-011 | MCP 服务（v2）：`lyre mcp serve --stdio` 暴露同一工具与资源，默认只读、`--allow-write` 白名单、不联网、版本协商与 task/cancel；不在 v1 契约 | P1 |
 | CLI-012 | 插件 CLI 扩展（v2）：插件注册带 Schema 的命令，强制沙箱，带授权与 hostApiRange；仅 headless-safe 槽位；不在 v1 契约 | P1 |
