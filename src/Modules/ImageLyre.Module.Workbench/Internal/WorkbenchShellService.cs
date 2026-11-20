@@ -57,4 +57,10 @@ internal sealed class WorkbenchShellService : IWorkbenchShell
 
     /// <inheritdoc />
     public void HideBusy() => (_shell as WorkbenchShell)?.HideBusy();
+
+    /// <inheritdoc />
+    public void AddDocumentTab(string contentId, string title) => (_shell as WorkbenchShell)?.AddDocumentTab(contentId, title);
+
+    /// <inheritdoc />
+    public void RemoveDocumentTab(string contentId) => (_shell as WorkbenchShell)?.RemoveDocumentTab(contentId);
 }

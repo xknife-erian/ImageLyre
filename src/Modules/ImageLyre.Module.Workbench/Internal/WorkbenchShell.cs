@@ -16,6 +16,7 @@ using ImageLyre.UI.Contracts.Workbench;
 using Microsoft.Extensions.Logging;
 
 using LyreContentAttachment = ImageLyre.UI.Contracts.Attachments.ContentAttachment;
+using System.Collections.Generic;
 using ImageLyre.UI.Contracts.Slots;
 
 namespace ImageLyre.Module.Workbench.Internal;
@@ -40,6 +41,8 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
     private readonly ContentControl _contentHost;
     private readonly TextBlock _busyText = new();
     private readonly Border _busyOverlay = new();
+    private readonly StackPanel _tabs = new() { Orientation = Orientation.Horizontal, Spacing = 4, IsVisible = false };
+    private readonly Dictionary<string, Button> _tabsById = new(StringComparer.Ordinal);
     private readonly AtomUIMenu _menu = new();
 
     internal WorkbenchShell(ISlotManager slots)
@@ -96,7 +99,12 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
         layout.Children.Add(statusBar);
         layout.Children.Add(_contentHost);
 
-        Content = new Grid { Children = { layout, _busyOverlay } };
+        var body = new Grid { Children = { layout, _busyOverlay } };
+        var root = new DockPanel();
+        DockPanel.SetDock(_tabs, Dock.Top);
+        root.Children.Add(_tabs);
+        root.Children.Add(body);
+        Content = root;
 
         RebuildMenu();
         slots.SlotContentChanged += (_, args) =>
@@ -196,4 +204,31 @@ internal sealed partial class WorkbenchShell : AtomUIWindow
 
     /// <inheritdoc />
     public void HideBusy() => _busyOverlay.IsVisible = false;
+
+    /// <inheritdoc />
+    public void AddDocumentTab(string contentId, string title)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(contentId);
+
+        if (_tabsById.ContainsKey(contentId))
+        {
+            return;
+        }
+
+        var tab = new Button { Content = title };
+        tab.Bind(Button.FontSizeProperty, new Avalonia.Markup.Xaml.MarkupExtensions.DynamicResourceExtension("Lyre.Type.Size.S13"));
+        _tabsById[contentId] = tab;
+        _tabs.Children.Add(tab);
+        _tabs.IsVisible = true;
+    }
+
+    /// <inheritdoc />
+    public void RemoveDocumentTab(string contentId)
+    {
+        if (_tabsById.Remove(contentId, out var tab))
+        {
+            _tabs.Children.Remove(tab);
+            _tabs.IsVisible = _tabs.Children.Count > 0;
+        }
+    }
 }

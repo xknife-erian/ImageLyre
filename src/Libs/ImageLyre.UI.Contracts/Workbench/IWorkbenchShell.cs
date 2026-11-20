@@ -21,4 +21,13 @@ public interface IWorkbenchShell
 
     /// <summary>隐藏忙状态遮罩。</summary>
     void HideBusy();
+
+    /// <summary>在标签条上新增一个文档标签。</summary>
+    /// <param name="contentId">内容标识，用于关闭时定位。</param>
+    /// <param name="title">标签标题。</param>
+    void AddDocumentTab(string contentId, string title);
+
+    /// <summary>关闭指定文档标签。</summary>
+    /// <param name="contentId">内容标识。</param>
+    void RemoveDocumentTab(string contentId);
 }

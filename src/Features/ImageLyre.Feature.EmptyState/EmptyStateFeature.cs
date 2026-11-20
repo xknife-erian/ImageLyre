@@ -48,7 +48,12 @@ public sealed class EmptyStateFeature : BasePicoFeatures
         var sample = new Button { Content = "打开示例", HorizontalAlignment = HorizontalAlignment.Center };
 
         // D2 的进度源是模拟的：分段上报，演示壳层遮罩；真实解码属业务插件，不在基座里做。
-        sample.Click += async (_, _) => await SimulateOpenAsync(BaseContext);
+        sample.Click += async (_, _) =>
+        {
+            IWorkbenchShell? shell = BaseContext.UseOptional<IWorkbenchShell>()?.Value;
+            shell?.AddDocumentTab("sample.tif", "sample.tif");
+            await SimulateOpenAsync(BaseContext);
+        };
 
         // D3 缺校准：一根内联黄条，贴在内容上方；默认隐藏，用按钮演示开关。
         var warning = BuildWarningBar();
