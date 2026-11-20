@@ -116,13 +116,6 @@ public record CommandDescriptor
     /// </summary>
     public Func<object?, bool>? CanExecutePredicate { get; init; }
 
-    /// <summary>
-    /// 可选 when 上下文键表达式（语法见 <see cref="IContextKeyService"/>）。
-    /// 设置后命令可用性 = when 求值 &amp;&amp; <see cref="CanExecutePredicate"/>；
-    /// 由 Shell 实现订阅 <see cref="IContextKeyService.ContextKeyChanged"/> 并重算
-    /// <see cref="ICommandRegistry.AvailableCommandsChanged"/>。
-    /// </summary>
-    public string? When { get; init; }
 
     /// <summary>
     /// 命令描述/提示文本（用于状态栏或工具提示）。

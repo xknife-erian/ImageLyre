@@ -15,6 +15,7 @@
     <ProjectReference Include="..\..\src\Libs\ImageLyre.Plugins\ImageLyre.Plugins.csproj" />
     <ProjectReference Include="..\..\src\Libs\ImageLyre.UI.Contracts\ImageLyre.UI.Contracts.csproj" />
     <ProjectReference Include="..\..\src\Modules\ImageLyre.Module.Workbench\ImageLyre.Module.Workbench.csproj" />
+    <ProjectReference Include="..\..\src\Modules\ImageLyre.Module.Commands\ImageLyre.Module.Commands.csproj" />
   </ItemGroup>
 
   <ItemGroup>
