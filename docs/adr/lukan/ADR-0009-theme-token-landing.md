@@ -21,17 +21,19 @@
 - 组之后保留设计键的点分结构，逐段转成 PascalCase，段数不固定但必须与设计键一一对应。设计写 `state.selected.bg`，代码就是 `Lyre.State.Selected.Bg`；设计写 `size.statusbar.height`，代码就是 `Lyre.Size.Statusbar.Height`。不做二次命名，不合并同义键。
 - `Type` 组固定五个子维，顺序固定：`Family`、`Size`、`LineHeight`、`Weight`、`LetterSpacing`。字号按值建键（`Lyre.Type.Size.S11` 至 `S20`），角色名只用在样式里，不建键；行高与字距是绝对值，各自建键。
 - 字重进资源：`Lyre.Type.Weight.Regular`=400、`Lyre.Type.Weight.SemiBold`=600，只有这两档，因为排印 §3 只定义这两档，且 `typography-avalonia.md` §4.1 已有对应键。
-- 线宽只允许两个值：`Lyre.Line.Width.Hairline`=1、`Lyre.Line.Width.Signal`=2，其余尺寸不许出现。圆角固定 0，不建键；阴影不做，不建键。
+- 行高与字距的键名同样按值建，与字号一一对应：`Lyre.Type.LineHeight.L11`=16、`L16`=24、`L13`=20、`L20`=28（四档行高齐全，没有第五个值）；字距三档 `Lyre.Type.LetterSpacing.Tight`=−0.20、`Normal`=0、`Caps`=+1.10，数值固定写在键上，不新增第四档。
+- 线宽键与设计侧 `size.hairline`、`ctrl.signal` 是映射关系而不是第二份值：键在这里定义一次，设计文档只提供来源名与用途。线宽只管框线：`Lyre.Line.Width.Hairline`=1、`Lyre.Line.Width.Signal`=2，其余框线尺寸不许出现。`controls.md` §4 的图标描边 1.25 属矢量图形自带属性，由图标资源携带，不进线宽键，因此与"线宽只允许 1 与 2"不冲突。圆角固定 0，不建键；阴影不做，不建键。
 - 类型：颜色给 `Color` 不给 `Brush`，`Brush` 与 `Thickness` 由壳在使用处用键组合生成。这条是把"值只有一个来源"收窄为"设计定义的数值只有一个来源"，组合产物不算新值。
 - `warn` 不进组表：`color-tokens.md` 的 18 个键里没有 warn，而产品外观 §6.2 把警告归入信号色，因此两键暂挂 `Lyre.Signal.Warning.Background` 与 `Lyre.Signal.Warning.Line`，值标 `TODO(设计确认)`，要么设计补值，要么删。
 
 ### 2.2 覆盖层：走 AtomUI 6.2.15 自带的令牌 API
 
-- 覆盖是**代码级**而不是资源级：AtomUI.Core 6.2.15 已提供 `DesignTokens`、`ThemeTokenResourceProvider`、`WithToken`、`WithInitialTheme`、`WithDefaultFontFamily`（包内实测确认）。A4 用这套 API 把十个字号位映射到四档，逐控件令牌（Menu、Button、ComboBox、WindowTitleBar 等）按 PLAN A4 的清单处理，不靠改本仓资源键去影响 AtomUI 控件。
+- 覆盖是**代码级**而不是资源级：AtomUI.Core 6.2.15 已提供 `DesignTokens`、`ThemeTokenResourceProvider`、`WithToken`、`WithInitialTheme`、`WithDefaultFontFamily`（包内实测确认）。A4 用这套 API 把十个字号位映射到四档，逐控件令牌只处理 A4 清单里的六个控件（按钮、输入、分段、复选框、菜单项、表格），清单之外的不预做，不靠改本仓资源键去影响 AtomUI 控件。
 - 亮暗两套字典各一本：`Themes/Light.axaml` 与 `Themes/Dark.axaml`，键名完全相同，以 `ThemeDictionaries` 的 `Light`/`Dark` 两个变体键挂进同一父字典。
 - `Application.RequestedThemeVariant` 是唯一开关，由外观模块写入；跟随系统写 `ThemeVariant.Default`。控件只引用 `Lyre.*`，切主题时框架按变体换值，控件树不重建。
 - `IThemeManager` 现有契约（`RegisterTheme(name, uri)` 加 `ApplyTheme(name)`）是"按 URI 换整本字典"，与上面这套共存会造成两种机制。本次只登记冲突，不在本 ADR 改契约：改 `IThemeManager` 的提案另开 ADR-0010，在那之前外观模块只用 `RequestedThemeVariant`，不复用 URI 切换。
 - 字号白名单的扫描对象是**源码**里的 `FontSize` 字面量，不是编译产物；通过条件是字面量 ∈ {11, 13, 16, 20}。缩放后的值只在运行期由换算产生，不参与静态扫描。
+- 键集合断言必须能抓到同名键：Avalonia 对同一字典内的重复 `x:Key` 静默取后者、不报错，因此断言的判定里要加一条"同一字典内 `x:Key` 不得重复"，只比两套键集合是否相等是抓不到的。
 - 字体家族与回退只在一个落点设置：`src/Apps/ImageLyre.App/Program.cs` 的 `BuildAvaloniaApp` 里，紧接 `UseCangmingAtomUI()` 之后一次性配置 `FontManagerOptions` 的 `DefaultFamilyName`、`FontFamilyMappings` 与 `FontFallbacks`（CJK 码段用 `UnicodeRange` 声明），同时用 AtomUI 的 `WithDefaultFontFamily` 保证控件跟随。两条家族栈写成 `Lyre.Type.Family.Ui` 与 `Lyre.Type.Family.Mono` 资源键，值是家族栈字符串；三平台族名以 `typography-avalonia.md` §3.2 与 §3.3 为准，其中 macOS 与 Linux 的族名标注为待实测。
 - 既有裸值同批迁移：`src/Modules/ImageLyre.Module.Workbench/Internal/WorkbenchShell.cs` 里的 `1280×800`、`Brushes.LightGray`、`Thickness(8, 3)` 属 A2 与 A3 的迁移清单，迁完才允许把字面量扫描接入。
 
@@ -65,7 +67,7 @@
 1. 若实测发现线宽反向补偿在 150% 与 200% 下出现亚像素抖动或明显模糊，改为"按缩放重算线宽令牌"的局部方案；这属于换机制，另开 ADR 并回写本文。
 2. 若文字在 200% 下清晰度不可接受，评估是否改为重算字号并放弃"不重算"口径；同样要另开 ADR，并同批改 `spacing.md` §6。
 3. 若 AtomUI 升版移除或改名 `DesignTokens` 一类 API，覆盖层按新 API 重写，键空间不变。
-4. 若出现第二个界面宿主，键空间仍成立，但家族栈与主题变体实现要重写，回 `docs/design/lukan/DESIGN-0003-libs-layering.md` §4。
+4. 若出现第二个界面宿主，按 `docs/design/lukan/DESIGN-0003-libs-layering.md` §4 处理，本文不重复其条款。
 
 ## 6 与其它文档的关系
 
