@@ -10,6 +10,7 @@ using Cangming.Toolkit.Avalonias.AtomUI;
 using ImageLyre.App.Startup;
 using ImageLyre.Bootstrap;
 using ImageLyre.Bootstrap.Services;
+using ImageLyre.Module.Workbench.Slots;
 using ImageLyre.UI.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -74,7 +75,7 @@ internal static partial class Program
     {
         // 顺序固定：先注入区域管理器（容器模块的上下文只保存延迟引用），
         // 再由容器模块建窗口，最后附着功能。反过来做会在创建窗口时抛"SlotManager 未注入"。
-        ISlotManager slotManager = pluginManager.InjectSlotManager<SlotManager>();
+        ISlotManager slotManager = pluginManager.InjectSlotManager<SlotRegistry>();
 
         IWorkbenchShell shell = pluginManager.FindModuleBuilder<IWorkbenchShell>()?.Build().Value
                                 ?? throw new InvalidOperationException(
