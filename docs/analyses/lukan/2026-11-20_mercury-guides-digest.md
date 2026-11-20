@@ -74,3 +74,16 @@ Mercury 的 `docs/guide` 是这套插件体系的一手说明书：它写的不�
 2. 两个时点各输出一行 Dump：首帧给基线、退出核对订阅归零；我们只有启动一行。
 
 SlotIssue 四字段与指南一致。
+
+## 8 15-菜单模型 读后记录（2026-11-20 部分）
+
+读了 §4 声明式条件。Mercury 的做法是 Feature 实现 IMenuConditionManifest，把"何时可用、何时可见"声明给宿主：
+
+- RegisterEnable(key, unexcepted, mandatory, apply) 与 RegisterVisibility 同形，可见与可用是两条独立通道；
+- 条件写的是状态键字符串（如 ExpLoaded:True、Panel:ExpFlowPanel），由 IUIStateService 的 Responser 产出；
+- 注册后宿主立刻按当前状态求值一次，菜单初始态就是对的；
+- 同一 key 二次注册替换旧订阅，Feature 重启不累积。
+
+本仓现状：菜单附件上是静态的 IsEnabled 与 IsVisible，没有条件、没有状态键服务、没有 UIState 那一层（迁移时按不做权限与不做状态匹配器的判断删掉了）。
+
+结论：**不纳入 A 到 E**。理由是它依赖 IUIStateService 这套状态键生产机制，属于新能力而不是本计划的补齐项；若将来要做，前置是先有状态键服务，再谈条件注册。记入待办。
