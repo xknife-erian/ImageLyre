@@ -158,7 +158,7 @@ public sealed class SlotRegistry : ISlotManager, ISlotRegistry, ISlotChangeSourc
                 continue;
             }
 
-            _issues.Add(new SlotIssue(SlotIssueKind.UnresolvedSlot, name, queue[0].OwnerType,
+            AddIssue(new SlotIssue(SlotIssueKind.UnresolvedSlot, name, queue[0].OwnerType,
                 $"槽位 {name} 从未被贡献，{queue.Count} 个附件处于待解析状态。"));
         }
 
@@ -166,7 +166,7 @@ public sealed class SlotRegistry : ISlotManager, ISlotRegistry, ISlotChangeSourc
         {
             if (slot.Entries.Count == 0 && !slot.Descriptor.IsReserved)
             {
-                _issues.Add(new SlotIssue(SlotIssueKind.EmptySlot, slot.Descriptor.Name, null,
+                AddIssue(new SlotIssue(SlotIssueKind.EmptySlot, slot.Descriptor.Name, null,
                     $"槽位 {slot.Descriptor.Name} 已贡献但没有任何附件。"));
             }
         }
@@ -200,6 +200,21 @@ public sealed class SlotRegistry : ISlotManager, ISlotRegistry, ISlotChangeSourc
     public void ReportIssue(SlotIssue issue)
     {
         ArgumentNullException.ThrowIfNull(issue);
+
+        AddIssue(issue);
+    }
+
+    /// <summary>登记一条问题，按"槽位 + 所有者 + 码"去重，避免同一问题反复上报把列表撑爆。</summary>
+    /// <param name="issue">问题条目。</param>
+    private void AddIssue(SlotIssue issue)
+    {
+        if (_issues.Any(existing =>
+            existing.Kind == issue.Kind
+            && string.Equals(existing.SlotName, issue.SlotName, StringComparison.Ordinal)
+            && string.Equals(existing.OwnerId, issue.OwnerId, StringComparison.Ordinal)))
+        {
+            return;
+        }
 
         _issues.Add(issue);
     }
@@ -277,28 +292,28 @@ public sealed class SlotRegistry : ISlotManager, ISlotRegistry, ISlotChangeSourc
     {
         if (attachment is ISlotAttachment slotAttachment && slotAttachment.Kind != slot.Descriptor.Kind)
         {
-            _issues.Add(new SlotIssue(SlotIssueKind.KindMismatch, slot.Descriptor.Name, ownerType,
+            AddIssue(new SlotIssue(SlotIssueKind.KindMismatch, slot.Descriptor.Name, ownerType,
                 $"附件形态 {slotAttachment.Kind} 与槽位声明的 {slot.Descriptor.Kind} 不一致，已拒绝。"));
             return;
         }
 
         if (slot.Descriptor.Capacity == SlotCapacity.Exclusive && slot.Entries.Count > 0)
         {
-            _issues.Add(new SlotIssue(SlotIssueKind.CapacityExceeded, slot.Descriptor.Name, ownerType,
+            AddIssue(new SlotIssue(SlotIssueKind.CapacityExceeded, slot.Descriptor.Name, ownerType,
                 "单值槽只接受第一个附件，后来者被拒绝。"));
             return;
         }
 
         if (slot.Entries.Any(e => ReferenceEquals(e.Attachment, attachment)))
         {
-            _issues.Add(new SlotIssue(SlotIssueKind.DuplicateAttachment, slot.Descriptor.Name, ownerType,
+            AddIssue(new SlotIssue(SlotIssueKind.DuplicateAttachment, slot.Descriptor.Name, ownerType,
                 "同一附件实例重复附着到同一槽位，已忽略。"));
             return;
         }
 
         if (_closed)
         {
-            _issues.Add(new SlotIssue(SlotIssueKind.AttachedAfterClose, slot.Descriptor.Name, ownerType,
+            AddIssue(new SlotIssue(SlotIssueKind.AttachedAfterClose, slot.Descriptor.Name, ownerType,
                 "收口之后仍有附件附着，按运行期动态面板处理。"));
         }
 
