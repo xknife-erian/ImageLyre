@@ -20,7 +20,6 @@ namespace ImageLyre.Module.Workbench.Slots;
 /// </remarks>
 public sealed class SlotHost : ContentControl, IDisposable
 {
-    private readonly ISlotRegistry _registry;
     private readonly ISlotChangeSource? _changes;
     private readonly string _slotName;
     private bool _disposed;
@@ -33,7 +32,6 @@ public sealed class SlotHost : ContentControl, IDisposable
         ArgumentNullException.ThrowIfNull(registry);
         ArgumentException.ThrowIfNullOrWhiteSpace(slotName);
 
-        _registry = registry;
         _slotName = slotName;
         _changes = registry as ISlotChangeSource;
 
@@ -75,15 +73,8 @@ public sealed class SlotHost : ContentControl, IDisposable
             .OfType<LyreContentAttachment>()
             .FirstOrDefault();
 
+        // 位置存在但暂时没人附着是正常状态：宿主只是不可见，不报空槽。
         Content = attachment?.Create();
         IsVisible = Content is not null;
-
-        // 位置存在但暂时没人附着是正常状态，按预留位置处理，不报空槽。
-        if (attachment is null && !IsReserved())
-        {
-            IsVisible = false;
-        }
     }
-
-    private bool IsReserved() => _registry.Snapshot().Any(s => s.Name == _slotName && s.IsReserved);
 }
