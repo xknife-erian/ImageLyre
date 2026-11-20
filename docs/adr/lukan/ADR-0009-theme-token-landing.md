@@ -29,7 +29,8 @@
 
 ### 2.2 覆盖层：走 AtomUI 6.2.15 自带的令牌 API
 
-- 覆盖是**代码级**而不是资源级：AtomUI.Core 6.2.15 已提供 `DesignTokens`、`ThemeTokenResourceProvider`、`WithToken`、`WithInitialTheme`、`WithDefaultFontFamily`（包内实测确认）。A4 用这套 API 把十个字号位映射到四档，逐控件令牌只处理 A4 清单里的六个控件（按钮、输入、分段、复选框、菜单项、表格），清单之外的不预做，不靠改本仓资源键去影响 AtomUI 控件。
+- 覆盖是**代码级**而不是资源级。AtomUI.Core 6.2.15 的公开令牌入口经 `MetadataLoadContext` 实测为：`AtomUI.Theme.IThemeManager` 暴露 `SemanticParts`（类型 `AtomUI.Theme.Schema.SemanticPartRegistry`）与 `ApplyThemeAsync(ThemeRequest, CancellationToken)`；令牌模型在 `AtomUI.Theme.Schema` 下，由 `TokenDescriptor`、`ControlTokenDescriptor`、`ControlTokenIdentity` 等类型描述，另有 `ControlTokenResourceKey` 一族资源键。A4 走这套 Schema 覆盖，把十个字号位映射到四档，逐控件令牌只处理清单里的六个控件（按钮、输入、分段、复选框、菜单项、表格），清单之外的不预做，不靠改本仓资源键去影响 AtomUI 控件。
+- （0.3 勘误：本条此前写作"已提供 `DesignTokens`、`ThemeTokenResourceProvider`、`WithToken`、`WithInitialTheme`、`WithDefaultFontFamily`"，那是从二进制字符串里匹配到的名字，不是可引用的公开类型；实测后改为上面这组真实类型，结论方向不变。）
 - 亮暗两套字典各一本：`Themes/Light.axaml` 与 `Themes/Dark.axaml`，键名完全相同，以 `ThemeDictionaries` 的 `Light`/`Dark` 两个变体键挂进同一父字典。
 - `Application.RequestedThemeVariant` 是唯一开关，由外观模块写入；跟随系统写 `ThemeVariant.Default`。控件只引用 `Lyre.*`，切主题时框架按变体换值，控件树不重建。
 - `IThemeManager` 现有契约（`RegisterTheme(name, uri)` 加 `ApplyTheme(name)`）是"按 URI 换整本字典"，与上面这套共存会造成两种机制。本次只登记冲突，不在本 ADR 改契约：改 `IThemeManager` 的提案另开 ADR-0010，在那之前外观模块只用 `RequestedThemeVariant`，不复用 URI 切换。
