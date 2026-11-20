@@ -125,3 +125,62 @@ flowchart TD
 ## 12 0.2 的教训
 
 把位置写成清单，等于替未来的插件作者决定他们能往哪里塞东西。正确做法是**把开位置的能力交出去**：谁拥有界面区域，谁就有权在自己下面再开位置；壳只保证"锚点存在、命名可追溯、父亡子收"。架构的职责是保证这套机制可靠，不是预言位置。
+
+## 13 嵌套参考实现：面板自己开位置
+
+这是整套设计的核心用法。一个功能插入一块面板，面板在构建时开出若干位置，下一个功能的作者只要知道名字就能往里放内容，两者互不认识。
+
+`csharp
+// 面板功能：开位置、摆渲染器、把子位置公开出去
+public sealed class DossierPanelFeature : BasePicoFeatures
+{
+    public const string PanelSlot = "Dossier.Panel";          // 我往壳的内容区占一块
+    public const string SummarySlot = "Dossier.Panel.Summary"; // 我开给别人的位置
+    public const string DetailSlot = "Dossier.Panel.Detail";
+
+    public override void RegisterAttachments(IAttachmentRegistry registry)
+    {
+        registry.AttachToSlot(WorkbenchSlots.Content, new ContentAttachment
+        {
+            Create = () => BuildPanel(registry),
+        });
+    }
+
+    private Control BuildPanel(IAttachmentRegistry registry)
+    {
+        registry.ContributeSlot(new SlotDescriptor(SummarySlot, SlotKind.Content, SlotCapacity.Exclusive, "摘要", IsReserved: true));
+        registry.ContributeSlot(new SlotDescriptor(DetailSlot, SlotKind.Content, SlotCapacity.Multiple, "明细", IsReserved: true));
+
+        return new StackPanel
+        {
+            Children =
+            {
+                SlotHost.For(SummarySlot),   // 每个子位置一个宿主控件
+                SlotHost.For(DetailSlot),
+            },
+        };
+    }
+}
+`
+
+`csharp
+// 外部功能：只要知道名字，无需引用面板功能的程序集
+public sealed class CalibrationDetailFeature : BasePicoFeatures
+{
+    public override void RegisterAttachments(IAttachmentRegistry registry) =>
+        registry.AttachToSlot("Dossier.Panel.Detail", new ContentAttachment { Create = BuildCalibrationBlock });
+}
+`
+
+要点逐条：
+
+| 要点 | 原因 |
+| :--- | :--- |
+| 子位置在**构建面板时**贡献，不是启动时 | 位置的生命与面板同寿；面板没被渲染时子位置不存在，附着进待解析桶 |
+| 子位置一律 IsReserved: true | 位置开出来是给未来用的，当下空是正常状态，不该进空槽诊断 |
+| 名称用 面板名.分区 前缀 | 排障时一眼看出归属；两个面板不会撞名 |
+| 外部功能只用字符串，不引用对方程序集 | 这是解耦的关键：插入不需要编译期依赖，只需要名字契约 |
+| 面板停止时要连带摘除子位置 | 父亡子收；子位置里的附件由附着者自己响应停用，面板不替它清 |
+
+**发现机制**：位置是开放的，但名字必须可被发现。三条渠道：面板功能把自己开的位置常量公开（public const string），第二是写进接入指南，第三是插件中心的自检窗口按槽位名列出当前所有位置与附件来源。没有这三条，开放会变成"谁也找不到谁"。
+
