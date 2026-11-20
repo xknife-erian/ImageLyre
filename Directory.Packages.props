@@ -6,6 +6,8 @@
     <ItemGroup>
         <PackageVersion Include="Avalonia" Version="12.1.6" />
         <PackageVersion Include="Avalonia.Desktop" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Headless" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Headless.XUnit" Version="12.1.6" />
         <PackageVersion Include="AtomUI.Desktop.Controls" Version="6.2.15" />
         <PackageVersion Include="AtomUI.Desktop.Controls.DataGrid" Version="6.2.15" />
     </ItemGroup>
