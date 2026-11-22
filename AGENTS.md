@@ -34,14 +34,14 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 - `docs/spec/requirements/product-requirements.md`：产品需求文档，定义用户、功能范围、优先级与验收口径，研发排期以它为准；
 - `docs/spec/baseline/startup-requirements.md`：新一代系统的启动需求与架构基线，任何设计、计划与评审先以它为前提；
 - `docs/spec/m1/`、`docs/spec/cli/`：M1 验收与交互规范、CLI 与 Agent 的技术契约；
-- `docs/adr/<用户名>/`、`docs/design/<用户名>/`、`docs/plans/<用户名>/`、`docs/analyses/<用户名>/`、`docs/daily/<用户名>/`：按类型与用户名归档，目录与说明已保留、内容已随 2026-11-22 重置清空，重建开始时直接写入；
+- `docs/adr/<用户名>/`、`docs/design/<用户名>/`、`docs/plans/<用户名>/`、`docs/analyses/<用户名>/`、`docs/daily/<用户名>/`：按类型与用户名归档；2026-11-22 重建的首批产出是 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` 与 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md`，其余目录待写入；
 - `docs/guide/`、`docs/reference/`：面向使用者与外部资料，平铺存放、不按人分。
 
 ## 4 项目现状与约定
 
 2022 年版基于 WPF 与 .NET 6 的实现、以及 2026-11 的两轮重建尝试整体弃用：2026-11-22 起工作区已清空，`src/`、`tests/`、`tools/` 下的代码与全部过程文档（ADR、design、analyses、daily、plans、guide、reference）的内容一并删除，`docs/` 的类型目录与各目录说明保留，清除前的完整状态保存在标签 `archive/pre-reset-2026-11-22`，需要取证时从该标签读取而不是凭记忆补写。
 
-当前仓库没有代码、也没有构建入口，重建从需求开始，唯一前置是 `docs/spec/requirements/` 与 `docs/spec/baseline/startup-requirements.md`；建什么、怎么分层、构建入口叫什么，由重建的首份 design 规定，本文件在那之后补登记。
+当前仓库没有代码、也没有构建入口；插件机制的架构基线与 M1 骨架分别由 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` 与 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md` 规定，工程目录、插件工程命名与扫描前缀以该 design 为准，代码从 M1 第 1 步开始落；构建入口在 M1 第 1 步落地后于本文件补登记，不得另起第二套。
 
 少而硬的共同约定：目录与文件搬家一律 `git mv`，删除用 `git rm`，禁止复制后把原目录留在原处；行尾与编码以 `.gitattributes`、`.editorconfig` 为准，新增文件交给 git 自动归一化；提交信息用中文并带 scoped 前缀，一次提交只做一件事。
 
@@ -49,9 +49,9 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 
 | 路径 | 用途 |
 | :--- | :--- |
-| `docs/spec/` | 需求、架构基线、M1 验收规范与 CLI 契约，当前唯一的交付物 |
-| `docs/` | 文档体系，规则入口 `docs/README.md`；类型目录与说明已保留，内容待重建后写入 |
-| `src/`、`tests/` | 源码与测试落点，已在位、内容为空；分层与构建入口由重建的首份 design 规定 |
+| `docs/spec/` | 需求、架构基线、M1 验收规范与 CLI 契约 |
+| `docs/` | 文档体系，规则入口 `docs/README.md`；`adr/` 与 `design/` 已有首批内容，其余类型目录与说明在位、内容待写入 |
+| `src/`、`tests/` | 源码与测试落点；目录结构与插件工程命名由 `DESIGN-0001` 规定，代码从 M1 第 1 步开始落 |
 | `.agents/skills/` | 游刃技能的下游副本，只读 |
 | `.agents/user-profile/<用户名>/` | 各人的 AI 配置档案，`.agents/` 下唯一的个人落点 |
 | `README.md` | 项目背景与历史缘由 |
