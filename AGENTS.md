@@ -13,7 +13,7 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 
 ## 2 技能加载
 
-技能只在任务匹配时按需加载，正文不复制到本文件。技能的唯一真源是游刃仓 `https://gitee.com/fangyu_fy/youren.git`，本仓 `.agents/skills/` 只是下游拷贝，只读；修订先提交到游刃仓，再用 `tools/sync-skills.cs` 同步过来，不要直接改副本，否则下一轮同步会把改动覆盖掉。
+技能只在任务匹配时按需加载，正文不复制到本文件。技能的唯一真源是游刃仓 `https://gitee.com/fangyu_fy/youren.git`，本仓 `.agents/skills/` 只是下游拷贝，只读；修订先提交到游刃仓，再用游刃仓的同步脚本拉取更新，不要直接改副本，否则下一轮同步会把改动覆盖掉。
 
 | 技能 | 何时加载 | 路径 |
 | :--- | :--- | :--- |
@@ -33,13 +33,15 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 
 - `docs/spec/requirements/product-requirements.md`：产品需求文档，定义用户、功能范围、优先级与验收口径，研发排期以它为准；
 - `docs/spec/baseline/startup-requirements.md`：新一代系统的启动需求与架构基线，任何设计、计划与评审先以它为前提；
-- `docs/spec/plans/`、`docs/spec/reviews/`、`docs/spec/status/`：产品经理的过程文档，文件名以 `PM-` 开头并接 `PLAN-`、`REVIEW-`、`STATUS-` 类型标记；
-- `docs/adr/lukan/`、`docs/design/lukan/`、`docs/plans/lukan/`、`docs/analyses/lukan/`、`docs/daily/lukan/`：按类型与用户名归档；
+- `docs/spec/m1/`、`docs/spec/cli/`：M1 验收与交互规范、CLI 与 Agent 的技术契约；
+- `docs/adr/<用户名>/`、`docs/design/<用户名>/`、`docs/plans/<用户名>/`、`docs/analyses/<用户名>/`、`docs/daily/<用户名>/`：按类型与用户名归档，2026-11-22 重置后为空，重建开始时按 `docs/README.md` 建立；
 - `docs/guide/`、`docs/reference/`：面向使用者与外部资料，平铺存放、不按人分。
 
 ## 4 项目现状与约定
 
-2022 年版基于 WPF 与 .NET 6 的实现整体弃用，最后一次完整状态保存在 `legacy/wpf-2022` 分支与 `archive/pre-rebuild-2026-11-18` 标签，主线 `develop` 已清空旧代码。新系统按启动需求重建，唯一构建入口为 `src/ImageLyre.slnx`，桌面入口在 `src/Apps/ImageLyre.Desktop`，`src/Libs/` 按内核、成像、编解码、插件、沙箱与 UI 分层；构建命令为 `dotnet build src/ImageLyre.slnx`。`tests/` 预留给 M1 阶段按 TDD 建立的测试工程。
+2022 年版基于 WPF 与 .NET 6 的实现、以及 2026-11 的两轮重建尝试整体弃用：2026-11-22 起工作区已清空，`src/`、`tests/`、`tools/` 与全部过程文档（ADR、design、analyses、daily、plans、guide、reference）一并删除，清除前的完整状态保存在标签 `archive/pre-reset-2026-11-22`，需要取证时从该标签读取而不是凭记忆补写。
+
+当前仓库没有代码、也没有构建入口，重建从需求开始，唯一前置是 `docs/spec/requirements/` 与 `docs/spec/baseline/startup-requirements.md`；建什么、怎么分层、构建入口叫什么，由重建的首份 design 规定，本文件在那之后补登记。
 
 少而硬的共同约定：目录与文件搬家一律 `git mv`，删除用 `git rm`，禁止复制后把原目录留在原处；行尾与编码以 `.gitattributes`、`.editorconfig` 为准，新增文件交给 git 自动归一化；提交信息用中文并带 scoped 前缀，一次提交只做一件事。
 
@@ -47,11 +49,9 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 
 | 路径 | 用途 |
 | :--- | :--- |
-| `src/ImageLyre.slnx` | 唯一构建入口 |
-| `src/Apps/ImageLyre.Desktop` | Avalonia + AtomUI 桌面入口 |
-| `src/Libs/` | 内核、成像、编解码、插件、沙箱与 UI 六个类库 |
-| `tests/` | 测试工程落点，M1 建立 |
+| `docs/spec/` | 需求、架构基线、M1 验收规范与 CLI 契约，当前唯一的交付物 |
 | `docs/` | 文档体系，规则入口 `docs/README.md` |
+| `src/`、`tests/` | 待建：重建的首份 design 落地后按它建立 |
 | `.agents/skills/` | 游刃技能的下游副本，只读 |
 | `.agents/user-profile/<用户名>/` | 各人的 AI 配置档案，`.agents/` 下唯一的个人落点 |
 | `README.md` | 项目背景与历史缘由 |
