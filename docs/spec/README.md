@@ -22,4 +22,4 @@
 1. 交付物按 `requirements/`、`baseline/`、`m1/`、`cli/` 分组，根目录只留本 README。
 2. 需求与架构基线是交付物的根；新一轮的设计、决策与过程记录在重建开始后按 `docs/README.md` 的类型目录重新建立，不再沿用旧目录。
 3. 验收矩阵是需求与测试之间的桥：需求 ID 与验收用例一一对应，执行记录回填在矩阵中。
-4. 历史的 `docs/adr/`、`docs/design/`、`docs/daily/` 已随 2026-11-22 的重置清除，恢复请查标签 `archive/pre-reset-2026-11-22`。
+4. 历史的 `docs/adr/`、`docs/design/`、`docs/daily/` 内容已随 2026-11-22 的重置清空，目录与说明保留；需要取证旧内容时查标签 `archive/pre-reset-2026-11-22`。
