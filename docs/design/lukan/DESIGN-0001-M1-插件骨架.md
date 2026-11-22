@@ -9,6 +9,7 @@
 | 0.5 | 2026-11-22 | 草稿 | lukan | 作者口径修订：`ImageLyre.Domains` 在 M1 建成空工程并附 README；新增“每个工程必须带 README”的约定 |
 | 0.6 | 2026-11-22 | 草稿 | lukan | 作者口径修订：按 Mercury 的 `MainWindowFactory` 与 `WorkbenchModule` 对齐——App 只负责启动、启动参数、启动画面与欢迎界面、编排；主窗体由壳插件在自己的 `Build()` 里产出 |
 | 0.7 | 2026-11-23 | 草稿 | lukan | 作者口径补两项基础支持：单入口双宿主（桌面 + CLI，同一 Bootstrap 与插件集，Feature 扫描期过滤，M1 命令为 `--version`/`--plugins`/`--help`）；多语言运行期切换（`ILocalizationService` 契约、平台插件聚合资源、壳与 Feature 刷新文案） |
+| 0.8 | 2026-11-23 | 草稿 | lukan | 修正多语言归属：本地化改成宿主基础设施 `ImageLyre.Localization`，App 创建、Bootstrap 注册同一实例，欢迎界面与主界面共用；删除 `ImageLyre.Module.Localization` 插件，壳与 Feature 只实现并注册资源源 |
 
 ## 1 目标与范围
 
@@ -49,9 +50,9 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 | `ImageLyre.Bootstrap` | `src/Bootstrap/ImageLyre.Bootstrap` | 启动链（L1，无 UI） | 日志初始化、扫描前缀、容器构建、`PicoPluginSystem.Launch`、管理器解析、`NotifyServiceProviderBuilt`、`StartAsync`、能力插件计数日志、关停；引用 cangming 机制包与契约，不引用 Avalonia、AtomUI 或任何插件 |
 | `ImageLyre.Domains` | `src/Contracts/ImageLyre.Domains` | 领域对象与纯算法（M1 为空工程） | 只放跨插件共享且带不变量的数据与纯函数；不引用 `ImageLyre.Contracts`、不引用 UI、不引 DI 与日志；M1 只有 README 与空 csproj |
 | `ImageLyre.Contracts` | `src/Contracts/ImageLyre.Contracts` | 产品契约（无 UI） | `ILocalizationService`、`ILocalizationSource`；M1 另放 `IClock`、`IGreeter`，命名空间为 `ImageLyre.Contracts.Demo`，M1 验收后删除；不引用 Avalonia、AtomUI、SkiaSharp |
-| `ImageLyre.Module.Localization` | `src/Plugins/ImageLyre.Module.Localization` | 平台插件 | 提供 `ILocalizationService`：聚合各插件注册的资源源、广播语言切换、缺键回退 zh-CN 并记诊断；自带中英两套资源 |
 | `ImageLyre.Shell.Contracts` | `src/Contracts/ImageLyre.Shell.Contracts` | 壳契约 | `ShellSlots`、`IWorkbenchShell`、`DockPaneAttachment`；引用 `ImageLyre.Contracts`、`Cangming.PicoPlugins`、`Cangming.Toolkit`、Avalonia |
-| `ImageLyre.Module.Shell` | `src/Plugins/ImageLyre.Module.Shell` | Module 插件（容器类 Module） | 在 `Build()` 里构造 `ShellWindow` 并贡献三个一级槽位；`IWorkbenchShell` 由 `ShellWindow` 实现；持有 `ShellModuleContext`；引用 `ImageLyre.Shell.Contracts`、机制包、Avalonia 路线包、AtomUI |
+| `ImageLyre.Localization` | `src/Infrastructure/ImageLyre.Localization` | 基础设施库（非插件） | `LocalizationService`：聚合资源源、维护当前语言、缺键回退 zh-CN 并记诊断、广播切换；引用 `ImageLyre.Contracts`，不引用 UI、不引用插件；由 App 创建、Bootstrap 注册同一实例 |
+| `ImageLyre.Module.Shell` | `src/Plugins/ImageLyre.Module.Shell` | Module 插件（容器类 Module） | 在 `Build()` 里构造 `ShellWindow` 并贡献三个一级槽位；`IWorkbenchShell` 由 `ShellWindow` 实现；实现 `ILocalizationSource` 提供壳文案；持有 `ShellModuleContext`；引用 `ImageLyre.Shell.Contracts`、`ImageLyre.Contracts`、机制包、Avalonia 路线包、AtomUI |
 | `ImageLyre.Module.Demo.Clock` | `src/Plugins/ImageLyre.Module.Demo.Clock` | Module 插件 | 提供 `IClock`，持有 `ClockModuleContext` |
 | `ImageLyre.Module.Demo.Greeter` | `src/Plugins/ImageLyre.Module.Demo.Greeter` | Module 插件 | 提供 `IGreeter`，声明 `Require<IClock>` 与 `After<IClock>`，持有 `GreeterModuleContext` |
 | `ImageLyre.Feature.Demo` | `src/Plugins/ImageLyre.Feature.Demo` | Feature 插件 | 消费 `IGreeter`，向工具条与辅助面板各附一项；持有 `DemoFeatureContext`；引用 `ImageLyre.Shell.Contracts`、`ImageLyre.Contracts`、路线包与 AtomUI，不引用任何 Module 工程 |
@@ -71,7 +72,7 @@ flowchart LR
     DC["ImageLyre.Contracts"]
     DN["ImageLyre.Domains（空工程）"]
     MS["ImageLyre.Module.Shell"]
-    ML["ImageLyre.Module.Localization"]
+    LOC["ImageLyre.Localization（基础设施）"]
     MC["ImageLyre.Module.Demo.Clock"]
     MG["ImageLyre.Module.Demo.Greeter"]
     FD["ImageLyre.Feature.Demo"]
@@ -89,8 +90,9 @@ flowchart LR
     MS --> SC
     MS --> CM
     MS --> AVL
-    ML --> DC
-    ML --> CM
+    LOC --> DC
+    APP --> LOC
+    BOOT --> LOC
     MC --> DC
     MC --> CM
     MG --> DC
@@ -116,8 +118,9 @@ sequenceDiagram
     participant Feat as Feature.Demo
 
     Entry->>Entry: 解析启动参数
-    Entry->>Welcome: 显示启动画面/欢迎界面
-    Entry->>Boot: StartAsync(configure)
+    Entry->>Entry: new LocalizationService()，注册 App 文案源
+    Entry->>Welcome: 显示启动画面/欢迎界面（文案取自同一服务）
+    Entry->>Boot: StartAsync(mode, configure: 注册同一实例)
     Boot->>Boot: LogHub.Initialize
     Boot->>Boot: AddPluginAssemblyPrefixes(["ImageLyre.Module.","ImageLyre.Feature."])
     Boot->>Boot: Launch → BuildServiceProvider → 解析管理器
@@ -255,14 +258,23 @@ async Task ComposeAsync(IClassicDesktopStyleApplicationLifetime desktop)
 public static int Main(string[] args)
 {
     var options = StartupOptions.Parse(args);
+    var localization = new LocalizationService();
+    localization.AddSource(new AppStringSource());
 
     if (options.Headless)
     {
-        return CliHost.RunAsync(options).GetAwaiter().GetResult();
+        return CliHost.RunAsync(options, localization).GetAwaiter().GetResult();
     }
 
-    return new App(options).RunDesktop(args);
+    return new App(options, localization).RunDesktop(args);
 }
+
+// 桌面分支：把同一实例注册进容器，插件通过构造注入取得它
+var bootstrap = await BootstrapHost.StartAsync(
+    loggerFactory,
+    HostMode.Desktop,
+    services => services.AddSingleton<ILocalizationService>(localization),
+    CancellationToken.None);
 ```
 
 CLI 骨架在 M1 只支持三条命令：`--version` 输出版本，`--plugins` 输出插件清单（Id、名称、状态、是否 Feature），`--help` 输出用法；三条都不创建窗口，也不初始化 Avalonia 应用。
@@ -554,7 +566,7 @@ public interface ILocalizationSource
 }
 ```
 
-M1 的落地范围：`ImageLyre.Module.Localization` 提供聚合服务与中英两套自有资源；壳插件与 `ImageLyre.Feature.Demo` 各自实现 `ILocalizationSource` 并注册；壳在标题栏放一个语言切换入口，切换后菜单、状态栏占位与示范面板文案刷新；欢迎界面用 App 自带的中英资源，不依赖插件。
+M1 的落地范围：`ImageLyre.Localization` 提供聚合服务与回退规则；App 在创建欢迎界面前先构造该服务并注册 App 自己的文案源，随后把它作为同一实例交给 Bootstrap 的容器；壳插件与 `ImageLyre.Feature.Demo` 各自实现 `ILocalizationSource` 并在 `OnStartAsync` 里注册；壳在标题栏放一个语言切换入口，切换后菜单、状态栏占位与示范面板文案刷新。`ImageLyre.Localization` 不是插件，因此不参与插件扫描、不能被禁用，也不出现在插件清单里。
 
 ## 6 边界情况
 
@@ -601,11 +613,11 @@ M1 的落地范围：`ImageLyre.Module.Localization` 提供聚合服务与中英
 
 | 步骤 | 产出 | 前置 | 完成判据 |
 | :--- | :--- | :--- | :--- |
-| 1 | 解决方案骨架、cangming 子模块、根 `Directory.Build.props`、`ImageLyre.Bootstrap` 骨架、`ImageLyre.App` 入口（桌面分支 + 无界面分支）、欢迎占位窗口、通配引用的复制机制；两个工程各带 README | 无 | 一个空插件工程构建后，应用输出目录出现其 dll，扫描日志的候选列表含该 dll；欢迎窗口出现，Bootstrap 输出 `能力插件 0 个`；`--plugins` 在无界面环境返回 0 且 Feature 数为 0；`ImageLyre.App.csproj` 无改动 |
+| 1 | 解决方案骨架、cangming 子模块、根 `Directory.Build.props`、`ImageLyre.Localization` 基础设施与 App 文案源、`ImageLyre.Bootstrap` 骨架、`ImageLyre.App` 入口（桌面分支 + 无界面分支）、欢迎占位窗口、通配引用的复制机制；各工程带 README | 无 | 一个空插件工程构建后，应用输出目录出现其 dll，扫描日志的候选列表含该 dll；欢迎窗口出现且文案来自 LocalizationService，Bootstrap 输出 `能力插件 0 个`；`--plugins` 在无界面环境返回 0 且 Feature 数为 0；`ImageLyre.App.csproj` 无改动 |
 | 2 | `ImageLyre.Contracts`（含 `ILocalizationService` 与 Demo 命名空间）、`ImageLyre.Shell.Contracts`、`ImageLyre.Domains` 空工程 | 步骤 1 | 三个工程构建通过且各自带 README；产品契约与 Domains 不引用 UI 框架；壳契约单向依赖产品契约，产品契约依赖 Domains |
 | 3 | `ImageLyre.Module.Shell`：三个槽位、`ShellWindow`、静态菜单与状态栏占位、面板空态；App 的 `MainWindowFactory.Compose` | 步骤 2 | `GetAllSlots` 返回三个槽位；主窗体由壳插件的 `Build()` 产出并显示；面板显示“尚无测量”；App 里没有窗口布局代码 |
 | 4 | 装配链收口：槽位管理器单例、注入顺序、附着、关停、欢迎窗口切换 | 步骤 3 | 主窗体显示后欢迎窗口关闭；关窗后进程正常退出；重复启动不残留槽位重复异常 |
-| 5 | `ImageLyre.Module.Localization`：聚合服务、中英资源、壳文案资源化、标题栏语言切换 | 步骤 4 | 切换中英后菜单与状态栏占位文案变化，窗口不重建；缺键回退中文并记诊断 |
+| 5 | 壳文案资源化：壳实现 `ILocalizationSource`、菜单与状态栏占位走资源键、标题栏语言切换入口 | 步骤 4 | 切换中英后菜单与状态栏占位文案变化，窗口不重建；缺键回退中文并记诊断 |
 | 6 | `ImageLyre.Module.Demo.Clock`、`ImageLyre.Module.Demo.Greeter`、`ImageLyre.Feature.Demo` 及四个上下文；Feature 自带文案源 | 步骤 5 | 工具条与面板各出现一项；日志里能看到 `After` 决定的启动先后；切换语言后面板文案同步变化 |
 | 7 | 检查脚本（引用方向、词表检索、通配引用计数、README 检查）、`ImageLyre.Module.Demo.Broken` | 步骤 6 | 脚本可执行并通过；D 的判据可复现 |
 | 8 | 验收 A–G 全跑、文档回写 | 步骤 7 | 七条验收通过并留下提交号与日志摘录；`AGENTS.md` 的现状段更新 |
