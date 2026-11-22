@@ -5,7 +5,8 @@
 | 0.1 | 2026-11-22 | 草稿 | lukan | M1 的工程结构、装配时序、界面槽位、接口契约、边界情况与验收；范围限定为插件机制，不含任何产品能力 |
 | 0.2 | 2026-11-22 | 草稿 | lukan | 第一轮评审修订：补管理器与槽位管理器的归属、壳窗口的获取方式、契约依赖、验收顺序与清理前置、插件 Id 策略、能力插件日志行、实施顺序与允许依赖集合 |
 | 0.3 | 2026-11-22 | 草稿 | lukan | 作者口径修订：命名空间改 `ImageLyre.` 前缀；新增 `ImageLyre.Bootstrap` 承载启动链；补上下文组织器签名；插件 Id 按角色分前缀；装配时序拆成 Bootstrap 与界面宿主两段 |
-| 0.4 | 2026-11-22 | 草稿 | lukan | 作者口径修订：契约拆成 `ImageLyre.Contracts` 与 `ImageLyre.Shell.Contracts`，示范契约以 `ImageLyre.Contracts.Demo` 命名空间放进产品契约；定义 `ImageLyre.Domains` 的方向与创建时机，M1 不建空工程 |
+| 0.4 | 2026-11-22 | 草稿 | lukan | 作者口径修订：契约拆成 `ImageLyre.Contracts` 与 `ImageLyre.Shell.Contracts`，示范契约以 `ImageLyre.Contracts.Demo` 命名空间放进产品契约；定义 `ImageLyre.Domains` 的方向与创建时机 |
+| 0.5 | 2026-11-22 | 草稿 | lukan | 作者口径修订：`ImageLyre.Domains` 在 M1 建成空工程并附 README；新增“每个工程必须带 README”的约定，验收逐工程检查 |
 
 ## 1 目标与范围
 
@@ -45,6 +46,7 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 | `ImageLyre.Bootstrap` | `src/Bootstrap/ImageLyre.Bootstrap` | 启动链（L1，无 UI） | 日志初始化、扫描前缀、容器构建、`PicoPluginSystem.Launch`、管理器解析、`NotifyServiceProviderBuilt`、`StartAsync`、能力插件计数日志、关停；引用 cangming 机制包，不引用 Avalonia、AtomUI 或任何插件 |
 | `ImageLyre.App` | `src/App/ImageLyre.App` | 界面宿主（L5） | `OnFrameworkInitializationCompleted` 里调用 Bootstrap、创建槽位管理器、注入、建壳、附着、显示窗口、关窗时关停；引用 Bootstrap、`ImageLyre.Shell.Contracts`、Avalonia、AtomUI，不按名字引用任何插件 |
 | `ImageLyre.Contracts` | `src/Contracts/ImageLyre.Contracts` | 产品契约（无 UI） | M1 放 `IClock`、`IGreeter`，命名空间为 `ImageLyre.Contracts.Demo`，M1 验收后删除；不引用 Avalonia、AtomUI、SkiaSharp |
+| `ImageLyre.Domains` | `src/Contracts/ImageLyre.Domains` | 领域对象与纯算法（M1 为空工程） | 只放跨插件共享且带不变量的数据与纯函数；不引用 `ImageLyre.Contracts`、不引用 UI、不引 DI 与日志；M1 只有 README 与空 csproj |
 | `ImageLyre.Shell.Contracts` | `src/Contracts/ImageLyre.Shell.Contracts` | 壳契约 | `ShellSlots`、`IWorkbenchShell`、`DockPaneAttachment`；引用 `ImageLyre.Contracts`、`Cangming.PicoPlugins`、`Cangming.Toolkit`、Avalonia |
 | `ImageLyre.Module.Shell` | `src/Plugins/ImageLyre.Module.Shell` | Module 插件（容器类 Module） | 实现 `IWorkbenchShell` 与 `ISupportSlotManager`，持有 `ShellModuleContext`，贡献三个一级槽位并构建主窗口；引用 `ImageLyre.Shell.Contracts`、机制包、Avalonia 路线包、AtomUI |
 | `ImageLyre.Module.Demo.Clock` | `src/Plugins/ImageLyre.Module.Demo.Clock` | Module 插件 | 提供 `IClock`，持有 `ClockModuleContext` |
@@ -54,6 +56,8 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 
 `ImageLyre.Bootstrap` 与 `ImageLyre.App` 的分界只有一条：Bootstrap 处理“界面出现之前”的一切，App 处理“界面出现之后”的一切。Bootstrap 不引用 UI，因此同一套启动链可以被将来的 CLI 宿主复用；App 只负责把壳插件产出的窗口挂到 Avalonia 上。
 
+每个工程旁边必须有 README.md，写明四件事：这个工程的意义、它的边界（不放什么）、依赖方向（引谁、被谁引）、边界变化时该改哪份文档。新建工程先写 README 再写代码，空工程同样要有 README，`ImageLyre.Domains` 是 M1 唯一的空工程，它的 README 就是“第一批领域对象出现前该不该往里放东西”的判据。没有 README 的工程视为未完成，验收 E 会逐工程检查。
+
 ### 3.2 依赖方向
 
 ```mermaid
@@ -62,6 +66,7 @@ flowchart LR
     APP["ImageLyre.App"]
     SC["ImageLyre.Shell.Contracts"]
     DC["ImageLyre.Contracts"]
+    DN["ImageLyre.Domains（空工程）"]
     MS["ImageLyre.Module.Shell"]
     MC["ImageLyre.Module.Demo.Clock"]
     MG["ImageLyre.Module.Demo.Greeter"]
@@ -73,6 +78,7 @@ flowchart LR
     BOOT --> CM["cangming 机制包"]
     SC --> CM
     SC --> DC
+    DC --> DN
     SC --> TK["Cangming.Toolkit"]
     SC --> AVL["Avalonia"]
     MS --> SC
@@ -88,7 +94,7 @@ flowchart LR
     FD --> AVL
 ```
 
-`ImageLyre.Bootstrap` 与 `ImageLyre.App` 都不按名字引用插件工程；`ImageLyre.App` 不引用 `ImageLyre.Contracts`，它不消费示范契约；发行用的通配引用在 §3.6 单列。`ImageLyre.Domains` 在 M1 不建空工程：第一个真实领域对象（`ImageContainer`、`Calibration`、`ROI` 几何）出现时创建，依赖方向固定为 `ImageLyre.Shell.Contracts` → `ImageLyre.Contracts` → `ImageLyre.Domains`，由 ADR-0001 §2.4 规定。
+`ImageLyre.Bootstrap` 与 `ImageLyre.App` 都不按名字引用插件工程；`ImageLyre.App` 不引用 `ImageLyre.Contracts`，它不消费示范契约；发行用的通配引用在 §3.6 单列。`ImageLyre.Domains` 在 M1 是空工程，只有 README 与 csproj，没有任何类型；它的边界由 README 写死，第一个真实领域对象出现时先改 README 再加类型。三个契约程序集的方向固定为 `ImageLyre.Shell.Contracts` → `ImageLyre.Contracts` → `ImageLyre.Domains`，由 ADR-0001 §2.4 规定。
 
 ### 3.3 装配时序
 
@@ -452,7 +458,7 @@ public interface IGreeter
 | D 隔离 | 保留 `ImageLyre.Module.Demo.Broken` 启动 | Broken 以 `BrokenPlugin` 形式出现、状态失败且错误消息为构造异常；其余插件 `Running`，窗口正常显示 | 无需恢复 |
 | B 加插件 | 新增 `ImageLyre.Feature.Hello`：一个 Feature 工程，向 `toolbar` 附一个按钮、向 `panel` 附一页，只依赖契约与路线包 | 重启后工具条与面板各多一项；`git status` 只出现新增文件与目录，`ImageLyre.App.csproj` 无改动 | 保留，供 A 一起删除 |
 | A 空壳 | 移除 `ImageLyre.Module.Demo.*`、`ImageLyre.Feature.Demo`、`ImageLyre.Feature.Hello`，并删除 `ImageLyre.Contracts` 中 `ImageLyre.Contracts.Demo` 命名空间后重建启动 | 应用启动到空窗口，视口“无图像”、面板“尚无测量”，Bootstrap 日志出现 `能力插件 0 个`，壳仍在运行 | 恢复全部工程与命名空间 |
-| E 纪律 | 对完整树执行检查脚本 | `ImageLyre.Feature.Demo` 与 `ImageLyre.Feature.Hello` 的项目引用里没有 `ImageLyre.Module.*` 与 `ImageLyre.Feature.*`；`ImageLyre.Contracts` 与 `ImageLyre.Domains` 不引用 UI 框架；`ImageLyre.Shell.Contracts` 不引用任何插件工程；`ImageLyre.App.csproj` 的按名插件引用为 0、只有一条通配引用；`ImageLyre.Bootstrap` 与 `ImageLyre.App` 的装配代码不命中 ADR-0001 §5.1 的词表 | 无需恢复 |
+| E 纪律 | 对完整树执行检查脚本 | `ImageLyre.Feature.Demo` 与 `ImageLyre.Feature.Hello` 的项目引用里没有 `ImageLyre.Module.*` 与 `ImageLyre.Feature.*`；`ImageLyre.Contracts` 与 `ImageLyre.Domains` 不引用 UI 框架；`ImageLyre.Shell.Contracts` 不引用任何插件工程；`ImageLyre.App.csproj` 的按名插件引用为 0、只有一条通配引用；每个工程目录都有 README.md；`ImageLyre.Bootstrap` 与 `ImageLyre.App` 的装配代码不命中 ADR-0001 §5.1 的词表 | 无需恢复 |
 
 “能力插件 N 个”由 `ImageLyre.Bootstrap` 输出，模板固定，只统计 `lyre.capability.` 前缀的插件，不把壳、平台插件与表达插件算进去；这条日志是 A 的判定依据，也是 G2 面板数据的起点。
 
@@ -468,8 +474,8 @@ public interface IGreeter
 
 | 步骤 | 产出 | 前置 | 完成判据 |
 | :--- | :--- | :--- | :--- |
-| 1 | 解决方案骨架、cangming 子模块、根 `Directory.Build.props`、`ImageLyre.Bootstrap` 骨架（日志、容器、`Launch`、管理器、计数日志）、`ImageLyre.App` 裸 Avalonia 占位窗口、通配引用的复制机制 | 无 | 一个空插件工程构建后，应用输出目录出现其 dll，扫描日志的候选列表含该 dll；Bootstrap 输出 `能力插件 0 个`；占位窗口能启动，且 `ImageLyre.App.csproj` 无改动 |
-| 2 | `ImageLyre.Contracts`（含 Demo 命名空间）、`ImageLyre.Shell.Contracts` | 步骤 1 | 两个契约工程构建通过；产品契约工程不引用 Avalonia、AtomUI、SkiaSharp；壳契约单向依赖产品契约 |
+| 1 | 解决方案骨架、cangming 子模块、根 `Directory.Build.props`、`ImageLyre.Bootstrap` 骨架（日志、容器、`Launch`、管理器、计数日志）、`ImageLyre.App` 裸 Avalonia 占位窗口、通配引用的复制机制；两个工程各带 README | 无 | 一个空插件工程构建后，应用输出目录出现其 dll，扫描日志的候选列表含该 dll；Bootstrap 输出 `能力插件 0 个`；占位窗口能启动，且 `ImageLyre.App.csproj` 无改动 |
+| 2 | `ImageLyre.Contracts`（含 Demo 命名空间）、`ImageLyre.Shell.Contracts`、`ImageLyre.Domains` 空工程 | 步骤 1 | 三个工程构建通过且各自带 README；产品契约与 Domains 不引用 Avalonia、AtomUI、SkiaSharp；壳契约单向依赖产品契约，产品契约依赖 Domains |
 | 3 | `ImageLyre.Module.Shell`：三个槽位、主窗口、静态菜单与状态栏占位、面板空态；`ImageLyre.App` 换成壳插件产物 | 步骤 2 | `GetAllSlots` 返回三个槽位；主窗口由 `CreateShell()` 产出并显示；面板显示“尚无测量” |
 | 4 | 装配链收口：槽位管理器单例、注入顺序、附着、关停 | 步骤 3 | 关窗后进程正常退出；重复启动不残留槽位重复异常 |
 | 5 | `ImageLyre.Module.Demo.Clock`、`ImageLyre.Module.Demo.Greeter`、`ImageLyre.Feature.Demo` 及四个上下文 | 步骤 4 | 工具条与面板各出现一项；日志里能看到 `After` 决定的启动先后；上下文未在构造期求值 |
