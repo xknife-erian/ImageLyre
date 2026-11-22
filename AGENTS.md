@@ -34,7 +34,7 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 - `docs/spec/requirements/product-requirements.md`：产品需求文档，定义用户、功能范围、优先级与验收口径，研发排期以它为准；
 - `docs/spec/baseline/startup-requirements.md`：新一代系统的启动需求与架构基线，任何设计、计划与评审先以它为前提；
 - `docs/spec/m1/`、`docs/spec/cli/`：M1 验收与交互规范、CLI 与 Agent 的技术契约；
-- `docs/adr/<用户名>/`、`docs/design/<用户名>/`、`docs/plans/<用户名>/`、`docs/analyses/<用户名>/`、`docs/daily/<用户名>/`：按类型与用户名归档；2026-11-22 重建的首批产出是 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` 与 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md`，其余目录待写入；
+- `docs/adr/<用户名>/`、`docs/design/<用户名>/`、`docs/plans/<用户名>/`、`docs/analyses/<用户名>/`、`docs/daily/<用户名>/`：按类型与用户名归档；2026-11-22 重建的首批产出是 `docs/adr/lukan/ADR-0001-插件机制架构基线.md`、`docs/design/lukan/DESIGN-0001-M1-插件骨架.md` 与 `docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md`，其余目录待写入；
 - `docs/guide/`、`docs/reference/`：面向使用者与外部资料，平铺存放、不按人分。
 
 ## 4 项目现状与约定
@@ -50,7 +50,7 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 | 路径 | 用途 |
 | :--- | :--- |
 | `docs/spec/` | 需求、架构基线、M1 验收规范与 CLI 契约 |
-| `docs/` | 文档体系，规则入口 `docs/README.md`；`adr/` 与 `design/` 已有首批内容，其余类型目录与说明在位、内容待写入 |
+| `docs/` | 文档体系，规则入口 `docs/README.md`；`adr/`、`design/` 与 `plans/` 已有首批内容，其余类型目录与说明在位、内容待写入 |
 | `src/`、`tests/` | 源码与测试落点；目录结构与插件工程命名由 `DESIGN-0001` 规定，代码从 M1 第 1 步开始落 |
 | `.agents/skills/` | 游刃技能的下游副本，只读 |
 | `.agents/user-profile/<用户名>/` | 各人的 AI 配置档案，`.agents/` 下唯一的个人落点 |
