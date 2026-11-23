@@ -139,6 +139,7 @@ public sealed partial class App : Application
             desktop.MainWindow = window;
             window.Show();
             HookSmokeMenuOpen(window);
+            HookSmokeLanguage(window);
             welcome.Close();
         }
         catch (Exception ex)
@@ -236,6 +237,37 @@ public sealed partial class App : Application
                 catch (Exception ex)
                 {
                     Console.Error.WriteLine($"冒烟：菜单展开失败：{ex.GetType().Name}：{ex.Message}");
+                    Environment.ExitCode = 1;
+                }
+            },
+            DispatcherPriority.Background);
+    }
+
+    /// <summary>按 <c>LYRE_SMOKE_LANGUAGE</c> 约定在主窗体显示后切换一次界面语言。</summary>
+    /// <param name="window">主窗体，标题在切换完成后读取。</param>
+    /// <remarks>
+    /// 值是目标语言名，例如 <c>en-US</c>；钩子只在环境变量存在时生效，切换完成后向 stderr 打印实际标题，
+    /// 失败时打印异常并把进程退出码置 1。语言切换本身只广播事件，壳与 Feature 各自刷新已有控件，不重建窗口。
+    /// </remarks>
+    private void HookSmokeLanguage(Window window)
+    {
+        string? language = Environment.GetEnvironmentVariable("LYRE_SMOKE_LANGUAGE");
+        if (string.IsNullOrWhiteSpace(language))
+            return;
+
+        // ponytail: 与另外两个冒烟钩子一样，属 M1 冒烟脚手架，接入真实 UI 测试后一起删除。
+        Dispatcher.UIThread.Post(
+            async () =>
+            {
+                try
+                {
+                    await _localization.SetLanguageAsync(language);
+                    Dispatcher.UIThread.RunJobs();
+                    Console.Error.WriteLine($"冒烟：语言已切换为 {language}，标题={window.Title}");
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"冒烟：语言切换失败：{ex.GetType().Name}：{ex.Message}");
                     Environment.ExitCode = 1;
                 }
             },
