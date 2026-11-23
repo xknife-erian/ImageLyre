@@ -1,0 +1,46 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <!--
+    UI 路线：AtomUI 与 Avalonia 成对锁定（基线 §3.1），任一侧升级都要整组回归。
+    AtomUI 6.2.11 编译于 Avalonia 12.1.4，与 cangming 0.1.9.1122 的 Avalonia 路线包同一钉点，
+    因此三件套没有一件运行在高于自己编译钉点的版本上；换到 AtomUI 6.2.15 会把 Avalonia
+    推到 12.1.6，机制包随之跑在补丁更高的运行时上，故不取。
+  -->
+  <ItemGroup Label="UI 路线">
+    <PackageVersion Include="Avalonia" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.4" />
+    <PackageVersion Include="AtomUI.Desktop.Controls" Version="6.2.11" />
+    <PackageVersion Include="ReactiveUI" Version="26.0.1" />
+    <PackageVersion Include="ReactiveUI.Avalonia" Version="12.1.6" />
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
+    <PackageVersion Include="SkiaSharp" Version="3.119.4" />
+  </ItemGroup>
+
+  <!--
+    插件机制基座：子模块锁定 tag v0.1.9.1122，包版本与之同名对齐，作为源码对照与版本锚点；
+    编译只吃这里的包，不把子模块的工程引用进解决方案。
+  -->
+  <ItemGroup Label="插件机制基座">
+    <PackageVersion Include="Cangming.PicoPlugins" Version="0.1.9.1122" />
+    <PackageVersion Include="Cangming.PicoPlugins.Avalonias" Version="0.1.9.1122" />
+    <PackageVersion Include="Cangming.Logs" Version="0.1.9.1122" />
+    <PackageVersion Include="Cangming.Toolkit" Version="0.1.9.1122" />
+  </ItemGroup>
+
+  <!--
+    测试：xunit v3 走 Microsoft.Testing.Platform，runner 选择写在根 `global.json`，
+    缺了那一节 .NET 10 SDK 会直接拒绝以 VSTest 方式运行。
+  -->
+  <ItemGroup Label="测试">
+    <PackageVersion Include="xunit.v3" Version="4.0.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+  </ItemGroup>
+
+</Project>

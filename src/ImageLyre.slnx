@@ -1,0 +1,7 @@
+<Solution>
+  <!--
+    唯一构建入口（DESIGN-0001 §2.1 约束 10）：dotnet build src/ImageLyre.slnx。
+    工程从 T10 起逐个加入，先是契约与领域骨架，随后 Bootstrap、App、壳插件与示范插件；
+    删除工程时同步摘除这里的条目，避免解决方案引用不存在的工程。
+  -->
+</Solution>
