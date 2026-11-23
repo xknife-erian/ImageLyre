@@ -1,6 +1,6 @@
 # ImageLyre
 
-> **状态（2026-11-23）**：2022 年 WPF 版与 2026 年 11 月的两轮重建已整体归档，归档前的完整状态在标签 `archive/pre-reset-2026-11-22`；M1 插件骨架已交付——12 个工程、5 套测试 44 项全绿、A–G 验收通过。插件架构基线见 [ADR-0001](docs/adr/lukan/ADR-0001-插件机制架构基线.md) 与 [ADR-0002](docs/adr/lukan/ADR-0002-平台契约抄录与本地演进.md)，M1 骨架见 [DESIGN-0001](docs/design/lukan/DESIGN-0001-M1-插件骨架.md)，实施与验收见 [PLAN-0001](docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md)。
+> **状态（2026-11-23）**：2022 年 WPF 版与 2026 年 11 月的两轮重建已整体归档，归档前的完整状态在标签 `archive/pre-reset-2026-11-22`；**M1 已完成**——14 个工程、7 套测试 61 项全绿、A–G 验收通过，菜单注册表与「帮助 → 关于」已落地。插件架构基线见 [ADR-0001](docs/adr/lukan/ADR-0001-插件机制架构基线.md) 与 [ADR-0002](docs/adr/lukan/ADR-0002-平台契约抄录与本地演进.md)，M1 骨架见 [DESIGN-0001](docs/design/lukan/DESIGN-0001-M1-插件骨架.md)，实施与验收见 [PLAN-0001](docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md)。
 
 ImageLyre 是显微镜旁的第一块屏幕。
 

@@ -41,7 +41,7 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 
 2022 年版基于 WPF 与 .NET 6 的实现、以及 2026-11 的两轮重建尝试整体弃用：2026-11-22 起工作区已清空，`src/`、`tests/`、`tools/` 下的代码与全部过程文档（ADR、design、analyses、daily、plans、guide、reference）的内容一并删除，`docs/` 的类型目录与各目录说明保留，清除前的完整状态保存在标签 `archive/pre-reset-2026-11-22`，需要取证时从该标签读取而不是凭记忆补写。
 
-当前仓库有可运行的 M1 骨架：唯一构建入口 `dotnet build src/ImageLyre.slnx`，不得另起第二套；目标框架、可空与警告即错误集中在根 `Directory.Build.props`，包版本集中在根 `Directory.Packages.props`，SDK 与 `dotnet test` 的 runner 由根 `global.json` 钉住（.NET 10 上 `dotnet test` 走 Microsoft.Testing.Platform；本机沙箱里 MTP 命名管道会被拒，跑测试请直接执行 `tests/<工程>/bin/Debug/net10.0/<工程>.dll`）。目录按职责分：`src/App/` 放进程入口与启动链，`src/Infrastructure/` 放共享库（其中 `Contracts/` 专放契约与领域），`src/Plugins/Modules/` 与 `src/Plugins/Features/` 放插件。插件机制的架构基线与 M1 骨架分别由 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` 与 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md` 规定，工程目录、插件工程命名与扫描前缀以该 design 为准。
+M1 已完成（2026-11-23）：唯一构建入口 `dotnet build src/ImageLyre.slnx`，不得另起第二套；目标框架、可空与警告即错误集中在根 `Directory.Build.props`，包版本集中在根 `Directory.Packages.props`，SDK 与 `dotnet test` 的 runner 由根 `global.json` 钉住（.NET 10 上 `dotnet test` 走 Microsoft.Testing.Platform；本机沙箱里 MTP 命名管道会被拒，跑测试请直接执行 `tests/<工程>/bin/Debug/net10.0/<工程>.dll`）。目录按职责分：`src/App/` 放进程入口与启动链，`src/Infrastructure/` 放共享库（其中 `Contracts/` 专放契约与领域），`src/Plugins/Modules/` 与 `src/Plugins/Features/` 放插件。插件机制的架构基线与 M1 骨架分别由 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` 与 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md` 规定，工程目录、插件工程命名与扫描前缀以该 design 为准。下一阶段为 G2 只读治理：插件与能力面板、依赖树与分级、诊断与受限模式，按 ADR-0001 §2.5 推进。
 
 少而硬的共同约定：每个工程（csproj）必须带 README.md，写明该工程的意义、边界（不放什么）、依赖方向与边界变化时该改哪份文档，空工程同样如此，新建工程先写 README 再写代码；目录与文件搬家一律 `git mv`，删除用 `git rm`，禁止复制后把原目录留在原处；行尾与编码以 `.gitattributes`、`.editorconfig` 为准，新增文件交给 git 自动归一化；提交信息用中文并带 scoped 前缀，一次提交只做一件事。
 
