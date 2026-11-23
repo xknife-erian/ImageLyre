@@ -17,4 +17,10 @@
     <ProjectReference Include="..\..\src\App\ImageLyre.App\ImageLyre.App.csproj" />
   </ItemGroup>
 
+  <!--
+    测试进程同样以「插件就在输出目录旁边」为前提启动 Bootstrap，因此与宿主导入同一份归并目标，
+    否则插件清单用例会因为插件依赖缺失而拿不到插件。
+  -->
+  <Import Project="..\..\PluginOutputMerge.targets" />
+
 </Project>

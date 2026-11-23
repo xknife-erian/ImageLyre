@@ -1,0 +1,17 @@
+<Project>
+
+  <!--
+    先继承仓库根的构建属性：MSBuild 只会自动找到最近的 Directory.Build.props，
+    本文件一旦存在就不再向上找，因此必须显式导入上一级的那份，否则插件会丢掉 net10.0、可空与警告即错误。
+  -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <!--
+      插件是库工程，默认不把 NuGet 依赖复制到自己的 bin；宿主需要一个可直接扫描、自带全部依赖的目录，
+      因此对 src/Plugins 下所有插件打开复制。App 的 CopyPluginOutputs 目标会把这些 dll 归并到输出目录。
+    -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+</Project>

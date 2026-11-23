@@ -30,8 +30,8 @@
 
 ## 依赖方向
 
-引用 `Avalonia`、`Avalonia.Desktop` 与 `AtomUI.Desktop.Controls` 承载窗口、控件与桌面生命周期；引用 `ImageLyre.Bootstrap` 驱动启动链；引用 `ImageLyre.Localization` 取得 `LocalizationService`；引用 `ImageLyre.Contracts` 取得 `ILocalizationService` 与 `ILocalizationSource`；CLI 清单读取直接使用 `Cangming.PicoPlugins` 的 `IPluginManager`、`PluginInfo` 与 `IPicoFeatures`，stderr 日志工厂直接使用 `Microsoft.Extensions.Logging.Abstractions`，这两个包因此显式声明而不依赖传递引用。不以编译引用方式引用 `ImageLyre.Shell.Contracts`（尚未建立）、`ImageLyre.Shell.Attachments` 或任何 `ImageLyre.Module.*`、`ImageLyre.Feature.*` 工程：插件产物只经 `ImageLyre.App.csproj` 里唯一一条指向 `src/Plugins/**/*.csproj` 的通配 `ProjectReference` 进入构建顺序与输出目录（`ReferenceOutputAssembly=false`），按名字的插件引用一律禁止。本工程是进程入口，不被其他工程引用。
+引用 `Avalonia`、`Avalonia.Desktop` 与 `AtomUI.Desktop.Controls` 承载窗口、控件与桌面生命周期；引用 `ImageLyre.Bootstrap` 驱动启动链；引用 `ImageLyre.Localization` 取得 `LocalizationService`；引用 `ImageLyre.Contracts` 取得本地化契约；CLI 清单读取直接使用 `Cangming.PicoPlugins` 的 `IPluginManager`、`PluginInfo` 与 `IPicoFeatures`，stderr 日志工厂直接使用 `Microsoft.Extensions.Logging.Abstractions`，这两个包因此显式声明而不依赖传递引用。不按名字引用任何插件工程，也不为插件依赖做编译引用：插件主程序集经 `ImageLyre.App.csproj` 里唯一一条指向 `src/Plugins/**/*.csproj` 的通配 `ProjectReference` 进入构建顺序与输出目录，插件自己的依赖由 `src/Plugins/Directory.Build.props` 的 `CopyLocalLockFileAssemblies` 与仓库根 `PluginOutputMerge.targets` 归并进来（测试工程导入同一份目标）。按名字的 `ImageLyre.Module.*`、`ImageLyre.Feature.*` 插件引用一律禁止。本工程是进程入口，不被其他工程引用。
 
 ## 边界变化时改哪份文档
 
-先改 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md` §3.1 的 `ImageLyre.App` 行、§3.3 的编排骨架与 CLI 分支、§4.4 的启动画面与欢迎界面、§5.6 的本地化契约，再改本文件；宿主分派规则、CLI 命令集合与退出码、欢迎窗口的固定语义或 App 自有资源键变化都要回写上述章节。若变化触及“App 不构建主窗体、不贡献槽位”的分界，先按 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` §2.4 与 §2.5 修订架构基线再动代码；任务范围变化同步改 `docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md` 的 T05、T06 与 T12。
+先改 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md` §3.1 的 `ImageLyre.App` 行、§3.3 的编排骨架与 CLI 分支、§3.7 的产物复制机制、§4.4 的启动画面与欢迎界面、§5.6 的本地化契约，再改本文件；宿主分派规则、CLI 命令集合与退出码、欢迎窗口的固定语义或 App 自有资源键变化都要回写上述章节。若变化触及“App 不构建主窗体、不贡献槽位”的分界，先按 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` §2.4 与 §2.5 修订架构基线再动代码；任务范围变化同步改 `docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md` 的 T05、T06、T11 与 T12。

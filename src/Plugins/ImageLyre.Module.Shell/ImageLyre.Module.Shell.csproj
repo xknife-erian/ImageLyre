@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    库插件：不设 OutputType（默认 Library），窗口由 Build 产出，不自己启动进程。
+    目标框架、可空与警告即错误由根 Directory.Build.props 提供。
+  -->
+  <ItemGroup>
+    <!-- 壳契约与界面词汇：槽位名、IWorkbenchShell 标记、DockPaneAttachment。 -->
+    <ProjectReference Include="..\..\Contracts\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+    <ProjectReference Include="..\..\Shell\ImageLyre.Shell.Attachments\ImageLyre.Shell.Attachments.csproj" />
+    <ProjectReference Include="..\..\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      机制包提供 Module 基类、上下文、槽位契约与 ISupportSlotManager；Avalonias 提供 SlotPanel；
+      Logs 直接用于槽位注入日志，Toolkit 直接用于辅助面板附着物的 Order 排序。
+    -->
+    <PackageReference Include="Cangming.Logs" />
+    <PackageReference Include="Cangming.PicoPlugins" />
+    <PackageReference Include="Cangming.PicoPlugins.Avalonias" />
+    <PackageReference Include="Cangming.Toolkit" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="AtomUI.Desktop.Controls" />
+  </ItemGroup>
+
+</Project>

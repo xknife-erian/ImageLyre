@@ -59,7 +59,7 @@ public sealed class CliHostTests
         error.ToString().Should().BeEmpty();
     }
 
-    [Fact(DisplayName = "3.--plugins 输出插件汇总行并返回 0，诊断日志只走 stderr")]
+    [Fact(DisplayName = "3.--plugins 列出壳插件并返回 0，诊断日志只走 stderr")]
     public async Task Test003()
     {
         // Arrange
@@ -76,8 +76,11 @@ public sealed class CliHostTests
         // Assert
         exitCode.Should().Be(0);
         string text = output.ToString();
-        text.Should().Contain("共 0 个插件，其中 Feature 0 个");
-        text.Should().NotContain("Id:");
+        text.Should().Contain("Id: lyre.shell.workbench");
+        text.Should().Contain("名称: 工作台壳");
+        text.Should().Contain("状态: Running");
+        text.Should().Contain("Feature: 否");
+        text.Should().Contain("共 1 个插件，其中 Feature 0 个");
         text.Should().NotContain("HasUiRoute");
         error.ToString().Should().Contain("HasUiRoute=False");
         error.ToString().Should().Contain("能力插件 0 个");

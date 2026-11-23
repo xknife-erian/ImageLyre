@@ -30,24 +30,26 @@
 
   <!--
     插件产物到达运行时的唯一形式：一条通配工程引用，把 src/Plugins/**/*.csproj 纳入构建顺序但不参与编译引用。
-    按名字的插件 ProjectReference 一律禁止，验收 E 检查的就是这里的按名引用数为 0；
-    新增插件只增工程目录，不改本文件。
-    退化触发条件：若构建后 App 输出目录不出现匹配到的插件 dll，改在仓库根 Directory.Build.targets 写仓库级复制目标，
-    仍不把插件工程按名字写进本文件；届时把实际机制回写 DESIGN-0001 §3.7。
+    按名字的插件 ProjectReference 一律禁止，验收 E 检查的就是这里的按名引用数为 0；新增插件只增工程目录，不改本文件。
+    这条引用只带来插件主程序集，插件自己的依赖由下面 CopyPluginOutputs 目标从各插件输出目录归并。
   -->
   <ItemGroup>
     <ProjectReference Include="..\..\Plugins\**\*.csproj"
                       ReferenceOutputAssembly="false"
                       OutputItemType="Content"
                       CopyToOutputDirectory="PreserveNewest" />
-    <!-- ponytail: 通配只复制插件主程序集，不复制插件的私有依赖；G4 接入装包与依赖清单时补依赖收集。 -->
     <!-- ponytail: 复制是增量的，PreserveNewest 不会清理已删插件的旧 dll；删除插件前必须先 dotnet clean。 -->
     <!-- ponytail: 空工程会被扫到但没有 [Plugin] 类型，因此不计数；T14 接入真实插件后这条由真实插件覆盖。 -->
   </ItemGroup>
 
   <!--
-    本工程不引用 ImageLyre.Shell.Contracts（尚未建立）、ImageLyre.Shell.Attachments 或任何按名字的插件工程：
-    主窗体由壳插件产出，插件产物只走上一条通配引用。
+    插件依赖归并：见仓库根的 PluginOutputMerge.targets，宿主与它的测试工程共用同一份目标。
+  -->
+  <Import Project="..\..\..\PluginOutputMerge.targets" />
+
+  <!--
+    本工程不按名字引用任何插件工程，也不为插件依赖做编译引用：
+    主窗体由壳插件产出，插件与它的依赖都只经上面两条机制进入输出目录。
   -->
 
 </Project>
