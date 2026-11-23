@@ -17,6 +17,7 @@
 | 0.13 | 2026-11-23 | 草稿 | lukan | 回写 T05：App 引用 `ImageLyre.Contracts` 取本地化契约（§3.2 原写不引用，改为按用途说明）；§3.3 的编排骨架换成代码式 AtomUI 启动，并补三条硬要求——`Application` 必须 `partial`、必须 `UseDesktopControls`、不要显式 `Show` 欢迎窗口 |
 | 0.14 | 2026-11-23 | 草稿 | lukan | 回写 T06：§3.2 补 App → 机制包这条边并说明理由（L5 依赖 L1，读 `IPluginManager` 与 `PluginInfo` 不可避免），§3.1 的 App 行同步；§3.3 的 CLI 调用换成带文本流的 `RunAsync`，并写明 stdout 只放结果、日志与错误走 stderr、输出不走本地化 |
 | 0.15 | 2026-11-23 | 草稿 | lukan | 订正 §3.7 通配引用的相对路径（原写 `..\Plugins\**`，少一层，实际指向不存在的 `src/App/Plugins`），并记录实测行为：插件工程不进解决方案也会被拉进构建并复制、`dotnet clean` 能清掉已复制的 dll、空工程只增加扫描候选不增加插件条目 |
+| 0.16 | 2026-11-23 | 草稿 | lukan | 按作者口径换掉自造示范契约：借用 `Cangming.Platform.Contracts` 的 `IPlatformCapabilities` 与 `IPerformanceMonitor`，三个验收插件改为 `Module.Platform`、`Module.Performance`、`Feature.Diagnostics`，故障样本改名 `Module.Broken`；§3.1/§3.2/§3.6/§3.7/§5.4/§5.5/§7/§9 同步 |
 
 ## 1 目标与范围
 
@@ -60,15 +61,15 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 | `ImageLyre.App` | `src/App/ImageLyre.App` | 进程入口与编排（L5） | 解析启动参数并选择宿主模式：桌面模式显示启动画面与欢迎界面、驱动 Bootstrap、创建槽位管理器、注入、触发附着、取主窗体挂到桌面；CLI 模式无窗口、无槽位、无 Feature，驱动 Bootstrap 后执行命令并退出；不构建主窗体、不贡献槽位、不定义主界面布局；引用 Bootstrap、`ImageLyre.Contracts`（本地化契约）、`ImageLyre.Shell.Contracts`、cangming 机制包（只读管理器与插件清单，不引实现包）、Avalonia、AtomUI |
 | `ImageLyre.Bootstrap` | `src/Bootstrap/ImageLyre.Bootstrap` | 启动链（L1，无 UI） | 日志初始化、扫描前缀、容器构建、`PicoPluginSystem.Launch`、管理器解析、`NotifyServiceProviderBuilt`、`StartAsync`、能力插件计数日志、关停；引用 cangming 机制包与契约，不引用 Avalonia、AtomUI 或任何插件 |
 | `ImageLyre.Domains` | `src/Contracts/ImageLyre.Domains` | 领域对象与纯算法（M1 为空工程） | 只放跨插件共享且带不变量的数据与纯函数；不引用 `ImageLyre.Contracts`、不引用 UI、不引 DI 与日志；M1 只有 README 与空 csproj |
-| `ImageLyre.Contracts` | `src/Contracts/ImageLyre.Contracts` | 产品契约（无 UI） | `ILocalizationService`、`ILocalizationSource`；M1 另放 `IClock`、`IGreeter`，命名空间为 `ImageLyre.Contracts.Demo`，M1 验收后删除；不引用 Avalonia、AtomUI、SkiaSharp |
+| `ImageLyre.Contracts` | `src/Contracts/ImageLyre.Contracts` | 产品契约（无 UI） | `ILocalizationService`、`ILocalizationSource`；另引用 `Cangming.Platform.Contracts` 借用 `IPlatformCapabilities` 与 `IPerformanceMonitor` 两个架构级契约，不再自造示范契约；不引用 Avalonia、AtomUI、SkiaSharp |
 | `ImageLyre.Shell.Contracts` | `src/Contracts/ImageLyre.Shell.Contracts` | 壳契约 | `ShellSlots`、`IWorkbenchShell` 两个类型；只引用 `ImageLyre.Contracts`，不引用 Avalonia、不引用机制包、不引用任何插件工程——槽位名与窗口标记都是纯标识，没有理由把 UI 与机制拖进契约 |
 | `ImageLyre.Shell.Attachments` | `src/Shell/ImageLyre.Shell.Attachments` | 附着物词汇（非插件，非契约） | `DockPaneAttachment`：实现机制包的 `IFeatureAttachment` 与 `Cangming.Toolkit` 的 `IOrderable`，承载 Avalonia `Control`；引用 `Cangming.PicoPlugins`、`Cangming.Toolkit`、Avalonia、`ImageLyre.Contracts`。它放的是“壳怎样接住一个界面项”的应用词汇，与 cangming 路线包把 `ToolbarButtonAttachment`、`ContentAttachment` 放在 `Cangming.PicoPlugins.Avalonias` 同一位置；因此它不占 `src/Contracts/` 的名分，单独落在 `src/Shell/` 下，`ImageLyre.Shell.Contracts` 的纯度也不因它受损 |
 | `ImageLyre.Localization` | `src/Infrastructure/ImageLyre.Localization` | 基础设施库（非插件） | `LocalizationService`：聚合资源源、维护当前语言、缺键回退 zh-CN 并记诊断、广播切换；引用 `ImageLyre.Contracts`，不引用 UI、不引用插件；由 App 创建、Bootstrap 注册同一实例 |
 | `ImageLyre.Module.Shell` | `src/Plugins/ImageLyre.Module.Shell` | Module 插件（容器类 Module） | 实现 `ISupportSlotManager` 接收槽位管理器注入，在 `Build()` 里构造 `ShellWindow` 并通过 `IAttachmentRegistry` 贡献三个一级槽位；`IWorkbenchShell` 由 `ShellWindow` 实现；实现 `ILocalizationSource` 提供壳文案；持有 `ShellModuleContext`；引用 `ImageLyre.Shell.Contracts`、`ImageLyre.Shell.Attachments`、`ImageLyre.Contracts`、机制包、Avalonia 路线包、AtomUI |
-| `ImageLyre.Module.Demo.Clock` | `src/Plugins/ImageLyre.Module.Demo.Clock` | Module 插件 | 提供 `IClock`，持有 `ClockModuleContext` |
-| `ImageLyre.Module.Demo.Greeter` | `src/Plugins/ImageLyre.Module.Demo.Greeter` | Module 插件 | 提供 `IGreeter`，声明 `Require<IClock>` 与 `After<IClock>`，持有 `GreeterModuleContext` |
-| `ImageLyre.Feature.Demo` | `src/Plugins/ImageLyre.Feature.Demo` | Feature 插件 | 消费 `IGreeter`，向工具条与辅助面板各附一项；持有 `DemoFeatureContext`；引用 `ImageLyre.Shell.Contracts`、`ImageLyre.Shell.Attachments`、`ImageLyre.Contracts`、路线包与 AtomUI，不引用任何 Module 工程 |
-| `ImageLyre.Module.Demo.Broken` | `src/Plugins/ImageLyre.Module.Demo.Broken` | Module 插件（测试） | 构造函数抛异常，验证构造失败隔离；不随产品发布 |
+| `ImageLyre.Module.Platform` | `src/Plugins/ImageLyre.Module.Platform` | Module 插件 | 提供 `IPlatformCapabilities`：读 `RuntimeInformation` 组装能力矩阵，M1 只声明 Windows 的实测结果，其余平台按未知处理；持有 `PlatformModuleContext` |
+| `ImageLyre.Module.Performance` | `src/Plugins/ImageLyre.Module.Performance` | Module 插件 | 提供 `IPerformanceMonitor`：按需采样内存、线程与运行时长，`SnapshotUpdated` 返回永不触发的流；声明 `Require<IPlatformCapabilities>` 与 `After<IPlatformCapabilities>`，因为可采指标以平台能力为准；持有 `PerformanceModuleContext` |
+| `ImageLyre.Feature.Diagnostics` | `src/Plugins/ImageLyre.Feature.Diagnostics` | Feature 插件 | 消费 `IPlatformCapabilities` 与 `IPerformanceMonitor`，向工具条附一个刷新按钮、向辅助面板附一页平台与内存读数；持有 `DiagnosticsFeatureContext`；引用 `ImageLyre.Shell.Contracts`、`ImageLyre.Shell.Attachments`、`ImageLyre.Contracts`、路线包与 AtomUI，不引用任何 Module 工程 |
+| `ImageLyre.Module.Broken` | `src/Plugins/ImageLyre.Module.Broken` | Module 插件（测试） | 构造函数抛异常，验证构造失败隔离；不随产品发布 |
 
 `ImageLyre.App` 与 `ImageLyre.Bootstrap` 的分界只有一条：Bootstrap 处理“插件就绪之前”的机制启动，App 处理“插件就绪前后”的用户可见过程与编排——启动画面、欢迎界面、主窗体挂载、关停转发。App 是编排者，不是界面宿主：主窗体由壳插件产出，App 只把它挂到桌面。
 
@@ -86,9 +87,10 @@ flowchart LR
     DN["ImageLyre.Domains（空工程）"]
     MS["ImageLyre.Module.Shell"]
     LOC["ImageLyre.Localization（基础设施）"]
-    MC["ImageLyre.Module.Demo.Clock"]
-    MG["ImageLyre.Module.Demo.Greeter"]
-    FD["ImageLyre.Feature.Demo"]
+    MC["ImageLyre.Module.Platform"]
+    MG["ImageLyre.Module.Performance"]
+    FD["ImageLyre.Feature.Diagnostics"]
+    PC["Cangming.Platform.Contracts（借用）"]
 
     APP --> BOOT
     APP --> SC
@@ -114,13 +116,18 @@ flowchart LR
     MC --> CM
     MG --> DC
     MG --> CM
+    MG -.->|"Require / After"| MC
     FD --> SC
     FD --> SA
     FD --> DC
     FD --> AVL
+    DC --> PC
+    MC --> PC
+    MG --> PC
+    FD --> PC
 ```
 
-`ImageLyre.Bootstrap` 与 `ImageLyre.App` 都不按名字引用插件工程；`ImageLyre.App` 引用 `ImageLyre.Contracts` 是为了本地化契约（`ILocalizationService`、`ILocalizationSource`），欢迎界面直接经它取文案，但它不消费示范契约，`IClock`、`IGreeter` 仍只被示范插件引用；发行用的通配引用在 §3.7 单列。
+`ImageLyre.Bootstrap` 与 `ImageLyre.App` 都不按名字引用插件工程；`ImageLyre.App` 引用 `ImageLyre.Contracts` 是为了本地化契约（`ILocalizationService`、`ILocalizationSource`），欢迎界面直接经它取文案；产品契约再引用 `Cangming.Platform.Contracts`，把 `IPlatformCapabilities` 与 `IPerformanceMonitor` 两个借用契约带进契约面，M1 不再自造 `IClock` 一类一次性示范契约；发行用的通配引用在 §3.7 单列。
 
 `ImageLyre.App` 另外直接引用机制包，这是 L5 的正当依赖而不是越界：CLI 的 `--plugins` 要类型化读取 `IPluginManager.Plugins`、`PluginInfo` 与 `IPicoFeatures`，桌面编排在 T12 还要用 `FindModuleBuilder` 取壳产物，而这两件事都发生在 Bootstrap 交出 `IPluginManager` 之后，宿主不可能不看见该类型。ADR-0001 §2.4 的 L5 行本就写明 App 编译期依赖 L0 与 L1，图里补这条边是把既有事实画出来；真正被禁止的是引用插件工程与机制实现包（`Cangming.Shell`、`Cangming.Platform`），这两条边界不变。
 
@@ -137,7 +144,7 @@ sequenceDiagram
     participant Boot as Bootstrap
     participant Mgr as IPluginManager
     participant Shell as 壳插件
-    participant Feat as Feature.Demo
+    participant Feat as Feature.Diagnostics
 
     Entry->>Entry: 解析启动参数
     Entry->>Entry: new LocalizationService()，注册 App 文案源
@@ -344,15 +351,15 @@ cangming v1 的 `AttachToSlot` 在槽位不存在时抛 `InvalidOperationExcepti
 每个插件持有自己的上下文类型，且只在内部使用。M1 的四个示范上下文如下，签名即约定：
 
 ```csharp
-// ImageLyre.Module.Demo.Clock
-internal sealed class ClockModuleContext : BaseModuleContext
+// ImageLyre.Module.Platform
+internal sealed class PlatformModuleContext : BaseModuleContext
 {
 }
 
-// ImageLyre.Module.Demo.Greeter
-internal sealed class GreeterModuleContext : BaseModuleContext
+// ImageLyre.Module.Performance
+internal sealed class PerformanceModuleContext : BaseModuleContext
 {
-    public Lazy<IClock> Clock => Use<IClock>();
+    public Lazy<IPlatformCapabilities> Capabilities => Use<IPlatformCapabilities>();
 }
 
 // ImageLyre.Module.Shell
@@ -368,10 +375,12 @@ internal sealed class ShellModuleContext : BaseModuleContext
         ?? throw new InvalidOperationException("SlotManager 尚未注入或未实现 IAttachmentRegistry");
 }
 
-// ImageLyre.Feature.Demo
-internal sealed class DemoFeatureContext : BaseFeatureContext
+// ImageLyre.Feature.Diagnostics
+internal sealed class DiagnosticsFeatureContext : BaseFeatureContext
 {
-    public Lazy<IGreeter> Greeter => Use<IGreeter>();
+    public Lazy<IPlatformCapabilities> Capabilities => Use<IPlatformCapabilities>();
+
+    public Lazy<IPerformanceMonitor> Performance => Use<IPerformanceMonitor>();
 }
 ```
 
@@ -404,9 +413,9 @@ M1 用主目录扫描，在 cangming 默认前缀表上追加 `ImageLyre.Module.
 
 M1 实测确认了三件事，后续验收依赖它们：插件工程不必进 `src/ImageLyre.slnx`，只要落在 `src/Plugins/**` 就会被这条通配引用拉进构建图并复制产物，这正说明机制不依赖解决方案条目；`dotnet clean` 会清掉已经复制进应用输出目录的 dll，所以删除插件后先 clean 再构建是有效的；空插件工程会被扫描成候选程序集但不产生插件条目，因为找不到 `[Plugin]` 类型，因此“扫描候选数增加、插件数不变”是机制生效的正常表现。
 
-故障样本要一条显式排除，否则它随通配引用无条件进入产品输出：通配项加 `Exclude="..\Plugins\ImageLyre.Module.Demo.Broken\**"`，再在 `Condition="'$(Configuration)'=='Debug'"` 的内容项里单独复制它。这样 Release 输出不含 Broken，验收 D 只在 Debug 树上成立，判据写成“Debug 输出的候选清单含 Broken，Release 输出不含”。
+故障样本要一条显式排除，否则它随通配引用无条件进入产品输出：通配项加 `Exclude="..\Plugins\ImageLyre.Module.Broken\**"`，再在 `Condition="'$(Configuration)'=='Debug'"` 的内容项里单独复制它。这样 Release 输出不含 Broken，验收 D 只在 Debug 树上成立，判据写成“Debug 输出的候选清单含 Broken，Release 输出不含”。
 
-示范工程与示范契约的生命周期同一条：`ImageLyre.Contracts.Demo` 命名空间、三个 Demo 插件在 M1 验收后一并移除，因此它们不是“常驻工程”，只是验收用的临时插件；移除时同步从 `src/ImageLyre.slnx` 摘除，避免解决方案引用不存在的工程。
+三个验收用插件的生命周期同一条：`ImageLyre.Module.Platform`、`ImageLyre.Module.Performance` 与 `ImageLyre.Feature.Diagnostics` 在 M1 验收后一并移除，因此它们不是“常驻工程”；移除时同步从 `src/ImageLyre.slnx` 摘除，避免解决方案引用不存在的工程。契约不像早先的示范契约那样需要删除——它们是借用的 cangming 类型，插件走了契约仍在，这正是借用优于自造的地方。
 
 ### 3.8 失败与降级
 
@@ -535,31 +544,18 @@ public sealed record DockPaneAttachment(string Title, Control Content)
 
 `DockPaneAttachment` 不会被 cangming 的 `SlotPanel` 识别，宿主需要一个专用呈现器：继承 `SlotPanel`、覆写 `UpdateContent`，只处理 `DockPaneAttachment`，遇到其它类型跳过并记日志；该呈现器放在 `ImageLyre.Module.Shell` 工程里。这正是 cangming `ADR-0007` 规定的应用词汇扩展方式，不需要改动基座或路线包。
 
-### 5.4 示范契约与最小能力包模板
+### 5.4 借用契约与最小能力包模板
 
-两个示范契约放在 `ImageLyre.Contracts` 程序集里，命名空间用 `ImageLyre.Contracts.Demo`，这样 M1 结束时按命名空间整体删除，不会误伤正式契约。
+M1 不再自造示范契约，改为从 cangming 借用两个架构级契约：`IPlatformCapabilities` 与 `IPerformanceMonitor`。两者都在 `Cangming.Platform.Contracts`，`ImageLyre.Contracts` 引用该包把它们带进契约面，插件与 Feature 只依赖 `ImageLyre.Contracts` 即可使用。
 
-```csharp
-namespace ImageLyre.Contracts.Demo;
+| 契约 | 成员 | 为什么借它 | M1 的实现口径 |
+| :--- | :--- | :--- | :--- |
+| `IPlatformCapabilities` | `CurrentOS`、`Supports(PlatformCapability)`、`CapabilityChanged` | 它是三端同构的判定基准，平台相关能力都以 `Supports` 为准，且不含任何图像或文档语义 | 读 `RuntimeInformation`，只声明 Windows 的实测结果，其余平台返回未知；`CapabilityChanged` 返回永不触发的流 |
+| `IPerformanceMonitor` | `GetPerformanceSnapshot()`、`SnapshotUpdated` | 诊断与可观测性的最小面，按需计算即可满足契约，无需后台采样线程 | 用 `Process` 与 `GC` 取工作集、托管堆、线程数与运行时长；文档数与 Rail 数 M1 没有来源，填 0 |
 
-/// <summary>M1 的示范能力：读取当前时间，用于验证契约解析与启动顺序。</summary>
-public interface IClock
-{
-    /// <summary>当前时间。</summary>
-    DateTimeOffset Now { get; }
-}
+借用的代价是这两份契约不在本仓、`[ContractMaturity(Experimental)]`，因此按 ADR §1.6 的版本锚点钉在 `0.1.9.1122`，上游改接口时同批升级；换成自造契约的代价更大——M1 结束后没人维护，还要在验收里专门删除，等于用一个必然废弃的接口去验证一个长期机制。
 
-/// <summary>M1 的示范能力：按名字问候，用于验证 Feature 消费契约。</summary>
-public interface IGreeter
-{
-    /// <summary>生成问候语。</summary>
-    /// <param name="name">被问候者名字。</param>
-    /// <returns>问候文本。</returns>
-    string Greet(string name);
-}
-```
-
-这两个契约在 M1 验收后删除，随第一个真实能力包一起替换。新增能力包的最小模板是同一目录下的三个工程：契约工程（接口与数据类型）、Module 工程（`BasePicoModule<T>`）、Feature 工程（`BasePicoFeatures`，向 `toolbar` 或 `panel` 附着一项），Feature 工程只引用契约工程、`ImageLyre.Shell.Contracts`、`ImageLyre.Shell.Attachments`、路线包与 AtomUI。
+新增能力包的最小模板仍是同一目录下的三个工程：契约工程（接口与数据类型）、Module 工程（`BasePicoModule<T>`）、Feature 工程（`BasePicoFeatures`，向 `toolbar` 或 `panel` 附着一项），Feature 工程只引用契约工程、`ImageLyre.Shell.Contracts`、`ImageLyre.Shell.Attachments`、路线包与 AtomUI。借用契约的能力包可以省掉契约工程，M1 的三个验收插件就是这种形态。
 
 ### 5.5 插件标识
 
@@ -568,10 +564,10 @@ public interface IGreeter
 | 工程 | 插件 Id | 契约 |
 | :--- | :--- | :--- |
 | `ImageLyre.Module.Shell` | `lyre.shell.workbench` | `IWorkbenchShell` |
-| `ImageLyre.Module.Demo.Clock` | `lyre.capability.clock` | `IClock` |
-| `ImageLyre.Module.Demo.Greeter` | `lyre.capability.greeter` | `IGreeter` |
-| `ImageLyre.Feature.Demo` | `lyre.feature.demo` | 无（Feature 不提供契约） |
-| `ImageLyre.Module.Demo.Broken` | `lyre.capability.broken` | 无 |
+| `ImageLyre.Module.Platform` | `lyre.capability.platform` | `IPlatformCapabilities` |
+| `ImageLyre.Module.Performance` | `lyre.capability.performance` | `IPerformanceMonitor` |
+| `ImageLyre.Feature.Diagnostics` | `lyre.feature.diagnostics` | 无（Feature 不提供契约） |
+| `ImageLyre.Module.Broken` | `lyre.capability.broken` | 无 |
 
 工程名与 Id 不同构是有意的：工程名按代码形态（Module 与 Feature）分组，Id 按运行角色分组，两者不互相推导，避免“改工程名就改身份”。
 
@@ -625,7 +621,7 @@ public interface ILocalizationSource
 }
 ```
 
-M1 的落地范围：`ImageLyre.Localization` 提供聚合服务与回退规则；App 在创建欢迎界面前先构造该服务并注册 App 自己的文案源，随后把它作为同一实例交给 Bootstrap 的容器；壳插件与 `ImageLyre.Feature.Demo` 各自实现 `ILocalizationSource` 并在 `OnStartAsync` 里注册；壳在标题栏放一个语言切换入口，切换后菜单、状态栏占位与示范面板文案刷新。`ImageLyre.Localization` 不是插件，因此不参与插件扫描、不能被禁用，也不出现在插件清单里。
+M1 的落地范围：`ImageLyre.Localization` 提供聚合服务与回退规则；App 在创建欢迎界面前先构造该服务并注册 App 自己的文案源，随后把它作为同一实例交给 Bootstrap 的容器；壳插件与 `ImageLyre.Feature.Diagnostics` 各自实现 `ILocalizationSource` 并在 `OnStartAsync` 里注册；壳在标题栏放一个语言切换入口，切换后菜单、状态栏占位与诊断面板文案刷新。`ImageLyre.Localization` 不是插件，因此不参与插件扫描、不能被禁用，也不出现在插件清单里。
 
 ## 6 边界情况
 
@@ -650,17 +646,17 @@ M1 的落地范围：`ImageLyre.Localization` 提供聚合服务与回退规则�
 
 | 步骤 | 动作 | 通过判据 | 恢复 |
 | :--- | :--- | :--- | :--- |
-| C 拔插件 | 删除 `ImageLyre.Module.Demo.Clock`（或移出目录）后重建启动 | Greeter 落 `Failed` 并写明缺少 `IClock`，Feature 不附着，应用可用 | 恢复工程 |
-| D 隔离 | 保留 `ImageLyre.Module.Demo.Broken` 启动 | Broken 以 `BrokenPlugin` 形式出现、状态失败且错误消息为构造异常；其余插件 `Running`，窗口正常显示 | 无需恢复 |
+| C 拔插件 | 删除 `ImageLyre.Module.Platform`（或移出目录）后重建启动 | `Performance` 落 `Failed` 并写明缺少 `IPlatformCapabilities`，Feature 不附着，应用可用 | 恢复工程 |
+| D 隔离 | 保留 `ImageLyre.Module.Broken` 启动 | Broken 以 `BrokenPlugin` 形式出现、状态失败且错误消息为构造异常；其余插件 `Running`，窗口正常显示 | 无需恢复 |
 | B 加插件 | 新增 `ImageLyre.Feature.Hello`：一个 Feature 工程，向 `toolbar` 附一个按钮、向 `panel` 附一页，只依赖契约与路线包 | 重启后工具条与面板各多一项；`git status` 只出现新增文件与目录，`ImageLyre.App.csproj` 无改动 | 保留，供 A 一起删除 |
-| A 空壳 | 移除 `ImageLyre.Module.Demo.*`、`ImageLyre.Feature.Demo`、`ImageLyre.Feature.Hello`，并删除 `ImageLyre.Contracts` 中 `ImageLyre.Contracts.Demo` 命名空间后重建启动 | 启动画面出现、主窗体显示空窗口（视口“无图像”、面板“尚无测量”），Bootstrap 日志出现 `能力插件 0 个`，壳仍在运行 | 恢复全部工程与命名空间 |
-| E 纪律 | 对完整树执行检查脚本 | `ImageLyre.Feature.Demo` 与 `ImageLyre.Feature.Hello` 的项目引用里没有 `ImageLyre.Module.*` 与 `ImageLyre.Feature.*`；`ImageLyre.Contracts`、`ImageLyre.Domains` 与 `ImageLyre.Shell.Contracts` 不引用 Avalonia、AtomUI、SkiaSharp 或 cangming 机制包，`ImageLyre.Shell.Contracts` 另不引用任何插件工程；`ImageLyre.Shell.Attachments` 不引用任何插件工程；`ImageLyre.App.csproj` 的按名插件引用为 0、只有一条通配引用；每个工程目录都有 README.md；契约、领域与插件不命中 `Registry`、`DllImport`、`System.Windows.Forms`、盘符字面量与反斜杠拼接；`ImageLyre.Bootstrap` 与 `ImageLyre.App` 的装配代码不命中 ADR-0001 §5.1 的词表 | 无需恢复 |
+| A 空壳 | 移除 `ImageLyre.Module.Platform`、`ImageLyre.Module.Performance`、`ImageLyre.Feature.Diagnostics`、`ImageLyre.Feature.Hello` 后重建启动 | 启动画面出现、主窗体显示空窗口（视口“无图像”、面板“尚无测量”），Bootstrap 日志出现 `能力插件 0 个`，壳仍在运行 | 恢复全部工程 |
+| E 纪律 | 对完整树执行检查脚本 | `ImageLyre.Feature.Diagnostics` 与 `ImageLyre.Feature.Hello` 的项目引用里没有 `ImageLyre.Module.*` 与 `ImageLyre.Feature.*`；`ImageLyre.Contracts`、`ImageLyre.Domains` 与 `ImageLyre.Shell.Contracts` 不引用 Avalonia、AtomUI、SkiaSharp 或 cangming 机制包，`ImageLyre.Shell.Contracts` 另不引用任何插件工程；`ImageLyre.Shell.Attachments` 不引用任何插件工程；`ImageLyre.App.csproj` 的按名插件引用为 0、只有一条通配引用；每个工程目录都有 README.md；契约、领域与插件不命中 `Registry`、`DllImport`、`System.Windows.Forms`、盘符字面量与反斜杠拼接；`ImageLyre.Bootstrap` 与 `ImageLyre.App` 的装配代码不命中 ADR-0001 §5.1 的词表 | 无需恢复 |
 | F 双宿主 | 用同一份构建产物执行 `ImageLyre.App --plugins`（无界面环境） | 输出插件清单，Feature 数量为 0，退出码 0；未创建任何窗口；同一份产物的桌面模式仍能启动并显示主窗体 | 无需恢复 |
 | G 多语言 | 桌面模式切到 `en-US`，再切回 `zh-CN` | 菜单、状态栏占位与示范面板文案随切换变化，窗口不重建；数字与单位不变；缺键时回退中文并记一条缺翻译诊断 | 无需恢复 |
 
 “能力插件 N 个”由 `ImageLyre.Bootstrap` 输出，模板固定，只统计 `lyre.capability.` 前缀的插件，不把壳、平台插件与表达插件算进去；这条日志是 A 的判定依据，也是 G2 面板数据的起点。
 
-替换检查不在 A–G 之内：用另一实现顶替 `IClock`，断言 `FindModuleBuilder<IClock>()` 解析到新实现且既有 Feature 仍能附着，作为 M1 的观察项记录在验收报告里。
+替换检查不在 A–G 之内：用另一实现顶替 `IPerformanceMonitor`，断言 `FindModuleBuilder<IPerformanceMonitor>()` 解析到新实现且既有 Feature 仍能附着，作为 M1 的观察项记录在验收报告里。
 
 ## 8 不在 M1 范围
 
@@ -673,12 +669,12 @@ M1 的落地范围：`ImageLyre.Localization` 提供聚合服务与回退规则�
 | 步骤 | 产出 | 前置 | 完成判据 |
 | :--- | :--- | :--- | :--- |
 | 1 | 解决方案 `src/ImageLyre.slnx` 与根配置、cangming 子模块、`ImageLyre.Domains` 空工程、`ImageLyre.Contracts` 骨架（仅 `ILocalizationService`、`ILocalizationSource`）、`ImageLyre.Localization` 基础设施与 App 文案源、`ImageLyre.Bootstrap` 骨架、`ImageLyre.App` 入口（桌面分支 + 无界面分支）、欢迎占位窗口、通配引用的复制机制；各工程带 README | 无 | 一个空插件工程构建后，应用输出目录出现其 dll，扫描日志的候选列表含该 dll；欢迎窗口出现且文案来自 LocalizationService，Bootstrap 输出 `能力插件 0 个`；`--plugins` 在无界面环境返回 0 且 Feature 数为 0；`ImageLyre.App.csproj` 无改动 |
-| 2 | `ImageLyre.Contracts` 的 `ImageLyre.Contracts.Demo` 命名空间、`ImageLyre.Shell.Contracts`（`ShellSlots`、`IWorkbenchShell`）、`ImageLyre.Shell.Attachments`（`DockPaneAttachment`） | 步骤 1 | 三个工程构建通过且各自带 README；产品契约不引用 UI 框架；壳契约单向依赖产品契约且不引用 Avalonia、不引用机制包；附着物程序集引用机制包与 Avalonia 但不引用任何插件工程；产品契约依赖步骤 1 已落地的 Domains，方向不倒置 |
+| 2 | `ImageLyre.Contracts` 引用 `Cangming.Platform.Contracts`（借用 `IPlatformCapabilities` 与 `IPerformanceMonitor`）、`ImageLyre.Shell.Contracts`（`ShellSlots`、`IWorkbenchShell`）、`ImageLyre.Shell.Attachments`（`DockPaneAttachment`） | 步骤 1 | 三个工程构建通过且各自带 README；产品契约不引用 UI 框架；壳契约单向依赖产品契约且不引用 Avalonia、不引用机制包；附着物程序集引用机制包与 Avalonia 但不引用任何插件工程；产品契约依赖步骤 1 已落地的 Domains，方向不倒置 |
 | 3 | `ImageLyre.Module.Shell`：`ISupportSlotManager` 注入、三个槽位、`ShellWindow`、静态菜单与状态栏占位、面板空态；App 的 `MainWindowFactory.Compose` | 步骤 2 | 壳收到槽位管理器注入（日志一行）；`GetAllSlots` 返回三个槽位；主窗体由壳插件的 `Build()` 产出并显示；面板显示“尚无测量”；App 里没有窗口布局代码 |
 | 4 | 装配链收口：槽位管理器单例、注入顺序、附着、关停、欢迎窗口切换 | 步骤 3 | 主窗体显示后欢迎窗口关闭；关窗后进程正常退出；重复启动不残留槽位重复异常 |
 | 5 | 壳文案资源化：壳实现 `ILocalizationSource`、菜单与状态栏占位走资源键、标题栏语言切换入口 | 步骤 4 | 切换中英后菜单与状态栏占位文案变化，窗口不重建；缺键回退中文并记诊断 |
-| 6 | `ImageLyre.Module.Demo.Clock`、`ImageLyre.Module.Demo.Greeter`、`ImageLyre.Feature.Demo` 及四个上下文；Feature 自带文案源 | 步骤 5 | 工具条与面板各出现一项；日志里能看到 `After` 决定的启动先后；切换语言后面板文案同步变化 |
-| 7 | 检查脚本（引用方向、词表检索、通配引用计数、README 检查）、`ImageLyre.Module.Demo.Broken` | 步骤 6 | 脚本可执行并通过；D 的判据可复现 |
+| 6 | `ImageLyre.Module.Platform`、`ImageLyre.Module.Performance`、`ImageLyre.Feature.Diagnostics` 及三个上下文；Feature 自带文案源 | 步骤 5 | 工具条与面板各出现一项；日志里能看到 `After` 决定的启动先后；拔掉 `Platform` 时 `Performance` 落 `Failed`；切换语言后面板文案同步变化 |
+| 7 | 检查脚本（引用方向、词表检索、通配引用计数、README 检查）、`ImageLyre.Module.Broken` | 步骤 6 | 脚本可执行并通过；D 的判据可复现 |
 | 8 | 验收 A–G 全跑、文档回写 | 步骤 7 | 七条验收通过并留下提交号与日志摘录；`AGENTS.md` 的现状段更新 |
 
 步骤 3 与步骤 4 不得并行：壳的槽位贡献点与 App 的编排顺序是同一条时序的两端，分开写会各自猜对方的契约。
