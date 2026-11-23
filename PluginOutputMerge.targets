@@ -6,14 +6,27 @@
     其余 dll 由本目标按插件目录逐个取顶层文件复制过来。宿主工程与它的测试工程都导入本文件，
     因为测试进程同样要以「插件就在输出目录旁边」为前提启动 Bootstrap。
 
+    Broken 是故障样本，只允许出现在 Debug 输出；Release 发行输出不得带它。构建仍会产出它
+    （构建不等于发布），所以这里先从通配归并里 Exclude，再只在 Debug 条件下单独 Include。
+
     只取一层 *.dll，不递归进 runtimes/ 之类的子目录，避免把原生库拍平到输出根；
     路径以本文件所在目录为基准，因此与导入方工程的位置无关。
   -->
   <Target Name="MergePluginOutputs" AfterTargets="Build" Condition="Exists('$(MSBuildThisFileDirectory)src\Plugins')">
     <ItemGroup>
-      <PluginOutputDll Include="$(MSBuildThisFileDirectory)src\Plugins\**\bin\$(Configuration)\$(TargetFramework)\*.dll" />
+      <PluginOutputDll Include="$(MSBuildThisFileDirectory)src\Plugins\**\bin\$(Configuration)\$(TargetFramework)\*.dll"
+                       Exclude="$(MSBuildThisFileDirectory)src\Plugins\Modules\ImageLyre.Module.Broken\bin\$(Configuration)\$(TargetFramework)\*.dll" />
+      <!-- ponytail: Broken 只进 Debug 输出是 M1 约定；G4 装包后由发行清单取代这条规则。 -->
+      <PluginOutputDll Include="$(MSBuildThisFileDirectory)src\Plugins\Modules\ImageLyre.Module.Broken\bin\$(Configuration)\$(TargetFramework)\*.dll"
+                       Condition="'$(Configuration)' == 'Debug'" />
     </ItemGroup>
     <Copy SourceFiles="@(PluginOutputDll)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <!--
+      宿主工程对 src/Plugins/**/*.csproj 的通配 ProjectReference 还会复制插件主程序集，
+      因此非 Debug 构建再从输出目录删一次 Broken，确保发行输出连主程序集也不含它。
+    -->
+    <Delete Files="$(OutDir)ImageLyre.Module.Broken.dll"
+            Condition="'$(Configuration)' != 'Debug' and Exists('$(OutDir)ImageLyre.Module.Broken.dll')" />
   </Target>
 
 </Project>

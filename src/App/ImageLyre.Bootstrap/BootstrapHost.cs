@@ -1,3 +1,4 @@
+using System.Reflection;
 using Cangming.Logs;
 using Cangming.PicoPlugins;
 using Cangming.PicoPlugins.Core;
@@ -92,10 +93,29 @@ public sealed class BootstrapHost : IAsyncDisposable
 
         // ponytail: 只统计 lyre.capability. 前缀，平台与表达插件要等 G2 的插件面板。
         int capabilityCount = manager.Plugins.Count(
-            plugin => manager.GetPluginInfo(plugin.GetType()).Id.StartsWith("lyre.capability.", StringComparison.Ordinal));
+            plugin => GetPluginId(manager, plugin).StartsWith("lyre.capability.", StringComparison.Ordinal));
         s_logger.LogInformation("能力插件 {Count} 个", capabilityCount);
 
         return new BootstrapHost(provider, manager);
+    }
+
+    /// <summary>优先读取构造失败占位条目保留的扫描期 Id，再回退管理器按类型查找。</summary>
+    /// <param name="manager">插件管理器。</param>
+    /// <param name="plugin">插件实例。</param>
+    /// <returns>插件 Id，用于能力插件计数。</returns>
+    /// <remarks>
+    /// cangming 的 <c>BrokenPlugin</c> 把扫描期 <c>[Plugin]</c> 元数据保存在公开的 <c>Info</c> 属性里，
+    /// 但按占位类型重查会得到占位类型自身的 Id；这里先读 <c>Info</c>，让失败的故障样本仍按真实前缀计数。
+    /// </remarks>
+    private static string GetPluginId(IPluginManager manager, IPicoPlugin plugin)
+    {
+        PropertyInfo? infoProperty = plugin.GetType().GetProperty(
+            "Info",
+            BindingFlags.Instance | BindingFlags.Public);
+
+        return infoProperty?.GetValue(plugin) is PluginInfo info
+                   ? info.Id
+                   : manager.GetPluginInfo(plugin.GetType()).Id;
     }
 
     /// <summary>停止本次启动的全部插件。</summary>

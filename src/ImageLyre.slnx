@@ -22,6 +22,7 @@
     <Project Path="Plugins/Modules/ImageLyre.Module.Shell/ImageLyre.Module.Shell.csproj" />
     <Project Path="Plugins/Modules/ImageLyre.Module.Platform/ImageLyre.Module.Platform.csproj" />
     <Project Path="Plugins/Modules/ImageLyre.Module.Performance/ImageLyre.Module.Performance.csproj" />
+    <Project Path="Plugins/Modules/ImageLyre.Module.Broken/ImageLyre.Module.Broken.csproj" />
   </Folder>
   <Folder Name="/Plugins/Features/">
     <Project Path="Plugins/Features/ImageLyre.Feature.Diagnostics/ImageLyre.Feature.Diagnostics.csproj" />

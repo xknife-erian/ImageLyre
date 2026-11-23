@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Reflection;
 using Cangming.PicoPlugins;
 using Cangming.PicoPlugins.Core;
 using Cangming.PicoPlugins.Core.Features;
@@ -148,7 +149,7 @@ public static class CliHost
         await output.WriteLineAsync("插件清单（无界面宿主）：");
         foreach (IPicoPlugin plugin in plugins)
         {
-            PluginInfo info = host.PluginManager.GetPluginInfo(plugin.GetType());
+            PluginInfo info = TryReadPluginInfo(plugin) ?? host.PluginManager.GetPluginInfo(plugin.GetType());
             bool isFeature = plugin is IPicoFeatures;
             if (isFeature)
                 featureCount++;
@@ -165,6 +166,23 @@ public static class CliHost
 
         // ponytail: 插件清单是纯文本，G2 的插件面板会替换这里的呈现方式；替换时保留 Id、名称、状态与 Feature 四个字段。
         return ExitSuccess;
+    }
+
+    /// <summary>优先读取构造失败占位条目保留的扫描期插件信息。</summary>
+    /// <param name="plugin">插件实例。</param>
+    /// <returns>占位条目公开的 <c>Info</c>；普通插件没有该属性时返回 <see langword="null"/>。</returns>
+    /// <remarks>
+    /// cangming 的 <c>BrokenPlugin</c> 在构造期把扫描到的 <c>[Plugin]</c> 元数据保存在公开的 <c>Info</c> 属性里，
+    /// 但 <c>GetPluginInfo(plugin.GetType())</c> 只会按占位类型重查，从而丢掉真实 Id 与名称；CLI 先读这个属性，
+    /// 读不到再回退管理器，保证故障样本仍以 <c>lyre.capability.broken</c> 与「故障样本」出现在清单里。
+    /// </remarks>
+    private static PluginInfo? TryReadPluginInfo(IPicoPlugin plugin)
+    {
+        PropertyInfo? infoProperty = plugin.GetType().GetProperty(
+            "Info",
+            BindingFlags.Instance | BindingFlags.Public);
+
+        return infoProperty?.GetValue(plugin) as PluginInfo;
     }
 
     /// <summary>输出用法、三条命令与退出码约定。</summary>

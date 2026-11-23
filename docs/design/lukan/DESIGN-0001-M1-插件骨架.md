@@ -30,6 +30,7 @@
 | 0.26 | 2026-11-23 | 草稿 | lukan | 订正 §4.2：cangming `v0.1.9.1122` 的路线包只有 `StatusBarAttachment`，没有 `StatusBarContentAttachment`，后者出现时再补专用呈现器；语言项在英文下保持语言自称，避免把「中文」译成 `Chinese` 后无法回切 |
 | 0.27 | 2026-11-23 | 草稿 | lukan | 补 §3.4 的实现级硬约束：壳窗口必须派生自 `AtomUI.Desktop.Controls.Window`，Avalonia 原生 `Window` 在 AtomUI 主题下没有 `OverlayLayer`，打开子菜单会抛 Popup 异常；冒烟新增 `LYRE_SMOKE_OPEN_MENU=1` 展开一次子菜单来守住它 |
 | 0.28 | 2026-11-23 | 草稿 | lukan | 回写 T14：§5.6 说明 M1 的附着物不可变（工具条标题、状态栏片段、面板页签在附着时定稿，只有面板内容随语言刷新，其余等 G3），§7 的 G 判据按同一口径收窄，不再承诺「切换后全部刷新」 |
+| 0.29 | 2026-11-23 | 草稿 | lukan | 回写 T16：§5.5 增设 `lyre.test.` 前缀，故障样本改用 `lyre.test.broken`，避免它被算进“能力插件 N 个”而让验收 A 的“0 个”永远达不到；同时记录 Release 输出不含故障样本 |
 
 ## 1 目标与范围
 
@@ -577,7 +578,7 @@ M1 需要两个长期能力契约：`IPlatformCapabilities` 与 `IPerformanceMon
 
 ### 5.5 插件标识
 
-插件 Id 用角色的前缀表达插件类别，既是命名约定，也是启动日志与将来插件面板的统计口径：`lyre.shell.` 是壳，`lyre.platform.` 是平台插件，`lyre.capability.` 是能力插件，`lyre.feature.` 是表达插件；Bootstrap 的“能力插件 N 个”只统计 `lyre.capability.` 前缀。
+插件 Id 用角色的前缀表达插件类别，既是命名约定，也是启动日志与将来插件面板的统计口径：`lyre.shell.` 是壳，`lyre.platform.` 是平台插件，`lyre.capability.` 是能力插件，`lyre.feature.` 是表达插件，`lyre.test.` 是只进 Debug 的测试样本；Bootstrap 的“能力插件 N 个”只统计 `lyre.capability.` 前缀。
 
 | 工程 | 插件 Id | 契约 |
 | :--- | :--- | :--- |
@@ -585,7 +586,9 @@ M1 需要两个长期能力契约：`IPlatformCapabilities` 与 `IPerformanceMon
 | `ImageLyre.Module.Platform` | `lyre.capability.platform` | `IPlatformCapabilities` |
 | `ImageLyre.Module.Performance` | `lyre.capability.performance` | `IPerformanceMonitor` |
 | `ImageLyre.Feature.Diagnostics` | `lyre.feature.diagnostics` | 无（Feature 不提供契约） |
-| `ImageLyre.Module.Broken` | `lyre.capability.broken` | 无 |
+| `ImageLyre.Module.Broken` | `lyre.test.broken` | 无 |
+
+故障样本刻意用 `lyre.test.` 而不是 `lyre.capability.`：它必然构造失败、不提供任何契约，若算进能力插件计数，验收 A 的“能力插件 0 个”就永远达不到，日志也会把一次失败说成一份能力。
 
 工程名与 Id 不同构是有意的：工程名按代码形态（Module 与 Feature）分组，Id 按运行角色分组，两者不互相推导，避免“改工程名就改身份”。
 

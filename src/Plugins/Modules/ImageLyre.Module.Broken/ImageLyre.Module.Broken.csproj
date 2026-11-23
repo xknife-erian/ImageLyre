@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- 故障样本只需要插件基类与 [Plugin]；不引用契约、UI 路线或任何插件工程。 -->
+    <PackageReference Include="Cangming.PicoPlugins" />
+  </ItemGroup>
+
+</Project>
