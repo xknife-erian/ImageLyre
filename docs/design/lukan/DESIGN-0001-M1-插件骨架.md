@@ -13,6 +13,7 @@
 | 0.9 | 2026-11-23 | 草稿 | lukan | 作者口径补三端同构约束：契约、领域与插件不写平台判断，不引注册表与 Win32，路径经统一目录服务；验收 E 增加平台相关符号检索 |
 | 0.10 | 2026-11-23 | 草稿 | lukan | 架构判定订正实施顺序：`ImageLyre.Domains` 空工程与本地化契约随步骤 1 落地，构建入口定址 `src/ImageLyre.slnx`；理由是契约方向与 `ILocalizationService` 的宿主依赖都要求它们先于步骤 1 的宿主代码 |
 | 0.11 | 2026-11-23 | 草稿 | lukan | 按独立评审与 cangming v1 源码订正三处：附着物词汇移出壳契约，新建 `ImageLyre.Shell.Attachments`，`ImageLyre.Shell.Contracts` 不再引用 Avalonia 与机制包；壳的槽位注入改为 `ISupportSlotManager` + `IAttachmentRegistry` 强转；§2.2 的期限约定表与 ADR-0001 §2.5 逐条对齐 |
+| 0.12 | 2026-11-23 | 草稿 | lukan | 回写 T04 实现时核出的两处：`StartAsync` 必须把宿主的 `ILoggerFactory` 登记进容器（管理器构造依赖它，cangming 不注册日志服务），并输出 `HasUiRoute` 一行供判据取证；同时登记容器里没有 `ILogger<T>` 的边界 |
 
 ## 1 目标与范围
 
@@ -187,7 +188,13 @@ public sealed class BootstrapHost : IAsyncDisposable
         PicoPluginSettings.HasUiRoute = mode == HostMode.Desktop;
         PicoPluginSettings.AddPluginAssemblyPrefixes(["ImageLyre.Module.", "ImageLyre.Feature."]);
 
+        // 判据要从日志确认扫描路线；cangming 只输出扫到的插件数，不输出该开关的值。
+        LogHub.For(typeof(BootstrapHost)).LogInformation("HasUiRoute={HasUiRoute}", PicoPluginSettings.HasUiRoute);
+
         var services = new ServiceCollection();
+
+        // 管理器构造依赖 ILoggerFactory，cangming 不注册日志服务，因此由宿主登记；放在 configure 之前便于覆盖。
+        services.AddSingleton(loggerFactory);
         configure?.Invoke(services);
         PicoPluginSystem.Launch(services);
 
@@ -207,6 +214,10 @@ public sealed class BootstrapHost : IAsyncDisposable
     public async ValueTask DisposeAsync() => await _pluginManager.StopAsync();
 }
 ```
+
+`services.AddSingleton(loggerFactory)` 一行不是示例省略：`DefaultPluginManager` 在 `v0.1.9.1122` 的构造签名要求 `ILoggerFactory`，而 `PluginsCore.ConfigureServices` 只登记管理器、载入器与已准入插件，从不调用 `AddLogging`，所以宿主不登记工厂时 `GetRequiredService<IPluginManager>()` 会直接失败。
+
+与之配套的边界是容器里只有 `ILoggerFactory`、没有 `ILogger<T>`：M1 的插件按 cangming 惯例用 `LogHub` 静态取日志，将来若某插件要构造注入 `ILogger<T>`，先在宿主侧补 `AddLogging` 再改本节，不预留空注册。`HasUiRoute` 那行日志同理不是装饰，T04 的判据要靠它从日志确认扫描路线，而 cangming 只输出扫描到的插件数、不输出该开关的值。
 
 ```csharp
 // ImageLyre.App/Startup/MainWindowFactory.cs，UI 线程
