@@ -12,6 +12,21 @@
 - 不放第四条命令与业务命令：`Cli/CliHost.cs` 只有 `--version`、`--plugins`、`--help` 三条命令，业务命令按 `ADR-0001` §2.5 归 G2；CLI 文本是机器可读接口，不经过 `ILocalizationService`，也不做本地化。
 - 不放产品能力与主界面布局：没有图像、ROI、测量、文档、设置代码，也没有菜单、状态栏、面板容器或主题配置。
 
+## 调试启动
+
+`Properties/launchSettings.json` 把 M1 的每种启动形态各设一个调试档案，`dotnet run --project src/App/ImageLyre.App --launch-profile <名称>` 或 Visual Studio 的启动下拉框都能选到；档案只服务本机调试，不参与发布产物。
+
+| 档案 | 等价启动参数 | 观察点 |
+| :--- | :--- | :--- |
+| `ImageLyre（桌面）` | 无参数 | 欢迎窗口常驻，需手动关闭 |
+| `ImageLyre --version` | `--version` | stdout 一行版本，退出码 0 |
+| `ImageLyre --plugins` | `--plugins` | stdout 插件清单与汇总行，Bootstrap 日志在 stderr |
+| `ImageLyre --help` | `--help` | 用法与退出码约定，退出码 0 |
+| `ImageLyre 未知参数（退出码 2）` | `--bogus` | stderr 回显参数原文，退出码 2 |
+| `ImageLyre 桌面冒烟（自动关闭）` | 环境变量 `LYRE_SMOKE_CLOSE_MS=1500` | 窗口 1.5 秒后自关，退出码 0 |
+
+`LYRE_SMOKE_CLOSE_MS` 是 `App.OnFrameworkInitializationCompleted` 里的自动冒烟钩子，只在取值为正整数时生效，接入真实 UI 测试后删除；它被写进冒烟档案，是为了让“桌面分支能起来并正常退出”这条验证不依赖人眼盯着窗口。
+
 ## 依赖方向
 
 引用 `Avalonia`、`Avalonia.Desktop` 与 `AtomUI.Desktop.Controls` 承载窗口、控件与桌面生命周期；引用 `ImageLyre.Bootstrap` 驱动启动链；引用 `ImageLyre.Localization` 取得 `LocalizationService`；引用 `ImageLyre.Contracts` 取得 `ILocalizationService` 与 `ILocalizationSource`；CLI 清单读取直接使用 `Cangming.PicoPlugins` 的 `IPluginManager`、`PluginInfo` 与 `IPicoFeatures`，stderr 日志工厂直接使用 `Microsoft.Extensions.Logging.Abstractions`，这两个包因此显式声明而不依赖传递引用。不引用 `ImageLyre.Shell.Contracts`（尚未建立）、`ImageLyre.Shell.Attachments`、任何 `ImageLyre.Module.*` 或 `ImageLyre.Feature.*` 工程。本工程是进程入口，不被其他工程引用。
