@@ -11,7 +11,7 @@
   -->
   <Target Name="MergePluginOutputs" AfterTargets="Build" Condition="Exists('$(MSBuildThisFileDirectory)src\Plugins')">
     <ItemGroup>
-      <PluginOutputDll Include="$(MSBuildThisFileDirectory)src\Plugins\*\bin\$(Configuration)\$(TargetFramework)\*.dll" />
+      <PluginOutputDll Include="$(MSBuildThisFileDirectory)src\Plugins\**\bin\$(Configuration)\$(TargetFramework)\*.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(PluginOutputDll)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>

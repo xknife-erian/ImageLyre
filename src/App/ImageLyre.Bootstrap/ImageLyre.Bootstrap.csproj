@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <!-- 只依赖契约，不按名字引用任何插件工程（DESIGN-0001 §3.2）。 -->
-    <ProjectReference Include="..\..\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
   </ItemGroup>
 
   <!--

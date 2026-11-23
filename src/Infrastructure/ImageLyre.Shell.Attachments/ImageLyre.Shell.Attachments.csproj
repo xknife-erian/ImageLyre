@@ -8,7 +8,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+    <ProjectReference Include="..\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

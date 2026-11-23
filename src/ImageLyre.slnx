@@ -2,27 +2,22 @@
   <!--
     唯一构建入口（DESIGN-0001 §2.1 约束 10）：dotnet build src/ImageLyre.slnx。
     测试工程在 ../tests/ 下，同样挂在本入口里：构建一条命令，测试按工程单独执行。
-    删除工程时同步摘除这里的条目，避免解决方案引用不存在的工程。
+    目录按职责分：App 放进程入口与启动链，Infrastructure 放共享库（契约、领域、本地化、附着物词汇），
+    Plugins 下再分 Modules 与 Features 两类。删除工程时同步摘除这里的条目。
   -->
-  <Folder Name="/Contracts/">
-    <Project Path="Contracts/ImageLyre.Domains/ImageLyre.Domains.csproj" />
-    <Project Path="Contracts/ImageLyre.Contracts/ImageLyre.Contracts.csproj" />
-    <Project Path="Contracts/ImageLyre.Shell.Contracts/ImageLyre.Shell.Contracts.csproj" />
-  </Folder>
-  <Folder Name="/Shell/">
-    <Project Path="Shell/ImageLyre.Shell.Attachments/ImageLyre.Shell.Attachments.csproj" />
-  </Folder>
-  <Folder Name="/Infrastructure/">
-    <Project Path="Infrastructure/ImageLyre.Localization/ImageLyre.Localization.csproj" />
-  </Folder>
-  <Folder Name="/Bootstrap/">
-    <Project Path="Bootstrap/ImageLyre.Bootstrap/ImageLyre.Bootstrap.csproj" />
-  </Folder>
   <Folder Name="/App/">
     <Project Path="App/ImageLyre.App/ImageLyre.App.csproj" />
+    <Project Path="App/ImageLyre.Bootstrap/ImageLyre.Bootstrap.csproj" />
   </Folder>
-  <Folder Name="/Plugins/">
-    <Project Path="Plugins/ImageLyre.Module.Shell/ImageLyre.Module.Shell.csproj" />
+  <Folder Name="/Infrastructure/">
+    <Project Path="Infrastructure/ImageLyre.Domains/ImageLyre.Domains.csproj" />
+    <Project Path="Infrastructure/ImageLyre.Contracts/ImageLyre.Contracts.csproj" />
+    <Project Path="Infrastructure/ImageLyre.Shell.Contracts/ImageLyre.Shell.Contracts.csproj" />
+    <Project Path="Infrastructure/ImageLyre.Shell.Attachments/ImageLyre.Shell.Attachments.csproj" />
+    <Project Path="Infrastructure/ImageLyre.Localization/ImageLyre.Localization.csproj" />
+  </Folder>
+  <Folder Name="/Plugins/Modules/">
+    <Project Path="Plugins/Modules/ImageLyre.Module.Shell/ImageLyre.Module.Shell.csproj" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="../tests/UnitTest.ImageLyre.App/UnitTest.ImageLyre.App.csproj" />

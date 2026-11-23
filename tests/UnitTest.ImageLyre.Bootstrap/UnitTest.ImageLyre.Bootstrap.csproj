@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Bootstrap\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj" />
+    <ProjectReference Include="..\..\src\App\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj" />
   </ItemGroup>
 
 </Project>
