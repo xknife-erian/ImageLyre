@@ -16,6 +16,7 @@
 | 0.12 | 2026-11-23 | 草稿 | lukan | 回写 T04 实现时核出的两处：`StartAsync` 必须把宿主的 `ILoggerFactory` 登记进容器（管理器构造依赖它，cangming 不注册日志服务），并输出 `HasUiRoute` 一行供判据取证；同时登记容器里没有 `ILogger<T>` 的边界 |
 | 0.13 | 2026-11-23 | 草稿 | lukan | 回写 T05：App 引用 `ImageLyre.Contracts` 取本地化契约（§3.2 原写不引用，改为按用途说明）；§3.3 的编排骨架换成代码式 AtomUI 启动，并补三条硬要求——`Application` 必须 `partial`、必须 `UseDesktopControls`、不要显式 `Show` 欢迎窗口 |
 | 0.14 | 2026-11-23 | 草稿 | lukan | 回写 T06：§3.2 补 App → 机制包这条边并说明理由（L5 依赖 L1，读 `IPluginManager` 与 `PluginInfo` 不可避免），§3.1 的 App 行同步；§3.3 的 CLI 调用换成带文本流的 `RunAsync`，并写明 stdout 只放结果、日志与错误走 stderr、输出不走本地化 |
+| 0.15 | 2026-11-23 | 草稿 | lukan | 订正 §3.7 通配引用的相对路径（原写 `..\Plugins\**`，少一层，实际指向不存在的 `src/App/Plugins`），并记录实测行为：插件工程不进解决方案也会被拉进构建并复制、`dotnet clean` 能清掉已复制的 dll、空工程只增加扫描候选不增加插件条目 |
 
 ## 1 目标与范围
 
@@ -388,16 +389,20 @@ M1 用主目录扫描，在 cangming 默认前缀表上追加 `ImageLyre.Module.
 
 ```xml
 <ItemGroup>
-  <ProjectReference Include="..\Plugins\**\*.csproj"
+  <ProjectReference Include="..\..\Plugins\**\*.csproj"
                     ReferenceOutputAssembly="false"
                     OutputItemType="Content"
                     CopyToOutputDirectory="PreserveNewest" />
 </ItemGroup>
 ```
 
+相对路径从 `src/App/ImageLyre.App/` 算起，因此要两个 `..` 才回到 `src/` 再进 `Plugins`；少写一层会指向并不存在的 `src/App/Plugins`，通配安静地匹配零个工程，表现为“机制加了但 dll 一直不出现”。
+
 `ReferenceOutputAssembly="false"` 保证插件程序集不进编译输入，`OutputItemType="Content"` 把它变成可复制的内容项，工程引用同时给出正确的构建顺序。这条通配引用是插件工程进入 `ImageLyre.App.csproj` 的唯一形式，按名字的逐条引用数量必须为 0，验收 E 检查的就是这一点。
 
 复制是增量的，`PreserveNewest` 不会清理已删除插件的旧 dll，因此所有“删除插件”的验收必须先 `dotnet clean` 或删除应用输出目录再构建，判据里要检查启动日志的候选程序集列表不含被删插件。
+
+M1 实测确认了三件事，后续验收依赖它们：插件工程不必进 `src/ImageLyre.slnx`，只要落在 `src/Plugins/**` 就会被这条通配引用拉进构建图并复制产物，这正说明机制不依赖解决方案条目；`dotnet clean` 会清掉已经复制进应用输出目录的 dll，所以删除插件后先 clean 再构建是有效的；空插件工程会被扫描成候选程序集但不产生插件条目，因为找不到 `[Plugin]` 类型，因此“扫描候选数增加、插件数不变”是机制生效的正常表现。
 
 故障样本要一条显式排除，否则它随通配引用无条件进入产品输出：通配项加 `Exclude="..\Plugins\ImageLyre.Module.Demo.Broken\**"`，再在 `Condition="'$(Configuration)'=='Debug'"` 的内容项里单独复制它。这样 Release 输出不含 Broken，验收 D 只在 Debug 树上成立，判据写成“Debug 输出的候选清单含 Broken，Release 输出不含”。
 
