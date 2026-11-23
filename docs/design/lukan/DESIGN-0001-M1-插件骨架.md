@@ -21,6 +21,7 @@
 | 0.17 | 2026-11-23 | 草稿 | lukan | 按作者口径把两个契约从「引用」改为「抄录」：`IPlatformCapabilities` 与 `IPerformanceMonitor` 以源码落进 `ImageLyre.Contracts`，去掉 `ContractMaturity` 依赖并裁剪性能快照里的壳字段；本仓可独立演进，向上游提升不属本仓范围；§3.1/§3.2/§5.4 同步 |
 | 0.18 | 2026-11-23 | 草稿 | lukan | 回写 T11：§3.7 记录插件依赖如何到达输出目录（插件打开 `CopyLocalLockFileAssemblies`，宿主与测试工程导入根 `PluginOutputMerge.targets` 归并插件 bin），并记录扫描缓存的失效陷阱；同时确认 App 仍不按名引用插件或插件依赖 |
 | 0.19 | 2026-11-23 | 草稿 | lukan | 回写 T12：§3.3 的线程要求改为「编排从 UI 线程发起、Bootstrap 等待放在 fire-and-forget 任务里」，删掉「`StartAsync` 在 UI 线程同步等待」这句与样例矛盾的旧措辞，保留「插件 `StartServiceAsync` 必须同步完成」的实现约束 |
+| 0.20 | 2026-11-23 | 草稿 | lukan | 回写 T13：§3.5 补「附着前断言三个槽位已贡献」的代码级护栏，§6 补「同一进程重复编排或关停」的边界与失败路径先停插件；单例槽位管理器、编排门闩与统一收口在实现中落地 |
 
 ## 1 目标与范围
 
@@ -344,6 +345,8 @@ cangming v1 的 `AttachToSlot` 在槽位不存在时抛 `InvalidOperationExcepti
 
 这条差异只影响顺序，不影响归属：两者都是 App 编排、模块产出窗口。cangming 落地 `ADR-0012` §2.7 的 v2 后，未贡献槽位的附着改为进入待解析桶、贡献时冲刷，本节的措辞与 §4.5 一并删除，顺序可以改回 Mercury 的写法。
 
+顺序不只写在文档里：`MainWindowFactory.Compose` 在 `Build` 之后、`RegisterFeatureAttachments` 之前断言三个槽位都已贡献，谁把附着提前，就会在附着前以“壳插件未贡献槽位”失败，而不是等到界面空白才发现。
+
 ### 3.6 上下文组织器
 
 每个插件持有自己的上下文类型，且只在内部使用。M1 的四个示范上下文如下，签名即约定：
@@ -640,6 +643,7 @@ M1 的落地范围：`ImageLyre.Localization` 提供聚合服务与回退规则�
 | 非插件程序集被扫到 | 默认前缀命中的 `Cangming.*` 会被扫到并按非插件跳过 | 不产生清单条目，不视为异常 |
 | Feature 附着抛异常 | 该 Feature 的附着被吞掉，其余 Feature 继续 | cangming 的 `RegisterFeatureAttachments` 单个 `try`；M1 记日志，G2 进诊断 |
 | 关停顺序 | 先关主窗体、退订槽位事件，再 `StopAsync` | 避免插件停止后控件仍被访问；停止超时取 cangming 默认 15 秒 |
+| 同一进程重复编排或重复关停 | 编排门闩拒绝第二次开始，关停幂等；启动失败时先停插件再显示原因 | 门闩是三态 `Idle → Begun → Stopped`，`Stop` 可以先于 `Begin`，因此桌面在启动完成前退出也不会留下半启动进程 |
 | 输出目录残留旧插件 | 已删除插件仍在清单里 | 删除插件的验收先 `dotnet clean`，并检查候选程序集列表 |
 
 ## 7 验收
