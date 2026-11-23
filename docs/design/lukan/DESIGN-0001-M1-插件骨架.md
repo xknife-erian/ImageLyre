@@ -20,6 +20,7 @@
 | 0.16 | 2026-11-23 | 草稿 | lukan | 按作者口径换掉自造示范契约：取 cangming 的 `IPlatformCapabilities` 与 `IPerformanceMonitor`，三个验收插件改为 `Module.Platform`、`Module.Performance`、`Feature.Diagnostics`，故障样本改名 `Module.Broken`；§3.1/§3.2/§3.6/§3.7/§5.4/§5.5/§7/§9 同步 |
 | 0.17 | 2026-11-23 | 草稿 | lukan | 按作者口径把两个契约从「引用」改为「抄录」：`IPlatformCapabilities` 与 `IPerformanceMonitor` 以源码落进 `ImageLyre.Contracts`，去掉 `ContractMaturity` 依赖并裁剪性能快照里的壳字段；本仓可独立演进，向上游提升不属本仓范围；§3.1/§3.2/§5.4 同步 |
 | 0.18 | 2026-11-23 | 草稿 | lukan | 回写 T11：§3.7 记录插件依赖如何到达输出目录（插件打开 `CopyLocalLockFileAssemblies`，宿主与测试工程导入根 `PluginOutputMerge.targets` 归并插件 bin），并记录扫描缓存的失效陷阱；同时确认 App 仍不按名引用插件或插件依赖 |
+| 0.19 | 2026-11-23 | 草稿 | lukan | 回写 T12：§3.3 的线程要求改为「编排从 UI 线程发起、Bootstrap 等待放在 fire-and-forget 任务里」，删掉「`StartAsync` 在 UI 线程同步等待」这句与样例矛盾的旧措辞，保留「插件 `StartServiceAsync` 必须同步完成」的实现约束 |
 
 ## 1 目标与范围
 
@@ -329,7 +330,7 @@ var bootstrap = await BootstrapHost.StartAsync(
 
 CLI 骨架在 M1 只支持三条命令：`--version` 输出版本，`--plugins` 输出插件清单（Id、名称、状态、是否 Feature），`--help` 输出用法；三条都不创建窗口，也不初始化 Avalonia 应用。
 
-线程要求：从 `FindModuleBuilder` 到 `window.Show()` 的每一步都在 UI 线程执行，因为槽位附着会创建控件；`StartAsync` 在 UI 线程同步等待。M1 因此附加一条约束：所有插件的 `StartServiceAsync` 必须同步完成，不得在启动动作里等待 UI 上下文的异步续体；将来若有插件需要真异步启动，必须先把 `StartAsync` 移到 UI 循环启动之前，再修改本节。
+线程要求：编排从 UI 线程发起，从 `FindModuleBuilder` 到 `window.Show()` 的每一步都在 UI 线程执行，因为取壳与附着都会创建控件；`BootstrapHost.StartAsync` 的等待放在 fire-and-forget 任务里推进（`_ = ComposeAsync(desktop)`），不得阻塞 UI 循环，`await` 之后由 Avalonia 同步上下文回到 UI 线程。M1 另有一条实现约束：插件的 `StartServiceAsync` 仍须同步完成，不得在启动动作里等待 UI 上下文的异步续体，否则等待会与尚未开始的消息循环互相堵死。
 
 ### 3.4 主窗体由壳插件承载
 
