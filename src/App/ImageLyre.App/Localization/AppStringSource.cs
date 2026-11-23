@@ -14,9 +14,12 @@ internal static class AppStringKeys
 
     /// <summary>欢迎窗口的状态文本。</summary>
     internal static string Status => "lyre.app.status";
+
+    /// <summary>启动失败时的前缀，后面接异常消息。</summary>
+    internal static string Failed => "lyre.app.failed";
 }
 
-/// <summary>App 自有界面文案源，M1 只提供欢迎窗口用到的三枚资源键。</summary>
+/// <summary>App 自有界面文案源，M1 只提供欢迎窗口用到的四枚资源键。</summary>
 /// <remarks>
 /// <para>
 /// 资源键以 <c>lyre.app.</c> 开头，与壳的 <c>lyre.shell.*</c> 和插件的 Id 前缀分开，因此壳或插件后注册同名键也不会覆盖 App 的文案；
@@ -35,13 +38,15 @@ public sealed class AppStringSource : ILocalizationSource
             {
                 [AppStringKeys.Product] = "ImageLyre",
                 [AppStringKeys.Version] = "版本",
-                [AppStringKeys.Status] = "插件骨架占位界面：主窗体由壳插件接入后替换。",
+                [AppStringKeys.Status] = "正在装载插件与主窗体……",
+                [AppStringKeys.Failed] = "启动失败：",
             },
             ["en-US"] = new Dictionary<string, string>(StringComparer.Ordinal)
             {
                 [AppStringKeys.Product] = "ImageLyre",
                 [AppStringKeys.Version] = "Version",
-                [AppStringKeys.Status] = "Plugin skeleton placeholder: the shell plugin will supply the main window.",
+                [AppStringKeys.Status] = "Loading plugins and the main window...",
+                [AppStringKeys.Failed] = "Startup failed:",
             },
         };
 

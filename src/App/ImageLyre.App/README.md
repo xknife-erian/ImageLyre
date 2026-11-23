@@ -2,12 +2,12 @@
 
 ## 意义
 
-本工程是进程入口与宿主分派点：解析启动参数后，桌面分支用 AtomUI 显示欢迎占位窗口并把文案来源固定到 `ILocalizationService`，CLI 分支把参数交给 `Cli/CliHost.cs` 执行 `--version`、`--plugins`、`--help` 或拒绝无效参数，期间不构造 `AppBuilder`、不触碰任何 Avalonia 类型。把两条分支的判定收在入口一处，是为了让同一份产物既能带界面启动，也能在没有桌面环境时被 CLI 调用，而不出现“先初始化 UI 再想办法把它关掉”的半桌面状态；M1 阶段它只承担欢迎窗口、分派与三条 CLI 命令，主窗体、槽位附着与插件装配分别留给 T11、T12 与 `ImageLyre.Bootstrap`。
+本工程是进程入口与宿主分派点：解析启动参数后，桌面分支用 AtomUI 显示欢迎占位窗口并把文案来源固定到 `ILocalizationService`，随后在 UI 线程上启动 Bootstrap、取壳、附着 Feature 并把主窗体挂到桌面；CLI 分支把参数交给 `Cli/CliHost.cs` 执行 `--version`、`--plugins`、`--help` 或拒绝无效参数，期间不构造 `AppBuilder`、不触碰任何 Avalonia 类型。把两条分支的判定收在入口一处，是为了让同一份产物既能带界面启动，也能在没有桌面环境时被 CLI 调用，而不出现“先初始化 UI 再想办法把它关掉”的半桌面状态；主窗体仍由壳插件产出，App 只负责取壳、挂载与关停转发。
 
 ## 边界（不放什么）
 
-- 不构建主窗体、不贡献槽位：主窗体由壳插件在自己的 `Build()` 里产出（T11 与 T12），槽位名与贡献属于 `ImageLyre.Shell.Contracts` 与壳插件，本工程只把取到的窗口挂到 `desktop.MainWindow`；欢迎窗口是 App 自己的固定语义区域，不进槽位。
-- 不放插件扫描与启动：扫描前缀、容器构建、`PicoPluginSystem.Launch`、插件启动与关停都在 `ImageLyre.Bootstrap`，`CliHost` 只调用它并读取结果，不复制它的顺序。
+- 不构建主窗体、不贡献槽位：主窗体由壳插件在自己的 `Build()` 里产出，槽位名与贡献属于 `ImageLyre.Shell.Contracts` 与壳插件；`Startup/MainWindowFactory.cs` 只按“注入 → 取壳 → 附着”的顺序编排，并把壳产物挂到 `desktop.MainWindow`；欢迎窗口是 App 自己的固定语义区域，不进槽位。
+- 不放插件扫描与启动：扫描前缀、容器构建、`PicoPluginSystem.Launch`、插件启动与关停都在 `ImageLyre.Bootstrap`，`CliHost` 与 `ComposeAsync` 只调用它，不复制它的顺序。
 - 不按名字登记插件：插件只经 `ImageLyre.App.csproj` 的通配 `ProjectReference` 被发现，新增插件不改本工程文件；按名字的插件引用一律禁止，验收 E 检查按名引用数为 0。
 - 不放本地化实现与资源聚合：`LocalizationService` 在 `ImageLyre.Localization`，本工程只创建实例并注册 `AppStringSource` 这一个 App 自有文案源。
 - 不放第四条命令与业务命令：`Cli/CliHost.cs` 只有 `--version`、`--plugins`、`--help` 三条命令，业务命令按 `ADR-0001` §2.5 归 G2；CLI 文本是机器可读接口，不经过 `ILocalizationService`，也不做本地化。
@@ -19,7 +19,7 @@
 
 | 档案 | 等价启动参数 | 观察点 |
 | :--- | :--- | :--- |
-| `ImageLyre（桌面）` | 无参数 | 欢迎窗口常驻，需手动关闭 |
+| `ImageLyre（桌面）` | 无参数 | 欢迎窗口短暂显示，随后切换为壳窗口；需手动关闭 |
 | `ImageLyre --version` | `--version` | stdout 一行版本，退出码 0 |
 | `ImageLyre --plugins` | `--plugins` | stdout 插件清单与汇总行，Bootstrap 日志在 stderr |
 | `ImageLyre --help` | `--help` | 用法与退出码约定，退出码 0 |
@@ -30,7 +30,7 @@
 
 ## 依赖方向
 
-引用 `Avalonia`、`Avalonia.Desktop` 与 `AtomUI.Desktop.Controls` 承载窗口、控件与桌面生命周期；引用 `ImageLyre.Bootstrap` 驱动启动链；引用 `ImageLyre.Localization` 取得 `LocalizationService`；引用 `ImageLyre.Contracts` 取得本地化契约；CLI 清单读取直接使用 `Cangming.PicoPlugins` 的 `IPluginManager`、`PluginInfo` 与 `IPicoFeatures`，stderr 日志工厂直接使用 `Microsoft.Extensions.Logging.Abstractions`，这两个包因此显式声明而不依赖传递引用。不按名字引用任何插件工程，也不为插件依赖做编译引用：插件主程序集经 `ImageLyre.App.csproj` 里唯一一条指向 `src/Plugins/**/*.csproj` 的通配 `ProjectReference` 进入构建顺序与输出目录，插件自己的依赖由 `src/Plugins/Directory.Build.props` 的 `CopyLocalLockFileAssemblies` 与仓库根 `PluginOutputMerge.targets` 归并进来（测试工程导入同一份目标）。按名字的 `ImageLyre.Module.*`、`ImageLyre.Feature.*` 插件引用一律禁止。本工程是进程入口，不被其他工程引用。
+引用 `Avalonia`、`Avalonia.Desktop` 与 `AtomUI.Desktop.Controls` 承载窗口、控件与桌面生命周期；引用 `ImageLyre.Bootstrap` 驱动启动链；引用 `ImageLyre.Localization` 取得 `LocalizationService`；引用 `ImageLyre.Contracts` 取得本地化契约；引用 `ImageLyre.Shell.Contracts` 取得 `IWorkbenchShell` 类型（T12 的取壳编排，L5→L0 的合法依赖）；CLI 清单读取直接使用 `Cangming.PicoPlugins` 的 `IPluginManager`、`PluginInfo` 与 `IPicoFeatures`，stderr 日志工厂直接使用 `Microsoft.Extensions.Logging.Abstractions`，这两个包因此显式声明而不依赖传递引用。不按名字引用任何插件工程，也不为 `ImageLyre.Shell.Attachments`、路线包等插件依赖做编译引用：插件主程序集经 `ImageLyre.App.csproj` 里唯一一条指向 `src/Plugins/**/*.csproj` 的通配 `ProjectReference` 进入构建顺序与输出目录，插件自己的依赖由 `src/Plugins/Directory.Build.props` 的 `CopyLocalLockFileAssemblies` 与仓库根 `PluginOutputMerge.targets` 归并进来（测试工程导入同一份目标）。按名字的 `ImageLyre.Module.*`、`ImageLyre.Feature.*` 插件引用一律禁止。本工程是进程入口，不被其他工程引用。
 
 ## 边界变化时改哪份文档
 
