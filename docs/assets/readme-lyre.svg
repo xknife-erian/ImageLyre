@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520">
+  <rect width="1600" height="520" fill="#F5F6F8"/>
+  <circle cx="1240" cy="210" r="230" fill="#ECEEF1"/>
+  <circle cx="1240" cy="210" r="231" fill="none" stroke="#DDE1E5" stroke-width="1"/>
+  <g fill="none" stroke="#141619" stroke-width="2.2" stroke-linecap="round">
+    <path d="M520 420 L520 250"/>
+    <path d="M520 400 C 470 330, 430 260, 442 176"/>
+    <path d="M520 400 C 570 330, 610 260, 598 176"/>
+    <path d="M442 176 L598 176"/>
+    <path d="M452 176 C 448 238, 446 300, 452 380"/>
+    <path d="M478 176 C 476 240, 476 300, 478 380"/>
+    <path d="M504 176 L504 380"/>
+    <path d="M530 176 C 532 240, 532 300, 530 380"/>
+    <path d="M556 176 C 560 238, 562 300, 556 380"/>
+    <path d="M570 176 C 574 240, 576 300, 570 380"/>
+  </g>
+  <g fill="#B83A24">
+    <circle cx="520" cy="176" r="2.4"/>
+    <circle cx="520" cy="380" r="2.4"/>
+  </g>
+  <g fill="none" stroke="#C2C7CD" stroke-width="1">
+    <path d="M120 120 L120 420"/>
+    <path d="M120 420 L520 420"/>
+  </g>
+  <g fill="#6A717A" font-family="Consolas, monospace" font-size="13">
+    <text x="120" y="446">FIG. 01 — A LYRE, FIVE STRINGS</text>
+  </g>
+</svg>

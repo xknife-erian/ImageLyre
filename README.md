@@ -1,48 +1,82 @@
-![Lyric](https://atelier-skald.com/wp-content/uploads/2018/08/APS9514-3S.jpg) 
-# ImageLyre 
+![一把里拉琴，五根弦](docs/assets/readme-lyre.png)
 
-> **状态说明（2026-11-18）**：本仓库 2022 年版基于 WPF 与 .NET 6 的实现已整体弃用，不再作为新系统的迁移来源。新一代跨平台系统的启动需求与架构基线见 [docs/spec/baseline/startup-requirements.md](docs/spec/baseline/startup-requirements.md)。
+# ImageLyre
 
-　　ImageLyre 软件和它的源代码是免费提供的。遵循来自中国的[木兰宽松许可证v2](http://license.coscl.org.cn/MulanPSL2)。
+> **状态（2026-11-22）**：2022 年 WPF 版与 2026 年 11 月的两轮重建已整体归档，工作区只保留需求、基线与目录骨架；归档前的完整状态在标签 `archive/pre-reset-2026-11-22`。新一代系统的插件架构基线见 [ADR-0001](docs/adr/lukan/ADR-0001-插件机制架构基线.md)，M1 骨架见 [DESIGN-0001](docs/design/lukan/DESIGN-0001-M1-插件骨架.md)，实施计划见 [PLAN-0001](docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md)。
 
-　　ImageLyre 的研发初心完全是建立在[ImageJ](https://imagej.nih.gov/ij/)的成功应用基础之上的，在这里向[ImageJ](https://imagej.nih.gov/ij/)的作者[Wayne Rasband](https://imagej.net/people/rasband)致以崇高的敬意。
+ImageLyre 是显微镜旁的第一块屏幕。
 
-　　本软件作者([稀布老咖](https://gitee.com/xknife))之所以想再造车轮，构建这样一个项目，主要的出发点有几个方面：一、[ImageJ](https://imagej.nih.gov/ij/)在功能界面与人机交互上是有不少可以改进优化的；二、虽然Java语言无所不能，并且有跨平台的优势，但是Java语言在构建桌面应用软件上还是略显笨拙一些；三、作者是一个有20余年技术实践与研发管理的老派工程师，并且工作中也和科研图像、显微图像的处理技术有很多的相关性，所以希望把工作积累的知识与经验充分释放利用起来。
+它要做的不是把 ImageJ 换一层皮，而是把「看图 → 校准 → 选区 → 测量 → 复核 → 导出」这条路重新铺一遍：让研究者更快拿到可信的数字，让老用户不必重新学一套软件，让 Agent 能看见上下文、提出可审阅的下一步。
 
-　　ImageLyre 是作者([稀布老咖](https://gitee.com/xknife))利用业余时间于2022年春天在北京家中启动研发的。
+一盏灯，一张台面，一枚干净的读数。
 
-　　ImageLyre 当前的定义是一款正在研发的图像处理软件。在第一期产品定义中，为快速验证与实现基本的产品思路与技术路线，ImageLyre 将完全参考[ImageJ](https://imagej.nih.gov/ij/)的功能布局与定义，以及实现的功能及效果；因开发语言的差异以及技术架构的不同，所以作者承诺原创，不抄袭代码（也没可能抄袭）。在第一期研发结束后，会在第二期定义新版的功能地图和界面交互。
+## 为什么做
 
-　　ImageLyre 使用 C# 语言与 .NET 10 平台开发，界面以 AtomUI 为一等公民（底层基于 AvaloniaUI），图像视口渲染、画布变换与 ROI 叠加基于 SkiaSharp，代码架构基于 MVVM 思想；编解码以 SimdCodecs 为主，显微镜厂商私有格式通过可选的 BioFormats.NET 插件接入，基础算子基于 Span<T> 与 System.Numerics 自研并做 SIMD 加速。系统可在 Windows、Linux 与 macOS 上运行，按 UI、内核、算子插件与跨进程沙箱四层解耦，同一插件既可由界面交互调用，也可在后台批量执行，并原生支持 Python 脚本。
+ImageLyre 的起点是 [ImageJ](https://imagej.nih.gov/ij/)。向它的作者 [Wayne Rasband](https://imagej.net/people/rasband) 致敬——一个人、一间实验室、一套软件，几十年。
 
-　　ImageLyre 支持的功能将会包括但不限于：
+作者 [稀布老咖](https://gitee.com/xknife) 想再造一次车轮，理由并不复杂：
 
-**(1)** 图像数据类型：8 位、16 位、32 位浮点数据表达，支持多通道、Z 栈与时序 T 序列。
+一、ImageJ 的界面与人机交互，今天看仍有大量可以重新设计的地方；二、Java 写桌面应用，终究笨拙了一些；三、作者做了二十余年技术，工作又与科研图像、显微图像纠缠很深，想把那些经验认真用一次。
 
-**(2)** 图像格式：TIFF（含 BigTIFF 与 ImageJ TIFF）、PNG、JPG；CZI、LIF、ND2、OIB 等厂商私有格式通过可选插件读取。
+2022 年春天，这个项目在北京的家中开始。
 
-**(3)** 图像显示：提供缩放和滚动图像的工具，支持高 DPI 与多视图对比；视图缩放不修改原始像素；对灰度图像应用伪彩色调色板，并把多通道图像按通道拆分观察与处理。
+## 做什么
 
-**(4)** 选择与选区：创建矩形、椭圆、多边形、自由手绘、线和点的选择，编辑选区并保存为 ImageJ 兼容的 `.roi` / `.zip` 文件，选区可在图像之间转移。
+Core 1.0 只保证四件事：**打开图能测、测完敢信、老用户能迁、插件能长。** 其余能力进官方更新，或者交给插件。
 
-**(5)** 图像增强：支持 8 位灰度和 RGB 彩色图像的平滑、锐化、边缘检测、中值过滤和阈值处理；交互式地调整 8、16 和 32 位图像的亮度和对比度。
+具体是十五个产品结果：
 
-**(6)** 几何操作：裁剪、缩放、调整大小和旋转，垂直或水平翻转；视图缩放与用于分析的定量重采样分属两条路径。
+- **看见**：首启即可开始；标准 TIFF/BigTIFF 与元数据；画布缩放、平移与像素探针。
+- **测量**：矩形/多边形 ROI 与 `.roi` 往返；校准；面积、均值、标准差、最小、最大、周长六项；CSV 与 sidecar 可复现。
+- **可逆**：撤销、自动保存、崩溃恢复；结果版本、对比与回退。
+- **界面**：浅色/深色/跟随系统；中英双语；键盘全路径、对比度与应用内缩放。
+- **可扩展**：插件即插即用；ImageJ 迁移壳；CLI 与 Agent 的一次可信分析。
 
-**(7)** 分析功能：测量面积、平均值、标准偏差、选择或整个图像的最小和最大值，以及长度和角度；支持颗粒分析、连通域筛选、圆度与 Feret 直径，测量结果按 ImageJ 的表头与指标顺序导出 CSV。
+Windows 先发，macOS 与 Linux 随后；三端共用同一套设计与同一套插件。核心路径离线可用。
 
-**(8)** 编辑功能：剪切、复制或粘贴图像或选区，使用 AND、OR、XOR 或混合模式粘贴，在图像上添加文本、箭头、矩形、椭圆或多边形。
+## 怎么建
 
-**(9)** 堆栈能力：在一个窗口中显示相关图像的“堆栈”，把文件夹中的图像作为堆栈打开，执行最大值、均值与求和投影，并把堆栈保存为多图像 TIFF。
+.NET 10。界面以 AtomUI 为一等公民，Avalonia 做平台底座，SkiaSharp 只负责图像视口、画布变换与 ROI 叠加。
 
-**(10)** 自动化与插件：通过 Feature 插件槽位扩展 IO、视图、算子、测量与脚本能力，重计算任务在跨进程沙箱中执行，Python 作为一等脚本语言。
+编解码以 SimdCodecs 为主，BioFormats.NET 作为随包插件、默认启用可禁用。插件机制以 cangming 的 `PicoPlugins` 为基座——只借它的发现、生命周期、依赖与槽位，不把它的 Shell 当应用内核。
 
-　　在交互层面，ImageLyre 会尽量保留 ImageJ 的操作习惯：菜单与工具栏分组、选区绘制手势、测量流程与常用快捷键都向 ImageJ 靠拢，让有经验的使用者不必重新学习；视觉与控件按 AtomUI 现代化，两者并不冲突。
+“一切皆为插件”不是口号，是三件事：平台能力（文档、命令、设置、通知、主题）是插件；编解码、算子、测量、视口是官方必装插件；界面功能是表达插件。官方套装随发行包预装，但在机制上与第三方插件完全一样，可以禁用、替换、按变体裁剪。契约层只留纯 C# 的数据与格式模型：`ImageContainer`、`Calibration`、`ROI`、CSV。
 
-　　最后，作者想描述一下初心与发源：其实最主要是看到[ImageJ](https://imagej.nih.gov/ij/)的作者 [Wayne Rasband](https://imagej.net/people/rasband) 的简介后，颇感励志。是的，这就是作者向往的工程师生活中的一个侧写。所以那就开始吧，**但行好事，莫问前程；前路有光，初心莫忘**。
+桌面与 CLI 是两个入口，同一套结果。
 
-　　注：作者[稀布老咖](https://gitee.com/xknife)中的“稀布”是“西部”的谐音。十余年前，母亲使用电脑水平一般，申请QQ后母亲想给自己起一个“西部沙子”的昵称，但拼音输入不太灵光，变成了“稀布沙子”，也就一直使用下去了。母亲已去世多年，记忆深处音容宛在，特此借这个谐音纪念我的母亲，感念养育之恩。
+## 与 ImageJ 的关系
+
+保留的是操作序列与术语：菜单层级、工具栏分组、ROI 手势、测量流程、常用快捷键。不保留的是 Swing 外观与 Java 实现。
+
+老用户第一次打开，应该觉得“还是那套逻辑，但顺手多了”；而不是“我又要学一套软件”。改动的地方要能查到新旧对照，争议交互要留一条一键回旧路径。
+
+## 现在到哪
+
+2026-11-22 的仓库重置把两轮重建的代码整体移出工作区，只留下需求、基线、目录骨架与构建入口。当前还没有 ImageLyre 自己的工程；cangming 以只读子模块接入，ImageLyre 的工程从 M1 的 T10 起按 `DESIGN-0001` 的目录结构与插件命名逐个加入。
+
+想读什么，从这里进：
+
+- 产品定位与十五个结果：[PRD 4.4](docs/spec/requirements/product-requirements.md)
+- 架构基线：[startup-requirements.md](docs/spec/baseline/startup-requirements.md)
+- 插件机制：[ADR-0001](docs/adr/lukan/ADR-0001-插件机制架构基线.md)
+- M1 骨架：[DESIGN-0001](docs/design/lukan/DESIGN-0001-M1-插件骨架.md)
+- M1 实施：[PLAN-0001](docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md)
+- 外观与交互：[product-appearance.md](docs/spec/requirements/product-appearance.md)、[interaction-requirements.md](docs/spec/requirements/interaction-requirements.md)
+
+## 写给未来
+
+作者说，最初真正推着他动手的，是读到 Wayne Rasband 简介时的那一点羡慕：一个人把一件事做了一辈子，做得足够好，好到全世界都在用。
+
+那就开始吧。**但行好事，莫问前程；前路有光，初心莫忘。**
+
+## 授权
+
+ImageLyre 的软件与源代码免费提供，遵循[木兰宽松许可证 v2](http://license.coscl.org.cn/MulanPSL2)。
+
+## 附记
+
+作者 [稀布老咖](https://gitee.com/xknife) 的“稀布”是“西部”的谐音。十余年前，母亲申请 QQ 时想给自己起名“西部沙子”，拼音不太灵光，打成了“稀布沙子”，便一直用下去。母亲已去世多年，音容宛在。借这个谐音纪念她，感念养育之恩。
 
 ---
 
-![Workbench](https://oss.xknife.net/Workbench_with_a_little_clutter_and_warmth.jpg)
+![一张工作台，有一点杂乱，也有温度](docs/assets/readme-workbench.png)
