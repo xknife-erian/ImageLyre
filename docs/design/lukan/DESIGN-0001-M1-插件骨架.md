@@ -27,6 +27,7 @@
 | 0.23 | 2026-11-23 | 草稿 | lukan | 按作者口径改菜单归属：壳只提供菜单条容器与外观，菜单项由命令注册表平台插件与各 Feature 贡献（G2），M1 只放一个禁用的占位项、不挂 Click 与 Command；§4.1 的判据与 §4.4 的区域表同步 |
 | 0.24 | 2026-11-23 | 草稿 | lukan | 回写 T15：语言切换入口落在菜单栏右侧（§4.4 标题栏行与 §5.6 同步），§3.3 补「CLI 也必须先注册 `ILocalizationService`」，因为壳的启动动作会解析它注册文案源 |
 | 0.25 | 2026-11-23 | 草稿 | lukan | 按作者口径调整两处归属：语言切换移到「文件」菜单下，作为壳自有的非插件功能；状态栏改为第四个一级槽位 `lyre.shell.statusbar`，读数片段由插件贡献，M1 的五段由壳占位以满足交互规格；§4.1/§4.2/§4.4/§4.5/§5.6 同步 |
+| 0.26 | 2026-11-23 | 草稿 | lukan | 订正 §4.2：cangming `v0.1.9.1122` 的路线包只有 `StatusBarAttachment`，没有 `StatusBarContentAttachment`，后者出现时再补专用呈现器；语言项在英文下保持语言自称，避免把「中文」译成 `Chinese` 后无法回切 |
 
 ## 1 目标与范围
 
@@ -452,7 +453,7 @@ M1 实测确认了三件事，后续验收依赖它们：插件工程不必进 `
 | `lyre.shell.toolbar` | 工具栏 | `ToolbarButtonAttachment` | 多 | 显式 `Order`，M1 要求每个附着物都写 `Order` |
 | `lyre.shell.viewport` | 图像视口 | `ContentAttachment` | 单 | 无 |
 | `lyre.shell.panel` | 辅助面板（Results 所在处） | `DockPaneAttachment` | 多 | 显式 `Order`，M1 要求每个附着物都写 `Order` |
-| `lyre.shell.statusbar` | 状态栏中段，承载各插件贡献的读数片段 | `StatusBarAttachment` 与 `StatusBarContentAttachment` | 多 | 显式 `Order`，M1 要求每个附着物都写 `Order` |
+| `lyre.shell.statusbar` | 状态栏中段，承载各插件贡献的读数片段 | `StatusBarAttachment`（M1 只有这一类；`StatusBarContentAttachment` 尚未在 cangming `v0.1.9.1122` 的路线包提供，出现时再补专用呈现器） | 多 | 显式 `Order`，M1 要求每个附着物都写 `Order` |
 
 M1 要求显式 `Order`，是因为渲染器的排序对 `NoPreference` 一律返回相等，底层用的是不稳定的就地排序，未声明顺序的相对次序没有保证；写死 `Order` 之后“按序呈现”才是可判定的承诺。
 

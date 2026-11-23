@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ImageLyre.Module.Shell;
 
-/// <summary>M1 的壳插件：以 <see cref="Build"/> 产出主窗体，并在窗口构造期贡献三个一级槽位。</summary>
+/// <summary>M1 的壳插件：以 <see cref="Build"/> 产出主窗体，并在窗口构造期贡献四个一级槽位。</summary>
 /// <remarks>
 /// <para>
 /// 壳是 M1 唯一的 UI 型 Module：它接收槽位管理器注入、贡献槽位、构造 <see cref="ShellWindow"/>，
@@ -83,7 +83,7 @@ public sealed class ShellModule : BasePicoModule<IWorkbenchShell>, ISupportSlotM
     /// <param name="args">构建参数，M1 不使用；壳没有按参数产出不同窗体的场景。</param>
     /// <returns>缓存同一个窗口实例的 <see cref="Lazy{T}"/>。</returns>
     /// <remarks>
-    /// 窗口构造会贡献三个槽位并创建 <c>SlotPanel</c>，因此调用方必须在 UI 线程取 <c>.Value</c>；
+    /// 窗口构造会贡献四个槽位并创建 <c>SlotPanel</c>，因此调用方必须在 UI 线程取 <c>.Value</c>；
     /// <see cref="Lazy{T}"/> 与字段双重缓存保证重复取壳只构造一次，不会触发同名槽位重复贡献。
     /// </remarks>
     public override Lazy<IWorkbenchShell> Build(params object[] args) =>

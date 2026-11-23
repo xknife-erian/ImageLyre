@@ -11,59 +11,60 @@ using ImageLyre.Shell.Contracts;
 using AtomMenu = AtomUI.Desktop.Controls.Menu;
 using AtomMenuItem = AtomUI.Desktop.Controls.MenuItem;
 using AtomTextBlock = AtomUI.Desktop.Controls.TextBlock;
-using AtomUIButton = AtomUI.Desktop.Controls.Button;
 
 namespace ImageLyre.Module.Shell;
 
-/// <summary>M1 的壳窗口：菜单栏、工具栏容器、视口容器、辅助面板容器与状态栏五段占位。</summary>
+/// <summary>M1 的壳窗口：菜单栏、工具栏容器、视口容器、辅助面板容器与带状态栏槽位的底栏。</summary>
 /// <remarks>
 /// <para>
-/// 窗口由 <see cref="ShellModule.Build"/> 在 Avalonia 就绪后构造，构造期先贡献三个一级槽位，再创建三个共享同一
+/// 窗口由 <see cref="ShellModule.Build"/> 在 Avalonia 就绪后构造，构造期先贡献四个一级槽位，再创建四个共享同一
 /// <see cref="ISlotManager"/> 的 <c>SlotPanel</c>；因此“取到壳体”等价于“槽位已贡献”，宿主随后才能附着 Feature。
 /// </para>
 /// <para>
 /// 布局只是骨架：视口与辅助面板没有内容时分别显示“无图像”与“尚无测量”空态，工具栏默认为空；
-/// 菜单栏只保留一个占位顶层与一个置灰子项，菜单项将来由命令注册表平台插件与各 Feature 贡献（G2），
-/// 壳不预置真实菜单，也不挂任何点击命令。
+/// 菜单栏只保留一个「文件」顶层，下面依次是壳自有的中文/English 语言切换与一个置灰占位项，
+/// 其余菜单项将来由命令注册表平台插件与各 Feature 贡献（G2）。语言项之外的菜单项不挂任何点击命令。
 /// </para>
 /// <para>
-/// 文案：所有可见文本经 <see cref="ILocalizationService.Get"/> 取 <c>lyre.shell.*</c> 资源键；菜单栏右侧的两个按钮
-/// 切换 <c>zh-CN</c>/<c>en-US</c>，<see cref="ILocalizationService.LanguageChanged"/> 回调只 <c>Post</c> 到 UI 线程逐项改
-/// <c>Text</c>/<c>Header</c>，不重建窗口或控件树。M1 只有中英两套文案，更多语言由后续任务扩资源源。
+/// 文案：所有可见文本经 <see cref="ILocalizationService.Get"/> 取 <c>lyre.shell.*</c> 资源键；语言项只调用
+/// <see cref="ILocalizationService.SetLanguageAsync"/>，<see cref="ILocalizationService.LanguageChanged"/> 回调只
+/// <c>Post</c> 到 UI 线程逐项改 <c>Text</c>/<c>Header</c>，不重建窗口或控件树。M1 只有中英两套文案，更多语言由后续任务扩资源源。
 /// </para>
 /// <para>
-/// 生命周期：窗口关闭后由宿主调用 <see cref="Dispose"/> 退订三个 <c>SlotPanel</c> 的槽位事件与本地化事件；
+/// 生命周期：窗口关闭后由宿主调用 <see cref="Dispose"/> 退订四个 <c>SlotPanel</c> 的槽位事件与本地化事件；
 /// M1 不提供运行期摘除附着物，控件树随窗口销毁由 Avalonia 统一回收。
 /// </para>
 /// </remarks>
 public sealed class ShellWindow : Window, IWorkbenchShell
 {
     private readonly ILocalizationService _localization;
+    private readonly ISlotManager _slotManager;
     private readonly SlotPanel _toolbarPanel;
     private readonly ViewportSlotPanel _viewportPanel;
     private readonly DockPaneSlotPanel _panel;
+    private SlotPanel _statusBarPanel = null!;
 
-    private AtomMenuItem _placeholderMenu = null!;
+    private AtomMenuItem _fileMenu = null!;
+    private AtomMenuItem _languageZhItem = null!;
+    private AtomMenuItem _languageEnItem = null!;
     private AtomMenuItem _placeholderItem = null!;
-    private AtomUIButton _chineseButton = null!;
-    private AtomUIButton _englishButton = null!;
     private (string Key, AtomTextBlock Block)[] _statusSegments = [];
     private AtomTextBlock _readyText = null!;
     private bool _disposed;
 
-    /// <summary>按已注入的上下文构造壳窗口并贡献三个一级槽位。</summary>
+    /// <summary>按已注入的上下文构造壳窗口并贡献四个一级槽位。</summary>
     /// <param name="context">壳插件上下文，必须已完成槽位管理器与 IoC 注入。</param>
     /// <exception cref="ArgumentNullException"><paramref name="context"/> 为 <see langword="null"/>。</exception>
     /// <exception cref="InvalidOperationException">槽位管理器或本地化服务尚未注入。</exception>
     /// <remarks>
     /// 构造必须在 UI 线程执行，因为 <c>SlotPanel</c> 会创建控件并订阅槽位事件；
-    /// 三个 <c>SlotPanel</c> 共用 <paramref name="context"/> 里的同一个 <see cref="ISlotManager"/> 实例，不各自创建。
+    /// 四个 <c>SlotPanel</c> 共用 <paramref name="context"/> 里的同一个 <see cref="ISlotManager"/> 实例，不各自创建。
     /// </remarks>
     internal ShellWindow(ShellModuleContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        ISlotManager slotManager = context.SlotManager;
+        _slotManager = context.SlotManager;
         _localization = context.Localization;
         ContributeSlots(context.Registry);
 
@@ -74,9 +75,9 @@ public sealed class ShellWindow : Window, IWorkbenchShell
         MinHeight = 600;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-        _toolbarPanel = CreateToolbarPanel(slotManager);
-        _viewportPanel = new ViewportSlotPanel(slotManager, _localization);
-        _panel = new DockPaneSlotPanel(slotManager, _localization);
+        _toolbarPanel = CreateToolbarPanel(_slotManager);
+        _viewportPanel = new ViewportSlotPanel(_slotManager, _localization);
+        _panel = new DockPaneSlotPanel(_slotManager, _localization);
 
         AtomMenu menu = BuildMenu();
         Content = BuildLayout(menu);
@@ -98,6 +99,7 @@ public sealed class ShellWindow : Window, IWorkbenchShell
         _toolbarPanel.SlotManager = null;
         _viewportPanel.SlotManager = null;
         _panel.SlotManager = null;
+        _statusBarPanel.SlotManager = null;
     }
 
     /// <summary>语言切换后把文本刷新投递到 UI 线程，不重建窗口。</summary>
@@ -112,8 +114,8 @@ public sealed class ShellWindow : Window, IWorkbenchShell
 
     /// <summary>按当前语言逐项改写已有控件的文本，不创建或替换任何控件。</summary>
     /// <remarks>
-    /// 菜单两个 Header、两个切换按钮、状态栏五段与就绪消息、视口/面板空态都只改 <c>Text</c>/<c>Header</c>；
-    /// 真实视口内容与页签标题属于 Feature，壳不在这里改写。
+    /// 「文件」菜单的顶层与语言项、占位项、状态栏五段与就绪消息、视口/面板空态都只改 <c>Text</c>/<c>Header</c>；
+    /// 当前语言项通过 <see cref="AtomMenuItem.IsEnabled"/> 置灰，真实视口内容与页签标题属于 Feature，不在这里改写。
     /// </remarks>
     private void RefreshTexts()
     {
@@ -121,10 +123,11 @@ public sealed class ShellWindow : Window, IWorkbenchShell
             return;
 
         Title = _localization.Get(ShellStringKeys.WindowTitle);
-        _placeholderMenu.Header = _localization.Get(ShellStringKeys.MenuPlaceholder);
+        _fileMenu.Header = _localization.Get(ShellStringKeys.MenuFile);
+        _languageZhItem.Header = _localization.Get(ShellStringKeys.MenuLanguageZh);
+        _languageEnItem.Header = _localization.Get(ShellStringKeys.MenuLanguageEn);
         _placeholderItem.Header = _localization.Get(ShellStringKeys.MenuPlaceholderItem);
-        _chineseButton.Content = _localization.Get(ShellStringKeys.LanguageZh);
-        _englishButton.Content = _localization.Get(ShellStringKeys.LanguageEn);
+        RefreshLanguageMenuState();
 
         foreach ((string key, AtomTextBlock block) in _statusSegments)
             block.Text = FormatStatus(key);
@@ -134,10 +137,22 @@ public sealed class ShellWindow : Window, IWorkbenchShell
         _panel.RefreshTexts();
     }
 
-    /// <summary>贡献工具栏、视口与辅助面板三个一级槽位。</summary>
+    /// <summary>把当前语言对应的菜单项置灰，另一项保持可点击。</summary>
+    /// <remarks>
+    /// AtomUI 的 <c>MenuItem</c> 支持 <see cref="Control.IsEnabled"/>，这里用它表达“当前语言”而不引入新控件；
+    /// 当前语言不是中英任意一项时两项都保持可用。
+    /// </remarks>
+    private void RefreshLanguageMenuState()
+    {
+        string current = _localization.Current.Name;
+        _languageZhItem.IsEnabled = !string.Equals(current, "zh-CN", StringComparison.Ordinal);
+        _languageEnItem.IsEnabled = !string.Equals(current, "en-US", StringComparison.Ordinal);
+    }
+
+    /// <summary>贡献工具栏、视口、辅助面板与状态栏四个一级槽位。</summary>
     /// <param name="registry">槽位管理器提供的注册面。</param>
     /// <remarks>
-    /// 三个槽位只在窗口构造期各贡献一次；<see cref="ShellModule.Build"/> 用 <see cref="Lazy{T}"/> 缓存窗口，
+    /// 四个槽位只在窗口构造期各贡献一次；<see cref="ShellModule.Build"/> 用 <see cref="Lazy{T}"/> 缓存窗口，
     /// 重复取壳不会重复执行这里，因此不会触发 <c>SlotManager</c> 的重名异常。
     /// </remarks>
     private static void ContributeSlots(IAttachmentRegistry registry)
@@ -145,10 +160,11 @@ public sealed class ShellWindow : Window, IWorkbenchShell
         registry.ContributeSlot(ShellSlots.Toolbar, "工具栏");
         registry.ContributeSlot(ShellSlots.Viewport, "图像视口");
         registry.ContributeSlot(ShellSlots.Panel, "辅助面板");
+        registry.ContributeSlot(ShellSlots.StatusBar, "状态栏");
     }
 
     /// <summary>创建绑定工具栏槽位的面板。</summary>
-    /// <param name="slotManager">与另外两个面板共享的槽位管理器。</param>
+    /// <param name="slotManager">与另外三个面板共享的槽位管理器。</param>
     /// <returns>横向排列的工具栏槽位面板。</returns>
     private static SlotPanel CreateToolbarPanel(ISlotManager slotManager) => new()
     {
@@ -158,23 +174,29 @@ public sealed class ShellWindow : Window, IWorkbenchShell
         MinHeight = 36,
     };
 
+    /// <summary>创建状态栏中段的插件读数槽位。</summary>
+    /// <param name="slotManager">与另外三个面板共享的槽位管理器。</param>
+    /// <returns>横向排列的状态栏槽位面板。</returns>
+    /// <remarks>
+    /// 状态栏槽位承载插件贡献的读数片段；M1 没有读数插件，槽位保持为空，左右两侧仍由壳的占位与临时消息构成。
+    /// </remarks>
+    private static SlotPanel CreateStatusBarPanel(ISlotManager slotManager) => new()
+    {
+        SlotName = ShellSlots.StatusBar,
+        SlotManager = slotManager,
+        Orientation = Orientation.Horizontal,
+        VerticalAlignment = VerticalAlignment.Center,
+        Margin = new Thickness(12, 0),
+    };
+
     /// <summary>拼装窗口的 Dock 布局：菜单与工具栏在上、状态栏在下、视口与辅助面板填满中间。</summary>
-    /// <param name="menu">已构造好的占位菜单。</param>
+    /// <param name="menu">已构造好的「文件」菜单。</param>
     /// <returns>窗口根控件。</returns>
     /// <remarks>
     /// 辅助面板固定占 320 像素宽，布局变更只改这里；M1 不提供可拖拽分隔条，也不提供面板收起。
     /// </remarks>
     private Control BuildLayout(AtomMenu menu)
     {
-        var languageBar = BuildLanguageBar();
-        var menuBar = new Grid
-        {
-            ColumnDefinitions = new ColumnDefinitions("*,Auto"),
-        };
-        menuBar.Children.Add(menu);
-        Grid.SetColumn(languageBar, 1);
-        menuBar.Children.Add(languageBar);
-
         var toolbar = new Border
         {
             Child = _toolbarPanel,
@@ -209,8 +231,8 @@ public sealed class ShellWindow : Window, IWorkbenchShell
         Border status = BuildStatusBar();
 
         var root = new DockPanel();
-        DockPanel.SetDock(menuBar, Dock.Top);
-        root.Children.Add(menuBar);
+        DockPanel.SetDock(menu, Dock.Top);
+        root.Children.Add(menu);
         DockPanel.SetDock(toolbar, Dock.Top);
         root.Children.Add(toolbar);
         DockPanel.SetDock(status, Dock.Bottom);
@@ -220,82 +242,60 @@ public sealed class ShellWindow : Window, IWorkbenchShell
         return root;
     }
 
-    /// <summary>构造唯一的占位菜单：一个顶层与一个置灰子项，不挂任何命令。</summary>
+    /// <summary>构造「文件」菜单：语言切换两项加一个置灰占位项，只有语言项挂点击动作。</summary>
     /// <returns>菜单栏控件。</returns>
     /// <remarks>
-    /// 菜单条只是壳的容器与外观；真实菜单项将来由命令注册表平台插件与各 Feature 贡献（G2）。
-    /// M1 不放真实菜单，也不在壳里预置八个顶层，避免未接命令的项被误点。
+    /// 菜单条只是壳的容器与外观；「文件」菜单里的语言切换是壳自有的非插件功能，其余菜单项将来由命令注册表
+    /// 平台插件与各 Feature 贡献（G2）。M1 不放真实命令菜单，也不在壳里预置八个顶层。
     /// </remarks>
     private AtomMenu BuildMenu()
     {
-        // ponytail: 菜单条只是壳的容器与外观，菜单项将来由命令注册表平台插件与各 Feature 贡献（G2）；
-        // M1 不放真实菜单，也不在壳里预置八个顶层，避免未接命令的项被误点。
-        _placeholderMenu = new AtomMenuItem
+        // ponytail: 菜单条只是壳的容器与外观，真实菜单项将来由命令注册表平台插件与各 Feature 贡献（G2）；
+        // M1 只放一个「文件」顶层、两个语言项与一个置灰占位项。
+        _fileMenu = new AtomMenuItem
         {
-            Header = _localization.Get(ShellStringKeys.MenuPlaceholder),
+            Header = _localization.Get(ShellStringKeys.MenuFile),
         };
+
+        // ponytail: 语言菜单项是壳自有的最小实现，只有这两项挂 Click；更多语言或正式语言菜单归后续任务。
+        _languageZhItem = new AtomMenuItem
+        {
+            Header = _localization.Get(ShellStringKeys.MenuLanguageZh),
+        };
+        _languageZhItem.Click += async (_, _) => await _localization.SetLanguageAsync("zh-CN");
+
+        _languageEnItem = new AtomMenuItem
+        {
+            Header = _localization.Get(ShellStringKeys.MenuLanguageEn),
+        };
+        _languageEnItem.Click += async (_, _) => await _localization.SetLanguageAsync("en-US");
+
         _placeholderItem = new AtomMenuItem
         {
             Header = _localization.Get(ShellStringKeys.MenuPlaceholderItem),
             IsEnabled = false,
         };
-        _placeholderMenu.Items.Add(_placeholderItem);
+
+        _fileMenu.Items.Add(_languageZhItem);
+        _fileMenu.Items.Add(_languageEnItem);
+        _fileMenu.Items.Add(_placeholderItem);
+        RefreshLanguageMenuState();
 
         var menu = new AtomMenu();
-        menu.Items.Add(_placeholderMenu);
+        menu.Items.Add(_fileMenu);
         return menu;
     }
 
-    /// <summary>构造菜单栏右侧的最小语言切换控件。</summary>
-    /// <returns>两个语言按钮组成的横向栏。</returns>
-    /// <remarks>
-    /// 按钮只调用 <see cref="ILocalizationService.SetLanguageAsync"/>，切换后的文字刷新走
-    /// <see cref="OnLanguageChanged"/>；这里不直接改任何控件文本，避免两套刷新路径。
-    /// </remarks>
-    private Control BuildLanguageBar()
-    {
-        // ponytail: 语言切换控件是 M1 的最小实现，标题栏的正式语言菜单与更多语言归后续任务。
-        _chineseButton = CreateLanguageButton(ShellStringKeys.LanguageZh, "zh-CN");
-        _englishButton = CreateLanguageButton(ShellStringKeys.LanguageEn, "en-US");
-
-        return new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            Spacing = 4,
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(8, 0),
-            Children =
-            {
-                _chineseButton,
-                _englishButton,
-            },
-        };
-    }
-
-    /// <summary>创建一个语言切换按钮。</summary>
-    /// <param name="labelKey">按钮文案的资源键。</param>
-    /// <param name="cultureName">点击后切换到的语言名。</param>
-    /// <returns>已绑定切换动作的按钮。</returns>
-    private AtomUIButton CreateLanguageButton(string labelKey, string cultureName)
-    {
-        var button = new AtomUIButton
-        {
-            Content = _localization.Get(labelKey),
-            Margin = new Thickness(2, 0),
-        };
-        button.Click += async (_, _) => await _localization.SetLanguageAsync(cultureName);
-        return button;
-    }
-
-    /// <summary>构造状态栏五段占位与最右侧的临时消息区。</summary>
+    /// <summary>构造状态栏：左侧五段规格占位、中间插件读数槽位、右侧临时消息区。</summary>
     /// <returns>状态栏控件。</returns>
     /// <remarks>
-    /// 五段依次是坐标、像素值、位深、缩放与校准单位；M1 没有图像生产者，因此标签后只接占位值。
-    /// 段位值是固定语义，不走槽位；将来接真实状态时改这里的绑定，不改槽位契约。
+    /// 五段依次是坐标、像素值、位深、缩放与校准单位；M1 没有真实读数插件，因此标签后只接占位值。
+    /// 中段绑定 <see cref="ShellSlots.StatusBar"/>，供插件贡献读数片段；左右两侧是壳的固定内容。
     /// </remarks>
     private Border BuildStatusBar()
     {
-        // ponytail: 状态栏五段只是标签占位，M1 没有图像生产者；真实状态绑定随图像能力接入。
+        // ponytail: 五段占位是交互规格 §2 要求的 M1 占位；真实读数由独立插件贡献到 statusbar 槽位，
+        // 第一批读数插件接入后撤掉壳的占位。
         var segments = new StackPanel
         {
             Orientation = Orientation.Horizontal,
@@ -314,6 +314,8 @@ public sealed class ShellWindow : Window, IWorkbenchShell
         foreach (var (_, block) in _statusSegments)
             segments.Children.Add(block);
 
+        _statusBarPanel = CreateStatusBarPanel(_slotManager);
+
         _readyText = new AtomTextBlock
         {
             Text = _localization.Get(ShellStringKeys.StatusReady),
@@ -324,11 +326,13 @@ public sealed class ShellWindow : Window, IWorkbenchShell
 
         var grid = new Grid
         {
-            ColumnDefinitions = new ColumnDefinitions("Auto,*"),
+            ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto"),
         };
 
         grid.Children.Add(segments);
-        Grid.SetColumn(_readyText, 1);
+        Grid.SetColumn(_statusBarPanel, 1);
+        grid.Children.Add(_statusBarPanel);
+        Grid.SetColumn(_readyText, 2);
         grid.Children.Add(_readyText);
 
         return new Border

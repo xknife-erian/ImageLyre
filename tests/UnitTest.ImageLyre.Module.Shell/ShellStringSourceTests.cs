@@ -16,19 +16,19 @@ public sealed class ShellStringSourceTests
         var culture = new CultureInfo("zh-CN");
         var expected = new Dictionary<string, string>(StringComparer.Ordinal)
         {
-            [ShellStringKeys.MenuPlaceholder] = "菜单",
-            [ShellStringKeys.MenuPlaceholderItem] = "（菜单项由插件提供）",
-            [ShellStringKeys.StatusCoordinate] = "坐标",
-            [ShellStringKeys.StatusPixel] = "像素值",
-            [ShellStringKeys.StatusDepth] = "位深",
-            [ShellStringKeys.StatusZoom] = "缩放",
-            [ShellStringKeys.StatusCalibration] = "校准单位",
-            [ShellStringKeys.StatusReady] = "就绪",
-            [ShellStringKeys.ViewportEmpty] = "无图像",
-            [ShellStringKeys.PanelEmpty] = "尚无测量",
-            [ShellStringKeys.WindowTitle] = "ImageLyre 工作台",
-            [ShellStringKeys.LanguageZh] = "中文",
-            [ShellStringKeys.LanguageEn] = "English",
+            ["lyre.shell.menu.file"] = "文件",
+            ["lyre.shell.menu.languageZh"] = "中文",
+            ["lyre.shell.menu.languageEn"] = "English",
+            ["lyre.shell.menu.placeholderItem"] = "（菜单项由插件提供）",
+            ["lyre.shell.status.coordinate"] = "坐标",
+            ["lyre.shell.status.pixel"] = "像素值",
+            ["lyre.shell.status.depth"] = "位深",
+            ["lyre.shell.status.zoom"] = "缩放",
+            ["lyre.shell.status.calibration"] = "校准单位",
+            ["lyre.shell.status.ready"] = "就绪",
+            ["lyre.shell.viewport.empty"] = "无图像",
+            ["lyre.shell.panel.empty"] = "尚无测量",
+            ["lyre.shell.window.title"] = "ImageLyre 工作台",
         };
 
         // Act & Assert
@@ -48,19 +48,19 @@ public sealed class ShellStringSourceTests
         var culture = new CultureInfo("en-US");
         var expected = new Dictionary<string, string>(StringComparer.Ordinal)
         {
-            [ShellStringKeys.MenuPlaceholder] = "Menu",
-            [ShellStringKeys.MenuPlaceholderItem] = "(Menu items supplied by plugins)",
-            [ShellStringKeys.StatusCoordinate] = "Coordinates",
-            [ShellStringKeys.StatusPixel] = "Pixel value",
-            [ShellStringKeys.StatusDepth] = "Bit depth",
-            [ShellStringKeys.StatusZoom] = "Zoom",
-            [ShellStringKeys.StatusCalibration] = "Calibration",
-            [ShellStringKeys.StatusReady] = "Ready",
-            [ShellStringKeys.ViewportEmpty] = "No image",
-            [ShellStringKeys.PanelEmpty] = "No measurements",
-            [ShellStringKeys.WindowTitle] = "ImageLyre Workbench",
-            [ShellStringKeys.LanguageZh] = "Chinese",
-            [ShellStringKeys.LanguageEn] = "English",
+            ["lyre.shell.menu.file"] = "File",
+            ["lyre.shell.menu.languageZh"] = "中文",
+            ["lyre.shell.menu.languageEn"] = "English",
+            ["lyre.shell.menu.placeholderItem"] = "(Menu items supplied by plugins)",
+            ["lyre.shell.status.coordinate"] = "Coordinates",
+            ["lyre.shell.status.pixel"] = "Pixel value",
+            ["lyre.shell.status.depth"] = "Bit depth",
+            ["lyre.shell.status.zoom"] = "Zoom",
+            ["lyre.shell.status.calibration"] = "Calibration",
+            ["lyre.shell.status.ready"] = "Ready",
+            ["lyre.shell.viewport.empty"] = "No image",
+            ["lyre.shell.panel.empty"] = "No measurements",
+            ["lyre.shell.window.title"] = "ImageLyre Workbench",
         };
 
         // Act & Assert
@@ -93,8 +93,8 @@ public sealed class ShellStringSourceTests
         var source = new ShellStringSource();
 
         // Act
-        bool zhFound = source.TryGet(ShellStringKeys.WindowTitle, new CultureInfo("zh-CN"), out string zhValue);
-        bool enFound = source.TryGet(ShellStringKeys.WindowTitle, new CultureInfo("en-US"), out string enValue);
+        bool zhFound = source.TryGet("lyre.shell.window.title", new CultureInfo("zh-CN"), out string zhValue);
+        bool enFound = source.TryGet("lyre.shell.window.title", new CultureInfo("en-US"), out string enValue);
 
         // Assert
         zhFound.Should().BeTrue();
@@ -111,5 +111,36 @@ public sealed class ShellStringSourceTests
         ShellStringKeys.All.Should().HaveCount(13);
         ShellStringKeys.All.Should().OnlyContain(
             key => key.StartsWith("lyre.shell.", StringComparison.Ordinal));
+    }
+
+    [Fact(DisplayName = "6.旧菜单与语言按钮键已删除，新菜单键都已登记")]
+    public void Test006()
+    {
+        // Arrange
+        var source = new ShellStringSource();
+        string[] newKeys =
+        [
+            "lyre.shell.menu.file",
+            "lyre.shell.menu.languageZh",
+            "lyre.shell.menu.languageEn",
+            "lyre.shell.menu.placeholderItem",
+        ];
+        string[] oldKeys =
+        [
+            "lyre.shell.menu.placeholder",
+            "lyre.shell.language.zh",
+            "lyre.shell.language.en",
+        ];
+
+        // Act & Assert
+        foreach (string key in newKeys)
+            ShellStringKeys.All.Should().Contain(key);
+
+        foreach (string key in oldKeys)
+        {
+            ShellStringKeys.All.Should().NotContain(key);
+            bool found = source.TryGet(key, new CultureInfo("zh-CN"), out _);
+            found.Should().BeFalse("旧键 {0} 已删除", key);
+        }
     }
 }

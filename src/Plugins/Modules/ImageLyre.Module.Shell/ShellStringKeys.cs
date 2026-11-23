@@ -4,7 +4,9 @@ namespace ImageLyre.Module.Shell;
 /// <remarks>新增键时同步扩 <see cref="ShellStringSource"/> 的中英字典与本工程的测试；键名本身是持久契约，不随布局改名。</remarks>
 internal static class ShellStringKeys
 {
-    internal static string MenuPlaceholder => "lyre.shell.menu.placeholder";
+    internal static string MenuFile => "lyre.shell.menu.file";
+    internal static string MenuLanguageZh => "lyre.shell.menu.languageZh";
+    internal static string MenuLanguageEn => "lyre.shell.menu.languageEn";
     internal static string MenuPlaceholderItem => "lyre.shell.menu.placeholderItem";
     internal static string StatusCoordinate => "lyre.shell.status.coordinate";
     internal static string StatusPixel => "lyre.shell.status.pixel";
@@ -15,12 +17,12 @@ internal static class ShellStringKeys
     internal static string ViewportEmpty => "lyre.shell.viewport.empty";
     internal static string PanelEmpty => "lyre.shell.panel.empty";
     internal static string WindowTitle => "lyre.shell.window.title";
-    internal static string LanguageZh => "lyre.shell.language.zh";
-    internal static string LanguageEn => "lyre.shell.language.en";
 
     internal static IReadOnlyList<string> All =>
     [
-        MenuPlaceholder,
+        MenuFile,
+        MenuLanguageZh,
+        MenuLanguageEn,
         MenuPlaceholderItem,
         StatusCoordinate,
         StatusPixel,
@@ -31,7 +33,5 @@ internal static class ShellStringKeys
         ViewportEmpty,
         PanelEmpty,
         WindowTitle,
-        LanguageZh,
-        LanguageEn,
     ];
 }

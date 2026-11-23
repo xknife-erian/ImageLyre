@@ -44,7 +44,7 @@ internal sealed class ShellModuleContext : BaseModuleContext
     }
 
     /// <summary>注入的槽位管理器；尚未注入或延迟引用返回 <see langword="null"/> 时抛出。</summary>
-    /// <remarks>求值后返回的就是宿主注入的同一个实例，三个 <c>SlotPanel</c> 必须共享它。</remarks>
+    /// <remarks>求值后返回的就是宿主注入的同一个实例，四个 <c>SlotPanel</c> 必须共享它。</remarks>
     /// <exception cref="InvalidOperationException">尚未注入，或延迟引用返回 <see langword="null"/>。</exception>
     public ISlotManager SlotManager => _slots?.Value
         ?? throw new InvalidOperationException(

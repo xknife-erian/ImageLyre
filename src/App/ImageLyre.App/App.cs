@@ -25,7 +25,7 @@ namespace ImageLyre.App;
 /// </para>
 /// <para>
 /// 失败路径：启动期异常先走 <see cref="StopAsync"/> 停掉已启动的 Bootstrap，再在欢迎窗口上显示原因；
-/// 正常关停时先释放壳体（退订三个 <c>SlotPanel</c> 的槽位事件），再停止插件，避免插件停止后控件仍被访问。
+/// 正常关停时先释放壳体（退订四个 <c>SlotPanel</c> 的槽位事件），再停止插件，避免插件停止后控件仍被访问。
 /// </para>
 /// <para>
 /// 线程要求：从注入槽位管理器到 <c>window.Show()</c> 的每一步都在 UI 线程执行，因为取壳会构造 Avalonia 控件、

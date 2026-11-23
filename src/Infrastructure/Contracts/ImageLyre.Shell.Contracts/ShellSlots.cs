@@ -21,4 +21,11 @@ public static class ShellSlots
 
     /// <summary>辅助面板，承载 <c>DockPaneAttachment</c>，允许多项，按显式 <c>Order</c> 排序。</summary>
     public const string Panel = "lyre.shell.panel";
+
+    /// <summary>状态栏中段，承载插件贡献的读数片段（<c>StatusBarAttachment</c> 一类），允许多项，按显式 <c>Order</c> 排序。</summary>
+    /// <remarks>
+    /// 状态栏段位不是固定语义：每一段读数都可能由独立插件提供，壳只保留左右两侧的固定占位；
+    /// M1 的五段规格占位由壳显示，等第一批真实读数插件接入后撤掉。
+    /// </remarks>
+    public const string StatusBar = "lyre.shell.statusbar";
 }

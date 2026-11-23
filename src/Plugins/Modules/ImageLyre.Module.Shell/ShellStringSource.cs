@@ -23,7 +23,9 @@ internal sealed class ShellStringSource : ILocalizationSource
         {
             ["zh-CN"] = new Dictionary<string, string>(StringComparer.Ordinal)
             {
-                [ShellStringKeys.MenuPlaceholder] = "菜单",
+                [ShellStringKeys.MenuFile] = "文件",
+                [ShellStringKeys.MenuLanguageZh] = "中文",
+                [ShellStringKeys.MenuLanguageEn] = "English",
                 [ShellStringKeys.MenuPlaceholderItem] = "（菜单项由插件提供）",
                 [ShellStringKeys.StatusCoordinate] = "坐标",
                 [ShellStringKeys.StatusPixel] = "像素值",
@@ -34,12 +36,12 @@ internal sealed class ShellStringSource : ILocalizationSource
                 [ShellStringKeys.ViewportEmpty] = "无图像",
                 [ShellStringKeys.PanelEmpty] = "尚无测量",
                 [ShellStringKeys.WindowTitle] = "ImageLyre 工作台",
-                [ShellStringKeys.LanguageZh] = "中文",
-                [ShellStringKeys.LanguageEn] = "English",
             },
             ["en-US"] = new Dictionary<string, string>(StringComparer.Ordinal)
             {
-                [ShellStringKeys.MenuPlaceholder] = "Menu",
+                [ShellStringKeys.MenuFile] = "File",
+                [ShellStringKeys.MenuLanguageZh] = "中文",
+                [ShellStringKeys.MenuLanguageEn] = "English",
                 [ShellStringKeys.MenuPlaceholderItem] = "(Menu items supplied by plugins)",
                 [ShellStringKeys.StatusCoordinate] = "Coordinates",
                 [ShellStringKeys.StatusPixel] = "Pixel value",
@@ -50,8 +52,6 @@ internal sealed class ShellStringSource : ILocalizationSource
                 [ShellStringKeys.ViewportEmpty] = "No image",
                 [ShellStringKeys.PanelEmpty] = "No measurements",
                 [ShellStringKeys.WindowTitle] = "ImageLyre Workbench",
-                [ShellStringKeys.LanguageZh] = "Chinese",
-                [ShellStringKeys.LanguageEn] = "English",
             },
         };
 
