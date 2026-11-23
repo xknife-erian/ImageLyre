@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    M1 为空工程：这里只有 README 与 csproj，没有类型。
+    目标框架、可空与警告即错误继承根 Directory.Build.props；本文件不声明任何依赖。
+    第一个类型进入前先读 README 的边界条款，边界变化时改 README 与 DESIGN-0001 §3.1。
+  -->
+
+</Project>

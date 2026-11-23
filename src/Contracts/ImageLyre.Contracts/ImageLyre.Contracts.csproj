@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- 固定方向：ImageLyre.Contracts → ImageLyre.Domains，反向引用一律禁止（ADR-0001 §2.4）。 -->
+    <ProjectReference Include="..\ImageLyre.Domains\ImageLyre.Domains.csproj" />
+  </ItemGroup>
+
+  <!--
+    本工程不引用 Avalonia、AtomUI、SkiaSharp 或任何机制包：
+    验收 E 会检查这一点，加引用前先改 DESIGN-0001 并说明理由。
+  -->
+
+</Project>
