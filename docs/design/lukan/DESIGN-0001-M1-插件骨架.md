@@ -15,6 +15,7 @@
 | 0.11 | 2026-11-23 | 草稿 | lukan | 按独立评审与 cangming v1 源码订正三处：附着物词汇移出壳契约，新建 `ImageLyre.Shell.Attachments`，`ImageLyre.Shell.Contracts` 不再引用 Avalonia 与机制包；壳的槽位注入改为 `ISupportSlotManager` + `IAttachmentRegistry` 强转；§2.2 的期限约定表与 ADR-0001 §2.5 逐条对齐 |
 | 0.12 | 2026-11-23 | 草稿 | lukan | 回写 T04 实现时核出的两处：`StartAsync` 必须把宿主的 `ILoggerFactory` 登记进容器（管理器构造依赖它，cangming 不注册日志服务），并输出 `HasUiRoute` 一行供判据取证；同时登记容器里没有 `ILogger<T>` 的边界 |
 | 0.13 | 2026-11-23 | 草稿 | lukan | 回写 T05：App 引用 `ImageLyre.Contracts` 取本地化契约（§3.2 原写不引用，改为按用途说明）；§3.3 的编排骨架换成代码式 AtomUI 启动，并补三条硬要求——`Application` 必须 `partial`、必须 `UseDesktopControls`、不要显式 `Show` 欢迎窗口 |
+| 0.14 | 2026-11-23 | 草稿 | lukan | 回写 T06：§3.2 补 App → 机制包这条边并说明理由（L5 依赖 L1，读 `IPluginManager` 与 `PluginInfo` 不可避免），§3.1 的 App 行同步；§3.3 的 CLI 调用换成带文本流的 `RunAsync`，并写明 stdout 只放结果、日志与错误走 stderr、输出不走本地化 |
 
 ## 1 目标与范围
 
@@ -55,7 +56,7 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 
 | 工程 | 目录 | 类型 | 职责与依赖 |
 | :--- | :--- | :--- | :--- |
-| `ImageLyre.App` | `src/App/ImageLyre.App` | 进程入口与编排（L5） | 解析启动参数并选择宿主模式：桌面模式显示启动画面与欢迎界面、驱动 Bootstrap、创建槽位管理器、注入、触发附着、取主窗体挂到桌面；CLI 模式无窗口、无槽位、无 Feature，驱动 Bootstrap 后执行命令并退出；不构建主窗体、不贡献槽位、不定义主界面布局；引用 Bootstrap、`ImageLyre.Contracts`（本地化契约）、`ImageLyre.Shell.Contracts`、Avalonia、AtomUI |
+| `ImageLyre.App` | `src/App/ImageLyre.App` | 进程入口与编排（L5） | 解析启动参数并选择宿主模式：桌面模式显示启动画面与欢迎界面、驱动 Bootstrap、创建槽位管理器、注入、触发附着、取主窗体挂到桌面；CLI 模式无窗口、无槽位、无 Feature，驱动 Bootstrap 后执行命令并退出；不构建主窗体、不贡献槽位、不定义主界面布局；引用 Bootstrap、`ImageLyre.Contracts`（本地化契约）、`ImageLyre.Shell.Contracts`、cangming 机制包（只读管理器与插件清单，不引实现包）、Avalonia、AtomUI |
 | `ImageLyre.Bootstrap` | `src/Bootstrap/ImageLyre.Bootstrap` | 启动链（L1，无 UI） | 日志初始化、扫描前缀、容器构建、`PicoPluginSystem.Launch`、管理器解析、`NotifyServiceProviderBuilt`、`StartAsync`、能力插件计数日志、关停；引用 cangming 机制包与契约，不引用 Avalonia、AtomUI 或任何插件 |
 | `ImageLyre.Domains` | `src/Contracts/ImageLyre.Domains` | 领域对象与纯算法（M1 为空工程） | 只放跨插件共享且带不变量的数据与纯函数；不引用 `ImageLyre.Contracts`、不引用 UI、不引 DI 与日志；M1 只有 README 与空 csproj |
 | `ImageLyre.Contracts` | `src/Contracts/ImageLyre.Contracts` | 产品契约（无 UI） | `ILocalizationService`、`ILocalizationSource`；M1 另放 `IClock`、`IGreeter`，命名空间为 `ImageLyre.Contracts.Demo`，M1 验收后删除；不引用 Avalonia、AtomUI、SkiaSharp |
@@ -91,6 +92,7 @@ flowchart LR
     APP --> BOOT
     APP --> SC
     APP --> DC
+    APP --> CM
     APP --> AV["Avalonia / AtomUI"]
     BOOT --> CM["cangming 机制包"]
     BOOT --> DC
@@ -118,6 +120,8 @@ flowchart LR
 ```
 
 `ImageLyre.Bootstrap` 与 `ImageLyre.App` 都不按名字引用插件工程；`ImageLyre.App` 引用 `ImageLyre.Contracts` 是为了本地化契约（`ILocalizationService`、`ILocalizationSource`），欢迎界面直接经它取文案，但它不消费示范契约，`IClock`、`IGreeter` 仍只被示范插件引用；发行用的通配引用在 §3.7 单列。
+
+`ImageLyre.App` 另外直接引用机制包，这是 L5 的正当依赖而不是越界：CLI 的 `--plugins` 要类型化读取 `IPluginManager.Plugins`、`PluginInfo` 与 `IPicoFeatures`，桌面编排在 T12 还要用 `FindModuleBuilder` 取壳产物，而这两件事都发生在 Bootstrap 交出 `IPluginManager` 之后，宿主不可能不看见该类型。ADR-0001 §2.4 的 L5 行本就写明 App 编译期依赖 L0 与 L1，图里补这条边是把既有事实画出来；真正被禁止的是引用插件工程与机制实现包（`Cangming.Shell`、`Cangming.Platform`），这两条边界不变。
 
 三个契约程序集的方向固定为 `ImageLyre.Shell.Contracts` → `ImageLyre.Contracts` → `ImageLyre.Domains`，由 ADR-0001 §2.4 规定；`ImageLyre.Shell.Contracts` 因此只依赖 `ImageLyre.Contracts`，Avalonia 与机制包一律不进这个程序集。
 
@@ -249,7 +253,7 @@ public static int Main(string[] args)
 {
     var options = StartupOptions.Parse(args);
     if (options.Headless)
-        return CliHost.Run(options);                  // T06
+        return CliHost.RunAsync(options, Console.Out, Console.Error, CancellationToken.None).GetAwaiter().GetResult();
 
     var localization = new LocalizationService();
     localization.AddSource(new AppStringSource());
@@ -292,7 +296,7 @@ async Task ComposeAsync(IClassicDesktopStyleApplicationLifetime desktop, ILocali
 
 `SlotManager` 是 `Cangming.PicoPlugins.Core.Features.SlotManager` 的具体类，同一实例必须同时交给 `InjectSlotManager`、每个 `SlotPanel.SlotManager` 与 `RegisterFeatureAttachments`；三处各 `new` 一个会得到“附着成功但界面永远为空”的假通过。
 
-同一入口的 CLI 分支在解析参数后与桌面分支分叉：不显示欢迎窗口、不创建槽位管理器、不取壳、不附着，只做 Bootstrap 与命令执行，退出码 0 成功、2 参数错误、1 运行失败。两条分支在 Bootstrap 之前分开、之后不再交汇，唯一差异是 `HostMode` 与 `HasUiRoute`。
+同一入口的 CLI 分支在解析参数后与桌面分支分叉：不显示欢迎窗口、不创建槽位管理器、不取壳、不附着，只做 Bootstrap 与命令执行，退出码 0 成功、2 参数错误、1 运行失败。两条分支在 Bootstrap 之前分开、之后不再交汇，唯一差异是 `HostMode` 与 `HasUiRoute`。CLI 的输出是机器可读接口而不是界面文案，因此不经过 `ILocalizationService`、不随界面语言变化；stdout 只放命令结果，Bootstrap 日志与错误一律写 stderr，让脚本可以只解析结果那一半。
 
 ```csharp
 // ImageLyre.App/Program.cs：入口先判定参数，再决定是否初始化 Avalonia
