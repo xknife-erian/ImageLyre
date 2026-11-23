@@ -31,12 +31,44 @@ public static class Program
     [STAThread]
     public static int Main(string[] args)
     {
+        TryConfigureUtf8Console();
+
         StartupOptions options = StartupOptions.Parse(args);
 
         if (options.Command == StartupCommand.Desktop)
             return RunDesktop(options, args);
 
         return CliHost.RunAsync(options, Console.Out, Console.Error, CancellationToken.None).GetAwaiter().GetResult();
+    }
+
+    /// <summary>把控制台输出固定为 UTF-8，避免随系统代码页漂移。</summary>
+    /// <remarks>
+    /// <para>
+    /// CLI 输出含中文且被 Agent 直接读取，若跟随控制台代码页（例如 936），在 UTF-8 终端里会变成乱码，
+    /// 与 CLI 契约「不依赖 locale 与 TTY」冲突；桌面分支的启动日志同样写 stderr，统一成 UTF-8 后
+    /// 冒烟脚本与现场排障读到的是同一份编码。
+    /// </para>
+    /// <para>
+    /// 无控制台时（双击启动、管道已关闭）设置编码会抛 <see cref="IOException"/> 或
+    /// <see cref="System.Security.SecurityException"/>，忽略即可：此时没有输出目标，编码也无意义。
+    /// </para>
+    /// </remarks>
+    private static void TryConfigureUtf8Console()
+    {
+        try
+        {
+            var utf8 = new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+            Console.OutputEncoding = utf8;
+            Console.InputEncoding = utf8;
+        }
+        catch (IOException)
+        {
+            // 没有控制台，保持默认。
+        }
+        catch (System.Security.SecurityException)
+        {
+            // 受限于宿主策略，保持默认。
+        }
     }
 
     /// <summary>创建本地化服务并启动桌面宿主。</summary>
