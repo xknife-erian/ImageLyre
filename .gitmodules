@@ -1,0 +1,3 @@
+[submodule "src/cangming"]
+	path = src/cangming
+	url = https://gitee.com/fangyu_fy/cangming.git
