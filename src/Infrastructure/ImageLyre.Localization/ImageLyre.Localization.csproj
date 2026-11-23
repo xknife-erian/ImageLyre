@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <!-- 只依赖契约：回退规则与语言切换的语义定义在 ImageLyre.Contracts 里。 -->
-    <ProjectReference Include="..\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+    <ProjectReference Include="..\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
   </ItemGroup>
 
   <!-- 不引用 Avalonia、AtomUI、SkiaSharp 与任何机制包：它是宿主基础设施，必须在无界面宿主里同样可用。 -->

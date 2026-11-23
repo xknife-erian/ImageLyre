@@ -2,17 +2,19 @@
   <!--
     唯一构建入口（DESIGN-0001 §2.1 约束 10）：dotnet build src/ImageLyre.slnx。
     测试工程在 ../tests/ 下，同样挂在本入口里：构建一条命令，测试按工程单独执行。
-    目录按职责分：App 放进程入口与启动链，Infrastructure 放共享库（契约、领域、本地化、附着物词汇），
-    Plugins 下再分 Modules 与 Features 两类。删除工程时同步摘除这里的条目。
+    目录按职责分：App 放进程入口与启动链；Infrastructure 放共享库，其中 Contracts 子目录专放契约与领域，
+    边界因此路径可读；Plugins 下分 Modules 与 Features 两类。删除工程时同步摘除这里的条目。
   -->
   <Folder Name="/App/">
     <Project Path="App/ImageLyre.App/ImageLyre.App.csproj" />
     <Project Path="App/ImageLyre.Bootstrap/ImageLyre.Bootstrap.csproj" />
   </Folder>
+  <Folder Name="/Infrastructure/Contracts/">
+    <Project Path="Infrastructure/Contracts/ImageLyre.Domains/ImageLyre.Domains.csproj" />
+    <Project Path="Infrastructure/Contracts/ImageLyre.Contracts/ImageLyre.Contracts.csproj" />
+    <Project Path="Infrastructure/Contracts/ImageLyre.Shell.Contracts/ImageLyre.Shell.Contracts.csproj" />
+  </Folder>
   <Folder Name="/Infrastructure/">
-    <Project Path="Infrastructure/ImageLyre.Domains/ImageLyre.Domains.csproj" />
-    <Project Path="Infrastructure/ImageLyre.Contracts/ImageLyre.Contracts.csproj" />
-    <Project Path="Infrastructure/ImageLyre.Shell.Contracts/ImageLyre.Shell.Contracts.csproj" />
     <Project Path="Infrastructure/ImageLyre.Shell.Attachments/ImageLyre.Shell.Attachments.csproj" />
     <Project Path="Infrastructure/ImageLyre.Localization/ImageLyre.Localization.csproj" />
   </Folder>

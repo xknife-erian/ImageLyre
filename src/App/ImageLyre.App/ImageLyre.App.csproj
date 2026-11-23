@@ -30,12 +30,12 @@
     <!-- 启动链在 Bootstrap，本地化实现在 Localization，契约提供 ILocalizationService 与 ILocalizationSource。 -->
     <ProjectReference Include="..\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ImageLyre.Localization\ImageLyre.Localization.csproj" />
-    <ProjectReference Include="..\..\Infrastructure\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
     <!--
       T12 的取壳编排需要 IWorkbenchShell 类型，这是 L5→L0 的合法依赖；只加这一个契约工程，
       不按名字引用插件、Shell.Attachments 或路线包，它们的产物由插件归并目标进入输出目录。
     -->
-    <ProjectReference Include="..\..\Infrastructure\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Contracts\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
   </ItemGroup>
 
   <!--

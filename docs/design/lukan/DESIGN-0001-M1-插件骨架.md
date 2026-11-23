@@ -23,6 +23,7 @@
 | 0.19 | 2026-11-23 | 草稿 | lukan | 回写 T12：§3.3 的线程要求改为「编排从 UI 线程发起、Bootstrap 等待放在 fire-and-forget 任务里」，删掉「`StartAsync` 在 UI 线程同步等待」这句与样例矛盾的旧措辞，保留「插件 `StartServiceAsync` 必须同步完成」的实现约束 |
 | 0.20 | 2026-11-23 | 草稿 | lukan | 回写 T13：§3.5 补「附着前断言三个槽位已贡献」的代码级护栏，§6 补「同一进程重复编排或关停」的边界与失败路径先停插件；单例槽位管理器、编排门闩与统一收口在实现中落地 |
 | 0.21 | 2026-11-23 | 草稿 | lukan | 按作者口径重排目录：Bootstrap 移入 `src/App/`，契约、领域与附着物词汇移入 `src/Infrastructure/`，插件分 `Modules/` 与 `Features/`；§3.1 的工程目录全表更新，并补一段「物理归置不改变层归属」的判据 |
+| 0.22 | 2026-11-23 | 草稿 | lukan | 按作者口径把三个契约与领域工程再收进 `src/Infrastructure/Contracts/`，让「契约层不得引用 UI」在路径上可读；§3.1 的目录表与目录判据段同步，Bootstrap 位置不变 |
 
 ## 1 目标与范围
 
@@ -65,9 +66,9 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 | :--- | :--- | :--- | :--- |
 | `ImageLyre.App` | `src/App/ImageLyre.App` | 进程入口与编排（L5） | 解析启动参数并选择宿主模式：桌面模式显示启动画面与欢迎界面、驱动 Bootstrap、创建槽位管理器、注入、触发附着、取主窗体挂到桌面；CLI 模式无窗口、无槽位、无 Feature，驱动 Bootstrap 后执行命令并退出；不构建主窗体、不贡献槽位、不定义主界面布局；引用 Bootstrap、`ImageLyre.Contracts`（本地化契约）、`ImageLyre.Shell.Contracts`、cangming 机制包（只读管理器与插件清单，不引实现包）、Avalonia、AtomUI |
 | `ImageLyre.Bootstrap` | `src/App/ImageLyre.Bootstrap` | 启动链（L1，无 UI） | 日志初始化、扫描前缀、容器构建、`PicoPluginSystem.Launch`、管理器解析、`NotifyServiceProviderBuilt`、`StartAsync`、能力插件计数日志、关停；引用 cangming 机制包与契约，不引用 Avalonia、AtomUI 或任何插件 |
-| `ImageLyre.Domains` | `src/Infrastructure/ImageLyre.Domains` | 领域对象与纯算法（M1 为空工程） | 只放跨插件共享且带不变量的数据与纯函数；不引用 `ImageLyre.Contracts`、不引用 UI、不引 DI 与日志；M1 只有 README 与空 csproj |
-| `ImageLyre.Contracts` | `src/Infrastructure/ImageLyre.Contracts` | 产品契约（无 UI） | `ILocalizationService`、`ILocalizationSource`；另抄录 `IPlatformCapabilities` 与 `IPerformanceMonitor` 两个架构级契约（`Platform/` 与 `Diagnostics/` 目录），抄录而非包引用，本仓可独立演进；不引用 Avalonia、AtomUI、SkiaSharp，也不引用任何 cangming 包 |
-| `ImageLyre.Shell.Contracts` | `src/Infrastructure/ImageLyre.Shell.Contracts` | 壳契约 | `ShellSlots`、`IWorkbenchShell` 两个类型；只引用 `ImageLyre.Contracts`，不引用 Avalonia、不引用机制包、不引用任何插件工程——槽位名与窗口标记都是纯标识，没有理由把 UI 与机制拖进契约 |
+| `ImageLyre.Domains` | `src/Infrastructure/Contracts/ImageLyre.Domains` | 领域对象与纯算法（M1 为空工程） | 只放跨插件共享且带不变量的数据与纯函数；不引用 `ImageLyre.Contracts`、不引用 UI、不引 DI 与日志；M1 只有 README 与空 csproj |
+| `ImageLyre.Contracts` | `src/Infrastructure/Contracts/ImageLyre.Contracts` | 产品契约（无 UI） | `ILocalizationService`、`ILocalizationSource`；另抄录 `IPlatformCapabilities` 与 `IPerformanceMonitor` 两个架构级契约（`Platform/` 与 `Diagnostics/` 目录），抄录而非包引用，本仓可独立演进；不引用 Avalonia、AtomUI、SkiaSharp，也不引用任何 cangming 包 |
+| `ImageLyre.Shell.Contracts` | `src/Infrastructure/Contracts/ImageLyre.Shell.Contracts` | 壳契约 | `ShellSlots`、`IWorkbenchShell` 两个类型；只引用 `ImageLyre.Contracts`，不引用 Avalonia、不引用机制包、不引用任何插件工程——槽位名与窗口标记都是纯标识，没有理由把 UI 与机制拖进契约 |
 | `ImageLyre.Shell.Attachments` | `src/Infrastructure/ImageLyre.Shell.Attachments` | 附着物词汇（非插件，非契约） | `DockPaneAttachment`：实现机制包的 `IFeatureAttachment` 与 `Cangming.Toolkit` 的 `IOrderable`，承载 Avalonia `Control`；引用 `Cangming.PicoPlugins`、`Cangming.Toolkit`、Avalonia、`ImageLyre.Contracts`。它放的是“壳怎样接住一个界面项”的应用词汇，与 cangming 路线包把 `ToolbarButtonAttachment`、`ContentAttachment` 放在 `Cangming.PicoPlugins.Avalonias` 同一位置；因此它不占契约工程的名分，单独落在 `src/Infrastructure/` 下，`ImageLyre.Shell.Contracts` 的纯度也不因它受损 |
 | `ImageLyre.Localization` | `src/Infrastructure/ImageLyre.Localization` | 基础设施库（非插件） | `LocalizationService`：聚合资源源、维护当前语言、缺键回退 zh-CN 并记诊断、广播切换；引用 `ImageLyre.Contracts`，不引用 UI、不引用插件；由 App 创建、Bootstrap 注册同一实例 |
 | `ImageLyre.Module.Shell` | `src/Plugins/Modules/ImageLyre.Module.Shell` | Module 插件（容器类 Module） | 实现 `ISupportSlotManager` 接收槽位管理器注入，在 `Build()` 里构造 `ShellWindow` 并通过 `IAttachmentRegistry` 贡献三个一级槽位；`IWorkbenchShell` 由 `ShellWindow` 实现；实现 `ILocalizationSource` 提供壳文案；持有 `ShellModuleContext`；引用 `ImageLyre.Shell.Contracts`、`ImageLyre.Shell.Attachments`、`ImageLyre.Contracts`、机制包、Avalonia 路线包、AtomUI |
@@ -78,7 +79,7 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 
 `ImageLyre.App` 与 `ImageLyre.Bootstrap` 的分界只有一条：Bootstrap 处理“插件就绪之前”的机制启动，App 处理“插件就绪前后”的用户可见过程与编排——启动画面、欢迎界面、主窗体挂载、关停转发。App 是编排者，不是界面宿主：主窗体由壳插件产出，App 只把它挂到桌面。
 
-目录按职责分三处，物理归置不改变层归属：`src/App/` 放进程入口与启动链（`ImageLyre.App`、`ImageLyre.Bootstrap`），`src/Infrastructure/` 放共享库（`ImageLyre.Domains`、`ImageLyre.Contracts`、`ImageLyre.Shell.Contracts`、`ImageLyre.Shell.Attachments`、`ImageLyre.Localization`），`src/Plugins/Modules/` 与 `src/Plugins/Features/` 分别放 Module 与 Feature 插件。判据以本表“类型”列为准：Bootstrap 放在 App 目录下仍是 L1 的启动链而不是 L5；契约与基础设施同处一个目录，也不放松“契约层不得引用 UI”那条。
+目录按职责分三处，物理归置不改变层归属：`src/App/` 放进程入口与启动链（`ImageLyre.App`、`ImageLyre.Bootstrap`），`src/Infrastructure/` 放共享库，其中 `Contracts/` 子目录专放契约与领域（`ImageLyre.Domains`、`ImageLyre.Contracts`、`ImageLyre.Shell.Contracts`），其余共享实现留在 `Infrastructure/` 根下（`ImageLyre.Shell.Attachments`、`ImageLyre.Localization`），`src/Plugins/Modules/` 与 `src/Plugins/Features/` 分别放 Module 与 Feature 插件。判据以本表“类型”列为准：Bootstrap 放在 App 目录下仍是 L1 的启动链而不是 L5；契约单独成子目录只是让“契约层不得引用 UI”在路径上可读，不改变依赖方向。
 
 每个工程旁边必须有 README.md，写四件事：意义、边界（不放什么）、依赖方向（引谁、被谁引）、边界变化时该改哪份文档。新建工程先写 README 再写代码，空工程同样要有 README，`ImageLyre.Domains` 是 M1 唯一的空工程，它的 README 就是“第一批领域对象出现前该不该往里放东西”的判据。没有 README 的工程视为未完成，验收 E 会逐工程检查。
 

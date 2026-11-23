@@ -6,9 +6,9 @@
   -->
   <ItemGroup>
     <!-- 壳契约与界面词汇：槽位名、IWorkbenchShell 标记、DockPaneAttachment。 -->
-    <ProjectReference Include="..\..\..\Infrastructure\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\Contracts\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Infrastructure\ImageLyre.Shell.Attachments\ImageLyre.Shell.Attachments.csproj" />
-    <ProjectReference Include="..\..\..\Infrastructure\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
