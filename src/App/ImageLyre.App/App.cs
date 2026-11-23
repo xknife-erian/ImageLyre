@@ -3,12 +3,14 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Cangming.PicoPlugins.Core.Features;
 using ImageLyre.App.Cli;
 using ImageLyre.App.Startup;
 using ImageLyre.Bootstrap;
 using ImageLyre.Contracts;
 using Microsoft.Extensions.DependencyInjection;
+using AtomMenuItem = AtomUI.Desktop.Controls.MenuItem;
 
 namespace ImageLyre.App;
 
@@ -136,6 +138,7 @@ public sealed partial class App : Application
 
             desktop.MainWindow = window;
             window.Show();
+            HookSmokeMenuOpen(window);
             welcome.Close();
         }
         catch (Exception ex)
@@ -200,6 +203,43 @@ public sealed partial class App : Application
             // ponytail: 关停失败没有日志出口，WinExe 下 stderr 不可见；日志管线接入后改记日志。
             System.Diagnostics.Debug.WriteLine($"Bootstrap 关停失败：{ex}");
         }
+    }
+
+    /// <summary>按 <c>LYRE_SMOKE_OPEN_MENU=1</c> 约定在主窗体显示后展开第一个带子项的菜单。</summary>
+    /// <param name="window">主窗体，菜单由壳插件在它内部构造。</param>
+    /// <remarks>
+    /// 存在的理由是一次真实漏测：壳窗口曾继承 Avalonia 原生 <c>Window</c>，在 AtomUI 主题下没有 OverlayLayer，
+    /// 点开「文件」子菜单就抛 <c>InvalidOperationException</c>，而当时的冒烟只验证窗口出现与自关，从未展开子菜单。
+    /// 本钩子把「菜单子项能打开」纳入冒烟；展开失败时写 stderr 并把进程退出码置 1，让命令行冒烟能判定失败。
+    /// </remarks>
+    private static void HookSmokeMenuOpen(Window window)
+    {
+        if (!string.Equals(Environment.GetEnvironmentVariable("LYRE_SMOKE_OPEN_MENU"), "1", StringComparison.Ordinal))
+            return;
+
+        // ponytail: M1 的冒烟钩子，覆盖“菜单子项 Popup 能打开”；接入真实 UI 测试后删除。
+        Dispatcher.UIThread.Post(
+            () =>
+            {
+                try
+                {
+                    AtomMenuItem? fileItem = window.GetVisualDescendants()
+                        .OfType<AtomMenuItem>()
+                        .FirstOrDefault(item => item.Items.Count > 0);
+
+                    if (fileItem is null)
+                        throw new InvalidOperationException("找不到可展开的菜单项");
+
+                    fileItem.Open();
+                    Console.Error.WriteLine("冒烟：菜单子项已展开。");
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"冒烟：菜单展开失败：{ex.GetType().Name}：{ex.Message}");
+                    Environment.ExitCode = 1;
+                }
+            },
+            DispatcherPriority.Background);
     }
 
     /// <summary>按 <c>LYRE_SMOKE_CLOSE_MS</c> 约定在窗口打开后定时关闭它。</summary>

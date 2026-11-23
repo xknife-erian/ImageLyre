@@ -25,6 +25,7 @@
 | `ImageLyre --help` | `--help` | 用法与退出码约定，退出码 0 |
 | `ImageLyre 未知参数（退出码 2）` | `--bogus` | stderr 回显参数原文，退出码 2 |
 | `ImageLyre 桌面冒烟（自动关闭）` | 环境变量 `LYRE_SMOKE_CLOSE_MS=1500` | 窗口 1.5 秒后自关，退出码 0 |
+| `ImageLyre 菜单冒烟（展开子菜单后关闭）` | 环境变量 `LYRE_SMOKE_OPEN_MENU=1` 与 `LYRE_SMOKE_CLOSE_MS=1500` | 主窗体出现后展开「文件」子菜单，日志出现「冒烟：菜单子项已展开」，失败时退出码 1 |
 
 `LYRE_SMOKE_CLOSE_MS` 是 `App.OnFrameworkInitializationCompleted` 里的自动冒烟钩子，只在取值为正整数时生效，接入真实 UI 测试后删除；它被写进冒烟档案，是为了让“桌面分支能起来并正常退出”这条验证不依赖人眼盯着窗口。
 

@@ -28,6 +28,7 @@
 | 0.24 | 2026-11-23 | 草稿 | lukan | 回写 T15：语言切换入口落在菜单栏右侧（§4.4 标题栏行与 §5.6 同步），§3.3 补「CLI 也必须先注册 `ILocalizationService`」，因为壳的启动动作会解析它注册文案源 |
 | 0.25 | 2026-11-23 | 草稿 | lukan | 按作者口径调整两处归属：语言切换移到「文件」菜单下，作为壳自有的非插件功能；状态栏改为第四个一级槽位 `lyre.shell.statusbar`，读数片段由插件贡献，M1 的五段由壳占位以满足交互规格；§4.1/§4.2/§4.4/§4.5/§5.6 同步 |
 | 0.26 | 2026-11-23 | 草稿 | lukan | 订正 §4.2：cangming `v0.1.9.1122` 的路线包只有 `StatusBarAttachment`，没有 `StatusBarContentAttachment`，后者出现时再补专用呈现器；语言项在英文下保持语言自称，避免把「中文」译成 `Chinese` 后无法回切 |
+| 0.27 | 2026-11-23 | 草稿 | lukan | 补 §3.4 的实现级硬约束：壳窗口必须派生自 `AtomUI.Desktop.Controls.Window`，Avalonia 原生 `Window` 在 AtomUI 主题下没有 `OverlayLayer`，打开子菜单会抛 Popup 异常；冒烟新增 `LYRE_SMOKE_OPEN_MENU=1` 展开一次子菜单来守住它 |
 
 ## 1 目标与范围
 
@@ -346,6 +347,8 @@ CLI 骨架在 M1 只支持三条命令：`--version` 输出版本，`--plugins` 
 主窗体是壳插件在 `Build()` 里构造的产物：`ImageLyre.Module.Shell` 实现 `BasePicoModule<IWorkbenchShell>`，`Build()` 返回 `Lazy<IWorkbenchShell>`，其值是 `ShellWindow : Window, IWorkbenchShell`；槽位贡献发生在 `ShellWindow` 的构造过程中，因此“取到壳体”就等于“槽位已贡献”。`IWorkbenchShell` 是标记接口，这与 Mercury 的 `IWorkbench` 同构：App 取到产物后断言它是 `Window`，不做任何界面构造。
 
 这条设计的判据是替换性：换掉壳插件（换布局、换 UI 路线）时，App 只改一行取窗代码的断言，不改启动链、不改 Bootstrap、不改任何 Feature。若某天 App 里出现“设置窗口尺寸、拼装面板、注册菜单”一类代码，说明壳的边界被破坏了。
+
+一条实现级硬约束：壳窗口必须派生自 `AtomUI.Desktop.Controls.Window`，不能直接用 `Avalonia.Controls.Window`。后者在 AtomUI 主题下没有 `OverlayLayer`，打开「文件」子菜单或任何 `Popup` 时会抛 `InvalidOperationException: Unable to create IPopupImpl and no overlay layer is found for the target control`；换成任何新 UI 路线前，先确认新基类提供 OverlayLayer。冒烟用 `LYRE_SMOKE_OPEN_MENU=1` 展开一次子菜单来守住这条，因为只验证「窗口出现、自关、退出码 0」的冒烟漏掉过它一次。
 
 ### 3.5 槽位先于附着
 

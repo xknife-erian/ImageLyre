@@ -11,6 +11,7 @@ using ImageLyre.Shell.Contracts;
 using AtomMenu = AtomUI.Desktop.Controls.Menu;
 using AtomMenuItem = AtomUI.Desktop.Controls.MenuItem;
 using AtomTextBlock = AtomUI.Desktop.Controls.TextBlock;
+using AtomUIWindow = AtomUI.Desktop.Controls.Window;
 
 namespace ImageLyre.Module.Shell;
 
@@ -34,8 +35,14 @@ namespace ImageLyre.Module.Shell;
 /// 生命周期：窗口关闭后由宿主调用 <see cref="Dispose"/> 退订四个 <c>SlotPanel</c> 的槽位事件与本地化事件；
 /// M1 不提供运行期摘除附着物，控件树随窗口销毁由 Avalonia 统一回收。
 /// </para>
+/// <para>
+/// 基类必须是 <c>AtomUI.Desktop.Controls.Window</c>，不能改回 <c>Avalonia.Controls.Window</c>：
+/// Avalonia 原生 Window 在 AtomUI 主题下没有 OverlayLayer，打开「文件」子菜单或任何 Popup 时会抛
+/// <c>InvalidOperationException: Unable to create IPopupImpl and no overlay layer is found for the target control</c>。
+/// 换 UI 路线或窗口基类前，先确认新基类提供 OverlayLayer。
+/// </para>
 /// </remarks>
-public sealed class ShellWindow : Window, IWorkbenchShell
+public sealed class ShellWindow : AtomUIWindow, IWorkbenchShell
 {
     private readonly ILocalizationService _localization;
     private readonly ISlotManager _slotManager;

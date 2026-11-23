@@ -25,6 +25,13 @@
       "environmentVariables": {
         "LYRE_SMOKE_CLOSE_MS": "1500"
       }
+    },
+    "ImageLyre 菜单冒烟（展开子菜单后关闭）": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "LYRE_SMOKE_OPEN_MENU": "1",
+        "LYRE_SMOKE_CLOSE_MS": "1500"
+      }
     }
   }
 }
