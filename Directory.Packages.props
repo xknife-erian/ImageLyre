@@ -34,6 +34,15 @@
   </ItemGroup>
 
   <!--
+    宿主基础：ImageLyre.Bootstrap 直接使用容器与日志抽象，版本与 .NET 10 服务包对齐；
+    机制包已传递引入日志实现，这里只锁直接使用的两个包，避免版本随传递依赖漂移。
+  -->
+  <ItemGroup Label="宿主基础">
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.14" />
+  </ItemGroup>
+
+  <!--
     测试：xunit v3 走 Microsoft.Testing.Platform，runner 选择写在根 `global.json`，
     缺了那一节 .NET 10 SDK 会直接拒绝以 VSTest 方式运行。
   -->

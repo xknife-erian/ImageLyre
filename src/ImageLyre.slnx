@@ -11,7 +11,11 @@
   <Folder Name="/Infrastructure/">
     <Project Path="Infrastructure/ImageLyre.Localization/ImageLyre.Localization.csproj" />
   </Folder>
+  <Folder Name="/Bootstrap/">
+    <Project Path="Bootstrap/ImageLyre.Bootstrap/ImageLyre.Bootstrap.csproj" />
+  </Folder>
   <Folder Name="/Tests/">
     <Project Path="../tests/UnitTest.ImageLyre.Localization/UnitTest.ImageLyre.Localization.csproj" />
+    <Project Path="../tests/UnitTest.ImageLyre.Bootstrap/UnitTest.ImageLyre.Bootstrap.csproj" />
   </Folder>
 </Solution>
