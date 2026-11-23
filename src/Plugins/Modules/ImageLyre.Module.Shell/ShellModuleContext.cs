@@ -3,6 +3,7 @@ using Cangming.PicoPlugins.Core.Features;
 using Cangming.PicoPlugins.Core.Modules;
 using Cangming.PicoPlugins.Core.Support;
 using ImageLyre.Contracts;
+using ImageLyre.Shell.Contracts.Menus;
 
 namespace ImageLyre.Module.Shell;
 
@@ -69,4 +70,14 @@ internal sealed class ShellModuleContext : BaseModuleContext
     public ILocalizationService Localization => _ioc?.Value.Resolve<ILocalizationService>()
         ?? throw new InvalidOperationException(
             "宿主未注册 ILocalizationService：壳插件无法取得本地化服务，请检查 Bootstrap 容器的注册。");
+
+    /// <summary>宿主注册的菜单注册表；IoC 未注入或容器里没有该服务时抛出。</summary>
+    /// <remarks>
+    /// 壳窗口按注册表渲染插件贡献的菜单，Feature 在启动时向同一实例注册菜单项；
+    /// 求值后返回的是宿主创建的同一个实例，因此双方看到的是同一份登记。
+    /// </remarks>
+    /// <exception cref="InvalidOperationException">IoC 未注入，或宿主未注册 <see cref="IMenuRegistry"/>。</exception>
+    public IMenuRegistry Menus => _ioc?.Value.Resolve<IMenuRegistry>()
+        ?? throw new InvalidOperationException(
+            "宿主未注册 IMenuRegistry：壳窗口无法取得菜单注册表，请检查 Bootstrap 容器的注册。");
 }

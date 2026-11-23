@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- 文案键是内部类型，测试直接遍历它校验中英双语文案完整性。 -->
+    <InternalsVisibleTo Include="UnitTest.ImageLyre.Feature.About" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 关于窗口走 AtomUI/Avalonia 路线包；只引用契约，不引用任何 Module 工程。 -->
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="AtomUI.Desktop.Controls" />
+    <PackageReference Include="Cangming.Logs" />
+    <PackageReference Include="Cangming.PicoPlugins" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Infrastructure\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\Contracts\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

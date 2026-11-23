@@ -55,6 +55,7 @@ function Invoke-App {
 }
 
 $failures = [System.Collections.Generic.List[string]]::new()
+$passed = 0
 
 function Assert-Contains {
     param(
@@ -65,6 +66,7 @@ function Assert-Contains {
 
     if ($Text.Contains($Expected, [System.StringComparison]::Ordinal)) {
         Write-Host "PASS $Name：$Expected"
+        $script:passed++
         return
     }
 
@@ -91,6 +93,7 @@ if ($english.ExitCode -ne 0) {
 }
 Assert-Contains -Name '桌面菜单展开' -Text $english.StdErr -Expected '冒烟：菜单子项已展开。'
 Assert-Contains -Name '桌面英文切换' -Text $english.StdErr -Expected '冒烟：语言已切换为 en-US'
+Assert-Contains -Name '关于功能注册' -Text $english.StdErr -Expected '关于 Feature 已启动，帮助菜单已注册。'
 
 # 3. 桌面中文：再切回 zh-CN，证明切换可逆且不需要重启。
 $chinese = Invoke-App -Arguments @() -Environment @{
@@ -113,5 +116,5 @@ if ($failures.Count -gt 0) {
 }
 
 Write-Host ''
-Write-Host '结果：3 项全部 PASS。'
+Write-Host "结果：$passed 项全部 PASS。"
 exit 0

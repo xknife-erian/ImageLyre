@@ -3,11 +3,14 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Cangming.Logs;
 using Cangming.PicoPlugins.Avalonias.Slots;
 using Cangming.PicoPlugins.Core.Features;
 using ImageLyre.Contracts;
 using ImageLyre.Module.Shell.Internal;
 using ImageLyre.Shell.Contracts;
+using ImageLyre.Shell.Contracts.Menus;
+using Microsoft.Extensions.Logging;
 using AtomMenu = AtomUI.Desktop.Controls.Menu;
 using AtomMenuItem = AtomUI.Desktop.Controls.MenuItem;
 using AtomTextBlock = AtomUI.Desktop.Controls.TextBlock;
@@ -44,11 +47,15 @@ namespace ImageLyre.Module.Shell;
 /// </remarks>
 public sealed class ShellWindow : AtomUIWindow, IWorkbenchShell
 {
+    private static readonly ILogger s_logger = LogHub.For(typeof(ShellWindow));
+
     private readonly ILocalizationService _localization;
     private readonly ISlotManager _slotManager;
+    private readonly IMenuRegistry _menuRegistry;
     private readonly SlotPanel _toolbarPanel;
     private readonly ViewportSlotPanel _viewportPanel;
     private readonly DockPaneSlotPanel _panel;
+    private AtomMenu _menu = null!;
     private SlotPanel _statusBarPanel = null!;
 
     private AtomMenuItem _fileMenu = null!;
@@ -73,6 +80,7 @@ public sealed class ShellWindow : AtomUIWindow, IWorkbenchShell
 
         _slotManager = context.SlotManager;
         _localization = context.Localization;
+        _menuRegistry = context.Menus;
         ContributeSlots(context.Registry);
 
         Title = _localization.Get(ShellStringKeys.WindowTitle);
@@ -86,9 +94,10 @@ public sealed class ShellWindow : AtomUIWindow, IWorkbenchShell
         _viewportPanel = new ViewportSlotPanel(_slotManager, _localization);
         _panel = new DockPaneSlotPanel(_slotManager, _localization);
 
-        AtomMenu menu = BuildMenu();
-        Content = BuildLayout(menu);
+        BuildMenu();
+        Content = BuildLayout();
         _localization.LanguageChanged += OnLanguageChanged;
+        _menuRegistry.Changed += OnMenuRegistryChanged;
     }
 
     /// <summary>退订槽位事件与本地化事件，释放对槽位管理器和本地化服务的引用。</summary>
@@ -103,6 +112,7 @@ public sealed class ShellWindow : AtomUIWindow, IWorkbenchShell
 
         _disposed = true;
         _localization.LanguageChanged -= OnLanguageChanged;
+        _menuRegistry.Changed -= OnMenuRegistryChanged;
         _toolbarPanel.SlotManager = null;
         _viewportPanel.SlotManager = null;
         _panel.SlotManager = null;
@@ -142,6 +152,7 @@ public sealed class ShellWindow : AtomUIWindow, IWorkbenchShell
         _readyText.Text = _localization.Get(ShellStringKeys.StatusReady);
         _viewportPanel.RefreshTexts();
         _panel.RefreshTexts();
+        RebuildMenu();
     }
 
     /// <summary>把当前语言对应的菜单项置灰，另一项保持可点击。</summary>
@@ -197,13 +208,14 @@ public sealed class ShellWindow : AtomUIWindow, IWorkbenchShell
     };
 
     /// <summary>拼装窗口的 Dock 布局：菜单与工具栏在上、状态栏在下、视口与辅助面板填满中间。</summary>
-    /// <param name="menu">已构造好的「文件」菜单。</param>
     /// <returns>窗口根控件。</returns>
     /// <remarks>
     /// 辅助面板固定占 320 像素宽，布局变更只改这里；M1 不提供可拖拽分隔条，也不提供面板收起。
     /// </remarks>
-    private Control BuildLayout(AtomMenu menu)
+    private Control BuildLayout()
     {
+        AtomMenu menu = _menu;
+
         var toolbar = new Border
         {
             Child = _toolbarPanel,
@@ -249,22 +261,21 @@ public sealed class ShellWindow : AtomUIWindow, IWorkbenchShell
         return root;
     }
 
-    /// <summary>构造「文件」菜单：语言切换两项加一个置灰占位项，只有语言项挂点击动作。</summary>
-    /// <returns>菜单栏控件。</returns>
+    /// <summary>构造菜单栏：「文件」由壳提供，其余顶层菜单与菜单项来自 <see cref="IMenuRegistry"/>。</summary>
     /// <remarks>
-    /// 菜单条只是壳的容器与外观；「文件」菜单里的语言切换是壳自有的非插件功能，其余菜单项将来由命令注册表
-    /// 平台插件与各 Feature 贡献（G2）。M1 不放真实命令菜单，也不在壳里预置八个顶层。
+    /// 「文件」里的语言切换是壳自有的非插件功能；插件贡献的菜单与菜单项由注册表提供，
+    /// 壳只按 <c>Order</c> 排序并解析标题资源键，不硬编码任何插件的 Id。
     /// </remarks>
-    private AtomMenu BuildMenu()
+    private void BuildMenu()
     {
-        // ponytail: 菜单条只是壳的容器与外观，真实菜单项将来由命令注册表平台插件与各 Feature 贡献（G2）；
-        // M1 只放一个「文件」顶层、两个语言项与一个置灰占位项。
+        _menu = new AtomMenu();
+
+        // ponytail: 语言菜单项是壳自有的最小实现；更多语言或正式语言菜单归后续任务。
         _fileMenu = new AtomMenuItem
         {
             Header = _localization.Get(ShellStringKeys.MenuFile),
         };
 
-        // ponytail: 语言菜单项是壳自有的最小实现，只有这两项挂 Click；更多语言或正式语言菜单归后续任务。
         _languageZhItem = new AtomMenuItem
         {
             Header = _localization.Get(ShellStringKeys.MenuLanguageZh),
@@ -288,10 +299,75 @@ public sealed class ShellWindow : AtomUIWindow, IWorkbenchShell
         _fileMenu.Items.Add(_placeholderItem);
         RefreshLanguageMenuState();
 
-        var menu = new AtomMenu();
-        menu.Items.Add(_fileMenu);
-        return menu;
+        RebuildMenu();
     }
+
+    /// <summary>按当前注册表与语言重建整棵菜单树；不重建窗口或其它控件。</summary>
+    /// <remarks>
+    /// 菜单是壳的 chrome，重建只替换 <see cref="AtomMenu"/> 的子项；插件面板、工具条与视口不受影响。
+    /// </remarks>
+    private void RebuildMenu()
+    {
+        if (_disposed)
+            return;
+
+        _menu.Items.Clear();
+        _menu.Items.Add(_fileMenu);
+        AppendContributedMenus();
+    }
+
+    /// <summary>把注册表中的顶层菜单与菜单项追加到菜单栏。</summary>
+    private void AppendContributedMenus()
+    {
+        foreach (MenuDefinition definition in _menuRegistry.Menus)
+        {
+            var menu = new AtomMenuItem
+            {
+                Header = _localization.Get(definition.TitleKey),
+            };
+
+            foreach (MenuItemDefinition item in _menuRegistry.GetItems(definition.Id))
+                menu.Items.Add(CreateMenuItem(item));
+
+            _menu.Items.Add(menu);
+        }
+    }
+
+    /// <summary>按定义创建一个菜单项；没有动作的项渲染为禁用项。</summary>
+    /// <param name="item">菜单项定义。</param>
+    /// <returns>可加入顶层菜单的 AtomUI 菜单项。</returns>
+    private AtomMenuItem CreateMenuItem(MenuItemDefinition item)
+    {
+        var menuItem = new AtomMenuItem
+        {
+            Header = _localization.Get(item.TitleKey),
+            IsEnabled = item.Invoke is not null,
+        };
+
+        if (item.Invoke is { } invoke)
+            menuItem.Click += async (_, _) => await InvokeMenuItemAsync(item.Id, invoke);
+
+        return menuItem;
+    }
+
+    /// <summary>执行菜单项动作并隔离异常，避免一次点击把窗口事件链打断。</summary>
+    /// <param name="itemId">菜单项 Id，仅用于日志。</param>
+    /// <param name="invoke">菜单项动作。</param>
+    private async Task InvokeMenuItemAsync(string itemId, Func<Task> invoke)
+    {
+        try
+        {
+            await invoke();
+        }
+        catch (Exception ex)
+        {
+            s_logger.LogError(ex, "菜单项 {ItemId} 执行失败。", itemId);
+        }
+    }
+
+    /// <summary>菜单注册表变化后把菜单重建投递到 UI 线程。</summary>
+    private void OnMenuRegistryChanged(object? sender, EventArgs e) =>
+        Dispatcher.UIThread.Post(RebuildMenu);
 
     /// <summary>构造状态栏：左侧五段规格占位、中间插件读数槽位、右侧临时消息区。</summary>
     /// <returns>状态栏控件。</returns>

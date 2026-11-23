@@ -38,6 +38,7 @@ public sealed partial class App : Application
 {
     private readonly StartupOptions _options;
     private readonly ILocalizationService _localization;
+    private readonly ImageLyre.Shell.Menus.MenuRegistry _menus = new();
     private readonly CompositionGate _gate = new();
 
     private BootstrapHost? _bootstrap;
@@ -102,7 +103,10 @@ public sealed partial class App : Application
             BootstrapHost bootstrap = await BootstrapHost.StartAsync(
                 loggerFactory,
                 HostMode.Desktop,
-                services => services.AddSingleton<ILocalizationService>(_localization),
+                services => {
+                    services.AddSingleton<ILocalizationService>(_localization);
+                    services.AddSingleton<ImageLyre.Shell.Contracts.Menus.IMenuRegistry>(_menus);
+                },
                 CancellationToken.None);
 
             _bootstrap = bootstrap;
