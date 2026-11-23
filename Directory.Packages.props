@@ -31,11 +31,6 @@
     <PackageVersion Include="Cangming.PicoPlugins.Avalonias" Version="0.1.9.1122" />
     <PackageVersion Include="Cangming.Logs" Version="0.1.9.1122" />
     <PackageVersion Include="Cangming.Toolkit" Version="0.1.9.1122" />
-    <!--
-      借用契约：M1 用它的 IPlatformCapabilities 与 IPerformanceMonitor 取代自造示范契约（DESIGN-0001 §5.4）；
-      两者仍是 Experimental，因此版本锚点与机制包同批升级，不单独追新。
-    -->
-    <PackageVersion Include="Cangming.Platform.Contracts" Version="0.1.9.1122" />
   </ItemGroup>
 
   <!--
