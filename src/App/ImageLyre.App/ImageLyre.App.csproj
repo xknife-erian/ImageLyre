@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- 进程入口带窗口，因此是 WinExe；目标框架、可空与警告即错误由根 Directory.Build.props 提供。 -->
+    <OutputType>WinExe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 桌面 UI 路线：Avalonia 承载生命周期与基础控件，AtomUI 提供欢迎窗口的控件与主题。 -->
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="AtomUI.Desktop.Controls" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 启动链在 Bootstrap，本地化实现在 Localization，契约提供 ILocalizationService 与 ILocalizationSource。 -->
+    <ProjectReference Include="..\..\Bootstrap\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ImageLyre.Localization\ImageLyre.Localization.csproj" />
+    <ProjectReference Include="..\..\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+  </ItemGroup>
+
+  <!--
+    本工程不引用 ImageLyre.Shell.Contracts（尚未建立）、ImageLyre.Shell.Attachments 或任何插件工程：
+    主窗体由壳插件产出，插件产物按 DESIGN-0001 §3.7 的通配引用在 T07 接入；按名字引用插件工程一律禁止。
+  -->
+
+</Project>
