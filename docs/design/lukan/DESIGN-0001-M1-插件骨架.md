@@ -19,6 +19,7 @@
 | 0.15 | 2026-11-23 | 草稿 | lukan | 订正 §3.7 通配引用的相对路径（原写 `..\Plugins\**`，少一层，实际指向不存在的 `src/App/Plugins`），并记录实测行为：插件工程不进解决方案也会被拉进构建并复制、`dotnet clean` 能清掉已复制的 dll、空工程只增加扫描候选不增加插件条目 |
 | 0.16 | 2026-11-23 | 草稿 | lukan | 按作者口径换掉自造示范契约：取 cangming 的 `IPlatformCapabilities` 与 `IPerformanceMonitor`，三个验收插件改为 `Module.Platform`、`Module.Performance`、`Feature.Diagnostics`，故障样本改名 `Module.Broken`；§3.1/§3.2/§3.6/§3.7/§5.4/§5.5/§7/§9 同步 |
 | 0.17 | 2026-11-23 | 草稿 | lukan | 按作者口径把两个契约从「引用」改为「抄录」：`IPlatformCapabilities` 与 `IPerformanceMonitor` 以源码落进 `ImageLyre.Contracts`，去掉 `ContractMaturity` 依赖并裁剪性能快照里的壳字段；本仓可独立演进，向上游提升不属本仓范围；§3.1/§3.2/§5.4 同步 |
+| 0.18 | 2026-11-23 | 草稿 | lukan | 回写 T11：§3.7 记录插件依赖如何到达输出目录（插件打开 `CopyLocalLockFileAssemblies`，宿主与测试工程导入根 `PluginOutputMerge.targets` 归并插件 bin），并记录扫描缓存的失效陷阱；同时确认 App 仍不按名引用插件或插件依赖 |
 
 ## 1 目标与范围
 
@@ -406,6 +407,10 @@ M1 用主目录扫描，在 cangming 默认前缀表上追加 `ImageLyre.Module.
 `ReferenceOutputAssembly="false"` 保证插件程序集不进编译输入，`OutputItemType="Content"` 把它变成可复制的内容项，工程引用同时给出正确的构建顺序。这条通配引用是插件工程进入 `ImageLyre.App.csproj` 的唯一形式，按名字的逐条引用数量必须为 0，验收 E 检查的就是这一点。
 
 复制是增量的，`PreserveNewest` 不会清理已删除插件的旧 dll，因此所有“删除插件”的验收必须先 `dotnet clean` 或删除应用输出目录再构建，判据里要检查启动日志的候选程序集列表不含被删插件。
+
+插件自己的依赖如何到达输出目录：插件是库工程，默认不把 NuGet 依赖复制到自己的 `bin`，因此 `src/Plugins/Directory.Build.props` 为该目录下所有插件打开 `CopyLocalLockFileAssemblies`；宿主再导入仓库根的 `PluginOutputMerge.targets`，在 Build 之后把 `src/Plugins/*/bin/$(Configuration)/$(TargetFramework)/*.dll` 归并到输出目录。宿主的测试工程导入同一份目标，因为测试进程也以「插件就在输出目录旁边」为前提启动 Bootstrap。这条机制取代了给 App 按名加插件依赖的临时做法，App.csproj 至今没有任何插件或插件依赖的编译引用；只归并一层 dll、不递归 `runtimes/`，原生库的布局留给 G4 的装包与依赖清单。
+
+一条运维陷阱要记住：cangming 的扫描缓存写在 `%LOCALAPPDATA%\.cangming\plugin\scan-cache`，按路径、长度与最后写入时间失效。插件若曾在缺依赖时被判为「非插件」，补上依赖而 dll 未变时缓存不会自动失效，表现为 `--plugins` 一直少这个插件；删掉该缓存目录（或 touch 插件 dll）再跑即可。
 
 M1 实测确认了三件事，后续验收依赖它们：插件工程不必进 `src/ImageLyre.slnx`，只要落在 `src/Plugins/**` 就会被这条通配引用拉进构建图并复制产物，这正说明机制不依赖解决方案条目；`dotnet clean` 会清掉已经复制进应用输出目录的 dll，所以删除插件后先 clean 再构建是有效的；空插件工程会被扫描成候选程序集但不产生插件条目，因为找不到 `[Plugin]` 类型，因此“扫描候选数增加、插件数不变”是机制生效的正常表现。
 
