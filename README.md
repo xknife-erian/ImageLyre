@@ -1,5 +1,3 @@
-![一把里拉琴，五根弦](docs/assets/readme-lyre.png)
-
 # ImageLyre
 
 > **状态（2026-11-22）**：2022 年 WPF 版与 2026 年 11 月的两轮重建已整体归档，工作区只保留需求、基线与目录骨架；归档前的完整状态在标签 `archive/pre-reset-2026-11-22`。新一代系统的插件架构基线见 [ADR-0001](docs/adr/lukan/ADR-0001-插件机制架构基线.md)，M1 骨架见 [DESIGN-0001](docs/design/lukan/DESIGN-0001-M1-插件骨架.md)，实施计划见 [PLAN-0001](docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md)。
@@ -76,7 +74,3 @@ ImageLyre 的软件与源代码免费提供，遵循[木兰宽松许可证 v2](h
 ## 附记
 
 作者 [稀布老咖](https://gitee.com/xknife) 的“稀布”是“西部”的谐音。十余年前，母亲申请 QQ 时想给自己起名“西部沙子”，拼音不太灵光，打成了“稀布沙子”，便一直用下去。母亲已去世多年，音容宛在。借这个谐音纪念她，感念养育之恩。
-
----
-
-![一张工作台，有一点杂乱，也有温度](docs/assets/readme-workbench.png)
