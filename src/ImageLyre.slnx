@@ -18,6 +18,7 @@
     <Project Path="App/ImageLyre.App/ImageLyre.App.csproj" />
   </Folder>
   <Folder Name="/Tests/">
+    <Project Path="../tests/UnitTest.ImageLyre.App/UnitTest.ImageLyre.App.csproj" />
     <Project Path="../tests/UnitTest.ImageLyre.Localization/UnitTest.ImageLyre.Localization.csproj" />
     <Project Path="../tests/UnitTest.ImageLyre.Bootstrap/UnitTest.ImageLyre.Bootstrap.csproj" />
   </Folder>

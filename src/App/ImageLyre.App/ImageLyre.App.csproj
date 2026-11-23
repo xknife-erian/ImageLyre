@@ -13,6 +13,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!--
+      CLI 宿主直接读取插件管理器、PluginInfo 与 IPicoFeatures 标记接口，因此显式声明机制包依赖；
+      日志抽象用于最小 stderr 日志工厂，避免只靠 Bootstrap 的传递引用。
+    -->
+    <PackageReference Include="Cangming.PicoPlugins" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- 启动链在 Bootstrap，本地化实现在 Localization，契约提供 ILocalizationService 与 ILocalizationSource。 -->
     <ProjectReference Include="..\..\Bootstrap\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ImageLyre.Localization\ImageLyre.Localization.csproj" />
