@@ -32,6 +32,7 @@
 | 0.28 | 2026-11-23 | 草稿 | lukan | 回写 T14：§5.6 说明 M1 的附着物不可变（工具条标题、状态栏片段、面板页签在附着时定稿，只有面板内容随语言刷新，其余等 G3），§7 的 G 判据按同一口径收窄，不再承诺「切换后全部刷新」 |
 | 0.29 | 2026-11-23 | 草稿 | lukan | 回写 T16：§5.5 增设 `lyre.test.` 前缀，故障样本改用 `lyre.test.broken`，避免它被算进“能力插件 N 个”而让验收 A 的“0 个”永远达不到；同时记录 Release 输出不含故障样本 |
 | 0.30 | 2026-11-23 | 草稿 | lukan | 回写 T18：新增 §3.9，把三个环境变量冒烟钩子（自关、展开菜单、切换语言）登记成表并写明失败口径与删除时机，避免钩子只存在于代码里 |
+| 0.31 | 2026-11-23 | 草稿 | lukan | M1 收口后的口径订正：cangming 明确为“子模块作源码锚点、编译只吃同名 NuGet 包”；三个平台能力插件改为长期保留，G2 用正式诊断面板替换 `Feature.Diagnostics`，因此 G 证据可复跑；CLI 无界面分支固定 UTF-8 输出；G 的冒烟证据收进 `scripts/qa/smoke-m1.ps1`，不再依赖仓外探针 |
 
 ## 1 目标与范围
 
@@ -44,7 +45,7 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 ### 2.1 长期约定
 
 1. 命名空间与工程名一律以 `ImageLyre` 为前缀（`ImageLyre.App`、`ImageLyre.Bootstrap`、`ImageLyre.Domains`、`ImageLyre.Contracts`、`ImageLyre.Shell.Contracts`、`ImageLyre.Module.*`、`ImageLyre.Feature.*`）；类型名可以用 `Lyre` 短名。插件 Id 与槽位名保留小写 `lyre.` 短名，因为它们是持久身份与字符串契约，改名会让禁用名单、审计键与已附着配置漂移。
-2. 只使用 cangming 已发布能力，不修改 cangming 源码；cangming 以只读子模块锁定 tag `v0.1.9.1122`，M1 第 1 步落地子模块。`Cangming.Shell` 与 `Cangming.Platform` 的实现包不接入。
+2. 只使用 cangming 已发布能力，不修改 cangming 源码；cangming 以只读子模块锁定 tag `v0.1.9.1122`，作为源码对照与版本锚点，编译只引用同名 NuGet 包，不把子模块工程引进解决方案。`Cangming.Shell` 与 `Cangming.Platform` 的实现包不接入。
 3. 插件在 `[Plugin]` 上写死显式 Id，不使用派生值；cangming 的载入器在扫描末尾执行 Id 唯一性策略，同 Id 按创建时间升序、再按类型全名保留一个，其余置未准入并记错误日志。
 4. `ImageLyre.Contracts` 与 `ImageLyre.Domains` 不得引用 Avalonia、AtomUI 或 SkiaSharp；`ImageLyre.Shell.Contracts` 允许引用 Avalonia；三者方向固定为 `ImageLyre.Shell.Contracts` → `ImageLyre.Contracts` → `ImageLyre.Domains`，反向引用一律禁止。
 5. 插件之间零 `ProjectReference`；Feature 工程只依赖契约、cangming 机制包、cangming 的 Avalonia 路线包与 AtomUI。
@@ -434,7 +435,7 @@ M1 实测确认了三件事，后续验收依赖它们：插件工程不必进 `
 
 故障样本要一条显式排除，否则它随通配引用无条件进入产品输出：通配项加 `Exclude="..\Plugins\Modules\ImageLyre.Module.Broken\**"`，再在 `Condition="'$(Configuration)'=='Debug'"` 的内容项里单独复制它。这样 Release 输出不含 Broken，验收 D 只在 Debug 树上成立，判据写成“Debug 输出的候选清单含 Broken，Release 输出不含”。
 
-三个验收用插件的生命周期同一条：`ImageLyre.Module.Platform`、`ImageLyre.Module.Performance` 与 `ImageLyre.Feature.Diagnostics` 在 M1 验收后一并移除，因此它们不是“常驻工程”；移除时同步从 `src/ImageLyre.slnx` 摘除，避免解决方案引用不存在的工程。契约不像早先的示范契约那样需要删除——两个能力契约是抄录进 `ImageLyre.Contracts` 的长期契约，插件走了契约仍在。
+三个首批平台能力插件的生命周期同一条：`ImageLyre.Module.Platform`、`ImageLyre.Module.Performance` 与 `ImageLyre.Feature.Diagnostics` 作为官方平台能力插件保留，不再按“验收后移除”处理，理由是它们实现的是抄录进 `ImageLyre.Contracts` 的长期契约，且验收 G 的菜单、页签与状态栏读数证据依赖 `Feature.Diagnostics` 的界面，删掉之后 G 无法复跑；G2 落地正式诊断面板时由正式界面替换 `Feature.Diagnostics`，两个 Module 继续保留。契约归本仓所有（ADR-0002），因此插件与契约都不随 M1 结束而删除。
 
 ### 3.8 失败与降级
 
@@ -456,7 +457,7 @@ M1 没有 UI 自动化测试，桌面分支因此保留三个只由环境变量�
 | `LYRE_SMOKE_OPEN_MENU=1` | 主窗体显示后展开第一个带子项的菜单，覆盖 Popup 链路 | 展开异常写 stderr 并把进程退出码置 1 |
 | `LYRE_SMOKE_LANGUAGE` | 主窗体显示后切换到指定语言并打印切换后的标题 | 切换异常写 stderr 并把进程退出码置 1 |
 
-三条都是 M1 的脚手架：接入真实 UI 测试后一并删除；新增钩子必须同时写进本表，否则下一次验收会拿不到证据却不知道为什么。
+三条都是 M1 的脚手架：接入真实 UI 测试后一并删除；新增钩子必须同时写进本表，否则下一次验收会拿不到证据却不知道为什么。三条钩子由 `scripts/qa/smoke-m1.ps1` 串起来：脚本先跑 `--plugins` 断言 Feature 为 0，再各跑一次 en-US 与 zh-CN 桌面冒烟并断言切换行，因此验收 G 的菜单与语言证据可以在仓库内复跑，不再依赖仓外探针。
 
 ## 4 界面槽位
 

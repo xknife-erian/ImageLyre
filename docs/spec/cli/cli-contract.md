@@ -4,12 +4,13 @@
 | :--- | :--- | :--- | :--- | :--- |
 | 1.0 | 2026-11-19 | 研发契约 | lukan | 从 PRD 2.9 §5.17 拆出；命令、参数、Schema、退出码与实现约束在此维护，产品口径见 `../requirements/product-requirements.md` §5.17 |
 | 1.1 | 2026-11-19 | 研发契约 | lukan | 产品口径改挂 PRD 4.1 的 CORE-14；测量选项、列序与对照容差改挂 `../requirements/measurement-baseline.md`；章节编号由 5.17.x 改为 1.x，内容不变 |
+| 1.2 | 2026-11-23 | 研发契约 | lukan | 宿主拓扑改为单入口双宿主：CLI 是 `ImageLyre.App` 的无界面模式，与桌面共用启动链与插件集，不初始化 AtomUI、Avalonia 或 SkiaSharp；删除已归档的 ADR-0006 与 `src/Apps/ImageLyre.Cli` 引用；废止 NativeAOT 单文件 CLI 与“CLI 输出目录不含 UI 程序集”的断言（单入口的必然结果，AOT 为 ADR-0001 非目标）；命令形状、JSON 与退出码不变 |
 
 > 本文是研发契约，不是产品需求。产品经理只定义“要什么、为什么、怎样算好”；命令形状、JSON Schema、退出码、宿主拓扑与实现约束由研发在此维护。本文的产品落点是 PRD 4.1 的 CORE-14，测量口径与对照容差以 `../requirements/measurement-baseline.md` 为准，两者冲突时以交付物为准并回写本文。
 
 ## 1 CLI 工作模式
 
-CLI 是独立入口，不依赖 AtomUI、Avalonia、SkiaSharp 或 `ImageLyre.UI`，只引用 Kernel、Imaging、Codecs、Plugins、Sandbox 与 headless 会话层；桌面与 CLI 共用该层，因此同一输入、同一构建、同一线程数下的结果必须逐值一致。AI 与外部流水线只消费 stdout 的 JSON、事件流与退出码，不解析自然语言。项目落点为 `src/Apps/ImageLyre.Cli`，CLI-only 产物与 `lyre-sandbox-host` 的拓扑见 ADR-0006；MCP 属 v2，不在 v1。`lyre` 是唯一无头入口，AUTO-004 复用 `lyre` 命令组合，Python 脚本执行仍属 AUTO-001/002。
+CLI 是同一可执行入口（`ImageLyre.App`）的无界面模式：启动参数选择宿主模式，无界面模式不初始化 AtomUI、Avalonia 或 SkiaSharp，也不创建窗口；桌面与 CLI 共用同一份启动链与插件集，因此同一输入、同一构建、同一线程数下的结果必须逐值一致。单入口意味着产物中可以携带 UI 程序集，但 CLI 模式不得加载或初始化它们。对外命令名仍以 `lyre` 呈现，可由启动器或别名提供，命令形状与 JSON 契约不因此改变。AI 与外部流水线只消费 stdout 的 JSON、事件流与退出码，不解析自然语言；MCP 属 v2，不在 v1。
 
 CLI 把「工具说明、图像元数据、插件返回值」一律视为**数据**，只有命令名与参数名可作为指令；v1 不提供 plan/confirm 开关；写命令必须显式输出路径，执行结果用 outputs 的 SHA 与 sidecar 复核。
 
@@ -135,7 +136,7 @@ lyre batch --manifest /data/files.json --out-dir /data/out --jobs 4 --cache-budg
 
 ### 1.6 分发与一致性
 
-CLI-only 标准格式包为 NativeAOT 单文件 `lyre`（免安装 tar.gz 或 OCI 镜像），不含 AtomUI、示例数据与 Python，包体 ≤ 100 MB、`lyre version`/`lyre info` 冷启动 ≤ 1.5 秒；厂商格式与插件另带 `lyre-sandbox-host`（含 .NET 10 JIT 运行时，≤ 120 MB），两者合计 ≤ 220 MB，厂商格式冷启动单独计量；厂商格式与插件经 `lyre-sandbox-host`（JIT）执行，宿主缺失时标准格式仍可用，厂商格式报 `sandbox.unavailable`。SYS-007/SYS-011 增加 CLI 产物行，CI 断言 CLI 输出目录不含 `Avalonia*`、`AtomUI*`、`SkiaSharp*` 与 `ImageLyre.UI`。
+CLI 与桌面共用同一可执行入口（`ImageLyre.App`）：无界面模式不初始化 UI 框架，但单入口产物会携带 UI 程序集，因此不再承诺 NativeAOT 单文件与“输出目录不含 `Avalonia*`、`AtomUI*`、`SkiaSharp*`”的 CI 断言（ADR-0001 已把 AOT 列为非目标）。分发以 RID 发布产物为准，包体与冷启动指标在首个 CLI 版本实测后重新定基线；厂商格式与插件经 `lyre-sandbox-host`（JIT）执行，宿主缺失时标准格式仍可用，厂商格式报 `sandbox.unavailable`。
 
 CLI 与桌面的对照：同一构建、同一 `--threads`、同一选项集下，JSON 指标按 `../requirements/measurement-baseline.md` §6 的 B 类 `1e-9` 相对差，CSV 按同文件 §7 逐字节，sidecar 只比稳定字段（排除 timestamp，保留 buildHash、inputSha256、threads、options）；`buildHash` 是产品级（提交 + 契约版本，CLI 与桌面相同），`artifactHash` 记录单产物哈希。VAL-004 增加「非默认校准 + 非默认测量选项」的 CLI ↔ 桌面用例。
 
