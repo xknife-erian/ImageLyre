@@ -14,6 +14,7 @@
 | 0.10 | 2026-11-23 | 草稿 | lukan | 架构判定订正实施顺序：`ImageLyre.Domains` 空工程与本地化契约随步骤 1 落地，构建入口定址 `src/ImageLyre.slnx`；理由是契约方向与 `ILocalizationService` 的宿主依赖都要求它们先于步骤 1 的宿主代码 |
 | 0.11 | 2026-11-23 | 草稿 | lukan | 按独立评审与 cangming v1 源码订正三处：附着物词汇移出壳契约，新建 `ImageLyre.Shell.Attachments`，`ImageLyre.Shell.Contracts` 不再引用 Avalonia 与机制包；壳的槽位注入改为 `ISupportSlotManager` + `IAttachmentRegistry` 强转；§2.2 的期限约定表与 ADR-0001 §2.5 逐条对齐 |
 | 0.12 | 2026-11-23 | 草稿 | lukan | 回写 T04 实现时核出的两处：`StartAsync` 必须把宿主的 `ILoggerFactory` 登记进容器（管理器构造依赖它，cangming 不注册日志服务），并输出 `HasUiRoute` 一行供判据取证；同时登记容器里没有 `ILogger<T>` 的边界 |
+| 0.13 | 2026-11-23 | 草稿 | lukan | 回写 T05：App 引用 `ImageLyre.Contracts` 取本地化契约（§3.2 原写不引用，改为按用途说明）；§3.3 的编排骨架换成代码式 AtomUI 启动，并补三条硬要求——`Application` 必须 `partial`、必须 `UseDesktopControls`、不要显式 `Show` 欢迎窗口 |
 
 ## 1 目标与范围
 
@@ -54,7 +55,7 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 
 | 工程 | 目录 | 类型 | 职责与依赖 |
 | :--- | :--- | :--- | :--- |
-| `ImageLyre.App` | `src/App/ImageLyre.App` | 进程入口与编排（L5） | 解析启动参数并选择宿主模式：桌面模式显示启动画面与欢迎界面、驱动 Bootstrap、创建槽位管理器、注入、触发附着、取主窗体挂到桌面；CLI 模式无窗口、无槽位、无 Feature，驱动 Bootstrap 后执行命令并退出；不构建主窗体、不贡献槽位、不定义主界面布局；引用 Bootstrap、`ImageLyre.Shell.Contracts`、Avalonia、AtomUI |
+| `ImageLyre.App` | `src/App/ImageLyre.App` | 进程入口与编排（L5） | 解析启动参数并选择宿主模式：桌面模式显示启动画面与欢迎界面、驱动 Bootstrap、创建槽位管理器、注入、触发附着、取主窗体挂到桌面；CLI 模式无窗口、无槽位、无 Feature，驱动 Bootstrap 后执行命令并退出；不构建主窗体、不贡献槽位、不定义主界面布局；引用 Bootstrap、`ImageLyre.Contracts`（本地化契约）、`ImageLyre.Shell.Contracts`、Avalonia、AtomUI |
 | `ImageLyre.Bootstrap` | `src/Bootstrap/ImageLyre.Bootstrap` | 启动链（L1，无 UI） | 日志初始化、扫描前缀、容器构建、`PicoPluginSystem.Launch`、管理器解析、`NotifyServiceProviderBuilt`、`StartAsync`、能力插件计数日志、关停；引用 cangming 机制包与契约，不引用 Avalonia、AtomUI 或任何插件 |
 | `ImageLyre.Domains` | `src/Contracts/ImageLyre.Domains` | 领域对象与纯算法（M1 为空工程） | 只放跨插件共享且带不变量的数据与纯函数；不引用 `ImageLyre.Contracts`、不引用 UI、不引 DI 与日志；M1 只有 README 与空 csproj |
 | `ImageLyre.Contracts` | `src/Contracts/ImageLyre.Contracts` | 产品契约（无 UI） | `ILocalizationService`、`ILocalizationSource`；M1 另放 `IClock`、`IGreeter`，命名空间为 `ImageLyre.Contracts.Demo`，M1 验收后删除；不引用 Avalonia、AtomUI、SkiaSharp |
@@ -89,6 +90,7 @@ flowchart LR
 
     APP --> BOOT
     APP --> SC
+    APP --> DC
     APP --> AV["Avalonia / AtomUI"]
     BOOT --> CM["cangming 机制包"]
     BOOT --> DC
@@ -115,7 +117,7 @@ flowchart LR
     FD --> AVL
 ```
 
-`ImageLyre.Bootstrap` 与 `ImageLyre.App` 都不按名字引用插件工程；`ImageLyre.App` 不引用 `ImageLyre.Contracts`，它不消费示范契约；发行用的通配引用在 §3.7 单列。
+`ImageLyre.Bootstrap` 与 `ImageLyre.App` 都不按名字引用插件工程；`ImageLyre.App` 引用 `ImageLyre.Contracts` 是为了本地化契约（`ILocalizationService`、`ILocalizationSource`），欢迎界面直接经它取文案，但它不消费示范契约，`IClock`、`IGreeter` 仍只被示范插件引用；发行用的通配引用在 §3.7 单列。
 
 三个契约程序集的方向固定为 `ImageLyre.Shell.Contracts` → `ImageLyre.Contracts` → `ImageLyre.Domains`，由 ADR-0001 §2.4 规定；`ImageLyre.Shell.Contracts` 因此只依赖 `ImageLyre.Contracts`，Avalonia 与机制包一律不进这个程序集。
 
@@ -243,24 +245,35 @@ internal static class MainWindowFactory
 
 ```csharp
 // ImageLyre.App/Program.cs 的编排骨架
-public static void Main(string[] args)
+public static int Main(string[] args)
 {
     var options = StartupOptions.Parse(args);
-    var app = new App(options);
-    app.StartWithClassicDesktopLifetime(args);
+    if (options.Headless)
+        return CliHost.Run(options);                  // T06
+
+    var localization = new LocalizationService();
+    localization.AddSource(new AppStringSource());
+
+    return AppBuilder.Configure<App>(() => new App(options, localization))
+        .UseAtomUIPlatformDetect(AtomUIWindowingPlatform.Auto)
+        .UseAtomUI(builder => builder.UseDesktopControls())
+        .StartWithClassicDesktopLifetime(args);
 }
 
 // App.OnFrameworkInitializationCompleted 内
-var welcome = new WelcomeWindow(_options);
-desktop.MainWindow = welcome;          // 先挂欢迎窗口，避免启动期没有窗口
-welcome.Show();
-_ = ComposeAsync(desktop);             // 不阻塞 UI 循环
+var welcome = new WelcomeWindow(_localization, _options);
+desktop.MainWindow = welcome;                 // 不显式 Show：经典桌面生命周期会显示它
+_ = ComposeAsync(desktop, _localization);     // 不阻塞 UI 循环
 
-async Task ComposeAsync(IClassicDesktopStyleApplicationLifetime desktop)
+async Task ComposeAsync(IClassicDesktopStyleApplicationLifetime desktop, ILocalizationService localization)
 {
     try
     {
-        var bootstrap = await BootstrapHost.StartAsync(loggerFactory, configure: null, CancellationToken.None);
+        var bootstrap = await BootstrapHost.StartAsync(
+            loggerFactory,
+            HostMode.Desktop,
+            services => services.AddSingleton(localization),
+            CancellationToken.None);
         var slotManager = new SlotManager();
         var window = MainWindowFactory.Compose(bootstrap.PluginManager, slotManager);
         window.Closed += async (_, _) => await bootstrap.DisposeAsync();
@@ -274,6 +287,8 @@ async Task ComposeAsync(IClassicDesktopStyleApplicationLifetime desktop)
     }
 }
 ```
+
+代码式启动有三条硬要求，照上面的骨架才能跑起来：`Application` 派生类必须是 `partial`，AtomUI 的源生成器要往它上面补本地化与启动图宿主，缺了报 `ATOMUILOC008`，补上之后 `ATOMUIREG015` 不再出现；`.UseAtomUIPlatformDetect` 之后必须再 `.UseAtomUI(builder => builder.UseDesktopControls())`，否则 AtomUI 6.2.11 在运行期抛 `Control package 'AtomUI.Desktop.Controls' is referenced but not enabled`；以及不要显式 `Show()` 欢迎窗口，经典桌面生命周期在启动时显示 `MainWindow`，重复显示会让欢迎窗口闪一次。
 
 `SlotManager` 是 `Cangming.PicoPlugins.Core.Features.SlotManager` 的具体类，同一实例必须同时交给 `InjectSlotManager`、每个 `SlotPanel.SlotManager` 与 `RegisterFeatureAttachments`；三处各 `new` 一个会得到“附着成功但界面永远为空”的假通过。
 
