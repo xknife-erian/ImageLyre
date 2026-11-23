@@ -6,7 +6,7 @@
 
 ## 边界（不放什么）
 
-- 不构建主窗体、不贡献槽位：主窗体由壳插件在自己的 `Build()` 里产出，槽位名与贡献属于 `ImageLyre.Shell.Contracts` 与壳插件；`Startup/MainWindowFactory.cs` 只按“注入 → 取壳 → 附着”的顺序编排，并把壳产物挂到 `desktop.MainWindow`；欢迎窗口是 App 自己的固定语义区域，不进槽位。
+- 不构建主窗体、不贡献槽位：主窗体由壳插件在自己的 `Build()` 里产出，槽位名与贡献属于 `ImageLyre.Shell.Contracts` 与壳插件；`Startup/MainWindowFactory.cs` 只按“注入 → 取壳 → 附着”的顺序编排，并把壳产物挂到 `desktop.MainWindow`；`Startup/CompositionGate.cs` 保证同一进程的编排与关停各一次，`App` 只创建一个 `SlotManager`，关窗、失败与进程退出三条路径共用同一个关停收口；欢迎窗口是 App 自己的固定语义区域，不进槽位。
 - 不放插件扫描与启动：扫描前缀、容器构建、`PicoPluginSystem.Launch`、插件启动与关停都在 `ImageLyre.Bootstrap`，`CliHost` 与 `ComposeAsync` 只调用它，不复制它的顺序。
 - 不按名字登记插件：插件只经 `ImageLyre.App.csproj` 的通配 `ProjectReference` 被发现，新增插件不改本工程文件；按名字的插件引用一律禁止，验收 E 检查按名引用数为 0。
 - 不放本地化实现与资源聚合：`LocalizationService` 在 `ImageLyre.Localization`，本工程只创建实例并注册 `AppStringSource` 这一个 App 自有文案源。
@@ -34,4 +34,4 @@
 
 ## 边界变化时改哪份文档
 
-先改 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md` §3.1 的 `ImageLyre.App` 行、§3.3 的编排骨架与 CLI 分支、§3.7 的产物复制机制、§4.4 的启动画面与欢迎界面、§5.6 的本地化契约，再改本文件；宿主分派规则、CLI 命令集合与退出码、欢迎窗口的固定语义或 App 自有资源键变化都要回写上述章节。若变化触及“App 不构建主窗体、不贡献槽位”的分界，先按 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` §2.4 与 §2.5 修订架构基线再动代码；任务范围变化同步改 `docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md` 的 T05、T06、T11 与 T12。
+先改 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md` §3.1 的 `ImageLyre.App` 行、§3.3 的编排骨架与 CLI 分支、§3.7 的产物复制机制、§4.4 的启动画面与欢迎界面、§5.6 的本地化契约，再改本文件；宿主分派规则、CLI 命令集合与退出码、欢迎窗口的固定语义或 App 自有资源键变化都要回写上述章节。若变化触及“App 不构建主窗体、不贡献槽位”的分界，先按 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` §2.4 与 §2.5 修订架构基线再动代码；任务范围变化同步改 `docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md` 的 T05、T06、T11、T12 与 T13。

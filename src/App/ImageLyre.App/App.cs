@@ -20,18 +20,27 @@ namespace ImageLyre.App;
 /// 取壳、附着 Feature，再把主窗体换到桌面并关闭欢迎窗口。
 /// </para>
 /// <para>
-/// 线程要求：从注入槽位管理器到 <c>window.Show()</c> 的每一步都在 UI 线程执行，因为取壳会构造 Avalonia 控件、
-/// 附着会创建 Feature 内容；Bootstrap 的等待不阻塞 UI 循环，编排以 fire-and-forget 任务启动，异常在任务内部捕获。
+/// 装配门闩：<see cref="CompositionGate"/> 保证同一进程的编排与关停各只发生一次；<see cref="ComposeAsync"/>
+/// 抢不到开始权时直接返回，<see cref="StopAsync"/> 被 <c>Closed</c>、<c>desktop.Exit</c> 与失败分支重复调用时只执行一次。
 /// </para>
 /// <para>
-/// 失败路径：启动期异常在欢迎窗口上显示原因，不让进程只剩日志；主窗体关闭时先释放壳体，再停止 Bootstrap。
-/// 本地化实例由入口创建并经容器注册为同一实例，欢迎窗口与主窗体共享它。
+/// 失败路径：启动期异常先走 <see cref="StopAsync"/> 停掉已启动的 Bootstrap，再在欢迎窗口上显示原因；
+/// 正常关停时先释放壳体（退订三个 <c>SlotPanel</c> 的槽位事件），再停止插件，避免插件停止后控件仍被访问。
+/// </para>
+/// <para>
+/// 线程要求：从注入槽位管理器到 <c>window.Show()</c> 的每一步都在 UI 线程执行，因为取壳会构造 Avalonia 控件、
+/// 附着会创建 Feature 内容；Bootstrap 的等待不阻塞 UI 循环，编排以 fire-and-forget 任务启动，异常在任务内部捕获。
 /// </para>
 /// </remarks>
 public sealed partial class App : Application
 {
     private readonly StartupOptions _options;
     private readonly ILocalizationService _localization;
+    private readonly CompositionGate _gate = new();
+
+    private BootstrapHost? _bootstrap;
+    private Window? _shellWindow;
+    private SlotManager? _slotManager;
 
     /// <summary>创建应用实例。</summary>
     /// <param name="options">启动参数解析结果，用于约束无界面分支不得进入本类。</param>
@@ -51,6 +60,9 @@ public sealed partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            // desktop.Exit 与主窗体 Closed 共用同一个 StopAsync；门闩让后到的那条路径直接返回。
+            desktop.Exit += (_, _) => _ = StopAsync();
+
             var welcome = new WelcomeWindow(_localization, _options);
             desktop.MainWindow = welcome;                 // 不显式 Show：经典桌面生命周期会显示它
             _ = ComposeAsync(desktop, welcome);           // 不阻塞 UI 循环
@@ -72,11 +84,14 @@ public sealed partial class App : Application
     /// 线程：方法从 UI 线程进入；<c>await</c> 之后由 Avalonia 同步上下文回到 UI 线程，因此取壳与显示不会跨线程碰控件。
     /// </para>
     /// <para>
-    /// 失败：启动期异常被捕获后在欢迎窗口显示原因；主窗体关闭时先释放壳体，再停止 Bootstrap，避免插件停止后控件仍被访问。
+    /// 失败：启动期异常先停掉已经启动的 Bootstrap，再在欢迎窗口显示原因；主窗体关闭时走同一个 <see cref="StopAsync"/>。
     /// </para>
     /// </remarks>
     private async Task ComposeAsync(IClassicDesktopStyleApplicationLifetime desktop, WelcomeWindow welcome)
     {
+        if (!_gate.TryBegin())
+            return;
+
         try
         {
             // ponytail: WinExe 没有控制台，写 stderr 的日志在双击启动时会丢失；日志管线归后续任务，不为它引入新包。
@@ -88,26 +103,36 @@ public sealed partial class App : Application
                 services => services.AddSingleton<ILocalizationService>(_localization),
                 CancellationToken.None);
 
-            var slotManager = new SlotManager();
-            Window window = MainWindowFactory.Compose(bootstrap.PluginManager, slotManager);
+            _bootstrap = bootstrap;
 
-            HookSmokeClose(window);
-
-            window.Closed += async (_, _) =>
+            // 启动期间桌面可能已经退出：StopAsync 已把门闩钉在 Stopped，这里不能再建窗口。
+            if (_gate.IsStopped)
             {
-                if (window is IDisposable disposable)
+                // 谁先拿到字段谁负责停；若 StopAsync 已取走，它已经停过，不能重复 Dispose。
+                BootstrapHost? owned = Interlocked.Exchange(ref _bootstrap, null);
+                if (ReferenceEquals(owned, bootstrap))
+                    await DisposeBootstrapAsync(bootstrap);
+
+                return;
+            }
+
+            SlotManager slotManager = CreateSlotManagerOnce();
+            Window window = MainWindowFactory.Compose(bootstrap.PluginManager, slotManager);
+            _shellWindow = window;
+
+            // 取壳到 Show 之间没有 await；若这段同步代码里收到退出信号，门闩已停止，不能再显示窗口。
+            if (_gate.IsStopped)
+            {
+                // 谁先拿到字段谁负责释放；若 StopAsync 已取走，它已经释放过，不能重复 Dispose。
+                Window? owned = Interlocked.Exchange(ref _shellWindow, null);
+                if (ReferenceEquals(owned, window) && window is IDisposable disposable)
                     disposable.Dispose();
 
-                try
-                {
-                    await bootstrap.DisposeAsync();
-                }
-                catch (Exception ex)
-                {
-                    // ponytail: 关停失败没有日志出口，WinExe 下 stderr 不可见；日志管线接入后改记日志。
-                    System.Diagnostics.Debug.WriteLine($"Bootstrap 关停失败：{ex}");
-                }
-            };
+                return;
+            }
+
+            HookSmokeClose(window);
+            window.Closed += async (_, _) => await StopAsync();
 
             desktop.MainWindow = window;
             window.Show();
@@ -115,8 +140,65 @@ public sealed partial class App : Application
         }
         catch (Exception ex)
         {
+            // T13：Bootstrap 已启动但取壳失败时，先把插件停掉再显示失败，不能留下半启动进程。
+            // 失败原因同时写 stderr，命令行冒烟与诊断能看到；WinExe 双击仍可能丢日志。
+            Console.Error.WriteLine($"启动失败：{ex}");
+            await StopAsync();
             HookSmokeClose(welcome);
             welcome.ShowFailure(ex);
+        }
+    }
+
+    /// <summary>创建本次启动唯一的槽位管理器；第二次调用直接抛异常。</summary>
+    /// <returns>本次启动唯一的 <see cref="SlotManager"/>，注入、壳面板与 Feature 附着共用它。</returns>
+    /// <exception cref="InvalidOperationException">已经创建过槽位管理器。</exception>
+    /// <remarks>
+    /// <see cref="CompositionGate.TryBegin"/> 已保证编排只进入一次；这里的字段与异常是第二道断言，
+    /// 防止后来有人把创建动作移到别的路径而悄悄产生第二个槽位表。
+    /// </remarks>
+    private SlotManager CreateSlotManagerOnce()
+    {
+        if (_slotManager is not null)
+            throw new InvalidOperationException("一次启动只能创建一个 SlotManager。");
+
+        _slotManager = new SlotManager();
+        return _slotManager;
+    }
+
+    /// <summary>统一的关停收口：先释放壳体，再停止 Bootstrap；门闩保证只执行一次。</summary>
+    /// <remarks>
+    /// <c>window.Closed</c>、<c>desktop.Exit</c> 与启动失败三条路径都调用本方法。重复调用返回 <see langword="false"/>
+    /// 的 <see cref="CompositionGate.TryStop"/> 分支，不会重复释放壳体，也不会重复停止插件。
+    /// </remarks>
+    private async Task StopAsync()
+    {
+        if (!_gate.TryStop())
+            return;
+
+        Window? window = Interlocked.Exchange(ref _shellWindow, null);
+        if (window is IDisposable disposable)
+            disposable.Dispose();
+
+        BootstrapHost? bootstrap = Interlocked.Exchange(ref _bootstrap, null);
+        if (bootstrap is null)
+            return;
+
+        await DisposeBootstrapAsync(bootstrap);
+    }
+
+    /// <summary>停止 Bootstrap 并把关停异常收敛成调试输出。</summary>
+    /// <param name="bootstrap">要停止的 Bootstrap，不得为 <see langword="null"/>。</param>
+    /// <remarks>关停失败不反向阻断 UI 退出；WinExe 下没有可见日志出口，等日志管线接入后改记日志。</remarks>
+    private static async Task DisposeBootstrapAsync(BootstrapHost bootstrap)
+    {
+        try
+        {
+            await bootstrap.DisposeAsync();
+        }
+        catch (Exception ex)
+        {
+            // ponytail: 关停失败没有日志出口，WinExe 下 stderr 不可见；日志管线接入后改记日志。
+            System.Diagnostics.Debug.WriteLine($"Bootstrap 关停失败：{ex}");
         }
     }
 

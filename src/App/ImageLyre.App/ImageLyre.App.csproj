@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- 装配门闩是内部类型，测试工程直接验证“编排一次、关停一次”的契约。 -->
+    <InternalsVisibleTo Include="UnitTest.ImageLyre.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- 桌面 UI 路线：Avalonia 承载生命周期与基础控件，AtomUI 提供欢迎窗口的控件与主题。 -->
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />

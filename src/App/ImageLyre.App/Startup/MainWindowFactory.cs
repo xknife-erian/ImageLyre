@@ -13,7 +13,7 @@ namespace ImageLyre.App.Startup;
 /// cangming v1 的 <c>AttachToSlot</c> 在槽位不存在时抛异常，因此不能照 Mercury 的“先附着再取壳”顺序写。
 /// </para>
 /// <para>
-/// <paramref name="slotManager"/> 必须同时用于注入、壳窗口里的每个 <c>SlotPanel</c> 与 Feature 附着；
+/// <c>slotManager</c> 必须同时用于注入、壳窗口里的每个 <c>SlotPanel</c> 与 Feature 附着；
 /// 三处各 <c>new</c> 一个会得到“附着成功但界面永远为空”的假通过，因为壳与 Feature 各自持有不同的槽位表。
 /// </para>
 /// </remarks>
@@ -42,11 +42,29 @@ internal static class MainWindowFactory
             throw new InvalidOperationException("壳插件未装载");
 
         // v1 的槽位必须先贡献再附着：取壳时 ShellWindow 已贡献三个槽位，这里才轮到 Feature。
+        EnsureSlotsContributed(slotManager);
+
         // ponytail: M1 还没有 Feature 工程，附着编排实际跑空；T14 接入 Feature 后由它贡献工具条与面板内容。
         pluginManager.RegisterFeatureAttachments(slotManager);
 
         return shell is Window window
                    ? window
                    : throw new InvalidOperationException("壳插件产物不是 Avalonia Window");
+    }
+
+    /// <summary>断言壳已经贡献三个一级槽位，保证附着顺序没有被提前。</summary>
+    /// <param name="slotManager">本次启动唯一的槽位管理器。</param>
+    /// <exception cref="InvalidOperationException">三个槽位中任意一个尚未贡献。</exception>
+    /// <remarks>
+    /// 这是“先取壳、再附着”的代码级护栏：取壳会构造 <c>ShellWindow</c> 并贡献槽位，
+    /// 若有人把 <c>RegisterFeatureAttachments</c> 提到 <c>Build</c> 之前，这里会在附着前直接失败。
+    /// </remarks>
+    private static void EnsureSlotsContributed(ISlotManager slotManager)
+    {
+        foreach (string slotName in new[] { ShellSlots.Toolbar, ShellSlots.Viewport, ShellSlots.Panel })
+        {
+            if (!slotManager.TryGetSlot(slotName, out _))
+                throw new InvalidOperationException($"壳插件未贡献槽位 {slotName}，不能附着 Feature");
+        }
     }
 }
