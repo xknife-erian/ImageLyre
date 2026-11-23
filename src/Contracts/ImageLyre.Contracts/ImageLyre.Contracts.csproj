@@ -5,6 +5,14 @@
     <ProjectReference Include="..\ImageLyre.Domains\ImageLyre.Domains.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!--
+      借用契约：IPlatformCapabilities 与 IPerformanceMonitor 来自 cangming 的契约库，
+      按 ADR-0001 §2.1「契约来源按需借用」引进来，不再自造 IClock 一类一次性接口（DESIGN-0001 §5.4）。
+    -->
+    <PackageReference Include="Cangming.Platform.Contracts" />
+  </ItemGroup>
+
   <!--
     本工程不引用 Avalonia、AtomUI、SkiaSharp 或任何机制包：
     验收 E 会检查这一点，加引用前先改 DESIGN-0001 并说明理由。
