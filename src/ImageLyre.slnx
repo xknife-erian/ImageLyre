@@ -7,6 +7,10 @@
   <Folder Name="/Contracts/">
     <Project Path="Contracts/ImageLyre.Domains/ImageLyre.Domains.csproj" />
     <Project Path="Contracts/ImageLyre.Contracts/ImageLyre.Contracts.csproj" />
+    <Project Path="Contracts/ImageLyre.Shell.Contracts/ImageLyre.Shell.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/Shell/">
+    <Project Path="Shell/ImageLyre.Shell.Attachments/ImageLyre.Shell.Attachments.csproj" />
   </Folder>
   <Folder Name="/Infrastructure/">
     <Project Path="Infrastructure/ImageLyre.Localization/ImageLyre.Localization.csproj" />

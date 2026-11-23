@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- 附着物词汇直接使用机制契约与排序契约，另承载 Avalonia 控件，因此不在契约层，也不引用机制实现包。 -->
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Cangming.PicoPlugins" />
+    <PackageReference Include="Cangming.Toolkit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

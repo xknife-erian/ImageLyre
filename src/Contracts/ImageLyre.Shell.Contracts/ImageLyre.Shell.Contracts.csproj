@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- 唯一依赖：产品契约。壳契约只表达界面标识，不应再有别的依赖。 -->
+    <ProjectReference Include="..\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+  </ItemGroup>
+
+  <!--
+    本工程不引用 Avalonia、AtomUI、SkiaSharp，也不引用 Cangming.PicoPlugins 与 Cangming.Toolkit：
+    槽位名是纯字符串，窗口标记是空接口；带控件与机制接口的附着物词汇在 ImageLyre.Shell.Attachments。
+    验收 E 会检查这一点，加引用前先改 DESIGN-0001 并说明理由。
+  -->
+
+</Project>
