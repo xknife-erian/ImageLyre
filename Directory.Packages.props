@@ -20,6 +20,8 @@
     <PackageVersion Include="ReactiveUI.Avalonia" Version="12.1.6" />
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
     <PackageVersion Include="SkiaSharp" Version="3.119.4" />
+    <!-- 平台能力与性能监控契约使用永不触发的 IObservable，版本与 cangming 机制包一致。 -->
+    <PackageVersion Include="System.Reactive" Version="7.0.0" />
   </ItemGroup>
 
   <!--

@@ -29,6 +29,7 @@
 | 0.25 | 2026-11-23 | 草稿 | lukan | 按作者口径调整两处归属：语言切换移到「文件」菜单下，作为壳自有的非插件功能；状态栏改为第四个一级槽位 `lyre.shell.statusbar`，读数片段由插件贡献，M1 的五段由壳占位以满足交互规格；§4.1/§4.2/§4.4/§4.5/§5.6 同步 |
 | 0.26 | 2026-11-23 | 草稿 | lukan | 订正 §4.2：cangming `v0.1.9.1122` 的路线包只有 `StatusBarAttachment`，没有 `StatusBarContentAttachment`，后者出现时再补专用呈现器；语言项在英文下保持语言自称，避免把「中文」译成 `Chinese` 后无法回切 |
 | 0.27 | 2026-11-23 | 草稿 | lukan | 补 §3.4 的实现级硬约束：壳窗口必须派生自 `AtomUI.Desktop.Controls.Window`，Avalonia 原生 `Window` 在 AtomUI 主题下没有 `OverlayLayer`，打开子菜单会抛 Popup 异常；冒烟新增 `LYRE_SMOKE_OPEN_MENU=1` 展开一次子菜单来守住它 |
+| 0.28 | 2026-11-23 | 草稿 | lukan | 回写 T14：§5.6 说明 M1 的附着物不可变（工具条标题、状态栏片段、面板页签在附着时定稿，只有面板内容随语言刷新，其余等 G3），§7 的 G 判据按同一口径收窄，不再承诺「切换后全部刷新」 |
 
 ## 1 目标与范围
 
@@ -640,6 +641,8 @@ public interface ILocalizationSource
 
 M1 的落地范围：`ImageLyre.Localization` 提供聚合服务与回退规则；App 在创建欢迎界面前先构造该服务并注册 App 自己的文案源，随后把它作为同一实例交给 Bootstrap 的容器；壳插件与 `ImageLyre.Feature.Diagnostics` 各自实现 `ILocalizationSource` 并在 `OnStartAsync` 里注册；壳在「文件」菜单下放语言切换（壳自有的非插件功能，不进槽位），切换后菜单、状态栏占位与诊断面板文案刷新。`ImageLyre.Localization` 不是插件，因此不参与插件扫描、不能被禁用，也不出现在插件清单里。
 
+M1 的附着物不可变，这条要提前说清：`ToolbarButtonAttachment` 的标题、`StatusBarAttachment` 的文本与 `DockPaneAttachment` 的页签标题都是构造时定稿的记录，cangming v1 没有替换与撤销能力，因此语言切换只能刷新被设计成可变的内容（面板里的 `TextBlock`），这三处要等 G3 的槽位撤销才能跟随语言。把它们写成「切换后全部刷新」会让 G 的判据变成无法满足的承诺。
+
 ## 6 边界情况
 
 | 情形 | 表现 | 处理 |
@@ -670,7 +673,7 @@ M1 的落地范围：`ImageLyre.Localization` 提供聚合服务与回退规则�
 | A 空壳 | 移除 `ImageLyre.Module.Platform`、`ImageLyre.Module.Performance`、`ImageLyre.Feature.Diagnostics`、`ImageLyre.Feature.Hello` 后重建启动 | 启动画面出现、主窗体显示空窗口（视口“无图像”、面板“尚无测量”），Bootstrap 日志出现 `能力插件 0 个`，壳仍在运行 | 恢复全部工程 |
 | E 纪律 | 对完整树执行检查脚本 | `ImageLyre.Feature.Diagnostics` 与 `ImageLyre.Feature.Hello` 的项目引用里没有 `ImageLyre.Module.*` 与 `ImageLyre.Feature.*`；`ImageLyre.Contracts`、`ImageLyre.Domains` 与 `ImageLyre.Shell.Contracts` 不引用 Avalonia、AtomUI、SkiaSharp 或 cangming 机制包，`ImageLyre.Shell.Contracts` 另不引用任何插件工程；`ImageLyre.Shell.Attachments` 不引用任何插件工程；`ImageLyre.App.csproj` 的按名插件引用为 0、只有一条通配引用；每个工程目录都有 README.md；契约、领域与插件不命中 `Registry`、`DllImport`、`System.Windows.Forms`、盘符字面量与反斜杠拼接；`ImageLyre.Bootstrap` 与 `ImageLyre.App` 的装配代码不命中 ADR-0001 §5.1 的词表 | 无需恢复 |
 | F 双宿主 | 用同一份构建产物执行 `ImageLyre.App --plugins`（无界面环境） | 输出插件清单，Feature 数量为 0，退出码 0；未创建任何窗口；同一份产物的桌面模式仍能启动并显示主窗体 | 无需恢复 |
-| G 多语言 | 桌面模式切到 `en-US`，再切回 `zh-CN` | 菜单、状态栏占位与示范面板文案随切换变化，窗口不重建；数字与单位不变；缺键时回退中文并记一条缺翻译诊断 | 无需恢复 |
+| G 多语言 | 桌面模式切到 `en-US`，再切回 `zh-CN` | 菜单文案、状态栏五段占位与诊断面板五行读数随切换变化，窗口不重建；数字与单位不变；缺键时回退中文并记一条缺翻译诊断。工具条标题、状态栏片段与面板页签在 M1 不随语言变，原因见 §5.6 的附着物不可变说明 | 无需恢复 |
 
 “能力插件 N 个”由 `ImageLyre.Bootstrap` 输出，模板固定，只统计 `lyre.capability.` 前缀的插件，不把壳、平台插件与表达插件算进去；这条日志是 A 的判定依据，也是 G2 面板数据的起点。
 

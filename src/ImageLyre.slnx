@@ -20,11 +20,17 @@
   </Folder>
   <Folder Name="/Plugins/Modules/">
     <Project Path="Plugins/Modules/ImageLyre.Module.Shell/ImageLyre.Module.Shell.csproj" />
+    <Project Path="Plugins/Modules/ImageLyre.Module.Platform/ImageLyre.Module.Platform.csproj" />
+    <Project Path="Plugins/Modules/ImageLyre.Module.Performance/ImageLyre.Module.Performance.csproj" />
+  </Folder>
+  <Folder Name="/Plugins/Features/">
+    <Project Path="Plugins/Features/ImageLyre.Feature.Diagnostics/ImageLyre.Feature.Diagnostics.csproj" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="../tests/UnitTest.ImageLyre.App/UnitTest.ImageLyre.App.csproj" />
     <Project Path="../tests/UnitTest.ImageLyre.Localization/UnitTest.ImageLyre.Localization.csproj" />
     <Project Path="../tests/UnitTest.ImageLyre.Bootstrap/UnitTest.ImageLyre.Bootstrap.csproj" />
     <Project Path="../tests/UnitTest.ImageLyre.Module.Shell/UnitTest.ImageLyre.Module.Shell.csproj" />
+    <Project Path="../tests/UnitTest.ImageLyre.Capabilities/UnitTest.ImageLyre.Capabilities.csproj" />
   </Folder>
 </Solution>

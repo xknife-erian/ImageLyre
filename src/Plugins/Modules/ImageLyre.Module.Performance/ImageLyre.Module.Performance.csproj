@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- 能力实现是内部类型，测试工程直接验证采样口径。 -->
+    <InternalsVisibleTo Include="UnitTest.ImageLyre.Capabilities" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cangming.Logs" />
+    <PackageReference Include="Cangming.PicoPlugins" />
+    <PackageReference Include="System.Reactive" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Infrastructure\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

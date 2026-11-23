@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- 诊断面板与工具条按钮走 AtomUI/Avalonia 路线包；只引用契约，不引用任何 Module 工程。 -->
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="AtomUI.Desktop.Controls" />
+    <PackageReference Include="Cangming.Logs" />
+    <PackageReference Include="Cangming.PicoPlugins" />
+    <PackageReference Include="Cangming.PicoPlugins.Avalonias" />
+    <PackageReference Include="Cangming.Toolkit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Infrastructure\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\Contracts\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Infrastructure\ImageLyre.Shell.Attachments\ImageLyre.Shell.Attachments.csproj" />
+  </ItemGroup>
+
+</Project>
