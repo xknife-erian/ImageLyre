@@ -3,6 +3,7 @@ using Cangming.PicoPlugins;
 using Cangming.PicoPlugins.Core;
 using Cangming.PicoPlugins.Core.Features;
 using Cangming.PicoPlugins.Core.Modules;
+using Cangming.PicoPlugins.Core.Support;
 using ImageLyre.Shell.Contracts;
 using Microsoft.Extensions.Logging;
 
@@ -14,10 +15,10 @@ namespace ImageLyre.Module.Shell;
 /// 壳是 M1 唯一的 UI 型 Module：它接收槽位管理器注入、贡献槽位、构造 <see cref="ShellWindow"/>，
 /// 并实现 <see cref="IWorkbenchShell"/> 让宿主把窗口挂到桌面。它不消费任何模块契约，
 /// 因此 <c>DeclareDependencies</c> 保持空声明；槽位管理器走 <see cref="ISupportSlotManager"/> 的独立注入通道，
-/// 不写进依赖声明，也不经 <c>Use&lt;T&gt;()</c> 取用。
+/// 本地化服务走 <see cref="ISupportUsingIoC"/> 从宿主容器解析，两者都不写进依赖声明，也不经 <c>Use&lt;T&gt;()</c> 取用。
 /// </para>
 /// <para>
-/// 时序铁律：构造函数只装配上下文，不读任何依赖；<see cref="InjectAsync(Lazy{ISlotManager})"/> 只保存延迟引用；
+/// 时序铁律：构造函数只装配上下文，不读任何依赖；两个 <c>InjectAsync</c> 重载都只保存延迟引用；
 /// <see cref="Build"/> 的 <see cref="Lazy{T}"/> 工厂在宿主第一次取窗口时执行，槽位贡献与控件构造都发生在那里，
 /// 因此宿主必须在 Avalonia 就绪后、在 UI 线程上取壳。
 /// </para>
@@ -28,11 +29,12 @@ namespace ImageLyre.Module.Shell;
 /// </para>
 /// </remarks>
 [Plugin(id: "lyre.shell.workbench", name: "工作台壳")]
-public sealed class ShellModule : BasePicoModule<IWorkbenchShell>, ISupportSlotManager
+public sealed class ShellModule : BasePicoModule<IWorkbenchShell>, ISupportSlotManager, ISupportUsingIoC
 {
     private static readonly ILogger s_logger = LogHub.For(typeof(ShellModule));
 
     private readonly ShellModuleContext _context;
+    private readonly ShellStringSource _stringSource = new();
     private Lazy<IWorkbenchShell>? _shell;
 
     /// <summary>创建一个只完成上下文装配的壳插件。</summary>
@@ -61,6 +63,22 @@ public sealed class ShellModule : BasePicoModule<IWorkbenchShell>, ISupportSlotM
         return Task.FromResult<IPicoPlugin>(this);
     }
 
+    /// <summary>接收宿主注入的 IoC 访问器，供启动期解析本地化服务。</summary>
+    /// <param name="iocLazy">IoC 访问器的延迟引用，不得为 <see langword="null"/>。</param>
+    /// <returns>被注入的插件本身。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="iocLazy"/> 为 <see langword="null"/>。</exception>
+    /// <remarks>
+    /// 实现的是 <see cref="ISupportUsingIoC"/> 的注入点，不是模块管理器重载；这里只保存引用，
+    /// 真正的 <c>Resolve&lt;ILocalizationService&gt;()</c> 发生在 <see cref="OnStartAsync"/> 与窗口构造时。
+    /// </remarks>
+    public Task<IPicoPlugin> InjectAsync(Lazy<IIoCManager> iocLazy)
+    {
+        ArgumentNullException.ThrowIfNull(iocLazy);
+        _context.SetIoC(iocLazy);
+
+        return Task.FromResult<IPicoPlugin>(this);
+    }
+
     /// <summary>在首次取壳时构造并缓存主窗体。</summary>
     /// <param name="args">构建参数，M1 不使用；壳没有按参数产出不同窗体的场景。</param>
     /// <returns>缓存同一个窗口实例的 <see cref="Lazy{T}"/>。</returns>
@@ -80,15 +98,17 @@ public sealed class ShellModule : BasePicoModule<IWorkbenchShell>, ISupportSlotM
         // 本方法会被读依赖与读顺序各调用一次，因此这里不能写任何副作用。
     }
 
-    /// <summary>启动时只记录一行日志，不构造任何控件。</summary>
+    /// <summary>启动时注册壳文案源，并记录一行日志；不构造任何控件。</summary>
     /// <returns>恒为 <see langword="true"/>。</returns>
     /// <remarks>
     /// <c>OnStartAsync</c> 早于 Avalonia 就绪，构建窗口必须留到 <see cref="Build"/>；
-    /// 这里只验证插件状态机能走到 Running，供 <c>--plugins</c> 清单判读。
+    /// 这里先取得宿主注册的 <c>ILocalizationService</c> 并加入 <see cref="ShellStringSource"/>，
+    /// 使窗口构造时已经能按资源键取到文案。文案源实例在模块生命周期内复用，重复启动不会重复注册。
     /// </remarks>
     protected override Task<bool> OnStartAsync()
     {
-        s_logger.LogInformation("壳插件已启动，主窗体将在 Build 时构造。");
+        _context.Localization.AddSource(_stringSource);
+        s_logger.LogInformation("壳插件已启动，文案源已注册。");
         return Task.FromResult(true);
     }
 }

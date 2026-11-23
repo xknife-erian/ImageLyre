@@ -25,5 +25,6 @@
     <Project Path="../tests/UnitTest.ImageLyre.App/UnitTest.ImageLyre.App.csproj" />
     <Project Path="../tests/UnitTest.ImageLyre.Localization/UnitTest.ImageLyre.Localization.csproj" />
     <Project Path="../tests/UnitTest.ImageLyre.Bootstrap/UnitTest.ImageLyre.Bootstrap.csproj" />
+    <Project Path="../tests/UnitTest.ImageLyre.Module.Shell/UnitTest.ImageLyre.Module.Shell.csproj" />
   </Folder>
 </Solution>

@@ -12,6 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- 资源键与文案源是内部实现，测试工程直接验证中英两套键值。 -->
+    <InternalsVisibleTo Include="UnitTest.ImageLyre.Module.Shell" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!--
       机制包提供 Module 基类、上下文、槽位契约与 ISupportSlotManager；Avalonias 提供 SlotPanel；
       Logs 直接用于槽位注入日志，Toolkit 直接用于辅助面板附着物的 Order 排序。

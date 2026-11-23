@@ -25,6 +25,7 @@
 | 0.21 | 2026-11-23 | 草稿 | lukan | 按作者口径重排目录：Bootstrap 移入 `src/App/`，契约、领域与附着物词汇移入 `src/Infrastructure/`，插件分 `Modules/` 与 `Features/`；§3.1 的工程目录全表更新，并补一段「物理归置不改变层归属」的判据 |
 | 0.22 | 2026-11-23 | 草稿 | lukan | 按作者口径把三个契约与领域工程再收进 `src/Infrastructure/Contracts/`，让「契约层不得引用 UI」在路径上可读；§3.1 的目录表与目录判据段同步，Bootstrap 位置不变 |
 | 0.23 | 2026-11-23 | 草稿 | lukan | 按作者口径改菜单归属：壳只提供菜单条容器与外观，菜单项由命令注册表平台插件与各 Feature 贡献（G2），M1 只放一个禁用的占位项、不挂 Click 与 Command；§4.1 的判据与 §4.4 的区域表同步 |
+| 0.24 | 2026-11-23 | 草稿 | lukan | 回写 T15：语言切换入口落在菜单栏右侧（§4.4 标题栏行与 §5.6 同步），§3.3 补「CLI 也必须先注册 `ILocalizationService`」，因为壳的启动动作会解析它注册文案源 |
 
 ## 1 目标与范围
 
@@ -308,7 +309,7 @@ async Task ComposeAsync(IClassicDesktopStyleApplicationLifetime desktop, ILocali
 
 `SlotManager` 是 `Cangming.PicoPlugins.Core.Features.SlotManager` 的具体类，同一实例必须同时交给 `InjectSlotManager`、每个 `SlotPanel.SlotManager` 与 `RegisterFeatureAttachments`；三处各 `new` 一个会得到“附着成功但界面永远为空”的假通过。
 
-同一入口的 CLI 分支在解析参数后与桌面分支分叉：不显示欢迎窗口、不创建槽位管理器、不取壳、不附着，只做 Bootstrap 与命令执行，退出码 0 成功、2 参数错误、1 运行失败。两条分支在 Bootstrap 之前分开、之后不再交汇，唯一差异是 `HostMode` 与 `HasUiRoute`。CLI 的输出是机器可读接口而不是界面文案，因此不经过 `ILocalizationService`、不随界面语言变化；stdout 只放命令结果，Bootstrap 日志与错误一律写 stderr，让脚本可以只解析结果那一半。
+同一入口的 CLI 分支在解析参数后与桌面分支分叉：不显示欢迎窗口、不创建槽位管理器、不取壳、不附着，只做 Bootstrap 与命令执行，退出码 0 成功、2 参数错误、1 运行失败。两条分支在 Bootstrap 之前分开、之后不再交汇，唯一差异是 `HostMode` 与 `HasUiRoute`。CLI 的输出是机器可读接口而不是界面文案，因此不经过 `ILocalizationService`、不随界面语言变化；stdout 只放命令结果，Bootstrap 日志与错误一律写 stderr，让脚本可以只解析结果那一半。CLI 同样要在 `BootstrapHost.StartAsync` 之前创建并注册 `ILocalizationService`：壳的启动动作会解析它来注册文案源，缺了这一步 `--plugins` 会把壳判 `Failed`；CLI 自身的输出仍不走本地化。
 
 ```csharp
 // ImageLyre.App/Program.cs：入口先判定参数，再决定是否初始化 Avalonia
@@ -466,7 +467,7 @@ M1 要求显式 `Order`，是因为渲染器的排序对 `NoPreference` 一律�
 | 启动画面与欢迎界面 | App 在 Bootstrap 之前显示，只有产品名、版本与状态文本；失败时显示原因并退出 | 早于插件系统就绪，窗口骨架不能依赖插件；内容区将来可由身份类 Feature 填充 |
 | 菜单条 | 壳只提供菜单条容器与外观；菜单项由命令注册表平台插件与各 Feature 贡献（G2 落地），M1 只放一个禁用的占位项，不挂 `Click` 与 `Command` | 菜单是命令的呈现，命令有 Id、键位与可用条件；壳静态定义八个顶层会把未实现的功能伪装成可用入口，误点还会触发动作 |
 | 状态栏五段 | 壳固定五段占位显示，依次为坐标、像素值、位深、缩放、校准单位，最右留临时消息 | 段位是固定语义，M1 没有图像能力，没有生产者，不定义状态契约 |
-| 标题栏 | 壳自绘文件名、脏标记与主题/语言入口 | 壳的 chrome，不是贡献点 |
+| 标题栏 | 壳自绘文件名与脏标记；语言切换入口在 M1 放在菜单栏右侧，将来可移回标题栏 | 壳的 chrome，不是贡献点 |
 | 通知中心、导出抽屉、画布内联错误条 | 壳按事件弹出，M1 只做内联错误条的最简版本 | 瞬时表面，不参与装配 |
 | 辅助面板空态 | 壳在面板无附着物时渲染“尚无测量”空状态，宽度不小于 320px 由壳的布局保证 | 槽位空不等于界面空；空态是壳的静态内容，不由插件附着 |
 
@@ -631,7 +632,7 @@ public interface ILocalizationSource
 }
 ```
 
-M1 的落地范围：`ImageLyre.Localization` 提供聚合服务与回退规则；App 在创建欢迎界面前先构造该服务并注册 App 自己的文案源，随后把它作为同一实例交给 Bootstrap 的容器；壳插件与 `ImageLyre.Feature.Diagnostics` 各自实现 `ILocalizationSource` 并在 `OnStartAsync` 里注册；壳在标题栏放一个语言切换入口，切换后菜单、状态栏占位与诊断面板文案刷新。`ImageLyre.Localization` 不是插件，因此不参与插件扫描、不能被禁用，也不出现在插件清单里。
+M1 的落地范围：`ImageLyre.Localization` 提供聚合服务与回退规则；App 在创建欢迎界面前先构造该服务并注册 App 自己的文案源，随后把它作为同一实例交给 Bootstrap 的容器；壳插件与 `ImageLyre.Feature.Diagnostics` 各自实现 `ILocalizationSource` 并在 `OnStartAsync` 里注册；壳在菜单栏右侧放一个语言切换入口（M1 取此位置；标题栏与菜单栏同属壳的 chrome，都不进槽位），切换后菜单、状态栏占位与诊断面板文案刷新。`ImageLyre.Localization` 不是插件，因此不参与插件扫描、不能被禁用，也不出现在插件清单里。
 
 ## 6 边界情况
 

@@ -2,8 +2,12 @@ using System.Collections.Immutable;
 using Cangming.PicoPlugins;
 using Cangming.PicoPlugins.Core;
 using Cangming.PicoPlugins.Core.Features;
+using ImageLyre.App.Localization;
 using ImageLyre.App.Startup;
 using ImageLyre.Bootstrap;
+using ImageLyre.Contracts;
+using ImageLyre.Localization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ImageLyre.App.Cli;
 
@@ -123,14 +127,19 @@ public static class CliHost
     /// <remarks>
     /// 每个插件占一个四行区块，字段依次为 Id、名称、状态与是否 Feature；状态取插件实例的 <c>State</c>，
     /// Feature 判定取 <see cref="IPicoFeatures"/> 标记接口，汇总行同时给出插件总数与 Feature 数。
+    /// 启动前注册一个本地化实例供壳插件解析：CLI 自己的输出不走本地化，但插件启动链要求宿主容器里有
+    /// <see cref="ILocalizationService"/>，否则壳插件会在 <c>OnStartAsync</c> 落 Failed。
     /// </remarks>
     private static async Task<int> WritePluginsAsync(TextWriter output, TextWriter error, CancellationToken cancellationToken)
     {
         using var loggerFactory = new StderrLoggerFactory(error);
+        var localization = new LocalizationService();
+        localization.AddSource(new AppStringSource());
+
         await using BootstrapHost host = await BootstrapHost.StartAsync(
             loggerFactory,
             HostMode.Headless,
-            configure: null,
+            services => services.AddSingleton<ILocalizationService>(localization),
             cancellationToken);
 
         IImmutableList<IPicoPlugin> plugins = host.PluginManager.Plugins;
