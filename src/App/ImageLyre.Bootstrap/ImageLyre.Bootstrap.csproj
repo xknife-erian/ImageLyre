@@ -4,7 +4,13 @@
     <!-- 机制基座：扫描、容器注册、插件管理器与日志门面都来自这一组包。 -->
     <PackageReference Include="Cangming.PicoPlugins" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 插件失败分类是纯函数，测试工程直接验证 Degraded 判定，不启动真实插件管理器。 -->
+    <InternalsVisibleTo Include="UnitTest.ImageLyre.Bootstrap" />
   </ItemGroup>
 
   <ItemGroup>
