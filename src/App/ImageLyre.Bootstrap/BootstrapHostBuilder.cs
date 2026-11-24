@@ -57,7 +57,7 @@ public static class BootstrapHostBuilder
 
         // 与迁移前保持同一日志分类，CLI 冒烟按文本匹配 HasUiRoute；这里直接用传入工厂，避免 LogHub 首次绑定与测试顺序耦合。
         loggerFactory
-            .CreateLogger("ImageLyre.Bootstrap.BootstrapHost")
+            .CreateLogger("ImageLyre.Bootstrap.BootstrapHostBuilder")
             .LogInformation("HasUiRoute={HasUiRoute}", PicoPluginSettings.HasUiRoute);
 
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);

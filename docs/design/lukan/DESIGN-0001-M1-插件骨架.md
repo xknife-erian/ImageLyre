@@ -85,7 +85,7 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 | `ImageLyre.Shell.Contracts` | `src/Infrastructure/Contracts/ImageLyre.Shell.Contracts` | 壳契约 | `ShellSlots`、`IWorkbenchShell` 两个类型；只引用 `ImageLyre.Contracts`，不引用 Avalonia、不引用机制包、不引用任何插件工程——槽位名与窗口标记都是纯标识，没有理由把 UI 与机制拖进契约 |
 | `ImageLyre.Shell.Attachments` | `src/Infrastructure/ImageLyre.Shell.Attachments` | 附着物词汇（非插件，非契约） | `DockPaneAttachment`：实现机制包的 `IFeatureAttachment` 与 `Cangming.Toolkit` 的 `IOrderable`，承载 Avalonia `Control`；引用 `Cangming.PicoPlugins`、`Cangming.Toolkit`、Avalonia、`ImageLyre.Contracts`。它放的是“壳怎样接住一个界面项”的应用词汇，与 cangming 路线包把 `ToolbarButtonAttachment`、`ContentAttachment` 放在 `Cangming.PicoPlugins.Avalonias` 同一位置；因此它不占契约工程的名分，单独落在 `src/Infrastructure/` 下，`ImageLyre.Shell.Contracts` 的纯度也不因它受损 |
 | `ImageLyre.Localization` | `src/Infrastructure/ImageLyre.Localization` | 基础设施库（非插件） | `LocalizationService`：聚合资源源、维护当前语言、缺键回退 zh-CN 并记诊断、广播切换；引用 `ImageLyre.Contracts`，不引用 UI、不引用插件；由 App 创建、Bootstrap 注册同一实例 |
-| `ImageLyre.Shell.Menus` | `src/Infrastructure/ImageLyre.Shell.Menus` | 基础设施库（非插件） | `MenuRegistry`：菜单与菜单项的内存登记、按 `Order` 与注册先后排序、句柄撤销与变更通知；引用 `ImageLyre.Shell.Contracts`，不引用 UI、机制包或插件；由 App 创建、Bootstrap 注册同一实例，壳与 Feature 经 IoC 解析 |
+| `ImageLyre.Shell.Menus` | `src/Infrastructure/ImageLyre.Shell.Menus` | 基础设施库（非插件） | `MenuRegistry`：菜单与菜单项的内存登记、按 `Order` 与注册先后排序、句柄撤销与变更通知；引用 `ImageLyre.Shell.Contracts`，不引用 UI、机制包或插件；由 `ImageLyre.Presentation.Desktop` 创建、Bootstrap 容器注册同一实例，壳与 Feature 经 IoC 解析 |
 | `ImageLyre.Module.Shell` | `src/Plugins/Modules/ImageLyre.Module.Shell` | Module 插件（容器类 Module） | 实现 `ISupportSlotManager` 接收槽位管理器注入，在 `Build()` 里构造 `ShellWindow` 并通过 `IAttachmentRegistry` 贡献四个一级槽位；`IWorkbenchShell` 由 `ShellWindow` 实现；按 `IMenuRegistry` 渲染插件贡献的菜单；实现 `ILocalizationSource` 提供壳文案；持有 `ShellModuleContext`；引用 `ImageLyre.Shell.Contracts`、`ImageLyre.Shell.Attachments`、`ImageLyre.Contracts`、机制包、Avalonia 路线包、AtomUI |
 | `ImageLyre.Module.Platform` | `src/Plugins/Modules/ImageLyre.Module.Platform` | Module 插件 | 提供 `IPlatformCapabilities`：读 `RuntimeInformation` 组装能力矩阵，M1 只声明 Windows 的实测结果，其余平台按未知处理；持有 `PlatformModuleContext` |
 | `ImageLyre.Module.Performance` | `src/Plugins/Modules/ImageLyre.Module.Performance` | Module 插件 | 提供 `IPerformanceMonitor`：按需采样内存、线程与运行时长，`SnapshotUpdated` 返回永不触发的流；声明 `Require<IPlatformCapabilities>` 与 `After<IPlatformCapabilities>`，因为可采指标以平台能力为准；持有 `PerformanceModuleContext` |
@@ -93,7 +93,7 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 | `ImageLyre.Feature.About` | `src/Plugins/Features/ImageLyre.Feature.About` | Feature 插件 | 向 `IMenuRegistry` 注册「帮助 → 关于」，点击时打开只读的关于窗口（产品、版本、运行时、操作系统、许可证、版权）；实现 `ILocalizationSource` 提供中英文案；持有 `AboutFeatureContext`；引用 `ImageLyre.Shell.Contracts`、`ImageLyre.Contracts`、路线包与 AtomUI，不引用任何 Module 工程 |
 | `ImageLyre.Module.Broken` | `src/Plugins/Modules/ImageLyre.Module.Broken` | Module 插件（测试） | 构造函数抛异常，验证构造失败隔离；不随产品发布 |
 
-`ImageLyre.App` 与 `ImageLyre.Bootstrap` 的分界只有一条：Bootstrap 处理“插件就绪之前”的机制启动，App 处理“插件就绪前后”的用户可见过程与编排——启动画面、欢迎界面、主窗体挂载、关停转发。App 是编排者，不是界面宿主：主窗体由壳插件产出，App 只把它挂到桌面。
+`ImageLyre.App` 与 `ImageLyre.Bootstrap` 的分界只有一条：Bootstrap 处理“插件就绪之前”的机制启动，App 处理进程入口与生命周期转交；2026-11-25 起欢迎界面、主窗体挂载与桌面关停已由 `ImageLyre.Presentation.Desktop` 承载，App 不再编排这些步骤。App 是入口，不是界面宿主：主窗体由壳插件产出，Presentation 把它挂到桌面。
 
 目录按职责分三处，物理归置不改变层归属：`src/App/` 放进程入口与启动链（`ImageLyre.App`、`ImageLyre.Bootstrap`），`src/Infrastructure/` 放共享库，其中 `Contracts/` 子目录专放契约与领域（`ImageLyre.Domains`、`ImageLyre.Contracts`、`ImageLyre.Shell.Contracts`），其余共享实现留在 `Infrastructure/` 根下（`ImageLyre.Shell.Attachments`、`ImageLyre.Shell.Menus`、`ImageLyre.Localization`），`src/Plugins/Modules/` 与 `src/Plugins/Features/` 分别放 Module 与 Feature 插件。判据以本表“类型”列为准：Bootstrap 放在 App 目录下仍是 L1 的启动链而不是 L5；契约单独成子目录只是让“契约层不得引用 UI”在路径上可读，不改变依赖方向。
 
@@ -234,7 +234,7 @@ sequenceDiagram
     Boot->>Mgr: StopAsync()
 ```
 
-以下三段是唯一允许的写法，签名与 cangming `v0.1.9.1122` 一致。
+以下是迁移前的旧写法：`BootstrapHost` 类型与这些代码块中的 App 编排已在 2026-11-25 删除，只用于历史对照，不得照此实现；现行实现见 §3.3.1。
 
 ```csharp
 // ImageLyre.Bootstrap
@@ -398,9 +398,9 @@ CLI 骨架在 M1 只支持三条命令：`--version` 输出版本，`--plugins` 
 
 ### 3.4 主窗体由壳插件承载
 
-主窗体是壳插件在 `Build()` 里构造的产物：`ImageLyre.Module.Shell` 实现 `BasePicoModule<IWorkbenchShell>`，`Build()` 返回 `Lazy<IWorkbenchShell>`，其值是 `ShellWindow : Window, IWorkbenchShell`；槽位贡献发生在 `ShellWindow` 的构造过程中，因此“取到壳体”就等于“槽位已贡献”。`IWorkbenchShell` 是标记接口，这与 Mercury 的 `IWorkbench` 同构：App 取到产物后断言它是 `Window`，不做任何界面构造。
+主窗体是壳插件在 `Build()` 里构造的产物：`ImageLyre.Module.Shell` 实现 `BasePicoModule<IWorkbenchShell>`，`Build()` 返回 `Lazy<IWorkbenchShell>`，其值是 `ShellWindow : Window, IWorkbenchShell`；槽位贡献发生在 `ShellWindow` 的构造过程中，因此“取到壳体”就等于“槽位已贡献”。`IWorkbenchShell` 是标记接口，这与 Mercury 的 `IWorkbench` 同构：`ImageLyre.Presentation.Desktop` 取到产物后断言它是 `Window`，不做任何界面构造。
 
-这条设计的判据是替换性：换掉壳插件（换布局、换 UI 路线）时，App 只改一行取窗代码的断言，不改启动链、不改 Bootstrap、不改任何 Feature。若某天 App 里出现“设置窗口尺寸、拼装面板、注册菜单”一类代码，说明壳的边界被破坏了。
+这条设计的判据是替换性：换掉壳插件（换布局、换 UI 路线）时，Presentation 只改取窗处的断言，不改启动链、不改 Bootstrap、不改任何 Feature。若某天 Presentation 里出现“设置窗口尺寸、拼装面板、注册菜单”一类代码，说明壳的边界被破坏了。
 
 一条实现级硬约束：壳窗口必须派生自 `AtomUI.Desktop.Controls.Window`，不能直接用 `Avalonia.Controls.Window`。后者在 AtomUI 主题下没有 `OverlayLayer`，打开「文件」子菜单或任何 `Popup` 时会抛 `InvalidOperationException: Unable to create IPopupImpl and no overlay layer is found for the target control`；换成任何新 UI 路线前，先确认新基类提供 OverlayLayer。冒烟用 `LYRE_SMOKE_OPEN_MENU=1` 展开一次子菜单来守住这条，因为只验证「窗口出现、自关、退出码 0」的冒烟漏掉过它一次。
 
@@ -408,9 +408,9 @@ CLI 骨架在 M1 只支持三条命令：`--version` 输出版本，`--plugins` 
 
 ### 3.5 槽位先于附着
 
-cangming v1 的 `AttachToSlot` 在槽位不存在时抛 `InvalidOperationException`，因此壳必须在 `RegisterFeatureAttachments` 之前完成 `ContributeSlot`，而槽位贡献发生在壳插件的 `Build()` 内，所以 App 的顺序是“注入 → 取壳 → 附着”。Mercury 的 `MainWindowFactory` 顺序是“注入 → 附着 → 取壳”，因为它的 `PluginSlotManager` 支持未贡献槽位的待解析桶；cangming v1 没有这个能力，所以顺序必须反过来。
+cangming v1 的 `AttachToSlot` 在槽位不存在时抛 `InvalidOperationException`，因此壳必须在 `RegisterFeatureAttachments` 之前完成 `ContributeSlot`，而槽位贡献发生在壳插件的 `Build()` 内，所以 `PresentationPlan` 的顺序是“注入 → 取壳 → 附着”。Mercury 的 `MainWindowFactory` 顺序是“注入 → 附着 → 取壳”，因为它的 `PluginSlotManager` 支持未贡献槽位的待解析桶；cangming v1 没有这个能力，所以顺序必须反过来。
 
-这条差异只影响顺序，不影响归属：两者都是 App 编排、模块产出窗口。cangming 落地 `ADR-0012` §2.7 的 v2 后，未贡献槽位的附着改为进入待解析桶、贡献时冲刷，本节的措辞与 §4.5 一并删除，顺序可以改回 Mercury 的写法。
+这条差异只影响顺序，不影响归属：两者都是 Presentation 编排、模块产出窗口。cangming 落地 `ADR-0012` §2.7 的 v2 后，未贡献槽位的附着改为进入待解析桶、贡献时冲刷，本节的措辞与 §4.5 一并删除，顺序可以改回 Mercury 的写法。
 
 顺序不只写在文档里：`MainWindowFactory.Compose` 在 `Build` 之后、`RegisterFeatureAttachments` 之前断言三个槽位都已贡献，谁把附着提前，就会在附着前以“壳插件未贡献槽位”失败，而不是等到界面空白才发现。
 
@@ -515,7 +515,7 @@ M1 没有 UI 自动化测试，桌面分支因此保留三个只由环境变量�
 
 ### 4.1 判据
 
-固定语义的界面位做成“具名状态位 + 契约”，自由装配的区域才做成槽位。菜单条（容器与外观）、标题栏、通知中心、导出抽屉都属于固定语义：状态栏段的含义由产品定义，标题栏是壳的 chrome，瞬时表面按事件弹出；**菜单项不是固定语义**，它由 Feature 经宿主级 `IMenuRegistry` 登记（M1 后先落最小注册表：只有菜单、标题键与动作；命令 Id、快捷键与可用条件留 G2），壳只提供菜单条容器并按 `Order` 渲染；**状态栏段位也不是固定语义**，每一段读数都可以由一个独立插件贡献到 `lyre.shell.statusbar` 槽位，M1 由壳占位以满足交互规格的五段要求，G2 起交给插件。启动画面与欢迎界面同样属于固定语义，而且早于插件系统就绪，因此由 App 直接构造，不进槽位。
+固定语义的界面位做成“具名状态位 + 契约”，自由装配的区域才做成槽位。菜单条（容器与外观）、标题栏、通知中心、导出抽屉都属于固定语义：状态栏段的含义由产品定义，标题栏是壳的 chrome，瞬时表面按事件弹出；**菜单项不是固定语义**，它由 Feature 经宿主级 `IMenuRegistry` 登记（M1 后先落最小注册表：只有菜单、标题键与动作；命令 Id、快捷键与可用条件留 G2），壳只提供菜单条容器并按 `Order` 渲染；**状态栏段位也不是固定语义**，每一段读数都可以由一个独立插件贡献到 `lyre.shell.statusbar` 槽位，M1 由壳占位以满足交互规格的五段要求，G2 起交给插件。启动画面与欢迎界面同样属于固定语义，而且早于插件系统就绪，因此由 `ImageLyre.Presentation.Desktop` 直接构造，不进槽位。
 
 ### 4.2 一级槽位
 
