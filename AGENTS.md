@@ -18,6 +18,7 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 | 技能 | 何时加载 | 路径 |
 | :--- | :--- | :--- |
 | `agent-project-rollout` | 新建项目接入 agent，或体检、同步技能副本时 | `.agents/skills/agent-project-rollout/SKILL.md` |
+| `architect-agent-team` | 架构师带多个子 Agent 改代码：拆任务书、判定续用还是新开上下文、Review 与门禁时 | `.agents/skills/architect-agent-team/SKILL.md` |
 | `csharp-doc-style` | 写或评审 C# 注释、ADR、Plan、Design、spec 等技术文档时 | `.agents/skills/csharp-doc-style/SKILL.md` |
 | `docs-scaffold` | 初始化或体检补全 `docs/` 目录与规则时 | `.agents/skills/docs-scaffold/SKILL.md` |
 | `eod-wrapup` | 收工：写当日小结、提交本地备份、更新计划与决策状态时 | `.agents/skills/eod-wrapup/SKILL.md` |
