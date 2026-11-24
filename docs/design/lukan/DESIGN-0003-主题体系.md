@@ -9,7 +9,8 @@
 | 0.5 | 2026-11-24 | 历史 | lukan | 按“定稿存档要进交付类目录、不被过程文档清理扫到”的口径，把 11-20 产物从 `docs/design/lukan/bakeoff-2026-11-20/` 迁进 `docs/reference/`；§2.2、§5、§11 与 §12 的路径引用随之更新 |
 | 0.6 | 2026-11-24 | 草稿（待拍板） | lukan | 落点按业主口径定在 `reference/`：撤销上一步新建的 `docs/design-archive/` 与登记行，改为在 `docs/README.md` 的交付类 `reference/` 条目与 `docs/reference/README.md` 里写明“定稿设计存档”的定位、存取规则与存档清单；11 处路径引用统一为 `docs/reference/2026-11-20-appearance/` |
 | 0.7 | 2026-11-24 | 草稿（待拍板） | lukan | 按业主口径整理存档命名：定稿报告 `report.html` 改为 `index.html`、三十版过程总览 `index.html` 改为 `gallery.html`，目录按登记表的 `<日期>-<主题-slug>` 规则改名 `2026-11-20-appearance/`；`docs/reference/README.md` 的入口清单与 §2.2 的说明同步更新 |
-| 0.8 | 2026-11-25 | 草稿（待拍板） | lukan | 读完恢复回来的 UI 稿（收口报告、主界面规格、控件与八态样张）后校订：补缺失的警告与错误状态色、状态栏定到 28、焦点按 `:focus-visible` 落实、页签墨条写出映射、画布底定为随明暗；另记四份基线之间的六处口径冲突 |
+| 0.8 | 2026-11-25 | 历史 | lukan | 读完恢复回来的 UI 稿（收口报告、主界面规格、控件与八态样张）后校订：补缺失的警告与错误状态色、状态栏定到 28、焦点按 `:focus-visible` 落实、页签墨条写出映射、画布底定为随明暗；另记四份基线之间的六处口径冲突 |
+| 0.9 | 2026-11-25 | 草稿（待拍板） | lukan | 按业主口径把六处缺口全部补掉：`color-tokens.md` 升 1.4 增 §6.4 状态提示两档、`spacing.md` 升 1.1 统一状态栏 28 并登记 6px 例外、主界面规格升 0.2、收口报告改两处笔误值、`states.html` 按 1.3 重刷配色；本文 §5.1 补映射行并给出 AtomUI 落法 |
 
 ## 1 结论
 
@@ -61,25 +62,25 @@
 
 | 文件 | 定义了什么 | 交给谁 |
 | :--- | :--- | :--- |
-| `docs/reference/2026-11-20-appearance/color-tokens.md` 1.3 | 表面、线、文字、信号、状态四组，含明暗两套取值与对比度矩阵 | 架构落 Token |
+| `docs/reference/2026-11-20-appearance/color-tokens.md` 1.4 | 表面、线、文字、信号、状态四组，含明暗两套取值、状态提示两档与对比度矩阵 | 架构落 Token |
 | `docs/reference/2026-11-20-appearance/typography.md` 2.0 | 四档字号 11/13/16/20、字重、行高、数字与中英混排 | 架构落 Token；§14 明确把「AtomUI 令牌、Avalonia 资源键、控件模板」交给架构 |
-| `docs/reference/2026-11-20-appearance/spacing.md` 1.0 | 4px 基线、六级间距、区域与控件尺寸、100–200% 缩放口径 | 架构落 Token |
+| `docs/reference/2026-11-20-appearance/spacing.md` 1.1 | 4px 基线、六级间距、区域与控件尺寸、100–200% 缩放口径；状态栏 28 与 6px 例外 | 架构落 Token |
 | `docs/reference/2026-11-20-appearance/controls.md` 1.1 与同目录 `state-model.md` 0.1 | 每类控件的五态形状与优先级 | 架构评估能否用 Token 表达 |
 
 这批文件有过一段断代：2026-11-22 的重置提交 `dc0f4b9`（327 个文件、40 712 行）把 `docs/design/` 整体当过程文档清掉，工作区一度只剩 `product-appearance.md` 与 `interaction-requirements.md` 的七处悬空引用，实现者拿不到任何色值；2026-11-24 已从标签 `archive/pre-reset-2026-11-22` 恢复，并按“定稿存档进交付类目录”的口径迁到 `docs/reference/2026-11-20-appearance/`（`reference/` 收定稿存档的定位与存取规则写在 `docs/README.md` 的交付类表与 `docs/reference/README.md`），共 106 个文件、25 MiB（原计 117 个文件、36 MiB，按“剔除原型页未引用的截图”订正为现值），含六个方向的竞标稿、`index.html`（定稿报告）、`gallery.html`（三十版过程总览）、`controls.html`、`e-science/states.html`、`type-specimen.html` 与 25 张被页面引用的预览图，页面 64 处资源引用零缺失。七处文档引用随文件存在而复原，`interaction-requirements.md` 里只写文件名的 `main-window-spec.md` 也补成了完整路径。本文的映射表按恢复后的原文编写。
 
-三份 HTML 的取色可信度不一样，必须先分清再用：`index.html`（收口报告）与 `controls.html`（控件样张）的配色已经是 1.3 的取值，表外用色为 0，可以直接取样；`e-science/states.html`（八态）的尺寸与排印 token 是对的（`--h-title:44`、`--h-status:28`、四档字号），但它的颜色是 1.0 之前的旧纸白基线（`--paper:#F2F2F0`、`--ink:#1B1B1B`、`--hair:#DEDEDA`、`--rule:#C6C6C1`），不能拿来取色；其余六个方向的原型是过程稿，只看结构不看值。
+三份 HTML 的取色可信度不一样，必须先分清再用：`index.html`（收口报告）与 `controls.html`（控件样张）的配色已是 1.3 的取值（2026-11-25 重刷后 `states.html` 也一并对齐），表外用色为 0，可以直接取样；`e-science/states.html`（八态）的尺寸与排印 token 是对的（`--h-title:44`、`--h-status:28`、四档字号），但它的颜色是 1.0 之前的旧纸白基线（`--paper:#F2F2F0`、`--ink:#1B1B1B`、`--hair:#DEDEDA`、`--rule:#C6C6C1`），不能拿来取色；其余六个方向的原型是过程稿，只看结构不看值。
 
-四份基线之间还有六处口径冲突，落地前必须逐条择一，否则实现者会照不同的文件写出两套值。下表给出判定与依据，被判为笔误的一侧请在下一版基线里改掉。
+四份基线之间还有六处口径冲突。2026-11-25 已按“改源头、不改下游引用”的顺序全部处置：能判为笔误的直接改基线并在版本表留痕，判为缺口的补 token，判为旧口径的以 30/31 为准。
 
-| # | 冲突点 | 两种说法 | 本文采用与理由 |
+| # | 冲突点 | 两种说法 | 处置结果 |
 | :--- | :--- | :--- | :--- |
-| 1 | 状态栏高度 | `spacing.md` §3.1 与 §4 写 32；§5、收口报告 `size.statusbar` 与主界面规格 `status.height` 都写 28 | 采用 28；§3.1 的 32 与 §4 的 32 是笔误，且 28 = 6 + 16 + 6 与状态栏内文字 11/16 自洽 |
-| 2 | 状态栏分隔线 | 主界面规格 §13 写“1px `line.divider`，上下 6” | 6 不在六级间距里；建议改 4（`space.1`），并同步改那份规格的验收 |
-| 3 | 输入框暗色底 | `color-tokens.md` 1.3 写 `#121417`；收口报告写 `#12120F` | 采用 `#121417`；报告是收口视图，1.3 是取值源 |
-| 4 | 悬停暗色底 | 1.3 写 `#292E34`；收口报告写 `#2A2E33` | 采用 `#292E34`，同上 |
-| 5 | 画布底 | `M1-interaction-spec.md` §2 写固定深灰 `#2B2B2B`；30/31 与收口报告写随明暗（`#E8EAED` / `#0D0F11`） | 采用随明暗；M1 那份早于 30/31，属旧口径 |
-| 6 | 警告与错误状态色 | 主界面规格要求缺校准黄条与六类错误条；`states.html` 用 `#F7EBC8` 底与 `#E2CB92` 边框；`color-tokens.md` 1.3 没有这两种色且禁止表外值 | 判定为基线缺口，处置见 §5.1 末与 §12 第 8 条；在给定值之前不覆盖 AtomUI 缺省 |
+| 1 | 状态栏高度 | `spacing.md` §3.1 与 §4 写 32；§5、收口报告与主界面规格都写 28 | 采用 28：`spacing.md` 升 1.1，两处 32 改 28，并把上下 6 登记为六级间距的唯一例外（理由与 1px 线、78 批次同属密集读数带） |
+| 2 | 状态栏分隔线 | 主界面规格 §13 写“1px `line.divider`，上下 6” | 保留 6 并补注为同一条例外，不再当作新的间距阶；主界面规格升 0.2 |
+| 3 | 输入框暗色底 | `color-tokens.md` 1.3 写 `#121417`；收口报告写 `#12120F` | 采用 `#121417`，收口报告已改 |
+| 4 | 悬停暗色底 | 1.3 写 `#292E34`；收口报告写 `#2A2E33` | 采用 `#292E34`，收口报告已改 |
+| 5 | 画布底 | M1 交互规范写固定深灰 `#2B2B2B`；30/31 与收口报告写随明暗（`#E8EAED` / `#0D0F11`） | 采用随明暗；M1 那份是旧口径，技术落法见 §7 第 1 行 |
+| 6 | 警告与错误状态色 | 主界面规格要求缺校准黄条与六类错误条；`states.html` 用旧配色时代的 `#F7EBC8`/`#E2CB92`；`color-tokens.md` 1.3 没有这两种色且禁止表外值 | 补成 token：`color-tokens.md` 升 1.4 新增 §6.4，给 `state.warning.line` 与 `state.error.line` 两档，底取窗口色；`states.html` 已按 1.3 与新 token 重刷 |
 
 上表第 5 条已经把画布底的口径定下来：30/31 与收口报告都写随明暗，M1 交互规范的固定深灰是更早的旧口径；剩下的不是“选哪个色”，而是“AtomUI 没有第三个不透明表面该怎么落”，技术处置在 §7 第 1 行，取值路线在 §12 第 2 条。
 
@@ -216,6 +217,9 @@
 | `signal.running` | 同 `signal.active` | 同 `signal.active` | `ColorPrimary` | 不设第二个名字，靠形状区分 |
 | `state.selected.bg` | `#E2E6EA` | `#2E333A` | `ControlItemBgActive` | Map，显式中性底 |
 | `state.disabled.bg` | `#F1F3F5` | `#1A1D21` | `ColorBgContainerDisabled` | Map，显式 |
+| `state.warning.line` | `#A9791C` | `#D9A441` | `ColorWarning` | 种子；派生的底与边按下表覆盖 |
+| `state.error.line` | `#B83A24` | `#D89A4A` | `ColorError` | 种子，与 `ColorPrimary` 同值不同义 |
+| `state.warning.bg` / `state.error.bg` | 同 `surface.window` | 同 `surface.window` | `ColorWarningBg` / `ColorErrorBg` | 显式覆盖为 `ColorBgLayout` 的值，压掉推导出的暖底与红底 |
 | `surface.canvas` | `#E8EAED` | `#0D0F11` | 无对应 Token | 见 §7 第 1 行 |
 | `canvas.ink` | `#F5F7FA` | 同值 | 常量 `LyreCanvasPalette.Ink` | 不随主题 |
 | `canvas.edge` | `#0B0D0F` | 同值 | 常量 `LyreCanvasPalette.Edge` | 不随主题 |
@@ -226,12 +230,13 @@
 
 `ControlItemBgActive` 的缺省值是主色的浅色推导，我们必须把它换成中性底，这是“选中不反白、不铺 signal”在 Token 层的唯一落点；6.3 新增的 `ControlItemColorActive` 缺省即 `ColorText`，正好把“选中不改字色”变成 Token 事实而不是逐控件覆盖。
 
-表里只有一种强调色，主界面却需要两类“提示”：缺校准的黄色内联条与六类错误的内联条（`main-window-spec.md` §5 的 `error.missingCalibration` 与 `error.banner`）。这是基线的缺口——`states.html` 里的 `#F7EBC8` 底色与 `#E2CB92` 边框属于旧配色时代的临时值，`color-tokens.md` 1.3 没给它们立名，而那份文件的禁止清单又明确禁止表外色值。两条处置路线：
+表里只有一种强调色，主界面却需要两类提示：缺校准的黄条与六类错误的内联条（`main-window-spec.md` §5 的 `error.missingCalibration` 与 `error.banner`）。2026-11-25 已把它们补成 token（`color-tokens.md` 1.4 §6.4）：警告与错误各给一条 1px 线，底一律取窗口色，暖色只出现在线与图标上。落法三条：
 
-- **正名为状态色（推荐）**：新增 `state.warning.bg` / `state.warning.line` / `state.warning.text` 与 `state.error.bg` / `state.error.line` / `state.error.text` 三对，分别映射到 AtomUI 的 `ColorWarningBg`、`ColorWarningBorder`、`ColorWarning` 与 `ColorErrorBg`、`ColorErrorBorder`、`ColorError`；错误一档落在 `signal` 色系（朱红本来就是错误语义），警告一档需要设计给一对值。
-- **保持单色**：把黄条改成“`ColorBgContainer` 底 + `signal` 2px 左边 + `ColorText` 文字”，代价是警告与错误只能靠文案区分，且与 `error.kinds` 的六类分级不再对应。
+- **种子与服务端覆盖**：`ColorWarning` 取 `#A9791C` / `#D9A441`，`ColorError` 取 `#B83A24` / `#D89A4A`（与 `ColorPrimary` 同值不同义）；AtomUI 会由种子推导出暖底与红底，这两张推导值不符合“表面全中性”，所以把 `ColorWarningBg`、`ColorErrorBg` 显式冻结成 `ColorBgLayout` 的取值，`ColorWarningBorder`、`ColorErrorBorder` 冻结成两条线的值。
+- **形状承担语义**：警告条用三角图标，错误条用圆形叉号，文案回答“发生了什么、影响什么、怎么退回去”；颜色不是唯一信息，灰度下两档靠图标与文案区分。
+- **不做半套覆盖**：两个种子、两个底、两个边一起写进主题文件；只写一半会出现“黄条是蓝的、错误条是红的”这种两头不靠的结果。
 
-在给定取值之前，`ColorWarning*` 与 `ColorError*` 保持 AtomUI 缺省、不做半套覆盖——只覆盖一半比不覆盖更糟，会出现“黄条是蓝的、错误条是红的”这种两头不靠的结果。
+对比度：警告线对窗口 3.57（亮）/ 7.98（暗），错误线 5.29 / 7.39，都过 3:1；提示条内文字仍用 `ColorText`，对窗口 16.76 / 15.14，过 AA。
 
 ### 5.2 字号与字重
 
@@ -435,6 +440,7 @@ Token 能表达颜色、尺寸、线宽与时长，表达不了“焦点是一�
 | 6 | 工具提示 | 无投影、1px 边框、11 字号 | 有 `ToolTipShadows`、`ToolTipFontSize` | Token 可及 |
 | 7 | 复选框 | 16 方框、勾是 2px 信号色、底为选中中性色 | 勾跟随 `ColorWhite`、选中底为主色 | 控件级覆盖 `ColorPrimary`、`ColorWhite`、`CheckIndicatorSize`、`CheckedMarkSize` |
 | 8 | 输入框暗色底 | 比面板深一档（`#121417` 对 `#1C1F23`） | 输入类控件一律读 `ColorBgContainer`，没有单独的输入底 Token | 逐个输入控件覆盖 `ColorBgContainer`（约八个），或在暗色下让步为与面板同色 |
+| 9 | 缺校准与错误提示条 | 32 高内联条，中性底 + 1px 提示边 + 图标，不弹窗 | AtomUI `Alert` 缺省的暖底、红底与圆角 | 走 Token：`ColorWarningBg`、`ColorErrorBg` 冻结成窗口色，`ColorWarningBorder`、`ColorErrorBorder` 冻结成两条提示线；`Alert` 的圆角随全局 `BorderRadius` 归零，不必改模板 |
 
 这张表的意义不是罗列麻烦，而是给出成本上限：如果第 2、3、4 行最后都要自定义 `ControlTheme`，G2 阶段就会有三个 AtomUI 主题的副本，每个都要随 AtomUI 升级复核。因此 §12 把它们列为需要拍板的让步项，先争取用 Token 与语义让步消化掉，而不是默认开工造模板。
 
@@ -506,4 +512,4 @@ Token 能表达颜色、尺寸、线宽与时长，表达不了“焦点是一�
 | 5 | UI 初稿的取值来源：需求侧文档（PRD、交互、外观、M1 交互规范）在 `docs/spec`，取值文件已按 T0 迁到 `docs/reference/2026-11-20-appearance/` | 产品经理与设计 | 若另有比 11-20 更新的稿，先给值再改 §5 的表，架构不动 |
 | 6 | 输入框暗色底（§7 第 8 行）：八个输入控件逐个覆盖，还是让步为与面板同色 | 设计与架构 | 先让步同色跑通 G2，等输入类控件大面积落地后再补覆盖 |
 | 7 | 主题契约的执行强度（§4.6）：白名单脚本够，还是要把可改 Token 收敛成“种子 + 一组颜色类 Map” | 架构 | 先上白名单脚本，第二套主题落地时按实际越界情况收紧 |
-| 8 | 警告与错误两种状态色（§5.1 末）：新增 `state.warning.*`/`state.error.*` 并映射 `ColorWarning*`/`ColorError*`，还是保持单色只靠文案区分 | 设计 | 新增；错误落 `signal` 色系，警告需要设计给一对值（现成的 `#F7EBC8`/`#E2CB92` 是旧配色时代的临时值，不能直接入表） |
+| 8 | 状态提示两档的取值复核（§5.1 末）：已补 `state.warning.line` 为 `#A9791C` / `#D9A441`、`state.error.line` 同 `signal`，底取窗口色 | 设计 | 已按此落地；若设计偏好别的警告色，只换这一对值，映射与组件都不用动 |

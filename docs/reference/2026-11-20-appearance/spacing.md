@@ -2,11 +2,12 @@
 
 | 版本 | 日期 | 状态 | 作者 | 说明 |
 | :--- | :--- | :--- | :--- | :--- |
-| 1.0 | 2026-11-20 | 现行 | lukan | 4px 基线、六级间距、21/22 区域尺寸、行高与内边距；所有值落到语义 token |
+| 1.0 | 2026-11-20 | 历史 | lukan | 4px 基线、六级间距、21/22 区域尺寸、行高与内边距；所有值落到语义 token |
+| 1.1 | 2026-11-25 | 现行 | lukan | 状态栏高度统一为 28（原计 32，§3.1 与 §4 与 §5、收口报告、主界面规格不一致，按后者订正）；space.statusPadY 由 8 改 6 并登记为六级间距的唯一例外 |
 
 ## 0 三条前提
 
-1. **4px 基线。** 垂直节奏只用 4 的整数倍；行高 16 / 20 / 24 / 28，区域与组件高度也是 4 的整数倍。唯一的非 4 倍数是 1px 发丝线与 78 的批次外高（76 内容 + 2 条 1px 边）。
+1. **4px 基线。** 垂直节奏只用 4 的整数倍；行高 16 / 20 / 24 / 28，区域与组件高度也是 4 的整数倍。非 4 倍数只有三处：1px 发丝线、78 的批次外高（76 内容 + 2 条 1px 边），以及状态栏的 6px 上下内边（§4 补充，28 = 6 + 16 + 6）。
 2. **六级间距。** 间距、内边距、gap 只用 `4 / 8 / 12 / 16 / 24 / 32`。没有第七级，没有 5、7、10、18。
 3. **每个值有名字。** 组件里不出现裸数值；任何一个 padding、gap、高度、宽度都必须能指回本节 token。找不到名字，就是错。
 
@@ -48,7 +49,7 @@
 | `size.panel.right.max` | 560 | 宽度上限 | 不拖 | 防止档案吞掉画布 |
 | `size.panel.right.step` | 8 | 拖拽步长 | — | 每次移动 8，落在 4px 栅格上 |
 | `size.batch.height` | 78 | 固定高度 | 不拖 | 批次外高：1 + 8 + 60 + 8 + 1；76 内容 + 2 条 1px 边 |
-| `size.statusbar.height` | 32 | 固定外高 | 不拖 | 画布下沿读数带；11/16 行高 + 上下 8 |
+| `size.statusbar.height` | 28 | 固定外高 | 不拖 | 画布下沿读数带；11/16 行高 + 上下 6（6 为密集读数带的例外，见 §4 补充） |
 | `size.canvas` | fluid | 流式区域 | 不拖 | 剩余空间重算；参与布局，不参与 4px 内栅格 |
 | `size.tool` | 36 | 固定方形 | 不拖 | 左轨工具位；44 轨宽内 4 + 36 + 4 |
 | `size.panel.head` | 32 | 固定高度 | 不拖 | 右栏面板头；16/24 行高 + 4 + 4 |
@@ -99,7 +100,7 @@
 | 按钮 | 28 | 上下 4，左右 12 | 按钮间 8 | `size.button.height`、`space.buttonPadY`、`space.buttonPadX`、`space.buttonGap` |
 | 批次 | 78 | 上下 8，左右 16 | 卡间 12 | `size.batch.height`、`space.batchPadY`、`space.batchPadX`、`space.batchGap` |
 | 缩略卡 | 56 × 60 | 图 40；左右 8 | 图与题注 4 | `size.thumb.card`、`size.thumb.image`、`space.thumbGap` |
-| 状态栏 | 32 | 上下 8，左右 16 | 项间 24 | `size.statusbar.height`、`space.statusPadY`、`space.statusPadX`、`space.statusGap` |
+| 状态栏 | 28 | 上下 6，左右 16 | 项间 24 | `size.statusbar.height`、`space.statusPadY`、`space.statusPadX`、`space.statusGap` |
 | 标题栏 | 44 | 上下 12，左右 16 | 元素间 12 | `size.titlebar.height`、`space.titlePadY`、`space.titlePadX`、`space.titleGap` |
 | 菜单栏 | 32 | 不设垂直 padding（居中），左右 8 | 菜单项间 4 | `size.menubar.height`、`space.menuPadX`、`space.menuGap` |
 | 左轨 | 44 宽 | 上下左右 4 | 工具间 4 | `size.rail.width`、`space.railPad`、`space.toolGap` |
@@ -108,7 +109,7 @@
 补充：
 
 - 菜单项高度 28（`size.menuItem.height`），左右 12（`space.menuItemPadX`）；菜单栏 32 内垂直居中，不再加 6px padding。
-- 状态栏 32 = 8 + 16 + 8；11/16 居中，上下 padding 8；1px 上边线含在 8 内。
+- 状态栏 28 = 6 + 16 + 6；11/16 居中，上下 padding 6。这里的 6 是六级间距之外的**唯一例外**，理由与 1px 线、78 批次同属密集读数带：状态栏要压到 28 才能与批次条（折叠 28）、标签条（28）齐平，而 8 + 16 + 8 = 32 会把它顶成区域高度的最大值。除状态栏外任何 gap、padding、margin 都不得取 6。
 - 标题栏 44 = 12 + 20 + 12；13/20 居中；1px 下边线含在 12 内。
 - 批次 78 = 1px 上边 + 8 + 60 + 8 + 1px 下边；60 卡高 = 40 图 + 4 + 16 题注。
 - 区域外尺寸（标题/菜单/左轨/右栏/批次/状态）含 1px 边线；组件高度（字段行/表头/表行/按钮/面板头/段头）不含 1px 分隔线。
@@ -170,7 +171,7 @@
 | `space.batchPadY` | 8 | `space.control` | 批次上下 |
 | `space.batchPadX` | 16 | `space.panel` | 批次左右 |
 | `space.batchGap` | 12 | `space.inset` | 缩略卡之间 |
-| `space.statusPadY` | 8 | `space.control` | 状态栏上下 |
+| `space.statusPadY` | 6 | 例外（见 §4 补充） | 状态栏上下 |
 | `space.statusPadX` | 16 | `space.panel` | 状态栏左右 |
 | `space.statusGap` | 24 | `space.section` | 状态项之间 |
 | `space.titlePadY` | 12 | `space.inset` | 标题栏上下留白 |
