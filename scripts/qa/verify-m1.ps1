@@ -3,14 +3,14 @@
     M1 插件骨架的只读质量检查脚本。
 
 .DESCRIPTION
-    在完整树上检查六类约束：引用方向、机制层词表、通配引用计数、工程 README、平台专属符号与壳契约纯度。
+    在完整树上检查七类约束：引用方向、机制层词表、通配引用计数、工程 README、平台专属符号、壳契约纯度与 Bootstrap 无 UI 引用。
     每项打印 PASS/FAIL 及一行原因；任一项失败时退出码为 1。脚本只读，不修改任何文件。
 
 .NOTES
     运行方式：pwsh scripts/qa/verify-m1.ps1
-    退出码：0 表示六项全部 PASS；1 表示至少一项 FAIL。
+    退出码：0 表示七项全部 PASS；1 表示至少一项 FAIL。
     新增检查项时同步更新本注释、本脚本与 scripts/qa/README.md。
-    ponytail：六类检查是 M1 的最小集；G2 之后扩到依赖树与清单校验。
+    ponytail：七类检查是 M1 的最小集；G2 之后扩到依赖树与清单校验。
 #>
 
 #Requires -Version 7.0
@@ -447,6 +447,34 @@ function Test-ShellContractPurity {
         -Reason 'Shell.Contracts 只有一条到 ImageLyre.Contracts 的 ProjectReference，且无 PackageReference。'
 }
 
+function Test-BootstrapUiFree {
+    $project = Join-Path $script:repoRoot 'src\App\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj'
+    if (-not (Test-Path -LiteralPath $project)) {
+        return New-CheckResult -Name '7. Bootstrap 无 UI 引用' -Pass $false -Reason '未找到 ImageLyre.Bootstrap.csproj。'
+    }
+
+    $details = [System.Collections.Generic.List[string]]::new()
+    foreach ($reference in @(Get-ProjectReferenceIncludes -ProjectPath $project)) {
+        if ($reference -match '(?i)ImageLyre\.Presentation\.') {
+            $details.Add("ProjectReference：$reference")
+        }
+    }
+
+    foreach ($package in @(Get-PackageReferenceIncludes -ProjectPath $project)) {
+        if ($package -match '(?i)^(Avalonia|AtomUI)') {
+            $details.Add("PackageReference：$package")
+        }
+    }
+
+    if ($details.Count -gt 0) {
+        return New-CheckResult -Name '7. Bootstrap 无 UI 引用' -Pass $false `
+            -Reason 'Bootstrap 引用了 Avalonia/AtomUI 或 Presentation 工程。' -Details @($details)
+    }
+
+    return New-CheckResult -Name '7. Bootstrap 无 UI 引用' -Pass $true `
+        -Reason 'Bootstrap 的 ProjectReference 未指向 ImageLyre.Presentation.*，PackageReference 无 Avalonia/AtomUI。'
+}
+
 try {
     $checks = @(
         (Test-ReferenceDirection),
@@ -454,7 +482,8 @@ try {
         (Test-WildcardReferenceCount),
         (Test-ReadmePresence),
         (Test-PlatformSymbols),
-        (Test-ShellContractPurity))
+        (Test-ShellContractPurity),
+        (Test-BootstrapUiFree))
 }
 catch {
     Write-Host "FAIL 脚本执行异常：$($_.Exception.Message)" -ForegroundColor Red
@@ -480,5 +509,5 @@ if ($failed -gt 0) {
     exit 1
 }
 
-Write-Host '结果：6 项全部 PASS。' -ForegroundColor Green
+Write-Host "结果：$($checks.Count) 项全部 PASS。" -ForegroundColor Green
 exit 0

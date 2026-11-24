@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- xUnit v3 的测试项目本身就是可执行程序，dotnet test 走 global.json 指定的 MTP runner。 -->
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="FluentAssertions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 第 8 套测试：只验证桌面 Presentation 的计划与入口契约，不启动真实窗口。 -->
+    <ProjectReference Include="..\..\src\App\ImageLyre.Presentation.Desktop\ImageLyre.Presentation.Desktop.csproj" />
+  </ItemGroup>
+
+</Project>

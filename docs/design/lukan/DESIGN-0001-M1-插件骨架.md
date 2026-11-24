@@ -76,8 +76,9 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 
 | 工程 | 目录 | 类型 | 职责与依赖 |
 | :--- | :--- | :--- | :--- |
-| `ImageLyre.App` | `src/App/ImageLyre.App` | 进程入口与编排（L5） | 解析启动参数并选择宿主模式：桌面模式显示启动画面与欢迎界面、驱动 Bootstrap、创建槽位管理器与菜单注册表、注入、触发附着、取主窗体挂到桌面；CLI 模式无窗口、无槽位、无 Feature，驱动 Bootstrap 后执行命令并退出；不构建主窗体、不贡献槽位、不定义主界面布局；引用 Bootstrap、`ImageLyre.Contracts`（本地化契约）、`ImageLyre.Shell.Contracts`、`ImageLyre.Shell.Menus`（创建注册表实例）、cangming 机制包（只读管理器与插件清单，不引实现包）、Avalonia、AtomUI |
-| `ImageLyre.Bootstrap` | `src/App/ImageLyre.Bootstrap` | 启动链（L1，无 UI） | 日志初始化、扫描前缀、容器构建、`PicoPluginSystem.Launch`、管理器解析、`NotifyServiceProviderBuilt`、`StartAsync`、能力插件计数日志、关停；引用 cangming 机制包与契约，不引用 Avalonia、AtomUI 或任何插件 |
+| `ImageLyre.App` | `src/App/ImageLyre.App` | 进程入口与宿主分派（L5） | 解析启动参数、固定 UTF-8、选择桌面或 CLI，并把桌面生命周期转交 `ImageLyre.Presentation.Desktop`；CLI 分支使用 `ImageLyre.Bootstrap` 的 HostPlan 执行命令后退出；不显示窗口、不创建槽位、不取壳、不写启动项顺序；引用 Presentation、Bootstrap、`ImageLyre.Contracts`、Avalonia、AtomUI |
+| `ImageLyre.Presentation.Desktop` | `src/App/ImageLyre.Presentation.Desktop` | 桌面 Presentation（L5） | 承载桌面 `PresentationPlan`、欢迎窗、AtomUI 主题注册、槽位管理器、取壳、Feature 附着、主窗体显示、冒烟回调与桌面 StopPlan；引用 Bootstrap、`ImageLyre.Contracts`、`ImageLyre.Shell.Contracts`、Avalonia、AtomUI；不引用 App，也不被 Bootstrap 引用 |
+| `ImageLyre.Bootstrap` | `src/App/ImageLyre.Bootstrap` | 启动链与宿主（L1，无 UI） | Generic Host 构建、日志初始化、扫描前缀、`PicoPluginSystem.Launch`、插件复合 Step、HostPlan、`StartupReport`、`ExitArbiter`、能力插件计数与关停；引用 cangming 机制包与契约，不引用 Avalonia、AtomUI、任何插件或 Presentation 工程 |
 | `ImageLyre.Domains` | `src/Infrastructure/Contracts/ImageLyre.Domains` | 领域对象与纯算法（M1 为空工程） | 只放跨插件共享且带不变量的数据与纯函数；不引用 `ImageLyre.Contracts`、不引用 UI、不引 DI 与日志；M1 只有 README 与空 csproj |
 | `ImageLyre.Contracts` | `src/Infrastructure/Contracts/ImageLyre.Contracts` | 产品契约（无 UI） | `ILocalizationService`、`ILocalizationSource`；另抄录 `IPlatformCapabilities` 与 `IPerformanceMonitor` 两个架构级契约（`Platform/` 与 `Diagnostics/` 目录），抄录而非包引用，本仓可独立演进；不引用 Avalonia、AtomUI、SkiaSharp，也不引用任何 cangming 包 |
 | `ImageLyre.Shell.Contracts` | `src/Infrastructure/Contracts/ImageLyre.Shell.Contracts` | 壳契约 | `ShellSlots`、`IWorkbenchShell` 两个类型；只引用 `ImageLyre.Contracts`，不引用 Avalonia、不引用机制包、不引用任何插件工程——槽位名与窗口标记都是纯标识，没有理由把 UI 与机制拖进契约 |
@@ -103,6 +104,7 @@ M1 的目标是让插件机制在真实宿主上跑通，并证明 ADR-0001 §2.
 flowchart LR
     BOOT["ImageLyre.Bootstrap"]
     APP["ImageLyre.App"]
+    PD["ImageLyre.Presentation.Desktop"]
     SC["ImageLyre.Shell.Contracts"]
     SA["ImageLyre.Shell.Attachments"]
     DC["ImageLyre.Contracts"]
@@ -115,18 +117,24 @@ flowchart LR
     FD["ImageLyre.Feature.Diagnostics"]
     ABOUT["ImageLyre.Feature.About"]
 
+    APP --> PD
     APP --> BOOT
     APP --> SC
     APP --> DC
     APP --> CM
     APP --> AV["Avalonia / AtomUI"]
+    PD --> BOOT
+    PD --> SC
+    PD --> DC
+    PD --> MENUS
+    PD --> AVL["Avalonia"]
     BOOT --> CM["cangming 机制包"]
     BOOT --> DC
     SC --> DC
     SA --> DC
     SA --> CM
     SA --> TK["Cangming.Toolkit"]
-    SA --> AVL["Avalonia"]
+    SA --> AVL
     DC --> DN
     MS --> SC
     MS --> SA
@@ -136,7 +144,6 @@ flowchart LR
     APP --> LOC
     BOOT --> LOC
     MENUS --> SC
-    APP --> MENUS
     ABOUT --> SC
     ABOUT --> DC
     ABOUT --> AVL

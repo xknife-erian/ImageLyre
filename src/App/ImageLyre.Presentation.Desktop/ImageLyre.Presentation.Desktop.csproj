@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!--
+      桌面 Presentation 的控件与主题：Avalonia 承载桌面生命周期与基础控件，AtomUI 提供欢迎窗、
+      主窗体与设计语言；三者成对锁定在 Directory.Packages.props 的 UI 路线里。
+    -->
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="AtomUI.Desktop.Controls" />
+    <PackageReference Include="AtomUI.DesignLanguages.AntDesign" />
+    <PackageReference Include="AtomUI.Desktop.Controls.Themes.AntDesign" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Host 阶段的编排与 Step/Plan 契约在 Bootstrap；壳类型与产品契约各取所需。 -->
+    <ProjectReference Include="..\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Contracts\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+  </ItemGroup>
+
+  <!--
+    本工程是 L5 桌面 Presentation，不是 IHost：只承载欢迎窗、主题注册、槽位、取壳、主窗体与桌面 Plan。
+    不引用 ImageLyre.App（App 反向引用本工程），不引用任何 ImageLyre.Module.* / ImageLyre.Feature.* 插件工程；
+    Bootstrap 不反向引用本工程。边界变化先改 DESIGN-0001 §3.1/§3.2 与 ADR-0003，再动本文件。
+  -->
+
+</Project>
