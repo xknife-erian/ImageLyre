@@ -15,6 +15,9 @@
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="AtomUI.Desktop.Controls" />
+    <!-- AtomUI 6.3 起设计语言必须显式启用，这两个包提供 Ant Design 语言与桌面控件取值包。 -->
+    <PackageReference Include="AtomUI.DesignLanguages.AntDesign" />
+    <PackageReference Include="AtomUI.Desktop.Controls.Themes.AntDesign" />
   </ItemGroup>
 
   <ItemGroup>

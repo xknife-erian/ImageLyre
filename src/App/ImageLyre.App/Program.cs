@@ -1,6 +1,8 @@
 using System.Runtime.CompilerServices;
 using AtomUI;
+using AtomUI.DesignLanguages.AntDesign;
 using AtomUI.Desktop.Controls;
+using AtomUI.Desktop.Controls.Themes.AntDesign;
 using Avalonia;
 using ImageLyre.App.Cli;
 using ImageLyre.App.Localization;
@@ -87,7 +89,12 @@ public static class Program
 
         return AppBuilder.Configure<App>(() => new App(options, localization))
             .UseAtomUIPlatformDetect(AtomUIWindowingPlatform.Auto)
-            .UseAtomUI(builder => builder.UseDesktopControls())
+            .UseAtomUI(builder =>
+            {
+                builder.UseDesktopControls();
+                // AtomUI 6.3 起设计语言必须显式启用；只启控件包会在启动期抛 ThemeLoadException。
+                builder.UseAntDesign(language => language.AddDesktopControls());
+            })
             .StartWithClassicDesktopLifetime(args);
     }
 }

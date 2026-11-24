@@ -35,6 +35,7 @@
 | 0.31 | 2026-11-23 | 草稿 | lukan | M1 收口后的口径订正：cangming 明确为“子模块作源码锚点、编译只吃同名 NuGet 包”；三个平台能力插件改为长期保留，G2 用正式诊断面板替换 `Feature.Diagnostics`，因此 G 证据可复跑；CLI 无界面分支固定 UTF-8 输出；G 的冒烟证据收进 `scripts/qa/smoke-m1.ps1`，不再依赖仓外探针 |
 | 0.32 | 2026-11-23 | 草稿 | lukan | 新增宿主级菜单注册表 `ImageLyre.Shell.Menus`（契约在 `ImageLyre.Shell.Contracts/Menus`）与首个消费者 `ImageLyre.Feature.About`（帮助 → 关于）；菜单贡献从 G2 前移为最小实现（只有菜单、标题键与动作，命令 Id 与快捷键留 G2）；§3.1、§3.2、§4.1、§4.4、§5.7 同步 |
 | 1.0 | 2026-11-23 | 现行 | lukan | M1 完成确认：14 个工程、7 套测试 61 项全绿，A–G 与双宿主/多语言/三端约束验收通过；本文作为现行设计，后续按 G2–G5 演进 |
+| 1.1 | 2026-11-24 | 现行 | lukan | UI 路线升级到 AtomUI 6.3.0 与 Avalonia 12.2.0；补 §3.4 第二条实现级硬约束：设计语言必须显式启用，App 引语言包与桌面取值包并调用 `UseAntDesign(...)`，否则启动抛 `ThemeLoadException` |
 
 ## 1 目标与范围
 
@@ -364,6 +365,8 @@ CLI 骨架在 M1 只支持三条命令：`--version` 输出版本，`--plugins` 
 这条设计的判据是替换性：换掉壳插件（换布局、换 UI 路线）时，App 只改一行取窗代码的断言，不改启动链、不改 Bootstrap、不改任何 Feature。若某天 App 里出现“设置窗口尺寸、拼装面板、注册菜单”一类代码，说明壳的边界被破坏了。
 
 一条实现级硬约束：壳窗口必须派生自 `AtomUI.Desktop.Controls.Window`，不能直接用 `Avalonia.Controls.Window`。后者在 AtomUI 主题下没有 `OverlayLayer`，打开「文件」子菜单或任何 `Popup` 时会抛 `InvalidOperationException: Unable to create IPopupImpl and no overlay layer is found for the target control`；换成任何新 UI 路线前，先确认新基类提供 OverlayLayer。冒烟用 `LYRE_SMOKE_OPEN_MENU=1` 展开一次子菜单来守住这条，因为只验证「窗口出现、自关、退出码 0」的冒烟漏掉过它一次。
+
+第二条实现级硬约束（2026-11-24 起，AtomUI 6.3）：设计语言必须显式启用。只调 `UseDesktopControls()` 不再隐含 Ant Design 主题，启动会抛 `ThemeLoadException: No design language is enabled`。App 因此同时引用 `AtomUI.DesignLanguages.AntDesign` 与 `AtomUI.Desktop.Controls.Themes.AntDesign`，并在 `UseAtomUI` 回调里把 `UseAntDesign(language => language.AddDesktopControls())` 与 `UseDesktopControls()` 并列；升级 AtomUI 时必须整组升级语言包、取值包与控件包，缺一个都会在启动期报缺失包名。桌面冒烟覆盖这条：进程必须以退出码 0 完成一次窗口显示与自关。
 
 ### 3.5 槽位先于附着
 
