@@ -396,7 +396,7 @@ flowchart LR
 - **E5（报告与登记）**：`StartupReport` 必须是契约而不是调试输出；新工程必须改 `verify-m1.ps1` 的 roots 并新增第 8 套测试工程，文档表格不算登记。这两条写入第 5 项与 P0 退出条件。
 - **未决事项**：`ImageLyre.Themes` 的归属（Presentation.Desktop 还是独立主题库）不在本文范围内；ADR-0001 的 L5 行需要新增 `Presentation.Desktop` 还是另开 ADR，由 P0 决策。
 
-完整评分、质询与增长复核记录见 [`docs/analyses/lukan/2026-11-24-启动编排模式专家辩论.md`](../../analyses/lukan/2026-11-24-启动编排模式专家辩论.md)。
+完整评分、质询与增长复核记录见 [`docs/reviews/lukan/2026-11-24_启动编排模式专家辩论.md`](../../reviews/lukan/2026-11-24_启动编排模式专家辩论.md)。
 
 ## 11 迁移路线（待作者拍板）
 
