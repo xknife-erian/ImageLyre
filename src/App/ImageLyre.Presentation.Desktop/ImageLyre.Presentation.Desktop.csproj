@@ -12,10 +12,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Host 阶段的编排与 Step/Plan 契约在 Bootstrap；壳类型与产品契约各取所需。 -->
+    <!--
+      槽位、取壳与 Feature 附着直接读取 cangming 的插件管理器与 SlotManager，
+      菜单注册表与壳契约按用途显式声明，不靠 Bootstrap 的传递引用。
+    -->
+    <PackageReference Include="Cangming.PicoPlugins" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Host 阶段的编排与 Step/Plan 契约在 Bootstrap；壳类型、产品契约与菜单注册表各取所需。 -->
     <ProjectReference Include="..\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Contracts\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ImageLyre.Shell.Menus\ImageLyre.Shell.Menus.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- PresentationPlan 与槽位步骤是内部类型，第 8 套测试直接断言它们的组序与步骤顺序。 -->
+    <InternalsVisibleTo Include="UnitTest.ImageLyre.Presentation.Desktop" />
   </ItemGroup>
 
   <!--

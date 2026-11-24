@@ -1,9 +1,9 @@
 using System.Globalization;
 using ImageLyre.Contracts;
 
-namespace ImageLyre.App.Localization;
+namespace ImageLyre.Presentation.Desktop.Localization;
 
-/// <summary>欢迎窗口使用的 App 自有资源键，集中定义以免写入方与资源源各写一份字面量。</summary>
+/// <summary>欢迎窗口使用的桌面入口自有资源键，集中定义以免写入方与资源源各写一份字面量。</summary>
 internal static class AppStringKeys
 {
     /// <summary>产品名，窗口标题与主标题共用。</summary>
@@ -19,10 +19,10 @@ internal static class AppStringKeys
     internal static string Failed => "lyre.app.failed";
 }
 
-/// <summary>App 自有界面文案源，M1 只提供欢迎窗口用到的四枚资源键。</summary>
+/// <summary>桌面入口自有界面文案源，M1 只提供欢迎窗口用到的四枚资源键。</summary>
 /// <remarks>
 /// <para>
-/// 资源键以 <c>lyre.app.</c> 开头，与壳的 <c>lyre.shell.*</c> 和插件的 Id 前缀分开，因此壳或插件后注册同名键也不会覆盖 App 的文案；
+/// 资源键以 <c>lyre.app.</c> 开头，与壳的 <c>lyre.shell.*</c> 和插件的 Id 前缀分开，因此壳或插件后注册同名键也不会覆盖这里的文案；
 /// 本类型只做键到文案的静态映射，不负责回退、缓存或语言切换，那些语义由 <see cref="ILocalizationService"/> 统一承担。
 /// </para>
 /// <para>

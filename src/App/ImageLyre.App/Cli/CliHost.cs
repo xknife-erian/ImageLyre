@@ -3,11 +3,11 @@ using System.Reflection;
 using Cangming.PicoPlugins;
 using Cangming.PicoPlugins.Core;
 using Cangming.PicoPlugins.Core.Features;
-using ImageLyre.App.Localization;
 using ImageLyre.App.Startup;
 using ImageLyre.Bootstrap;
 using ImageLyre.Contracts;
 using ImageLyre.Localization;
+using ImageLyre.Presentation.Desktop.Localization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ImageLyre.App.Cli;

@@ -11,13 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- 桌面 UI 路线：Avalonia 承载生命周期与基础控件，AtomUI 提供欢迎窗口的控件与主题。 -->
+    <!--
+      桌面 UI 路线：Avalonia 承载生命周期与基础控件，AtomUI 桌面控件包提供 UseAtomUI 与平台探测；
+      欢迎窗控件与 Ant Design 设计语言随 Presentation 工程进入运行时，本工程不直接引用那两个主题包。
+    -->
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="AtomUI.Desktop.Controls" />
-    <!-- AtomUI 6.3 起设计语言必须显式启用，这两个包提供 Ant Design 语言与桌面控件取值包。 -->
-    <PackageReference Include="AtomUI.DesignLanguages.AntDesign" />
-    <PackageReference Include="AtomUI.Desktop.Controls.Themes.AntDesign" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,17 +30,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- 启动链在 Bootstrap，本地化实现在 Localization，契约提供 ILocalizationService 与 ILocalizationSource。 -->
+    <!--
+      启动链与桌面入口：CLI 继续使用 Bootstrap 的兼容入口；桌面分支只转交 Presentation.Desktop，
+      欢迎窗、槽位、取壳与 PresentationPlan 都在 L5 工程里。
+    -->
     <ProjectReference Include="..\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj" />
+    <ProjectReference Include="..\ImageLyre.Presentation.Desktop\ImageLyre.Presentation.Desktop.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ImageLyre.Localization\ImageLyre.Localization.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Contracts\ImageLyre.Contracts\ImageLyre.Contracts.csproj" />
-    <!--
-      T12 的取壳编排需要 IWorkbenchShell 类型，这是 L5→L0 的合法依赖；只加这一个契约工程，
-      不按名字引用插件、Shell.Attachments 或路线包，它们的产物由插件归并目标进入输出目录。
-    -->
-    <ProjectReference Include="..\..\Infrastructure\Contracts\ImageLyre.Shell.Contracts\ImageLyre.Shell.Contracts.csproj" />
-    <!-- 菜单注册表是宿主级基础设施（与本地化同类），App 创建实例并在容器里注册同一份给壳与 Feature 使用。 -->
-    <ProjectReference Include="..\..\Infrastructure\ImageLyre.Shell.Menus\ImageLyre.Shell.Menus.csproj" />
   </ItemGroup>
 
   <!--

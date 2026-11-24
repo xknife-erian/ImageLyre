@@ -2,9 +2,7 @@
 
 ## 意义
 
-本工程是第 8 套测试，守住 `ImageLyre.Presentation.Desktop` 的桌面 Presentation 契约：`PresentationPlan` 的组与顺序、桌面启动选项的映射、欢迎窗到主窗体的装配顺序，以及桌面 `StopPlan` 的释放语义。它把“桌面启动到底按什么顺序发生”变成可断言的数据，而不是只能靠启动日志与人工点窗口确认。
-
-T01 阶段本工程只有工程骨架与 README，尚无测试类；测试随 T05–T07 的 Presentation 骨架与 Plan 实现一并补入，先写失败测试再写实现。
+本工程是第 8 套测试，守住 `ImageLyre.Presentation.Desktop` 的桌面 Presentation 契约：`PresentationPlan` 的组序与步骤顺序、欢迎窗到主窗体的装配顺序，以及后续桌面 `StopPlan` 的释放语义。它把“桌面启动到底按什么顺序发生”变成可断言的数据，而不是只能靠启动日志与人工点窗口确认。当前只有 `Startup/PresentationPlanTests.cs`，断言 `welcome`/`composition`/`show` 三组的固定组序、组容量与扁平后的 Step Id 序列；装配顺序的失败回滚与关停语义随 T09/T10 补入。
 
 ## 边界（不放什么）
 
@@ -14,7 +12,7 @@ T01 阶段本工程只有工程骨架与 README，尚无测试类；测试随 T0
 
 ## 依赖方向
 
-引用 `ImageLyre.Presentation.Desktop`、`xunit.v3`、`xunit.runner.visualstudio`、`Microsoft.NET.Test.Sdk` 与 `FluentAssertions`；不引用 `ImageLyre.App`、不引用任何 UI 或插件工程。被 `src/ImageLyre.slnx` 引用。
+引用 `ImageLyre.Presentation.Desktop`、`xunit.v3`、`xunit.runner.visualstudio`、`Microsoft.NET.Test.Sdk` 与 `FluentAssertions`；不引用 `ImageLyre.App`、不引用任何 UI 或插件工程。`PresentationPlan` 与各 Step 是 Presentation 的内部类型，测试经工程里的 `InternalsVisibleTo` 访问，不为了测试把它们改成公开契约。被 `src/ImageLyre.slnx` 引用。
 
 ## 怎么跑
 

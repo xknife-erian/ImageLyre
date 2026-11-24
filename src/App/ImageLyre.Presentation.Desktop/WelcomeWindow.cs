@@ -2,24 +2,23 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using ImageLyre.App.Localization;
-using ImageLyre.App.Startup;
 using ImageLyre.Contracts;
+using ImageLyre.Presentation.Desktop.Localization;
 using AtomCard = AtomUI.Desktop.Controls.Card;
 using AtomSpace = AtomUI.Desktop.Controls.Space;
 using AtomTextBlock = AtomUI.Desktop.Controls.TextBlock;
 
-namespace ImageLyre.App;
+namespace ImageLyre.Presentation.Desktop;
 
 /// <summary>启动期显示的欢迎窗口：产品名、程序集版本与一行状态文本。</summary>
 /// <remarks>
 /// <para>
-/// 窗口骨架必须在插件系统就绪之前存在，因此完全由 App 构造、不依赖任何插件或槽位；文案全部经 <see cref="ILocalizationService.Get"/> 取得，
-/// 控件走 AtomUI 的默认主题，从而与将来壳窗口的视觉基线一致。
+/// 窗口骨架必须在插件系统就绪之前存在，因此完全由 <see cref="Startup.DesktopStartup"/> 构造、不依赖任何插件或槽位；
+/// 文案全部经 <see cref="ILocalizationService.Get"/> 取得，控件走 AtomUI 的默认主题，从而与将来壳窗口的视觉基线一致。
 /// </para>
 /// <para>
-/// 生命周期：实例由 <see cref="App"/> 创建并挂到桌面主窗口，关闭即结束进程；M1 不订阅 <see cref="ILocalizationService.LanguageChanged"/>，
-/// 欢迎界面是静态占位，语言切换后的刷新留给 T15 的壳文案任务。
+/// 生命周期：实例由桌面入口创建并挂到桌面主窗口，主窗体显示后由 PresentationPlan 的显示组关闭；M1 不订阅
+/// <see cref="ILocalizationService.LanguageChanged"/>，欢迎界面是静态占位，语言切换后的刷新留给 T15 的壳文案任务。
 /// </para>
 /// </remarks>
 public sealed class WelcomeWindow : Window
@@ -29,17 +28,11 @@ public sealed class WelcomeWindow : Window
 
     /// <summary>创建一个欢迎窗口。</summary>
     /// <param name="localization">文案服务，窗口内的每个字符串都从它取得。</param>
-    /// <param name="options">启动参数解析结果，只用于断言当前不是无界面分支。</param>
-    /// <exception cref="ArgumentNullException"><paramref name="localization"/> 或 <paramref name="options"/> 为 <see langword="null"/>。</exception>
-    /// <exception cref="InvalidOperationException"><paramref name="options"/> 表示无界面分支。</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="localization"/> 为 <see langword="null"/>。</exception>
     /// <remarks>构造必须在 UI 线程执行；本类不创建线程，也不持有需要释放的资源。</remarks>
-    public WelcomeWindow(ILocalizationService localization, StartupOptions options)
+    public WelcomeWindow(ILocalizationService localization)
     {
         ArgumentNullException.ThrowIfNull(localization);
-        ArgumentNullException.ThrowIfNull(options);
-
-        if (options.Headless)
-            throw new InvalidOperationException("无界面分支不得创建欢迎窗口。");
 
         _localization = localization;
         string product = localization.Get(AppStringKeys.Product);

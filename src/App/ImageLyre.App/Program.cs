@@ -1,20 +1,19 @@
 using System.Runtime.CompilerServices;
 using AtomUI;
-using AtomUI.DesignLanguages.AntDesign;
 using AtomUI.Desktop.Controls;
-using AtomUI.Desktop.Controls.Themes.AntDesign;
 using Avalonia;
 using ImageLyre.App.Cli;
-using ImageLyre.App.Localization;
 using ImageLyre.App.Startup;
 using ImageLyre.Localization;
+using ImageLyre.Presentation.Desktop;
+using ImageLyre.Presentation.Desktop.Localization;
 
 namespace ImageLyre.App;
 
 /// <summary>进程入口：先解析命令，再决定走桌面宿主还是 CLI。</summary>
 /// <remarks>
 /// <para>
-/// 命令行参数由 <see cref="StartupOptions.Parse"/> 解析；桌面命令在 <see cref="RunDesktop"/> 里创建本地化服务并启动
+/// 命令行参数由 <see cref="StartupOptions.Parse"/> 解析；桌面命令在 <see cref="RunDesktop"/> 里创建本地化服务与日志工厂并启动
 /// AtomUI 桌面生命周期，其余命令交给 <see cref="CliHost.RunAsync"/> 并在无界面条件下返回它的退出码。
 /// </para>
 /// <para>
@@ -38,7 +37,7 @@ public static class Program
         StartupOptions options = StartupOptions.Parse(args);
 
         if (options.Command == StartupCommand.Desktop)
-            return RunDesktop(options, args);
+            return RunDesktop(args);
 
         return CliHost.RunAsync(options, Console.Out, Console.Error, CancellationToken.None).GetAwaiter().GetResult();
     }
@@ -73,28 +72,25 @@ public static class Program
         }
     }
 
-    /// <summary>创建本地化服务并启动桌面宿主。</summary>
-    /// <param name="options">启动参数解析结果。</param>
+    /// <summary>创建本地化服务与日志工厂，启动 AtomUI 桌面宿主。</summary>
     /// <param name="args">原样传给 Avalonia 生命周期的命令行参数。</param>
     /// <returns>Avalonia 经典桌面生命周期的退出码。</returns>
     /// <remarks>
     /// 单独成方法并禁止内联，是为了让 <see cref="Main"/> 的 CLI 分支在 JIT 期也不必解析 Avalonia 与 AtomUI 的类型引用，
     /// 从而把“无界面分支不初始化 Avalonia”固定在代码形状上，而不只依赖运行期恰好没有走到这一支。
+    /// AtomUI 的控件包与设计语言登记在 <see cref="DesktopEntry.ConfigureAtomUI"/>，本方法只把它接进 AppBuilder，
+    /// 便于测试与替换；日志工厂交给 Presentation 建立 Host 之用，本身不持有可释放资源。
     /// </remarks>
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static int RunDesktop(StartupOptions options, string[] args)
+    private static int RunDesktop(string[] args)
     {
         var localization = new LocalizationService();
         localization.AddSource(new AppStringSource());
+        var loggerFactory = new StderrLoggerFactory(Console.Error);
 
-        return AppBuilder.Configure<App>(() => new App(options, localization))
+        return AppBuilder.Configure<App>(() => new App(localization, loggerFactory))
             .UseAtomUIPlatformDetect(AtomUIWindowingPlatform.Auto)
-            .UseAtomUI(builder =>
-            {
-                builder.UseDesktopControls();
-                // AtomUI 6.3 起设计语言必须显式启用；只启控件包会在启动期抛 ThemeLoadException。
-                builder.UseAntDesign(language => language.AddDesktopControls());
-            })
+            .UseAtomUI(DesktopEntry.ConfigureAtomUI)
             .StartWithClassicDesktopLifetime(args);
     }
 }
