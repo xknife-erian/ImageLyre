@@ -5,16 +5,18 @@ using Microsoft.Extensions.Logging;
 
 namespace ImageLyre.Presentation.Desktop.Startup;
 
-/// <summary>桌面关停的收口：用 <see cref="ExitArbiter"/> 保证开始与关停各一次，关停先释放壳窗体、再停止宿主并可等待。</summary>
+/// <summary>桌面关停的收口：用 <see cref="ExitArbiter"/> 保证开始与关停各一次，关停先关闭壳窗体、再停止宿主并可等待。</summary>
 /// <remarks>
 /// <para>
 /// 状态与“只关停一次、停止可先于开始、返回同一个任务”的语义由 <see cref="ExitArbiter"/> 提供；本类只持有本次启动的宿主与
-/// 壳窗体，并在关闭动作里按“释放壳窗体 → 停止宿主 → 释放宿主”的固定顺序执行，避免插件停止后控件仍被访问。
+/// 壳窗体，并在关闭动作里把两者交给 <see cref="DesktopStopPlan"/>，按“关闭壳窗体 → 停止宿主 → 释放宿主”的固定顺序执行，
+/// 避免插件停止后控件仍被访问。
 /// </para>
 /// <para>
 /// 登记与关停的互斥用一把锁：<see cref="AttachHost"/> 与 <see cref="AttachShell"/> 在锁内检查关停状态，关闭动作在锁内取走引用，
 /// 因此关停先到时登记返回 false 由调用方自行释放，登记先到时关闭动作一定能取到引用，不会漏停。
-/// 宿主停止失败只写调试输出，不反向阻断退出；超时与超时后失败由 <see cref="ExitArbiter"/> 记录日志。
+/// 宿主停止异常由 <see cref="DesktopStopPlan"/> 原样抛出并交给 <see cref="ExitArbiter"/> 的等待方，由桌面入口记录；
+/// 超时与超时后失败也由 <see cref="ExitArbiter"/> 记录日志。
 /// </para>
 /// </remarks>
 internal sealed class DesktopShutdown
@@ -47,8 +49,8 @@ internal sealed class DesktopShutdown
     internal bool IsStopped => _exit.IsStopped;
 
     /// <summary>执行或等待唯一一次关停；重复调用与并发调用返回同一个任务。</summary>
-    /// <returns>关停完成的任务；超时为 <see cref="TimeoutException"/>，其余宿主停止异常按本类策略收敛为调试输出。</returns>
-    internal Task StopAsync() => _exit.StopAsync();
+    /// <returns>关停完成的任务；超时为 <see cref="TimeoutException"/>，宿主停止异常原样传给等待方。</returns>
+    internal Task StopAsync() => _exit.TryStopAsync();
 
     /// <summary>登记本次启动的宿主，让关闭动作负责停止它。</summary>
     /// <param name="host">已构建但可能尚未启动的宿主。</param>
@@ -69,9 +71,9 @@ internal sealed class DesktopShutdown
         }
     }
 
-    /// <summary>登记主窗体，让关闭动作在停止宿主之前先释放它。</summary>
-    /// <param name="shell">壳插件产出的主窗体，关停时若实现 <see cref="IDisposable"/> 则被释放。</param>
-    /// <returns>登记成功返回 <see langword="true"/>；已经关停时返回 <see langword="false"/>，调用方必须自行释放窗体。</returns>
+    /// <summary>登记主窗体，让关闭动作在停止宿主之前先关闭它。</summary>
+    /// <param name="shell">壳插件产出的主窗体，关停时被关闭。</param>
+    /// <returns>登记成功返回 <see langword="true"/>；已经关停时返回 <see langword="false"/>，调用方必须自行关闭窗体。</returns>
     /// <exception cref="ArgumentNullException"><paramref name="shell"/> 为 <see langword="null"/>。</exception>
     internal bool AttachShell(Window shell)
     {
@@ -87,7 +89,7 @@ internal sealed class DesktopShutdown
         }
     }
 
-    /// <summary>关闭动作：先释放壳窗体，再停止并释放宿主；只由 <see cref="ExitArbiter"/> 执行一次。</summary>
+    /// <summary>关闭动作：把本次启动的壳窗体与宿主交给 <see cref="DesktopStopPlan"/>；只由 <see cref="ExitArbiter"/> 执行一次。</summary>
     /// <param name="cancellationToken">超时后取消的令牌，传给宿主停止方法。</param>
     /// <returns>关停完成的任务。</returns>
     private async Task StopCoreAsync(CancellationToken cancellationToken)
@@ -103,24 +105,6 @@ internal sealed class DesktopShutdown
             _host = null;
         }
 
-        if (shell is IDisposable disposable)
-            disposable.Dispose();
-
-        if (host is null)
-            return;
-
-        try
-        {
-            await host.StopAsync(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            // ponytail: 关停失败没有日志出口，WinExe 下 stderr 不可见；关停异常不反向阻断退出，日志管线接入后改记日志。
-            System.Diagnostics.Debug.WriteLine($"宿主关停失败：{ex}");
-        }
-        finally
-        {
-            host.Dispose();
-        }
+        await DesktopStopPlan.ExecuteAsync(shell, host, cancellationToken);
     }
 }

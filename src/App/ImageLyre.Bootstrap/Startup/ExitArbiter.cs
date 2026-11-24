@@ -6,12 +6,12 @@ namespace ImageLyre.Bootstrap.Startup;
 /// <remarks>
 /// <para>
 /// 状态只有三个：Idle → Begun → Stopped。<see cref="TryBegin"/> 用比较交换从 Idle 迁移到 Begun，
-/// <see cref="StopAsync"/> 从任意状态迁移到 Stopped 并返回同一个任务；因此停止先于开始时，迟到的 <see cref="TryBegin"/> 一律返回 false。
+/// <see cref="TryStopAsync"/> 从任意状态迁移到 Stopped 并返回同一个任务；因此停止先于开始时，迟到的 <see cref="TryBegin"/> 一律返回 false。
 /// 状态用 <see cref="Interlocked"/> 维护，任务缓存与动作启动在 <c>_gate</c> 内完成，读状态不加锁。
 /// </para>
 /// <para>
 /// 关闭动作接收一个在超时后取消的令牌，调用方应把令牌继续传给宿主的停止方法；超过 <c>timeout</c> 时
-/// <see cref="StopAsync"/> 记录警告并抛出 <see cref="TimeoutException"/>，而关闭动作自身抛出的异常原样传给等待方，
+/// <see cref="TryStopAsync"/> 记录警告并抛出 <see cref="TimeoutException"/>，而关闭动作自身抛出的异常原样传给等待方，
 /// 不会被超时或取消掩盖。超时后动作若才失败，异常经日志记录而不是静默丢弃。
 /// </para>
 /// <para>
@@ -53,7 +53,7 @@ public sealed class ExitArbiter
 
     /// <summary>尝试开始一次启动；只有从未开始且从未关停时成功。</summary>
     /// <returns>首次调用返回 <see langword="true"/>；已经开始或已经关停时返回 <see langword="false"/>。</returns>
-    /// <remarks>本方法无锁，与 <see cref="StopAsync"/> 并发调用时以比较交换的结果为准，不会出现既开始又关停的状态。</remarks>
+    /// <remarks>本方法无锁，与 <see cref="TryStopAsync"/> 并发调用时以比较交换的结果为准，不会出现既开始又关停的状态。</remarks>
     public bool TryBegin() => Interlocked.CompareExchange(ref _state, Begun, Idle) == Idle;
 
     /// <summary>是否已经进入关停。</summary>
@@ -66,7 +66,7 @@ public sealed class ExitArbiter
     /// 停止先于开始时也执行关闭动作，从而让“启动尚未登记资源就退出”的路径仍有唯一的清理点；
     /// 动作只启动一次，之后的所有调用都返回同一个任务，等待方因此都能观察到相同的完成或失败。
     /// </remarks>
-    public Task StopAsync()
+    public Task TryStopAsync()
     {
         Task task;
 

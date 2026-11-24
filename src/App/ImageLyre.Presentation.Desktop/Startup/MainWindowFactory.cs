@@ -41,8 +41,9 @@ internal static class MainWindowFactory
     /// <exception cref="ArgumentNullException"><paramref name="pluginManager"/> 或 <paramref name="slotManager"/> 为 <see langword="null"/>。</exception>
     /// <exception cref="InvalidOperationException">壳插件未装载，或其产物不是 <see cref="Window"/>。</exception>
     /// <remarks>
-    /// 本方法必须在 UI 线程执行，因为取壳会构造窗口与控件；槽位断言失败时先释放已经构造的窗体再抛出，
-    /// 避免调用方拿不到引用而把半构造的壳留在内存里。
+    /// 本方法必须在 UI 线程执行，因为取壳会构造窗口与控件；槽位断言失败时先关闭已经构造的窗体再抛出，
+    /// 避免调用方拿不到引用而把半构造的壳留在内存里。关闭走 <see cref="DesktopStopPlan.CloseShell"/>，
+    /// 因为 Avalonia 的 <see cref="Window"/> 不实现 <see cref="IDisposable"/>，释放窗体只有关闭一条路。
     /// </remarks>
     internal static Window BuildShell(IPluginManager pluginManager, SlotManager slotManager)
     {
@@ -63,8 +64,8 @@ internal static class MainWindowFactory
         }
         catch
         {
-            // ponytail: 只释放 Avalonia 窗体；壳插件自己持有的其它资源由 T09 的 StopPlan 接手。
-            (window as IDisposable)?.Dispose();
+            // 关窗会触发平台关闭并回收控件；壳插件自己持有的其它资源由桌面关停序列接手。
+            DesktopStopPlan.CloseShell(window);
             throw;
         }
 

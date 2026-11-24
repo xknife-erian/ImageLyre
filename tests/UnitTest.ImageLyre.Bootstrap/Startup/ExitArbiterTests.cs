@@ -10,7 +10,7 @@ namespace ImageLyre.Bootstrap.Tests.Startup;
 /// <summary>守住启动关停的并发契约：关闭动作只执行一次、返回同一个任务、停止可先于开始、超时有日志且异常不被吞掉。</summary>
 public sealed class ExitArbiterTests
 {
-    [Fact(DisplayName = "1.64 个并发 StopAsync 只执行一次关闭动作并返回同一个任务")]
+    [Fact(DisplayName = "1.64 个并发 TryStopAsync 只执行一次关闭动作并返回同一个任务")]
     public async Task Test001()
     {
         // Arrange
@@ -28,7 +28,7 @@ public sealed class ExitArbiterTests
         var results = new ConcurrentBag<Task>();
 
         // Act
-        Parallel.For(0, 64, _ => results.Add(arbiter.StopAsync()));
+        Parallel.For(0, 64, _ => results.Add(arbiter.TryStopAsync()));
         await started.Task;
         release.SetResult();
         await Task.WhenAll(results);
@@ -39,7 +39,7 @@ public sealed class ExitArbiterTests
         results.Should().AllSatisfy(task => task.Should().BeSameAs(first));
     }
 
-    [Fact(DisplayName = "2.StopAsync 先于 TryBegin 时关闭动作执行一次，之后 TryBegin 一律返回 false")]
+    [Fact(DisplayName = "2.TryStopAsync 先于 TryBegin 时关闭动作执行一次，之后 TryBegin 一律返回 false")]
     public async Task Test002()
     {
         // Arrange
@@ -53,7 +53,7 @@ public sealed class ExitArbiterTests
             NullLogger<ExitArbiter>.Instance);
 
         // Act
-        await arbiter.StopAsync();
+        await arbiter.TryStopAsync();
 
         // Assert
         calls.Should().Be(1);
@@ -76,17 +76,17 @@ public sealed class ExitArbiterTests
             loggerFactory.CreateLogger<ExitArbiter>());
 
         // Act
-        Task first = arbiter.StopAsync();
+        Task first = arbiter.TryStopAsync();
 
         // Assert
         await first.Awaiting(task => task).Should().ThrowAsync<TimeoutException>();
         calls.Should().Be(1);
         loggerFactory.Messages.Should().Contain(message => message.Contains("超时", StringComparison.Ordinal));
-        arbiter.StopAsync().Should().BeSameAs(first);
+        arbiter.TryStopAsync().Should().BeSameAs(first);
         calls.Should().Be(1);
     }
 
-    [Fact(DisplayName = "4.关闭动作抛出的原始异常原样传播，重复 StopAsync 不重跑动作且返回同一任务")]
+    [Fact(DisplayName = "4.关闭动作抛出的原始异常原样传播，重复 TryStopAsync 不重跑动作且返回同一任务")]
     public async Task Test004()
     {
         // Arrange
@@ -101,8 +101,8 @@ public sealed class ExitArbiterTests
             NullLogger<ExitArbiter>.Instance);
 
         // Act
-        Task first = arbiter.StopAsync();
-        Task second = arbiter.StopAsync();
+        Task first = arbiter.TryStopAsync();
+        Task second = arbiter.TryStopAsync();
 
         // Assert
         second.Should().BeSameAs(first);
@@ -124,7 +124,7 @@ public sealed class ExitArbiterTests
         arbiter.TryBegin().Should().BeTrue();
         arbiter.TryBegin().Should().BeFalse();
 
-        await arbiter.StopAsync();
+        await arbiter.TryStopAsync();
 
         arbiter.TryBegin().Should().BeFalse();
     }

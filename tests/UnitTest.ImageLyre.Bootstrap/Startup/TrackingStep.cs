@@ -9,6 +9,9 @@ internal sealed class TrackingStep : IBootstrapStep<string>
     private readonly List<string> _rollbacks;
     private readonly StepOutcome _outcome;
     private readonly Exception? _error;
+    private readonly IReadOnlyList<StepDiagnostic>? _diagnostics;
+    private readonly Exception? _executeException;
+    private readonly Action? _onExecute;
 
     public TrackingStep(
         string id,
@@ -17,7 +20,10 @@ internal sealed class TrackingStep : IBootstrapStep<string>
         List<string> executions,
         List<string> rollbacks,
         bool canRollback = false,
-        Exception? error = null)
+        Exception? error = null,
+        IReadOnlyList<StepDiagnostic>? diagnostics = null,
+        Exception? executeException = null,
+        Action? onExecute = null)
     {
         Id = id;
         Group = group;
@@ -25,6 +31,9 @@ internal sealed class TrackingStep : IBootstrapStep<string>
         Phase = StepPhase.Host;
         _outcome = outcome;
         _error = error;
+        _diagnostics = diagnostics;
+        _executeException = executeException;
+        _onExecute = onExecute;
         _executions = executions;
         _rollbacks = rollbacks;
     }
@@ -40,7 +49,14 @@ internal sealed class TrackingStep : IBootstrapStep<string>
     public ValueTask<StepResult> ExecuteAsync(string context, CancellationToken cancellationToken)
     {
         _executions.Add(Id);
-        return ValueTask.FromResult(new StepResult(_outcome, _error));
+        _onExecute?.Invoke();
+
+        if (_executeException is not null)
+        {
+            throw _executeException;
+        }
+
+        return ValueTask.FromResult(new StepResult(_outcome, _error, _diagnostics));
     }
 
     public ValueTask RollbackAsync(string context, CancellationToken cancellationToken)

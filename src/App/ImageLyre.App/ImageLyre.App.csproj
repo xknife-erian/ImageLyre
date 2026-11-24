@@ -6,11 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- 装配门闩是内部类型，测试工程直接验证“编排一次、关停一次”的契约。 -->
-    <InternalsVisibleTo Include="UnitTest.ImageLyre.App" />
-  </ItemGroup>
-
-  <ItemGroup>
     <!--
       桌面 UI 路线：Avalonia 承载生命周期与基础控件，AtomUI 桌面控件包提供 UseAtomUI 与平台探测；
       欢迎窗控件与 Ant Design 设计语言随 Presentation 工程进入运行时，本工程不直接引用那两个主题包。
@@ -31,7 +26,7 @@
 
   <ItemGroup>
     <!--
-      启动链与桌面入口：CLI 继续使用 Bootstrap 的兼容入口；桌面分支只转交 Presentation.Desktop，
+      启动链与桌面入口：CLI 直接使用 Bootstrap 的 Host 构建器与 HostPlan；桌面分支只转交 Presentation.Desktop，
       欢迎窗、槽位、取壳与 PresentationPlan 都在 L5 工程里。
     -->
     <ProjectReference Include="..\ImageLyre.Bootstrap\ImageLyre.Bootstrap.csproj" />

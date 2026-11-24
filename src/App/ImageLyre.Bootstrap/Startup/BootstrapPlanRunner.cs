@@ -8,7 +8,8 @@ namespace ImageLyre.Bootstrap.Startup;
 /// <para>
 /// 结果策略与设计一致：<see cref="StepOutcome.Completed"/> 与 <see cref="StepOutcome.Degraded"/> 继续执行并进入回滚候选，
 /// <see cref="StepOutcome.Failed"/> 记录后按完成逆序回滚持有资源的步骤并抛出带 Step Id 的异常，
-/// <see cref="StepOutcome.Aborted"/> 记录后停止后续步骤但不视为失败。步骤自身抛出的取消异常在令牌已取消时记为中止并继续向上传播。
+/// <see cref="StepOutcome.Aborted"/> 记录后停止后续步骤但不视为失败；步骤直接抛出的非取消异常按 <see cref="StepOutcome.Failed"/>
+/// 处理并回滚后包装为带 Step Id 的异常，取消异常在令牌已取消时记为中止并原样向上传播。
 /// </para>
 /// <para>
 /// 报告是唯一的结果出口：每个步骤无论结局都写入一条 <see cref="StepRecord"/>，回滚成功的步骤用
@@ -46,7 +47,7 @@ public sealed class BootstrapPlanRunner<TContext>
     /// <param name="cancellationToken">取消令牌；取消后不再执行后续步骤。</param>
     /// <returns>Plan 执行完成的任务。</returns>
     /// <exception cref="OperationCanceledException">步骤在令牌取消后中止，或步骤抛出未包装的取消异常。</exception>
-    /// <exception cref="InvalidOperationException">步骤返回 <see cref="StepOutcome.Failed"/>，消息带失败步骤的 Id。</exception>
+    /// <exception cref="InvalidOperationException">步骤返回 <see cref="StepOutcome.Failed"/> 或直接抛出非取消异常，消息带失败步骤的 Id。</exception>
     /// <remarks>回滚只覆盖失败步骤之前已经完成且声明 <see cref="IBootstrapStep{TContext}.CanRollback"/> 的步骤，失败步骤自身不参与。</remarks>
     public async Task RunAsync(TContext context, CancellationToken cancellationToken)
     {
@@ -63,11 +64,43 @@ public sealed class BootstrapPlanRunner<TContext>
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                _report.Add(CreateRecord(step, StepOutcome.Aborted, error: null, Stopwatch.GetElapsedTime(startedAt)));
+                TimeSpan abortedElapsed = Stopwatch.GetElapsedTime(startedAt);
+                _report.Add(CreateRecord(
+                    step,
+                    StepOutcome.Aborted,
+                    error: null,
+                    abortedElapsed,
+                    diagnostics: null));
+                WriteStepLog(step, StepOutcome.Aborted, abortedElapsed, diagnostics: null, error: null);
                 throw;
             }
+            catch (Exception ex)
+            {
+                TimeSpan failedElapsed = Stopwatch.GetElapsedTime(startedAt);
+                _report.Add(CreateRecord(
+                    step,
+                    StepOutcome.Failed,
+                    ex,
+                    failedElapsed,
+                    diagnostics: null));
+                WriteStepLog(step, StepOutcome.Failed, failedElapsed, diagnostics: null, error: ex);
+                await RollbackAsync(completed, context, cancellationToken).ConfigureAwait(false);
+                throw new InvalidOperationException($"启动步骤 {step.Id} 失败。", ex);
+            }
 
-            _report.Add(CreateRecord(step, result.Outcome, result.Error, Stopwatch.GetElapsedTime(startedAt)));
+            TimeSpan elapsed = Stopwatch.GetElapsedTime(startedAt);
+            _report.Add(CreateRecord(
+                step,
+                result.Outcome,
+                result.Error,
+                elapsed,
+                result.Diagnostics));
+            WriteStepLog(
+                step,
+                result.Outcome,
+                elapsed,
+                result.Diagnostics,
+                result.Outcome == StepOutcome.Failed ? result.Error : null);
 
             switch (result.Outcome)
             {
@@ -121,16 +154,60 @@ public sealed class BootstrapPlanRunner<TContext>
         }
     }
 
-    /// <summary>把一次步骤执行映射为报告记录，耗时与异常类型由执行器填写。</summary>
+    /// <summary>把一步执行结果写进结构化日志：StepId、结局与耗时固定，降级诊断合并成一个字段。</summary>
+    /// <param name="step">刚执行完的步骤。</param>
+    /// <param name="outcome">执行结局。</param>
+    /// <param name="elapsed">本步骤的耗时。</param>
+    /// <param name="diagnostics">降级步骤的结构化诊断；无降级时为 <see langword="null"/>。</param>
+    /// <param name="error">失败时随日志记录的异常；无异常时为 <see langword="null"/>。</param>
+    private void WriteStepLog(
+        IBootstrapStep<TContext> step,
+        StepOutcome outcome,
+        TimeSpan elapsed,
+        IReadOnlyList<StepDiagnostic>? diagnostics,
+        Exception? error)
+    {
+        string? diagnosticText = diagnostics is { Count: > 0 }
+            ? string.Join("；", diagnostics.Select(item => $"{item.Module}：{item.Message}"))
+            : null;
+
+        LogLevel level = outcome switch
+        {
+            StepOutcome.Failed => LogLevel.Error,
+            StepOutcome.Degraded => LogLevel.Warning,
+            _ => LogLevel.Information,
+        };
+
+        const string template = "启动步骤 {StepId} 结束：结果 {Outcome}，耗时 {ElapsedMs:0.###} 毫秒";
+        if (diagnosticText is null)
+        {
+            _logger.Log(level, error, template + "。", step.Id, outcome, elapsed.TotalMilliseconds);
+        }
+        else
+        {
+            _logger.Log(
+                level,
+                error,
+                template + "，诊断 {Diagnostics}",
+                step.Id,
+                outcome,
+                elapsed.TotalMilliseconds,
+                diagnosticText);
+        }
+    }
+
+    /// <summary>把一次步骤执行映射为报告记录，耗时、异常类型与降级诊断由执行器填写。</summary>
     /// <param name="step">刚执行完的步骤。</param>
     /// <param name="outcome">执行结局。</param>
     /// <param name="error">失败或降级携带的异常；正常完成与中止时为 <see langword="null"/>。</param>
     /// <param name="elapsed">本步骤的耗时。</param>
+    /// <param name="diagnostics">降级步骤的结构化诊断；无降级时为 <see langword="null"/>。</param>
     /// <returns>尚未标记回滚的步骤记录。</returns>
     private static StepRecord CreateRecord(
         IBootstrapStep<TContext> step,
         StepOutcome outcome,
         Exception? error,
-        TimeSpan elapsed) =>
-        new(step.Id, step.Group, step.Phase, outcome, elapsed, error?.GetType().Name, RolledBack: false);
+        TimeSpan elapsed,
+        IReadOnlyList<StepDiagnostic>? diagnostics) =>
+        new(step.Id, step.Group, step.Phase, outcome, elapsed, error?.GetType().Name, RolledBack: false, diagnostics);
 }

@@ -61,24 +61,9 @@ public sealed class BootstrapHostBuilderTests
         var loggerFactory = new RecordingLoggerFactory();
 
         // Act & Assert
-        await using (BootstrapHost first = await BootstrapHost.StartAsync(
-            loggerFactory,
-            HostMode.Headless,
-            configure: null,
-            CancellationToken.None))
-        {
-            first.Services.GetRequiredService<IPluginManager>().Should().BeSameAs(first.PluginManager);
-        }
-
-        await using (BootstrapHost second = await BootstrapHost.StartAsync(
-            loggerFactory,
-            HostMode.Headless,
-            configure: null,
-            CancellationToken.None))
-        {
-            second.Services.GetRequiredService<IPluginManager>().Should().BeSameAs(second.PluginManager);
-            second.PluginManager.Plugins.Should().BeEmpty();
-        }
+        IPluginManager first = await RunHostAsync(loggerFactory);
+        IPluginManager second = await RunHostAsync(loggerFactory);
+        second.Should().NotBeSameAs(first);
 
         loggerFactory.Messages.Should().Contain("HasUiRoute=False");
     }
@@ -95,5 +80,23 @@ public sealed class BootstrapHostBuilderTests
         // Assert
         PicoPluginSettings.HasUiRoute.Should().BeTrue();
         loggerFactory.Messages.Should().Contain("HasUiRoute=True");
+    }
+
+    private static async Task<IPluginManager> RunHostAsync(RecordingLoggerFactory loggerFactory)
+    {
+        IHost host = BootstrapHostBuilder.Build(loggerFactory, HostMode.Headless, configure: null, args: []);
+        try
+        {
+            await host.StartAsync(TestContext.Current.CancellationToken);
+            IPluginManager manager = host.Services.GetRequiredService<IPluginManager>();
+            host.Services.GetRequiredService<IPluginManager>().Should().BeSameAs(manager);
+            manager.Plugins.Should().BeEmpty();
+            return manager;
+        }
+        finally
+        {
+            await host.StopAsync(TestContext.Current.CancellationToken);
+            host.Dispose();
+        }
     }
 }

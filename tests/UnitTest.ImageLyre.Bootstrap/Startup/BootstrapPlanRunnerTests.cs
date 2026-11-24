@@ -63,6 +63,9 @@ public sealed class BootstrapPlanRunnerTests
         // Arrange
         var executions = new List<string>();
         var rollbacks = new List<string>();
+        var degradedDiagnostic = new StepDiagnostic(
+            "ImageLyre.Module.Broken",
+            "插件启动状态为 Failed，已降级继续。");
         var plan = new BootstrapPlan<string>(
         [
             new BootstrapGroup<string>(
@@ -76,7 +79,8 @@ public sealed class BootstrapPlanRunnerTests
                         executions,
                         rollbacks,
                         canRollback: true,
-                        error: new InvalidOperationException("插件 ImageLyre.Module.Broken 启动失败。")),
+                        error: new InvalidOperationException("插件 ImageLyre.Module.Broken 启动失败。"),
+                        diagnostics: [degradedDiagnostic]),
                     new TrackingStep("plugins.3", "plugins", StepOutcome.Completed, executions, rollbacks, canRollback: true),
                 ]),
         ]);
@@ -94,6 +98,7 @@ public sealed class BootstrapPlanRunnerTests
             StepOutcome.Degraded,
             StepOutcome.Completed);
         report.Records[1].ErrorType.Should().Be(nameof(InvalidOperationException));
+        report.Records[1].Diagnostics.Should().ContainSingle().Which.Should().BeEquivalentTo(degradedDiagnostic);
         report.Records.Select(record => record.RolledBack).Should().Equal(false, false, false);
     }
 
@@ -164,6 +169,91 @@ public sealed class BootstrapPlanRunnerTests
         // Assert
         report.Records.Should().ContainSingle()
             .Which.Should().Be(record with { RolledBack = true });
+    }
+
+    [Fact(DisplayName = "6.Step 直接抛非取消异常时记 Failed、逆序回滚已完成步骤并抛带 StepId 的异常")]
+    public async Task Test006()
+    {
+        // Arrange
+        var executions = new List<string>();
+        var rollbacks = new List<string>();
+        var thrown = new InvalidOperationException("壳装载失败");
+        var plan = new BootstrapPlan<string>(
+        [
+            new BootstrapGroup<string>(
+                "composition",
+                [
+                    new TrackingStep("composition.1", "composition", StepOutcome.Completed, executions, rollbacks, canRollback: true),
+                    new TrackingStep(
+                        "composition.2",
+                        "composition",
+                        StepOutcome.Completed,
+                        executions,
+                        rollbacks,
+                        canRollback: true,
+                        executeException: thrown),
+                    new TrackingStep("composition.3", "composition", StepOutcome.Completed, executions, rollbacks, canRollback: true),
+                ]),
+        ]);
+        var report = new StartupReport();
+        var runner = new BootstrapPlanRunner<string>(plan, report, NullLogger.Instance);
+
+        // Act
+        var act = () => runner.RunAsync("bootstrap", CancellationToken.None);
+
+        // Assert
+        var failure = (await act.Should().ThrowAsync<InvalidOperationException>()).Which;
+        failure.Message.Should().Contain("composition.2");
+        failure.InnerException.Should().BeSameAs(thrown);
+        executions.Should().Equal("composition.1", "composition.2");
+        rollbacks.Should().Equal("composition.1");
+        report.Records.Select(record => record.Id).Should().Equal("composition.1", "composition.2");
+        report.Records.Select(record => record.Outcome).Should().Equal(
+            StepOutcome.Completed,
+            StepOutcome.Failed);
+        report.Records[1].ErrorType.Should().Be(nameof(InvalidOperationException));
+    }
+
+    [Fact(DisplayName = "7.取消后不再执行后续 Step，报告把正在执行的 Step 记为 Aborted")]
+    public async Task Test007()
+    {
+        // Arrange
+        var executions = new List<string>();
+        var rollbacks = new List<string>();
+        using var cancellation = new CancellationTokenSource();
+        var plan = new BootstrapPlan<string>(
+        [
+            new BootstrapGroup<string>(
+                "composition",
+                [
+                    new TrackingStep("composition.1", "composition", StepOutcome.Completed, executions, rollbacks, canRollback: true),
+                    new TrackingStep(
+                        "composition.2",
+                        "composition",
+                        StepOutcome.Completed,
+                        executions,
+                        rollbacks,
+                        canRollback: true,
+                        executeException: new OperationCanceledException(cancellation.Token),
+                        onExecute: cancellation.Cancel),
+                    new TrackingStep("composition.3", "composition", StepOutcome.Completed, executions, rollbacks, canRollback: true),
+                ]),
+        ]);
+        var report = new StartupReport();
+        var runner = new BootstrapPlanRunner<string>(plan, report, NullLogger.Instance);
+
+        // Act
+        var act = () => runner.RunAsync("bootstrap", cancellation.Token);
+
+        // Assert
+        await act.Should().ThrowAsync<OperationCanceledException>();
+        executions.Should().Equal("composition.1", "composition.2");
+        rollbacks.Should().BeEmpty();
+        report.Records.Select(record => record.Id).Should().Equal("composition.1", "composition.2");
+        report.Records.Select(record => record.Outcome).Should().Equal(
+            StepOutcome.Completed,
+            StepOutcome.Aborted);
+        report.Records[1].ErrorType.Should().BeNull();
     }
 
     private static BootstrapPlan<string> CreatePlan(

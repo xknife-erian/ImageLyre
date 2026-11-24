@@ -9,6 +9,7 @@ using ImageLyre.Contracts;
 using ImageLyre.Localization;
 using ImageLyre.Presentation.Desktop.Localization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace ImageLyre.App.Cli;
 
@@ -70,8 +71,8 @@ public static class CliHost
     /// <remarks>
     /// <para>
     /// 分派只按 <see cref="StartupOptions.Command"/> 走四条分支：<c>--version</c> 与 <c>--help</c> 只写文本，
-    /// <c>--plugins</c> 先以 <see cref="HostMode.Headless"/> 启动 <see cref="BootstrapHost"/> 再遍历插件，
-    /// <c>Invalid</c> 只回显原始参数；四条分支都不创建窗口、不初始化 Avalonia。
+    /// <c>--plugins</c> 先以 <see cref="HostMode.Headless"/> 用 <see cref="BootstrapHostBuilder"/> 构建并启动
+    /// <see cref="IHost"/> 再遍历插件，<c>Invalid</c> 只回显原始参数；四条分支都不创建窗口、不初始化 Avalonia。
     /// </para>
     /// <para>
     /// 任何运行期异常（包括 Bootstrap 启动失败与取消）都在本方法内捕获，向 <paramref name="error"/> 写一行原因并返回
@@ -120,10 +121,10 @@ public static class CliHost
         return ExitSuccess;
     }
 
-    /// <summary>启动无界面 Bootstrap，列出插件并输出汇总行。</summary>
+    /// <summary>启动无界面 Host，列出插件并输出汇总行。</summary>
     /// <param name="output">命令输出流，只接收插件清单。</param>
-    /// <param name="error">诊断流，传给 <see cref="StderrLoggerFactory"/> 接收 Bootstrap 日志。</param>
-    /// <param name="cancellationToken">取消令牌，只取消插件启动的等待。</param>
+    /// <param name="error">诊断流，传给 <see cref="StderrLoggerFactory"/> 接收 Host 日志。</param>
+    /// <param name="cancellationToken">取消令牌，只取消宿主启动的等待。</param>
     /// <returns>插件清单写完后恒为 <see cref="ExitSuccess"/>；启动失败由调用方统一捕获。</returns>
     /// <remarks>
     /// 每个插件占一个四行区块，字段依次为 Id、名称、状态与是否 Feature；状态取插件实例的 <c>State</c>，
@@ -137,35 +138,50 @@ public static class CliHost
         var localization = new LocalizationService();
         localization.AddSource(new AppStringSource());
 
-        await using BootstrapHost host = await BootstrapHost.StartAsync(
+        IHost host = BootstrapHostBuilder.Build(
             loggerFactory,
             HostMode.Headless,
             services => services.AddSingleton<ILocalizationService>(localization),
-            cancellationToken);
-
-        IImmutableList<IPicoPlugin> plugins = host.PluginManager.Plugins;
-        int featureCount = 0;
-
-        await output.WriteLineAsync("插件清单（无界面宿主）：");
-        foreach (IPicoPlugin plugin in plugins)
+            args: []);
+        try
         {
-            PluginInfo info = TryReadPluginInfo(plugin) ?? host.PluginManager.GetPluginInfo(plugin.GetType());
-            bool isFeature = plugin is IPicoFeatures;
-            if (isFeature)
-                featureCount++;
+            await host.StartAsync(cancellationToken);
+            IPluginManager manager = host.Services.GetRequiredService<IPluginManager>();
+            IImmutableList<IPicoPlugin> plugins = manager.Plugins;
+            int featureCount = 0;
+
+            await output.WriteLineAsync("插件清单（无界面宿主）：");
+            foreach (IPicoPlugin plugin in plugins)
+            {
+                PluginInfo info = TryReadPluginInfo(plugin) ?? manager.GetPluginInfo(plugin.GetType());
+                bool isFeature = plugin is IPicoFeatures;
+                if (isFeature)
+                    featureCount++;
+
+                await output.WriteLineAsync();
+                await output.WriteLineAsync($"Id: {info.Id}");
+                await output.WriteLineAsync($"名称: {info.Name}");
+                await output.WriteLineAsync($"状态: {plugin.State}");
+                await output.WriteLineAsync($"Feature: {(isFeature ? "是" : "否")}");
+            }
 
             await output.WriteLineAsync();
-            await output.WriteLineAsync($"Id: {info.Id}");
-            await output.WriteLineAsync($"名称: {info.Name}");
-            await output.WriteLineAsync($"状态: {plugin.State}");
-            await output.WriteLineAsync($"Feature: {(isFeature ? "是" : "否")}");
+            await output.WriteLineAsync($"共 {plugins.Count} 个插件，其中 Feature {featureCount} 个");
+
+            // ponytail: 插件清单是纯文本，G2 的插件面板会替换这里的呈现方式；替换时保留 Id、名称、状态与 Feature 四个字段。
+            return ExitSuccess;
         }
-
-        await output.WriteLineAsync();
-        await output.WriteLineAsync($"共 {plugins.Count} 个插件，其中 Feature {featureCount} 个");
-
-        // ponytail: 插件清单是纯文本，G2 的插件面板会替换这里的呈现方式；替换时保留 Id、名称、状态与 Feature 四个字段。
-        return ExitSuccess;
+        finally
+        {
+            try
+            {
+                await host.StopAsync(CancellationToken.None);
+            }
+            finally
+            {
+                host.Dispose();
+            }
+        }
     }
 
     /// <summary>优先读取构造失败占位条目保留的扫描期插件信息。</summary>

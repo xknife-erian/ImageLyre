@@ -20,9 +20,9 @@ namespace ImageLyre.Presentation.Desktop.Startup;
 /// 取壳与附着必须在 Host 启动之后，因为它们依赖插件产物。
 /// </para>
 /// <para>
-/// 线程：本方法由 <c>App.OnFrameworkInitializationCompleted</c> 在 UI 线程调用，第一个 <c>await</c> 之前完成的欢迎窗创建与
-/// <c>MainWindow</c> 赋值因此仍发生在经典桌面生命周期显示主窗口之前；<c>await</c> 之后由 Avalonia 同步上下文回到 UI 线程，
-/// PresentationPlan 的每个步骤都在 UI 线程构造与显示控件。
+/// 线程：本方法由 <c>App.OnFrameworkInitializationCompleted</c> 在 UI 线程调用，欢迎窗创建与 <c>MainWindow</c> 赋值发生在第一个
+/// <c>await</c> 之前，因此经典桌面生命周期仍能显示它；<c>Task.Yield</c> 之后的宿主启动与 PresentationPlan 都在主循环启动后的
+/// UI 线程上执行，启动失败时的关窗不会再触发主循环启动前的退出。
 /// </para>
 /// <para>
 /// 关停：<see cref="IClassicDesktopStyleApplicationLifetime.ShutdownRequested"/> 先取消本次退出，等待
@@ -30,7 +30,7 @@ namespace ImageLyre.Presentation.Desktop.Startup;
 /// 取消后的重入由 <c>exitAllowed</c> 放行。<c>desktop.Exit</c> 与主窗体 <c>Closed</c> 只作兜底，触发同一个可等待的关停。
 /// </para>
 /// <para>
-/// 失败：任何启动期异常都先用执行器的报告定位失败步骤，再释放已构造的壳窗体、关停宿主，把原因写 stderr 与日志并显示在欢迎窗上；
+/// 失败：任何启动期异常都先用执行器的报告定位失败步骤，再关闭已构造的壳窗体、关停宿主，把原因写 stderr 与日志并显示在欢迎窗上；
 /// <see cref="StepOutcome.Degraded"/> 由执行器记录后继续，不阻断主窗体显示。
 /// </para>
 /// </remarks>
@@ -86,6 +86,10 @@ public static class DesktopStartup
         var welcome = new WelcomeWindow(localization);
         desktop.MainWindow = welcome;             // 不显式 Show：经典桌面生命周期会显示它
 
+        // 让经典桌面生命周期先显示欢迎窗并进入主循环，再开始 Host 与 Presentation 的异步工作；
+        // 否则启动期失败的关窗可能发生在主循环之前，被当成“最后一个窗口关闭”而提前结束进程。
+        await Task.Yield();
+
         // 启动期间桌面可能已经退出：门闩已钉在 Stopped，这里不能再建宿主或窗口。
         if (!shutdown.TryBegin())
             return;
@@ -127,11 +131,15 @@ public static class DesktopStartup
 
             if (!shutdown.AttachShell(shellWindow))
             {
-                DisposeShell(shellWindow);
+                DesktopStopPlan.CloseShell(shellWindow);
                 return;
             }
 
-            shellWindow.Closed += (_, _) => _ = StopQuietlyAsync(shutdown, logger);
+            // Closed 只作兜底：关停动作自己也会关闭壳窗体，ExitArbiter 幂等，已进入关停时不再重复发起。
+            shellWindow.Closed += (_, _) => {
+                if (!shutdown.IsStopped)
+                    _ = StopQuietlyAsync(shutdown, logger);
+            };
 
             DesktopSmokeHooks.CloseAfterDelay(shellWindow);
             DesktopSmokeHooks.OpenMenu(shellWindow);
@@ -139,11 +147,17 @@ public static class DesktopStartup
         }
         catch (Exception ex)
         {
-            // T13：Host 已启动但取壳失败时，先释放壳再停插件，不能留下半启动进程。
+            // T13：Host 已启动但取壳失败时，先关闭壳再停插件，不能留下半启动进程。
             // 失败原因同时写 stderr 与日志，命令行冒烟与诊断能看到；WinExe 双击仍可能丢 stderr。
             Console.Error.WriteLine($"启动失败：{ex}");
             logger.LogError(ex, "桌面启动失败。");
-            DisposeShell(context?.ShellWindow);
+            DesktopStopPlan.CloseShell(context?.ShellWindow);
+
+            // 失败界面的宿主是欢迎窗：壳可能已被显示并关闭，不能把已关闭窗体留在 MainWindow 上，
+            // 否则经典桌面生命周期启动时会对它再 Show 一次并抛“Cannot re-show a closed window”。
+            if (welcome.PlatformImpl is not null)
+                desktop.MainWindow = welcome;
+
             await StopQuietlyAsync(shutdown, logger);
             DesktopSmokeHooks.CloseAfterDelay(welcome);
             welcome.ShowFailure(ex);
@@ -183,13 +197,5 @@ public static class DesktopStartup
         {
             logger.LogError(ex, "桌面关停失败。");
         }
-    }
-
-    /// <summary>释放实现 <see cref="IDisposable"/> 的壳窗体；为 <see langword="null"/> 时什么都不做。</summary>
-    /// <param name="window">待释放的壳窗体。</param>
-    private static void DisposeShell(Window? window)
-    {
-        if (window is IDisposable disposable)
-            disposable.Dispose();
     }
 }
