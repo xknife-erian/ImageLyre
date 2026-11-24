@@ -35,4 +35,17 @@ public sealed class StartupReport
             .Where(record => string.Equals(record.Group, group, StringComparison.Ordinal))
             .ToArray();
     }
+
+    /// <summary>把已执行回滚的步骤标记为已回滚；只改回滚标记，其余字段原样保留。</summary>
+    /// <param name="stepId">步骤标识，与 <see cref="StepRecord.Id"/> 精确匹配。</param>
+    /// <exception cref="ArgumentException"><paramref name="stepId"/> 为 <see langword="null"/>、空串或空白。</exception>
+    /// <remarks>记录不存在或重复标记时什么都不做，因此调用方不必先查报告。</remarks>
+    public void MarkRolledBack(string stepId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(stepId);
+
+        int index = _records.FindLastIndex(record => string.Equals(record.Id, stepId, StringComparison.Ordinal));
+        if (index >= 0)
+            _records[index] = _records[index] with { RolledBack = true };
+    }
 }

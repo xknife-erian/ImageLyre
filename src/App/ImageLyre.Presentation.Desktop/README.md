@@ -13,7 +13,8 @@
 - 不放插件：不按名字引用任何 `ImageLyre.Module.*` 或 `ImageLyre.Feature.*` 工程，主窗体由壳插件产出，本工程只负责取壳与挂载。
 - 不放产品能力：M1 阶段没有图像、ROI、测量、通道或校准代码，后续能力只能以插件形式接入。
 - 不放契约：`ILocalizationService`、`IWorkbenchShell`、`ShellSlots`、`IMenuRegistry` 等类型留在 `ImageLyre.Contracts`、`ImageLyre.Shell.Contracts` 与 `ImageLyre.Shell.Menus`，本工程只引用。
-- 不放完整关停：当前的 `Startup/DesktopShutdown` 只保证“开始一次、关停一次、先释放壳再停宿主”，完整 await、超时与 `ExitArbiter` 在 T09 补齐；`PresentationPlan` 的失败回滚与启动报告归 T09/T10。
+- 不放完整关停策略：`Startup/DesktopShutdown` 用 `ImageLyre.Bootstrap` 的 `ExitArbiter` 保证“开始一次、关停一次、返回可等待任务与超时”，关闭动作只做“释放壳 → 停宿主”；`ShutdownRequested` 的取消与重入由 `DesktopStartup` 负责，完整的 `DesktopStopPlan` 分组仍归后续任务。
+- 不放 Plan 执行算法：逐 Step 执行、写 `StartupReport`、`Degraded` 继续与 `Failed` 逆序回滚由 Bootstrap 的 `BootstrapPlanRunner` 统一实现，本工程只提供 `PresentationPlan` 与上下文。
 
 ## 依赖方向
 
