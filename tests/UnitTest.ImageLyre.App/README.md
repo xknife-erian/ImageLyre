@@ -10,7 +10,7 @@
 
 - 不放桌面 UI 测试：不构造 `AppBuilder`、不创建窗口、不启动 Avalonia 桌面生命周期，桌面冒烟由入口实跑负责。
 - 不放插件实现测试：`--plugins` 只验证无插件树下的清单与汇总行；具体插件的行为由各插件工程自己的测试覆盖。
-- 不放第二条 `--plugins` 用例：`BootstrapHost.StartAsync` 调用的 `LogHub.Initialize` 在进程内只允许一次，T13 装配链收口前，本工程只保留一条启动 Bootstrap 的用例。
+- 不放第二条 `--plugins` 用例：`BootstrapHostBuilder.Build` 的 `LogHub.Initialize` 在进程内只允许一次，本工程只保留一条真正启动宿主、读取插件清单的用例；其余测试直接验证参数解析与 CLI 文本。
 - 不放端到端进程测试：不拉起子进程验证真实 stdout/stderr 与退出码，那是入口冒烟与验收 F 的范围。
 - 不放本地化断言：CLI 文本不随语言变化，`ILocalizationService` 的行为由 `UnitTest.ImageLyre.Localization` 覆盖。
 

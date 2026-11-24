@@ -2,7 +2,7 @@
 #
 # 用法：pwsh -File scripts/qa/smoke-m1.ps1 [-Configuration Debug]
 # 前置：先 dotnet build src/ImageLyre.slnx；脚本不负责构建。
-# 判据：三条各输出 PASS，任一失败以退出码 1 结束，失败原因打印到 stderr。
+# 判据：六条各输出 PASS（无界面过滤、扫描路线、菜单、英文、关于注册、中文），任一失败以退出码 1 结束，失败原因打印到 stderr。
 
 param(
     [string]$Configuration = 'Debug'

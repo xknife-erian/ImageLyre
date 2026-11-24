@@ -42,7 +42,7 @@ ImageLyre 是新一代跨平台显微图像分析系统仓库，目标是全面�
 
 2022 年版基于 WPF 与 .NET 6 的实现、以及 2026-11 的两轮重建尝试整体弃用：2026-11-22 起工作区已清空，`src/`、`tests/`、`tools/` 下的代码与全部过程文档（ADR、design、analyses、daily、plans、guide、reference）的内容一并删除，`docs/` 的类型目录与各目录说明保留，清除前的完整状态保存在标签 `archive/pre-reset-2026-11-22`，需要取证时从该标签读取而不是凭记忆补写。
 
-M1 已完成（2026-11-23）：唯一构建入口 `dotnet build src/ImageLyre.slnx`，不得另起第二套；目标框架、可空与警告即错误集中在根 `Directory.Build.props`，包版本集中在根 `Directory.Packages.props`，SDK 与 `dotnet test` 的 runner 由根 `global.json` 钉住（.NET 10 上 `dotnet test` 走 Microsoft.Testing.Platform；本机沙箱里 MTP 命名管道会被拒，跑测试请直接执行 `tests/<工程>/bin/Debug/net10.0/<工程>.dll`）。目录按职责分：`src/App/` 放进程入口与启动链，`src/Infrastructure/` 放共享库（其中 `Contracts/` 专放契约与领域），`src/Plugins/Modules/` 与 `src/Plugins/Features/` 放插件。插件机制的架构基线与 M1 骨架分别由 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` 与 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md` 规定，工程目录、插件工程命名与扫描前缀以该 design 为准。下一阶段为 G2 只读治理：插件与能力面板、依赖树与分级、诊断与受限模式，按 ADR-0001 §2.5 推进。
+M1 已完成（2026-11-23），启动宿主已按 `ADR-0003` 迁移（2026-11-25）：唯一构建入口 `dotnet build src/ImageLyre.slnx`，不得另起第二套；目标框架、可空与警告即错误集中在根 `Directory.Build.props`，包版本集中在根 `Directory.Packages.props`，SDK 与 `dotnet test` 的 runner 由根 `global.json` 钉住（.NET 10 上 `dotnet test` 走 Microsoft.Testing.Platform；本机沙箱里 MTP 命名管道会被拒，跑测试请直接执行 `tests/<工程>/bin/Debug/net10.0/<工程>.dll`）。目录按职责分：`src/App/` 放进程入口、启动链与桌面 Presentation，`src/Infrastructure/` 放共享库（其中 `Contracts/` 专放契约与领域），`src/Plugins/Modules/` 与 `src/Plugins/Features/` 放插件。App 只做入口与生命周期转交，Bootstrap 持 Generic Host 与 HostPlan，桌面编排在 `ImageLyre.Presentation.Desktop`；当前 15 个 src 工程、8 套测试 84 项。插件机制基线、M1 骨架与启动宿主分别由 `ADR-0001`、`DESIGN-0001`、`ADR-0003` 与 `DESIGN-0002` 规定，工程目录、插件命名与扫描前缀以 `DESIGN-0001` 为准。下一阶段为 G2 只读治理：插件与能力面板、依赖树与分级、诊断与受限模式，按 ADR-0001 §2.5 推进。
 
 少而硬的共同约定：每个工程（csproj）必须带 README.md，写明该工程的意义、边界（不放什么）、依赖方向与边界变化时该改哪份文档，空工程同样如此，新建工程先写 README 再写代码；目录与文件搬家一律 `git mv`，删除用 `git rm`，禁止复制后把原目录留在原处；行尾与编码以 `.gitattributes`、`.editorconfig` 为准，新增文件交给 git 自动归一化；提交信息用中文并带 scoped 前缀，一次提交只做一件事。
 
@@ -52,8 +52,8 @@ M1 已完成（2026-11-23）：唯一构建入口 `dotnet build src/ImageLyre.sl
 | :--- | :--- |
 | `docs/spec/` | 需求、架构基线、M1 验收规范与 CLI 契约 |
 | `docs/` | 文档体系，规则入口 `docs/README.md`；`adr/`、`design/` 与 `plans/` 已有首批内容，其余类型目录与说明在位、内容待写入 |
-| `src/`、`tests/` | 源码与测试落点；目录结构与插件命名按 `DESIGN-0001`，M1 的十三个常驻工程、一个只随 Debug 输出的故障样本与七套测试工程已在其位 |
-| `scripts/qa/` | 检查脚本落点：`verify-m1.ps1` 做引用方向、机制层词表、通配引用计数、工程 README、平台符号与壳契约纯度六项检查；`smoke-m1.ps1` 跑无界面清单与桌面中英切换冒烟并断言日志行 |
+| `src/`、`tests/` | 源码与测试落点；目录结构与插件命名按 `DESIGN-0001`，当前为十四个常驻工程、一个只随 Debug 输出的故障样本与八套测试工程 |
+| `scripts/qa/` | 检查脚本落点：`verify-m1.ps1` 做引用方向、机制层词表、通配引用计数、工程 README、平台符号、壳契约纯度与 Bootstrap 无 UI 引用七项检查；`smoke-m1.ps1` 跑无界面清单与桌面中英切换冒烟并断言日志行 |
 | `.agents/skills/` | 游刃技能的下游副本，只读 |
 | `.agents/user-profile/<用户名>/` | 各人的 AI 配置档案，`.agents/` 下唯一的个人落点 |
 | `README.md` | 项目背景与历史缘由 |

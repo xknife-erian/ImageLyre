@@ -1,6 +1,6 @@
 # ImageLyre
 
-> **状态（2026-11-23）**：2022 年 WPF 版与 2026 年 11 月的两轮重建已整体归档，归档前的完整状态在标签 `archive/pre-reset-2026-11-22`；**M1 已完成**——14 个工程、7 套测试 61 项全绿、A–G 验收通过，菜单注册表与「帮助 → 关于」已落地。插件架构基线见 [ADR-0001](docs/adr/lukan/ADR-0001-插件机制架构基线.md) 与 [ADR-0002](docs/adr/lukan/ADR-0002-平台契约抄录与本地演进.md)，M1 骨架见 [DESIGN-0001](docs/design/lukan/DESIGN-0001-M1-插件骨架.md)，实施与验收见 [PLAN-0001](docs/plans/lukan/PLAN-0001-M1-插件骨架实施.md)。
+> **状态（2026-11-25）**：2022 年 WPF 版与 2026 年 11 月的两轮重建已整体归档，归档前的完整状态在标签 `archive/pre-reset-2026-11-22`；**M1 已完成，启动宿主已迁移**——15 个工程、8 套测试 84 项全绿、`verify-m1.ps1` 七项与 `smoke-m1.ps1` 六项通过，菜单注册表与「帮助 → 关于」已落地。App 只做入口，Bootstrap 持 Generic Host 与 HostPlan，桌面编排在 [`ImageLyre.Presentation.Desktop`](src/App/ImageLyre.Presentation.Desktop/README.md)。插件架构基线见 [ADR-0001](docs/adr/lukan/ADR-0001-插件机制架构基线.md)、[ADR-0002](docs/adr/lukan/ADR-0002-平台契约抄录与本地演进.md) 与 [ADR-0003](docs/adr/lukan/ADR-0003-启动宿主与Presentation分层.md)，M1 骨架见 [DESIGN-0001](docs/design/lukan/DESIGN-0001-M1-插件骨架.md)，启动模式见 [DESIGN-0002](docs/design/lukan/DESIGN-0002-启动宿主与编排模式.md)。
 
 ImageLyre 是显微镜旁的第一块屏幕。
 
@@ -50,7 +50,7 @@ Windows 先发，macOS 与 Linux 随后；三端共用同一套设计与同一�
 
 ## 现在到哪
 
-2026-11-22 的仓库重置把两轮重建的代码整体移出工作区，只留下需求、基线与目录骨架；2026-11-23 的 M1 在这套骨架上落成：`src/ImageLyre.slnx` 是唯一构建入口，14 个工程（含一个只随 Debug 输出的故障样本）按 `App`、`Infrastructure`、`Plugins` 归置，七套测试共 61 项全绿，`scripts/qa/verify-m1.ps1` 的六项检查与 `scripts/qa/smoke-m1.ps1` 的冒烟通过。菜单注册表与第一个菜单功能「帮助 → 关于」已落地，插件贡献菜单不再需要改壳。cangming 以只读子模块锁定 tag `v0.1.9.1122` 作为源码对照与版本锚点，编译只引用同名 NuGet 包，不把子模块工程引进解决方案。M1 不含任何产品能力；图像、ROI、测量与文档留到第一批真实能力包，它们会按同一套插件机制接入。
+2026-11-22 的仓库重置把两轮重建的代码整体移出工作区，只留下需求、基线与目录骨架；2026-11-23 的 M1 在这套骨架上落成，2026-11-25 又按 `ADR-0003` 把启动宿主迁移到 Generic Host 与 `ImageLyre.Presentation.Desktop`：`src/ImageLyre.slnx` 是唯一构建入口，15 个工程（含一个只随 Debug 输出的故障样本）按 `App`、`Infrastructure`、`Plugins` 归置，八套测试共 84 项全绿，`scripts/qa/verify-m1.ps1` 的七项检查与 `scripts/qa/smoke-m1.ps1` 的六项冒烟通过。菜单注册表与第一个菜单功能「帮助 → 关于」已落地，插件贡献菜单不再需要改壳；App 只做入口，Bootstrap 编排 HostPlan，桌面 Presentation 负责欢迎窗、槽位、取壳与主窗体。cangming 以只读子模块锁定 tag `v0.1.9.1122` 作为源码对照与版本锚点，编译只引用同名 NuGet 包，不把子模块工程引进解决方案。M1 不含任何产品能力；图像、ROI、测量与文档留到第一批真实能力包，它们会按同一套插件机制接入。
 
 想读什么，从这里进：
 

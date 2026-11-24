@@ -396,6 +396,17 @@ flowchart LR
 - **E5（报告与登记）**：`StartupReport` 必须是契约而不是调试输出；新工程必须改 `verify-m1.ps1` 的 roots 并新增第 8 套测试工程，文档表格不算登记。这两条写入第 5 项与 P0 退出条件。
 - **未决事项**：`ImageLyre.Themes` 的归属（Presentation.Desktop 还是独立主题库）不在本文范围内；ADR-0001 的 L5 行需要新增 `Presentation.Desktop` 还是另开 ADR，由 P0 决策。
 
+### 10.4 实施例外
+
+`PLAN-0002` 落地时确认了四条与本文目标口径的差异，代码与本节同读，不得把“目标”误当成“当前已满足”：
+
+1. 生产 Plan 的叶组尚未达到 5–9 项目标容量：`HostPlan` 为 0/1/0、`PresentationPlan` 为 0/4/2。容量校验只用于增长压测，当前按迁移期例外处理；新增启动项时不得用空操作 Step 凑容量，应在对应组出现真实步骤后自然达标。
+2. `DesktopStopPlan` 是“关壳 → 停宿主 → 释放宿主”三个动作的命名序列，不是通用 Plan/Step 容器；当前没有独立日志管线，未造空的刷日志步骤，接入日志后再评估是否分组。
+3. 取消路径只记 `Aborted` 并停止后续步骤，不逆序回滚已完成步骤；正常关停由 `DesktopStopPlan` 负责，取消回滚等出现真实消费者后再补。
+4. `desktop.Exit` 与主窗体 `Closed` 只是不可等待的兜底；主路径是 `ShutdownRequested` 取消退出、等待 `ExitArbiter` 完成后再次 `Shutdown()`，验收以主路径为准。
+
+
+
 完整评分、质询与增长复核记录见 [`docs/reviews/lukan/2026-11-24_启动编排模式专家辩论.md`](../../reviews/lukan/2026-11-24_启动编排模式专家辩论.md)；实施任务与验收见 [`PLAN-0002`](../../plans/lukan/PLAN-0002-启动宿主与编排模式实施.md)。
 
 ## 11 迁移路线（已拍板，待执行）

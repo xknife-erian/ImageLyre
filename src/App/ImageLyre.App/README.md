@@ -7,12 +7,12 @@
 ## 边界（不放什么）
 
 - 不放桌面编排：欢迎窗、Generic Host 启动、槽位管理器、取壳、Feature 附着、主窗体显示、关停收口与三个冒烟回调都在 `ImageLyre.Presentation.Desktop`；本工程的 `App` 只判断生命周期类型并转交 `DesktopStartup.RunAsync`，`OnFrameworkInitializationCompleted` 内不出现任何启动项或顺序。
-- 不放插件扫描与启动：扫描前缀、容器构建、`PicoPluginSystem.Launch`、插件启动与关停都在 `ImageLyre.Bootstrap`；`CliHost` 只是继续用 `BootstrapHost` 兼容入口，不复制它的顺序。桌面分支不再直接调用 `BootstrapHost`。
+- 不放插件扫描与启动：扫描前缀、容器构建、`PicoPluginSystem.Launch`、插件启动与关停都在 `ImageLyre.Bootstrap`；`CliHost` 通过 `BootstrapHostBuilder.Build` 构建 `IHost` 并在 `--plugins` 结束后停止、释放宿主，不复制 Bootstrap 的顺序。桌面分支不直接调用 Bootstrap。
 - 不按名字登记插件：插件只经 `ImageLyre.App.csproj` 的通配 `ProjectReference` 被发现，新增插件不改本工程文件；按名字的插件引用一律禁止，验收 E 检查按名引用数为 0。
 - 不放本地化实现与资源聚合：`LocalizationService` 在 `ImageLyre.Localization`，欢迎窗文案源与资源键已迁到 `ImageLyre.Presentation.Desktop.Localization`；本工程只创建服务实例并把它交给 Presentation。
 - 不放第四条命令与业务命令：`Cli/CliHost.cs` 只有 `--version`、`--plugins`、`--help` 三条命令，业务命令按 `ADR-0001` §2.5 归 G2；CLI 文本是机器可读接口，不经过 `ILocalizationService`，也不做本地化。
 - 不放产品能力与主界面布局：没有图像、ROI、测量、文档、设置代码，也没有菜单、状态栏、面板容器或主题配置。
-- 暂留 `Startup/CompositionGate.cs`：它是 T09 迁移 `ExitArbiter` 前的门闩与并发测试载体，当前没有生产调用点，但测试仍按“编排一次、关停一次、停止先于开始”的语义验证它；删除与替换在同一任务里完成，不提前留下无测试的关停逻辑。
+- 不保留旧的编排门闩：`CompositionGate` 与 `BootstrapHost` 已随 T08/T09 删除，关停语义由 Bootstrap 的 `ExitArbiter` 与 Presentation 的 `DesktopStopPlan` 承接；App 内不再有生产死代码。
 
 ## 调试启动
 

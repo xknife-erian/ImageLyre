@@ -2,7 +2,7 @@
 
 ## 意义
 
-本工程是第 8 套测试，守住 `ImageLyre.Presentation.Desktop` 的桌面 Presentation 契约：`PresentationPlan` 的组序与步骤顺序、欢迎窗到主窗体的装配顺序，以及后续桌面 `StopPlan` 的释放语义。它把“桌面启动到底按什么顺序发生”变成可断言的数据，而不是只能靠启动日志与人工点窗口确认。当前只有 `Startup/PresentationPlanTests.cs`，断言 `welcome`/`composition`/`show` 三组的固定组序、组容量与扁平后的 Step Id 序列；装配顺序的失败回滚与关停语义随 T09/T10 补入。
+本工程是第 8 套测试，守住 `ImageLyre.Presentation.Desktop` 的桌面 Presentation 契约：`PresentationPlan` 的组序与步骤顺序、欢迎窗到主窗体的装配顺序。它把“桌面启动到底按什么顺序发生”变成可断言的数据，而不是只能靠启动日志与人工点窗口确认。当前 `Startup/PresentationPlanTests.cs` 断言 `welcome`/`composition`/`show` 三组的固定组序、组容量与扁平后的 Step Id 序列；`DesktopStopPlan` 的关壳/停宿主由 `smoke-m1.ps1` 的退出路径与失败注入实跑覆盖，不在本工程启动真实窗口。
 
 ## 边界（不放什么）
 

@@ -34,8 +34,9 @@
 | 0.30 | 2026-11-23 | 草稿 | lukan | 回写 T18：新增 §3.9，把三个环境变量冒烟钩子（自关、展开菜单、切换语言）登记成表并写明失败口径与删除时机，避免钩子只存在于代码里 |
 | 0.31 | 2026-11-23 | 草稿 | lukan | M1 收口后的口径订正：cangming 明确为“子模块作源码锚点、编译只吃同名 NuGet 包”；三个平台能力插件改为长期保留，G2 用正式诊断面板替换 `Feature.Diagnostics`，因此 G 证据可复跑；CLI 无界面分支固定 UTF-8 输出；G 的冒烟证据收进 `scripts/qa/smoke-m1.ps1`，不再依赖仓外探针 |
 | 0.32 | 2026-11-23 | 草稿 | lukan | 新增宿主级菜单注册表 `ImageLyre.Shell.Menus`（契约在 `ImageLyre.Shell.Contracts/Menus`）与首个消费者 `ImageLyre.Feature.About`（帮助 → 关于）；菜单贡献从 G2 前移为最小实现（只有菜单、标题键与动作，命令 Id 与快捷键留 G2）；§3.1、§3.2、§4.1、§4.4、§5.7 同步 |
-| 1.0 | 2026-11-23 | 现行 | lukan | M1 完成确认：14 个工程、7 套测试 61 项全绿，A–G 与双宿主/多语言/三端约束验收通过；本文作为现行设计，后续按 G2–G5 演进 |
-| 1.1 | 2026-11-24 | 现行 | lukan | UI 路线升级到 AtomUI 6.3.0 与 Avalonia 12.2.0；补 §3.4 第二条实现级硬约束：设计语言必须显式启用，App 引语言包与桌面取值包并调用 `UseAntDesign(...)`，否则启动抛 `ThemeLoadException` |
+| 1.0 | 2026-11-23 | 历史 | lukan | M1 完成确认：14 个工程、7 套测试 61 项全绿，A–G 与双宿主/多语言/三端约束验收通过；后续由 1.2 的启动宿主迁移接续 |
+| 1.1 | 2026-11-24 | 历史 | lukan | UI 路线升级到 AtomUI 6.3.0 与 Avalonia 12.2.0；补 §3.4 第二条实现级硬约束：设计语言必须显式启用，App 引语言包与桌面取值包并调用 `UseAntDesign(...)`，否则启动抛 `ThemeLoadException` |
+| 1.2 | 2026-11-25 | 现行 | lukan | 按 ADR-0003 与 DESIGN-0002 迁移启动宿主：App 只做入口、Bootstrap 持 Generic Host/Step/Plan、新增 Presentation.Desktop；工程 15 个（含 Broken）、8 套测试 84 项；§3.3 增加现行启动链，旧 M1 时序标为历史 |
 
 ## 1 目标与范围
 
@@ -119,7 +120,6 @@ flowchart LR
 
     APP --> PD
     APP --> BOOT
-    APP --> SC
     APP --> DC
     APP --> CM
     APP --> AV["Avalonia / AtomUI"]
@@ -158,15 +158,46 @@ flowchart LR
     FD --> AVL
 ```
 
-`ImageLyre.Bootstrap` 与 `ImageLyre.App` 都不按名字引用插件工程；`ImageLyre.App` 引用 `ImageLyre.Contracts` 是为了本地化契约（`ILocalizationService`、`ILocalizationSource`），欢迎界面直接经它取文案，诊断相关契约也随本工程一起可见；M1 不再自造 `IClock` 一类一次性示范契约；发行用的通配引用在 §3.7 单列。
+`ImageLyre.Bootstrap` 与 `ImageLyre.App` 都不按名字引用插件工程；`ImageLyre.App` 引用 `ImageLyre.Contracts` 是为了本地化契约（`ILocalizationService`、`ILocalizationSource`），欢迎界面直接经它取文案，诊断相关契约也随本工程一起可见；M1 不再自造 `IClock` 一类一次性示范契约；发行用的通配引用在 §3.7 单列。2026-11-25 起 App 只保留入口与 CLI 分派，桌面取壳与附着已迁入 `ImageLyre.Presentation.Desktop`，Bootstrap 不再被 App 直接用来取壳。
 
-`ImageLyre.App` 另外直接引用机制包，这是 L5 的正当依赖而不是越界：CLI 的 `--plugins` 要类型化读取 `IPluginManager.Plugins`、`PluginInfo` 与 `IPicoFeatures`，桌面编排在 T12 还要用 `FindModuleBuilder` 取壳产物，而这两件事都发生在 Bootstrap 交出 `IPluginManager` 之后，宿主不可能不看见该类型。ADR-0001 §2.4 的 L5 行本就写明 App 编译期依赖 L0 与 L1，图里补这条边是把既有事实画出来；真正被禁止的是引用插件工程与机制实现包（`Cangming.Shell`、`Cangming.Platform`），这两条边界不变。
+`ImageLyre.App` 另外直接引用机制包，这是 L5 的正当依赖而不是越界：CLI 的 `--plugins` 要类型化读取 `IPluginManager.Plugins`、`PluginInfo` 与 `IPicoFeatures`，而这件事发生在 Bootstrap 交出 `IPluginManager` 之后，宿主不可能不看见该类型。ADR-0001 §2.4 的 L5 行本就写明 App 编译期依赖 L0 与 L1；真正被禁止的是引用插件工程与机制实现包（`Cangming.Shell`、`Cangming.Platform`），这两条边界不变。桌面取壳的 `FindModuleBuilder` 依赖已随 §3.3 的迁移移入 Presentation，不再属于 App。
 
 三个契约程序集的方向固定为 `ImageLyre.Shell.Contracts` → `ImageLyre.Contracts` → `ImageLyre.Domains`，由 ADR-0001 §2.4 规定；`ImageLyre.Shell.Contracts` 因此只依赖 `ImageLyre.Contracts`，Avalonia 与机制包一律不进这个程序集。
 
 `ImageLyre.Shell.Attachments` 是 L0 之外的一层词汇：它要实现机制包的 `IFeatureAttachment` 与 `Cangming.Toolkit` 的 `IOrderable`，还要携带 Avalonia `Control`，这两件事都不能放进契约。把它单列而不是塞进 `ImageLyre.Shell.Contracts`，依据有三条：其一，ADR-0001 §2.4 的 L0 规则要求契约只依赖 cangming 的契约程序集，而 `Cangming.PicoPlugins` 与 `Cangming.Toolkit` 是机制包；其二，基线 §10.2 明列“契约层引用 Avalonia、SkiaSharp 或 UI 类型”为不得出现；其三，cangming 自己把 `ToolbarButtonAttachment`、`ContentAttachment` 放在路线包 `Cangming.PicoPlugins.Avalonias` 而不是内核，Lyre 照同一位置放 `DockPaneAttachment`，两边的词汇边界因此同构。代价是多一个工程与一份 README，换来的是契约层不必为一条界面词汇开口子。
 
 ### 3.3 启动与编排时序
+
+#### 3.3.1 现行启动链（2026-11-25 起）
+
+```mermaid
+sequenceDiagram
+    participant P as Program.Main
+    participant A as App
+    participant D as DesktopStartup
+    participant H as IHost
+    participant B as BootstrapHostBuilder
+    participant PP as PresentationPlan
+    participant E as ExitArbiter
+
+    P->>A: AppBuilder.Configure / StartWithClassicDesktopLifetime
+    A->>D: RunAsync(desktop, localization, loggerFactory)
+    D->>D: new WelcomeWindow；desktop.MainWindow = welcome
+    D->>H: BootstrapHostBuilder.Build
+    H->>B: Launch → HostPlan（插件复合 Step）
+    B-->>D: Host 启动完成（单插件 Failed 记 Degraded）
+    D->>PP: RunAsync（Avalonia UI 线程）
+    PP->>PP: 建槽位 → 注入 → 取壳 → 附着 → 显示 → 关欢迎窗
+    D->>D: 宿主级冒烟回调
+    D->>E: ShutdownRequested
+    E->>D: DesktopStopPlan：关壳 → 停宿主 → 释放宿主
+```
+
+现行实现以 [App.cs](../../../src/App/ImageLyre.App/App.cs)、[DesktopStartup.cs](../../../src/App/ImageLyre.Presentation.Desktop/Startup/DesktopStartup.cs)、[BootstrapHostBuilder.cs](../../../src/App/ImageLyre.Bootstrap/BootstrapHostBuilder.cs) 与 [PresentationPlan.cs](../../../src/App/ImageLyre.Presentation.Desktop/Startup/PresentationPlan.cs) 为准；`App` 只转交生命周期，启动项顺序由 Bootstrap 与 Presentation 的 Plan 持有。
+
+#### 3.3.2 M1 迁移前时序（历史）
+
+以下图与代码块是 2026-11-25 迁移前的 M1 快照，只用于理解当时的取舍；`BootstrapHost`、`App.ComposeAsync` 与 `MainWindowFactory` 在 App 中的旧位置已不存在，不得按下面的代码片段实现。
 
 ```mermaid
 sequenceDiagram

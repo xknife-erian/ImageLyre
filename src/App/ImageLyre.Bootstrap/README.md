@@ -8,7 +8,7 @@
 
 - 不放界面：不引用 Avalonia、AtomUI、SkiaSharp，不创建窗口、控件、槽位管理器或主窗体，这些属于 `ImageLyre.Presentation.Desktop` 与壳插件。
 - 不放宿主分派：不解析启动参数、不判断桌面还是无界面、不初始化 Avalonia，`HostMode` 只是调用方传进来的输入。
-- 不放业务服务：不创建 `LocalizationService`、不注册具体能力实现，宿主把需要共享的业务实例经 `StartAsync` 的 `configure` 回调注册进容器；日志工厂是唯一例外，它是本方法的入参且插件管理器构造必需，由本工程注册。
+- 不放业务服务：不创建 `LocalizationService`、不注册具体能力实现，宿主把需要共享的业务实例经 `BootstrapHostBuilder.Build` 的 `configure` 回调注册进容器；日志工厂是唯一例外，它是构建器的入参且插件管理器构造必需，由本工程注册。
 - 不放插件：不按名字引用任何 `ImageLyre.Module.*` 或 `ImageLyre.Feature.*` 工程，扫描只按程序集文件名前缀发生。
 - 不放桌面的关停顺序：`ExitArbiter` 只裁决开始/关停各一次、返回同一个任务与超时，先释放壳窗体再停宿主属于 Presentation 的关闭动作，不在本工程实现。
 - 不放产品能力：M1 的 Bootstrap 里没有图像、ROI、测量、文档或设置代码，后续能力只能以插件形式接入。
@@ -19,4 +19,4 @@
 
 ## 边界变化时改哪份文档
 
-先改 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md` §3.1、§3.3、§3.7 与 §3.8 及本文件：`StartAsync` 的签名或步骤顺序变化必须同步回写 §3.3 的代码块，扫描前缀增删改 §3.7，失败与关停语义改 §3.8；`BootstrapPlanRunner`、`StartupReport` 与 `ExitArbiter` 的契约变化同时改 `docs/design/lukan/DESIGN-0002-启动宿主与编排模式.md` §7.4、§7.5、§10.2 与 `docs/plans/lukan/PLAN-0002-启动宿主与编排模式实施.md` 的 T09/T10，以及 `docs/adr/lukan/ADR-0003-启动宿主与Presentation分层.md` §2 第 7、8 条；若改动使 Bootstrap 需要依赖 UI 或插件工程，先按 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` §2.4 与 §2.5 修正架构基线，再动代码。宿主职责的挪动同时改 `ImageLyre.App` 与 `ImageLyre.Presentation.Desktop` 的 README。
+先改 `docs/design/lukan/DESIGN-0001-M1-插件骨架.md` §3.1、§3.3、§3.7 与 §3.8 及本文件：`BootstrapHostBuilder.Build` 的签名或 HostPlan 步骤顺序变化必须同步回写 §3.3 的现行启动链，扫描前缀增删改 §3.7，失败与关停语义改 §3.8；`BootstrapPlanRunner`、`StartupReport` 与 `ExitArbiter` 的契约变化同时改 `docs/design/lukan/DESIGN-0002-启动宿主与编排模式.md` §7.4、§7.5、§10.2、§10.4 与 `docs/plans/lukan/PLAN-0002-启动宿主与编排模式实施.md` 的 T09/T10，以及 `docs/adr/lukan/ADR-0003-启动宿主与Presentation分层.md` §2 第 7、8 条；若改动使 Bootstrap 需要依赖 UI 或插件工程，先按 `docs/adr/lukan/ADR-0001-插件机制架构基线.md` §2.4 与 §2.5 修正架构基线，再动代码。宿主职责的挪动同时改 `ImageLyre.App` 与 `ImageLyre.Presentation.Desktop` 的 README。
