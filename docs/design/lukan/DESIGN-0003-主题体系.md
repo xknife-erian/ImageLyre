@@ -10,7 +10,8 @@
 | 0.6 | 2026-11-24 | 草稿（待拍板） | lukan | 落点按业主口径定在 `reference/`：撤销上一步新建的 `docs/design-archive/` 与登记行，改为在 `docs/README.md` 的交付类 `reference/` 条目与 `docs/reference/README.md` 里写明“定稿设计存档”的定位、存取规则与存档清单；11 处路径引用统一为 `docs/reference/2026-11-20-appearance/` |
 | 0.7 | 2026-11-24 | 草稿（待拍板） | lukan | 按业主口径整理存档命名：定稿报告 `report.html` 改为 `index.html`、三十版过程总览 `index.html` 改为 `gallery.html`，目录按登记表的 `<日期>-<主题-slug>` 规则改名 `2026-11-20-appearance/`；`docs/reference/README.md` 的入口清单与 §2.2 的说明同步更新 |
 | 0.8 | 2026-11-25 | 历史 | lukan | 读完恢复回来的 UI 稿（收口报告、主界面规格、控件与八态样张）后校订：补缺失的警告与错误状态色、状态栏定到 28、焦点按 `:focus-visible` 落实、页签墨条写出映射、画布底定为随明暗；另记四份基线之间的六处口径冲突 |
-| 0.9 | 2026-11-25 | 草稿（待拍板） | lukan | 按业主口径把六处缺口全部补掉：`color-tokens.md` 升 1.4 增 §6.4 状态提示两档、`spacing.md` 升 1.1 统一状态栏 28 并登记 6px 例外、主界面规格升 0.2、收口报告改两处笔误值、`states.html` 按 1.3 重刷配色；本文 §5.1 补映射行并给出 AtomUI 落法 |
+| 0.9 | 2026-11-25 | 历史 | lukan | 按业主口径把六处缺口全部补掉：`color-tokens.md` 升 1.4 增 §6.4 状态提示两档、`spacing.md` 升 1.1 统一状态栏 28 并登记 6px 例外、主界面规格升 0.2、收口报告改两处笔误值、`states.html` 按 1.3 重刷配色；本文 §5.1 补映射行并给出 AtomUI 落法 |
+| 0.10 | 2026-11-25 | 草稿（待拍板） | lukan | 收工前补一条待拍板：工程落点是否由新建 `ImageLyre.Shell.Theme` 改为并入 `ImageLyre.Presentation.Desktop`（`PLAN-0003` 的 T01）；其余内容与 0.9 相同 |
 
 ## 1 结论
 
@@ -513,3 +514,4 @@ Token 能表达颜色、尺寸、线宽与时长，表达不了“焦点是一�
 | 6 | 输入框暗色底（§7 第 8 行）：八个输入控件逐个覆盖，还是让步为与面板同色 | 设计与架构 | 先让步同色跑通 G2，等输入类控件大面积落地后再补覆盖 |
 | 7 | 主题契约的执行强度（§4.6）：白名单脚本够，还是要把可改 Token 收敛成“种子 + 一组颜色类 Map” | 架构 | 先上白名单脚本，第二套主题落地时按实际越界情况收紧 |
 | 8 | 状态提示两档的取值复核（§5.1 末）：已补 `state.warning.line` 为 `#A9791C` / `#D9A441`、`state.error.line` 同 `signal`，底取窗口色 | 设计 | 已按此落地；若设计偏好别的警告色，只换这一对值，映射与组件都不用动 |
+| 9 | 工程落点：本文 §6.1 原写新建 `ImageLyre.Shell.Theme`，`PLAN-0003` 的 T01 拟并入 `ImageLyre.Presentation.Desktop`（`PLAN-0002` 已把主题注册划进该工程，并声明不立 `ImageLyre.Themes`） | 业主 | 并入：少一个工程、与启动宿主线天然对齐，插件仍经 `Shell.Contracts` 的 `IThemeService` 解耦；批准后回写 §6.1 |
