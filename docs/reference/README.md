@@ -20,6 +20,8 @@
 
 `2026-11-20-appearance/` 的来历：2026-11-20 以 `bakeoff-2026-11-20/` 为名提交，2026-11-22 随 `docs/design/` 一起被删除（`dc0f4b9`），2026-11-24 从标签 `archive/pre-reset-2026-11-22` 恢复，剔除 11 张原型页未引用的截图（4 张 contact-sheet、`type-specimen.png` 与 6 张中间稿 `preview.png`）后入库，页面引用的 25 张图全部保留；同一次整理把定稿报告提为 `index.html`、把三十版过程总览降为 `gallery.html`，避免过程文件冒充主入口。现行设计与取值映射见 `docs/design/lukan/DESIGN-0003-主题体系.md`。
 
+存档里的页面并不同代，取色与取值要分清：`index.html`（定稿报告）与 `controls.html`（控件样张）已是 1.3 的配色，可以直接取样；`e-science/states.html`（八态）的尺寸与排印 token 正确，但颜色仍是 1.0 之前的旧纸白基线（`--paper:#F2F2F0`、`--ink:#1B1B1B`），只能用来看结构与状态，不能取色；其余六个方向的原型是过程稿，只看结构。
+
 存档内的历史文档可能引用早已退役的别的路径（例如早期 `DESIGN-0003-libs-layering.md`），这类引用按定稿原文保留、不做追溯改写，需要现行口径时以 `docs/design/` 为准。
 
 ## 注意
