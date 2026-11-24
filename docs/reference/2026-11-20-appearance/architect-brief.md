@@ -58,7 +58,7 @@
 
 - 视觉基准：`e-science/v10/mock.html`（亮 30）、`e-science/v11/mock.html`（暗 31）
 - 八态：`e-science/states.html`
-- 汇总：`report.html`
+- 汇总：`index.html`
 - 排印：`typography.md` 2.0；落地参考：`typography-avalonia.md`
 - 间距：`spacing.md`；颜色：`color-tokens.md` 1.3
 - 状态：`state-model.md`；控件：`controls.md` 1.1

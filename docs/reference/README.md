@@ -16,9 +16,9 @@
 
 | 目录 | 日期 | 内容 | 入口 |
 | :--- | :--- | :--- | :--- |
-| `bakeoff-2026-11-20/` | 2026-11-20 | 外观竞标的六个方向（a-instrument、b-swiss、c-tool、d-darkroom、e-science、f-craftsman）全部原型与说明，稿 19–31 的编号表，以及颜色、排印、间距、控件、状态五份取值基线与主界面规格 | `index.html`（总览）、`report.html`（收口报告）、`controls.html`（控件样张）、`e-science/states.html`（八态）、`type-specimen.html`（字样） |
+| `2026-11-20-appearance/` | 2026-11-20 | 外观定稿：六个方向（a-instrument、b-swiss、c-tool、d-darkroom、e-science、f-craftsman）全部原型与说明，稿 19–31 的编号表，以及颜色、排印、间距、控件、状态五份取值基线与主界面规格 | `index.html`（定稿报告，主入口）、`gallery.html`（三十版过程总览）、`controls.html`（控件样张）、`e-science/states.html`（八态）、`type-specimen.html`（字样） |
 
-`bakeoff-2026-11-20/` 的来历：2026-11-20 提交，2026-11-22 随 `docs/design/` 一起被删除（`dc0f4b9`），2026-11-24 从标签 `archive/pre-reset-2026-11-22` 恢复，剔除 11 张原型页未引用的截图（4 张 contact-sheet、`type-specimen.png` 与 6 张中间稿 `preview.png`）后入库，页面引用的 25 张图全部保留。现行设计与取值映射见 `docs/design/lukan/DESIGN-0003-主题体系.md`。
+`2026-11-20-appearance/` 的来历：2026-11-20 以 `bakeoff-2026-11-20/` 为名提交，2026-11-22 随 `docs/design/` 一起被删除（`dc0f4b9`），2026-11-24 从标签 `archive/pre-reset-2026-11-22` 恢复，剔除 11 张原型页未引用的截图（4 张 contact-sheet、`type-specimen.png` 与 6 张中间稿 `preview.png`）后入库，页面引用的 25 张图全部保留；同一次整理把定稿报告提为 `index.html`、把三十版过程总览降为 `gallery.html`，避免过程文件冒充主入口。现行设计与取值映射见 `docs/design/lukan/DESIGN-0003-主题体系.md`。
 
 存档内的历史文档可能引用早已退役的别的路径（例如早期 `DESIGN-0003-libs-layering.md`），这类引用按定稿原文保留、不做追溯改写，需要现行口径时以 `docs/design/` 为准。
 

@@ -7,7 +7,7 @@
 
 > 本文是给架构的落地参考，由架构维护；设计契约是 `typography.md` 2.0（四档 11/13/16/20）。本文现有映射按 1.x 的八档写成，字号与令牌映射待架构按 2.0 更新；API 选择、令牌钉法、待实测项与验收脚本由架构决定，设计只认 `typography.md` 的数值、角色与验收语言。
 
-本文是 `docs/reference/bakeoff-2026-11-20/typography.md`（下称"设计值"）在桌面端的实现口径，读者是接手的 Avalonia 研发与后续验收者。设计值给出的是字体、八档字号、字重、行高、数字规则、对比度与缩放要求；本文只回答一件事：这些数值在 Avalonia 12.1.6 与 AtomUI 6.2.15 上分别落到哪个 API、哪个资源键、哪种类型，以及哪些点因为本仓版本限制只能标为待实测。
+本文是 `docs/reference/2026-11-20-appearance/typography.md`（下称"设计值"）在桌面端的实现口径，读者是接手的 Avalonia 研发与后续验收者。设计值给出的是字体、八档字号、字重、行高、数字规则、对比度与缩放要求；本文只回答一件事：这些数值在 Avalonia 12.1.6 与 AtomUI 6.2.15 上分别落到哪个 API、哪个资源键、哪种类型，以及哪些点因为本仓版本限制只能标为待实测。
 
 文中"已核实"指本次通过包内元数据、运行时探针或 XAML 编译器验证过的结论，验证方法与临时工程见第 1 节；"待实测"指本仓当前无法验证、必须由研发在真机或已还原的工程上测一次的点，第 10 节汇总了全部待实测项。
 
@@ -36,7 +36,7 @@
 
 ### 1.2 本文依据的文件
 
-- 设计值：`docs/reference/bakeoff-2026-11-20/typography.md`（第 1–13 节全文，尤其第 2、3、4、5、8、9 节）。
+- 设计值：`docs/reference/2026-11-20-appearance/typography.md`（第 1–13 节全文，尤其第 2、3、4、5、8、9 节）。
 - 版本：`Directory.Packages.props`、`Directory.Build.props`、`global.json`。
 - 现有资源：`src/Libs/ImageLyre.Themes/README.md`、`src/Apps/ImageLyre.App/App.axaml`、`src/Apps/ImageLyre.App/Program.cs`。
 - 架构约束：`docs/design/lukan/DESIGN-0003-libs-layering.md`（Themes 工程只放资源与常量，不放逻辑）、`docs/design/lukan/DESIGN-0001-docs-convention.md`（文档归档口径）。
